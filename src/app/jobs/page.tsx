@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { JobCard } from "@/components/ui/JobCard";
 import type { UnifiedJob } from "@/lib/types";
@@ -20,6 +20,14 @@ const SALARY_THRESHOLDS: Record<SalaryFilter, number> = {
 };
 
 export default function JobsPage() {
+  return (
+    <Suspense fallback={<div className="max-w-4xl mx-auto px-4 py-12 text-center"><div className="w-8 h-8 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto" /></div>}>
+      <JobsContent />
+    </Suspense>
+  );
+}
+
+function JobsContent() {
   const searchParams = useSearchParams();
   const initialQuery = searchParams.get("q") || "";
   const initialLocation = searchParams.get("location") || "";
