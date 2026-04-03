@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MatchMySkillset.com - Business Plan</title>
+<style>
+  @page {
+    margin: 2cm;
+    size: A4;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #1a1a2e;
+    line-height: 1.6;
+    background: #fff;
+    font-size: 11pt;
+  }
+
+  /* Cover page */
+  .cover {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+    color: white;
+    page-break-after: always;
+  }
+  .cover h1 {
+    font-size: 48pt;
+    font-weight: 800;
+    letter-spacing: -1px;
+    margin-bottom: 8px;
+  }
+  .cover .tagline {
+    font-size: 18pt;
+    color: #a8a4ff;
+    margin-bottom: 40px;
+    font-weight: 300;
+  }
+  .cover .subtitle {
+    font-size: 14pt;
+    color: #ccc;
+    margin-bottom: 6px;
+  }
+  .cover .date {
+    font-size: 12pt;
+    color: #999;
+    margin-top: 30px;
+  }
+  .cover .founders {
+    margin-top: 50px;
+    font-size: 11pt;
+    color: #bbb;
+  }
+
+  /* Content */
+  .content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px 20px;
+  }
+  h2 {
+    font-size: 22pt;
+    color: #302b63;
+    margin-top: 50px;
+    margin-bottom: 20px;
+    padding-bottom: 8px;
+    border-bottom: 3px solid #302b63;
+    page-break-after: avoid;
+  }
+  h3 {
+    font-size: 15pt;
+    color: #1a1a2e;
+    margin-top: 30px;
+    margin-bottom: 12px;
+    page-break-after: avoid;
+  }
+  h4 {
+    font-size: 12pt;
+    color: #302b63;
+    margin-top: 20px;
+    margin-bottom: 8px;
+  }
+  p { margin-bottom: 12px; }
+  ul, ol { margin: 0 0 16px 24px; }
+  li { margin-bottom: 6px; }
+
+  /* Stat boxes */
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin: 20px 0;
+  }
+  .stat-box {
+    background: #f4f3ff;
+    border-left: 4px solid #302b63;
+    padding: 16px;
+    border-radius: 0 8px 8px 0;
+  }
+  .stat-box .number {
+    font-size: 20pt;
+    font-weight: 800;
+    color: #302b63;
+  }
+  .stat-box .label {
+    font-size: 9pt;
+    color: #666;
+    line-height: 1.3;
+  }
+
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 10pt;
+  }
+  th {
+    background: #302b63;
+    color: white;
+    padding: 10px 12px;
+    text-align: left;
+    font-weight: 600;
+  }
+  td {
+    padding: 8px 12px;
+    border-bottom: 1px solid #e0e0e0;
+  }
+  tr:nth-child(even) { background: #f8f8fc; }
+  tr:last-child td { border-bottom: 2px solid #302b63; }
+
+  /* Quote boxes */
+  .quote {
+    background: #fff3f3;
+    border-left: 4px solid #e74c3c;
+    padding: 14px 18px;
+    margin: 16px 0;
+    font-style: italic;
+    font-size: 10pt;
+    color: #555;
+  }
+  .quote .source {
+    font-style: normal;
+    font-size: 9pt;
+    color: #999;
+    margin-top: 6px;
+  }
+
+  /* Highlight boxes */
+  .highlight {
+    background: #e8f5e9;
+    border: 1px solid #4caf50;
+    border-radius: 8px;
+    padding: 16px;
+    margin: 16px 0;
+  }
+  .highlight.blue {
+    background: #e3f2fd;
+    border-color: #2196f3;
+  }
+  .highlight.purple {
+    background: #f3e5f5;
+    border-color: #9c27b0;
+  }
+  .highlight.orange {
+    background: #fff3e0;
+    border-color: #ff9800;
+  }
+
+  /* Section break */
+  .section-break {
+    page-break-before: always;
+  }
+
+  /* TOC */
+  .toc {
+    page-break-after: always;
+  }
+  .toc h2 { border: none; }
+  .toc ol { list-style: none; counter-reset: toc; margin: 0; padding: 0; }
+  .toc > ol > li {
+    counter-increment: toc;
+    padding: 8px 0;
+    border-bottom: 1px dotted #ccc;
+    font-size: 12pt;
+  }
+  .toc > ol > li::before {
+    content: counter(toc) ".";
+    font-weight: 700;
+    color: #302b63;
+    margin-right: 12px;
+    display: inline-block;
+    width: 30px;
+  }
+
+  /* Persona cards */
+  .persona {
+    background: #fafafa;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 16px 0;
+  }
+  .persona .name {
+    font-weight: 700;
+    font-size: 13pt;
+    color: #302b63;
+  }
+  .persona .role {
+    color: #888;
+    font-size: 10pt;
+    margin-bottom: 10px;
+  }
+
+  /* Revenue waterfall */
+  .revenue-bar {
+    display: flex;
+    align-items: center;
+    margin: 6px 0;
+  }
+  .revenue-bar .bar-label {
+    width: 200px;
+    font-size: 9pt;
+    text-align: right;
+    padding-right: 12px;
+  }
+  .revenue-bar .bar {
+    height: 24px;
+    background: linear-gradient(90deg, #302b63, #a8a4ff);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    padding-left: 8px;
+    color: white;
+    font-size: 9pt;
+    font-weight: 600;
+  }
+
+  /* Phase timeline */
+  .timeline {
+    position: relative;
+    padding-left: 30px;
+    margin: 20px 0;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 12px;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: #302b63;
+  }
+  .timeline-item {
+    position: relative;
+    margin-bottom: 20px;
+  }
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -24px;
+    top: 4px;
+    width: 14px;
+    height: 14px;
+    background: #302b63;
+    border-radius: 50%;
+    border: 3px solid #fff;
+  }
+  .timeline-item .phase {
+    font-weight: 700;
+    color: #302b63;
+    font-size: 11pt;
+  }
+  .timeline-item .months {
+    font-size: 9pt;
+    color: #888;
+  }
+
+  @media print {
+    .cover { height: 100vh; }
+    .section-break { page-break-before: always; }
+    body { font-size: 10pt; }
+  }
+</style>
+</head>
+<body>
+
+<!-- COVER PAGE -->
+<div class="cover">
+  <h1>MatchMySkillset</h1>
+  <div class="tagline">AI-Assisted. Human-Led.</div>
+  <div class="subtitle">Discover careers you never knew existed.</div>
+  <div class="subtitle">Find candidates you never thought to look for.</div>
+  <div class="founders">
+    <p>Founded by Fred &amp; Dave</p>
+    <p>matchmyskillset.com</p>
+  </div>
+  <div class="date">Business Plan &mdash; April 2026</div>
+</div>
+
+<!-- TABLE OF CONTENTS -->
+<div class="content toc">
+  <h2>Contents</h2>
+  <ol>
+    <li>Executive Summary</li>
+    <li>The Problem</li>
+    <li>Market Opportunity</li>
+    <li>The Solution</li>
+    <li>Bootstrap Strategy: How We Start</li>
+    <li>How It Works: Job Seekers</li>
+    <li>How It Works: Employers</li>
+    <li>How It Works: Recruitment Agents</li>
+    <li>Competitive Landscape</li>
+    <li>Unique Differentiators</li>
+    <li>Revenue Model &amp; Income Streams</li>
+    <li>Affiliate Programme Strategy</li>
+    <li>Fred's Role &amp; Revenue Contribution</li>
+    <li>Go-to-Market Strategy</li>
+    <li>Technology &amp; Platform</li>
+    <li>Financial Projections</li>
+    <li>Roadmap</li>
+    <li>Risks &amp; Mitigations</li>
+    <li>The Vision</li>
+  </ol>
+</div>
+
+<!-- 1. EXECUTIVE SUMMARY -->
+<div class="content">
+  <h2>1. Executive Summary</h2>
+
+  <p><strong>MatchMySkillset</strong> is a UK-based career intelligence platform that uses AI to match people to jobs they never knew existed, based on their actual skills rather than their job title history. On the employer side, it surfaces hidden talent that traditional recruitment misses.</p>
+
+  <p>The UK recruitment market is worth <strong>&pound;141 billion</strong>, yet the system is fundamentally broken. Job seekers apply to roles by title, missing thousands of positions their skills perfectly suit. Employers receive hundreds of irrelevant applications while qualified candidates are filtered out by keyword-matching ATS systems. The result: 242 applicants per opening, a 0.4% callback rate, and a &pound;39 billion annual skills gap.</p>
+
+  <p>MatchMySkillset solves this from both sides. For <strong>job seekers</strong>, our AI analyses their skills (from CVs, plain-English descriptions, or even life experience) and maps them to career paths they would never have searched for. For <strong>employers</strong>, it surfaces pre-qualified candidates whose transferable skills match the role, not just the keywords. For <strong>recruitment agents</strong>, it provides a tool that makes them dramatically more effective at matching.</p>
+
+  <p>Our founding team combines <strong>AI technology</strong> (Dave) with <strong>deep recruitment industry expertise and contacts</strong> (Fred). This is not just another tech platform hoping recruiters will show up. Fred's network of employers and candidates provides immediate supply and demand from day one, while the AI layer scales what no human recruiter can do alone.</p>
+
+  <div class="highlight">
+    <strong>Our thesis:</strong> The most valuable job match is one neither the candidate nor the employer would have found on their own. That is what we build.
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat-box">
+      <div class="number">&pound;141B</div>
+      <div class="label">UK recruitment market value</div>
+    </div>
+    <div class="stat-box">
+      <div class="number">33%</div>
+      <div class="label">of UK workers want to change careers</div>
+    </div>
+    <div class="stat-box">
+      <div class="number">88%</div>
+      <div class="label">of employers say ATS filters out qualified people</div>
+    </div>
+    <div class="stat-box">
+      <div class="number">0.4%</div>
+      <div class="label">average callback rate for job applications</div>
+    </div>
+    <div class="stat-box">
+      <div class="number">&pound;132k</div>
+      <div class="label">cost of a bad hire at manager level</div>
+    </div>
+    <div class="stat-box">
+      <div class="number">2M</div>
+      <div class="label">UK workers changed career in 2023</div>
+    </div>
+  </div>
+
+  <!-- 2. THE PROBLEM -->
+  <h2 class="section-break">2. The Problem</h2>
+
+  <h3>For Job Seekers: A Broken Discovery Engine</h3>
+  <p>Every major job board (LinkedIn, Indeed, Reed, Totaljobs) works the same way: search by job title. This means people only discover roles they already know about. A product manager searches for "product manager." A teacher searches for "teacher." Nobody searches for "learning experience designer" or "customer success manager" because they have never heard of those roles, despite having every skill required.</p>
+
+  <div class="quote">
+    "This job market is terrifying. It's a black hole that makes you question everything."
+    <div class="source">Reddit r/ukjobs, 2025</div>
+  </div>
+
+  <p>The numbers tell the story:</p>
+  <ul>
+    <li><strong>242 applicants per opening</strong> (3x the 2017 rate), with a <strong>0.4% callback rate</strong></li>
+    <li><strong>75% of applicants receive zero response</strong> to their applications</li>
+    <li><strong>73% of applicants</strong> lack required qualifications because they are applying to the wrong roles</li>
+    <li><strong>66% of ATS systems</strong> cannot understand synonyms ("Project Management" does not match "Program Management")</li>
+    <li><strong>20-30% of all job listings are ghost jobs</strong> with no intention to hire</li>
+    <li><strong>97.8% of Fortune 500 companies</strong> use ATS that rejects 75% of CVs before a human sees them</li>
+  </ul>
+
+  <div class="quote">
+    "Almost nobody wants to train or bring anyone on anymore. If you don't have the exact job title, you're invisible."
+    <div class="source">Mumsnet, Careers forum, 2025</div>
+  </div>
+
+  <h3>For Employers: Drowning in Noise, Starving for Talent</h3>
+  <p>Employers face the mirror image of this problem. AI application tools have made spray-and-pray applications trivially easy, flooding inboxes with irrelevant CVs while genuinely qualified candidates (especially career changers with transferable skills) are invisible.</p>
+
+  <ul>
+    <li><strong>1,200-2,000 applications per role</strong>, with over 90% completely unqualified</li>
+    <li><strong>&pound;6,125 average cost per hire</strong>, rising to &pound;19,000 for management roles</li>
+    <li><strong>95% of UK businesses</strong> admit to making at least one bad hire per year</li>
+    <li><strong>&pound;132,000 average cost of a bad hire</strong> at mid-manager level</li>
+    <li><strong>42+ days average time to fill</strong> a vacancy</li>
+    <li><strong>75% of UK firms</strong> struggle to find staff with the right skills</li>
+    <li><strong>62% of SMEs</strong> cannot operate at full capacity due to hiring difficulties</li>
+    <li><strong>&pound;39 billion annual UK cost</strong> of the skills mismatch</li>
+  </ul>
+
+  <div class="quote">
+    "We get 1,500 applications for every role. Maybe 50 are relevant. Our ATS can't tell the difference, and my team doesn't have time to read them all."
+    <div class="source">UK HR Director, Reddit r/humanresources</div>
+  </div>
+
+  <h3>For Recruitment Agents: Squeezed from All Sides</h3>
+  <ul>
+    <li><strong>181 UK recruitment agencies entered liquidation</strong> in H1 2025 (18% increase YoY)</li>
+    <li>Employer NICs rising to 15%, squeezing margins</li>
+    <li>Clients pushing back on 15-20% placement fees</li>
+    <li>LinkedIn Recruiter costs &pound;9,000/seat/year with only 4-25% InMail response rates</li>
+    <li>In-house teams poaching agency staff, then only sending agencies the hardest-to-fill roles</li>
+    <li>AI tools threatening to disintermediate the entire agency model</li>
+  </ul>
+
+  <div class="highlight orange">
+    <strong>The core insight:</strong> The recruitment industry optimises for job titles and keywords. The real world runs on skills. This mismatch costs the UK economy &pound;39 billion per year. MatchMySkillset bridges that gap.
+  </div>
+
+  <!-- 3. MARKET OPPORTUNITY -->
+  <h2 class="section-break">3. Market Opportunity</h2>
+
+  <h3>Market Size</h3>
+  <table>
+    <tr><th>Metric</th><th>Value</th></tr>
+    <tr><td>UK recruitment market total value</td><td>&pound;141 billion</td></tr>
+    <tr><td>UK online recruitment market (2025)</td><td>&pound;1.6 billion, growing at 6.9% CAGR</td></tr>
+    <tr><td>Global AI recruitment market</td><td>&pound;560M, growing at 7.6% CAGR</td></tr>
+    <tr><td>Number of UK recruitment agencies</td><td>30,035</td></tr>
+    <tr><td>UK recruitment advertising spend</td><td>&pound;950 million annually</td></tr>
+    <tr><td>Technology share of recruitment budgets</td><td>35% (up 10% YoY)</td></tr>
+  </table>
+
+  <h3>Structural Tailwinds</h3>
+  <ol>
+    <li><strong>Skills-based hiring revolution:</strong> 85% of employers claim to prioritise skills over degrees, but only 0.14% of hires are actually affected. The intent exists; the tools do not.</li>
+    <li><strong>Career change epidemic:</strong> 33% of UK workers want to change careers. 2 million did in 2023. 64% feel stuck. This is our core audience.</li>
+    <li><strong>EU/UK pay transparency:</strong> The EU Pay Transparency Directive (2026) will force salary disclosure, making skills-to-salary mapping possible.</li>
+    <li><strong>AI disruption of existing jobs:</strong> Millions of workers will need to reskill. They need a platform that maps their existing skills to new roles.</li>
+    <li><strong>Post-COVID career reset:</strong> Remote work expanded the geography of job markets; now people need to understand what is available.</li>
+    <li><strong>Government investment:</strong> &pound;132M allocated for Skills Bootcamps 2025-26. Growth and Skills Levy from April 2026 opens new funding for short courses.</li>
+  </ol>
+
+  <!-- 4. THE SOLUTION -->
+  <h2 class="section-break">4. The Solution</h2>
+
+  <p>MatchMySkillset is built on three pillars:</p>
+
+  <h3>Pillar 1: AI-Powered Skills Intelligence</h3>
+  <p>Our AI engine does what no job board offers: it understands skills, not keywords. It extracts skills from CVs, plain-English descriptions, and even life experience (parenting, volunteering, hobbies). It then maps those skills against thousands of job roles using O*NET, ESCO, and our proprietary adjacency model built from real career transition data.</p>
+
+  <h3>Pillar 2: Human-Led Guidance</h3>
+  <p>AI discovers the possibilities. A human recruiter validates them. Fred and our team of specialist career transition recruiters intervene at three critical points: career direction validation, application review, and offer negotiation. This is not a chatbot pretending to be a career advisor. This is real expertise layered on top of AI intelligence.</p>
+
+  <h3>Pillar 3: Two-Sided Marketplace</h3>
+  <p>Job seekers find roles they never knew existed. Employers find candidates they never thought to look for. The platform creates matches that neither side would have discovered alone, then Fred's team ensures those matches convert into hires.</p>
+
+  <div class="highlight blue">
+    <strong>The tagline:</strong> AI-Assisted. Human-Led. Your career, discovered.
+  </div>
+
+  <!-- 5. BOOTSTRAP STRATEGY -->
+  <h2 class="section-break">5. Bootstrap Strategy: How We Start</h2>
+
+  <p>Every marketplace faces the chicken-and-egg problem: candidates will not come without jobs, and employers will not come without candidates. We solve this by <strong>not requiring employers to sign up at all</strong> in the early stages. Instead, we use free job APIs for immediate job inventory, a viral free tool to attract CVs, and Fred's recruitment expertise to take those CVs directly to employers.</p>
+
+  <div class="highlight blue">
+    <strong>The key insight:</strong> We do not need employers on the platform. We need CVs. Fred IS the employer side. He takes the candidates to employers. The platform is his superpower.
+  </div>
+
+  <h3>Step 1: The Hook (No Jobs Needed)</h3>
+  <p>The viral entry point is NOT "find a job." It is <strong>"Discover careers you never knew existed."</strong></p>
+  <p>A free tool, no sign-up required. Paste your CV or describe your experience. AI extracts your skills and shows you 5-10 career paths you have never heard of, with salary ranges, transition difficulty, and skills gaps. This is shareable, interesting, and useful even without a single job listing. People will do it out of curiosity. "I had no idea I was a 92% match for UX Researcher" is the kind of thing people screenshot and share on LinkedIn, Reddit, and WhatsApp.</p>
+  <p><strong>That is how we get CVs.</strong> People come for the free insight. We capture their skill profile when they create an account to save their results.</p>
+
+  <h3>Step 2: Jobs from APIs (Immediate Inventory)</h3>
+  <p>From day one, the platform has thousands of real UK jobs by aggregating free and revenue-share job APIs. Users get genuine value: skill-matched job recommendations from real listings, ranked by how well their transferable skills match each role.</p>
+
+  <table>
+    <tr><th>Job API</th><th>Listings</th><th>Cost</th><th>Revenue Model</th></tr>
+    <tr><td><strong>Adzuna</strong></td><td>1M+ UK jobs</td><td>Free (with attribution)</td><td>CPC affiliate revenue</td></tr>
+    <tr><td><strong>Reed API</strong></td><td>200k+ UK jobs</td><td>Free API key</td><td>Click-through attribution</td></tr>
+    <tr><td><strong>Indeed Publisher</strong></td><td>Millions</td><td>Revenue share</td><td>&pound;0.05-0.15 per click (CPC)</td></tr>
+    <tr><td><strong>Jooble</strong></td><td>Aggregator</td><td>Free</td><td>CPC affiliate revenue</td></tr>
+    <tr><td><strong>The Muse</strong></td><td>Curated roles</td><td>Free tier</td><td>Referral revenue</td></tr>
+    <tr><td><strong>Careerjet</strong></td><td>Aggregator</td><td>Free</td><td>CPC affiliate revenue</td></tr>
+  </table>
+
+  <h4>Job Click Revenue (CPC)</h4>
+  <p>Every time a user clicks through to apply for a job on Indeed, Adzuna, or another partner, we earn a cost-per-click fee. This is revenue from day one, before any employer signs up or any subscription is sold.</p>
+
+  <table>
+    <tr><th>Scale (MAU)</th><th>Estimated Job Clicks/Month</th><th>CPC Revenue/Month</th></tr>
+    <tr><td>2,000</td><td>1,000</td><td>&pound;80-150</td></tr>
+    <tr><td>10,000</td><td>5,000</td><td>&pound;400-750</td></tr>
+    <tr><td>50,000</td><td>25,000</td><td>&pound;2,000-3,750</td></tr>
+    <tr><td>200,000</td><td>100,000</td><td>&pound;8,000-15,000</td></tr>
+  </table>
+
+  <p>At scale, job click revenue alone could reach &pound;8,000-15,000 per month. Combined with course and tool affiliates, passive revenue from user activity becomes substantial.</p>
+
+  <h3>Step 3: Fred's Direct Employer Outreach + Reverse Recruitment</h3>
+  <p>Fred works both sides from day one:</p>
+
+  <h4>A) Featured Jobs: Fred Brings Employers to the Platform</h4>
+  <p>Fred approaches employers in his network directly and offers them something no job board does: <em>"Post your role with us, and instead of 1,500 random applications, you will receive a curated shortlist of 10-15 candidates whose skills genuinely match, verified by AI and reviewed by me personally."</em></p>
+  <p>These become <strong>Featured Jobs</strong> on the platform, displayed prominently above API-sourced listings. Employers get a premium, curated experience. Job seekers see real, exclusive roles alongside the API jobs. Fred charges employers either a listing fee (&pound;199-499) or works on a placement basis (15-20% of salary). This gives the platform <strong>exclusive job content from day one</strong> that no other aggregator has.</p>
+
+  <h4>B) Reverse Recruitment: Fred Takes Candidates to Employers</h4>
+  <p>Simultaneously, Fred has a growing pool of <strong>skill-profiled candidates</strong> (far richer than raw CVs) that the AI has matched against real job listings. Every week, Fred:</p>
+  <ol>
+    <li>Reviews the platform's strongest new candidates (AI flags the top 10 with best transferable skills)</li>
+    <li>Picks 5 to work with personally</li>
+    <li>Matches them against live roles (API data + Featured Jobs + his own network)</li>
+    <li>For Featured Jobs: sends the employer a curated shortlist with skills-match breakdowns</li>
+    <li>For external roles: approaches the employer directly with pre-screened candidates</li>
+    <li>Charges placement fees (15-20% of salary) on successful hires</li>
+  </ol>
+  <p>This two-pronged approach means Fred is both <strong>bringing jobs to the candidates</strong> (Featured Jobs) and <strong>bringing candidates to the jobs</strong> (reverse recruitment). The platform has exclusive content, employers get a premium service, and candidates see curated opportunities alongside the API aggregated listings.</p>
+
+  <h3>Step 4: The Flywheel Kicks In</h3>
+  <p>Once Fred places a few people, everything accelerates:</p>
+  <ul>
+    <li><strong>Case studies:</strong> "Sarah was a teacher. We matched her to UX Research. She was hired in 8 weeks." This is the content that drives more CVs.</li>
+    <li><strong>Employer relationships:</strong> Companies Fred placed with now trust the platform and sign up directly (becoming subscription revenue).</li>
+    <li><strong>Word of mouth:</strong> Placed candidates tell friends. Success stories spread on social media.</li>
+    <li><strong>Data:</strong> Every placement validates the matching algorithm, making it more accurate.</li>
+    <li><strong>Transition Twins:</strong> Successfully placed candidates become mentors for the next wave.</li>
+  </ul>
+
+  <h3>The Complete Bootstrap Flow</h3>
+  <div style="background:#f4f3ff; padding:20px; border-radius:10px; margin:16px 0; font-size:10pt;">
+    <p style="text-align:center; margin-bottom:12px;"><strong>User finds us via Google / social / word of mouth</strong></p>
+    <p style="text-align:center; margin-bottom:12px;">&darr;</p>
+    <p style="text-align:center; margin-bottom:12px;"><strong>"Discover careers you never knew existed"</strong> (free, no sign-up)</p>
+    <p style="text-align:center; margin-bottom:12px;">&darr;</p>
+    <p style="text-align:center; margin-bottom:12px;">Uploads CV or describes experience &rarr; AI shows 5 career paths</p>
+    <p style="text-align:center; margin-bottom:12px;">&darr;</p>
+    <p style="text-align:center; margin-bottom:12px;">Creates account to save results <strong>(we now have the CV + skill profile)</strong></p>
+    <p style="text-align:center; margin-bottom:12px;">&darr;</p>
+    <p style="text-align:center; margin-bottom:4px;"><strong>Two things happen simultaneously:</strong></p>
+    <table style="width:100%; margin-top:8px;">
+      <tr>
+        <td style="width:50%; vertical-align:top; padding:10px; background:#e3f2fd; border-radius:8px;">
+          <strong>User browses API-sourced jobs</strong><br>
+          Ranked by skill match score<br>
+          Clicks through to apply<br>
+          <em>(We earn CPC revenue per click)</em><br>
+          <em>(We earn affiliate revenue on courses)</em>
+        </td>
+        <td style="width:50%; vertical-align:top; padding:10px; background:#e8f5e9; border-radius:8px; margin-left:8px;">
+          <strong>Fred reviews top candidates</strong><br>
+          AI flags best transferable skills<br>
+          Fred approaches employers directly<br>
+          <em>(Earns placement fees: &pound;5k-10k each)</em><br>
+          <em>(Employers sign up to platform)</em>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="highlight">
+    <strong>Day-one revenue without a single employer on the platform:</strong> Indeed Publisher CPC (per click), Adzuna CPC (per click), course affiliate commissions (Coursera, DataCamp), CV builder affiliates (Resume.io), Fred's direct placements to his network. The platform pays for itself from week one.
+  </div>
+
+  <!-- 6. HOW IT WORKS: JOB SEEKERS -->
+  <h2 class="section-break">6. How It Works: Job Seekers</h2>
+
+  <h3>The User Journey</h3>
+
+  <h4>Step 1: Tell Us Who You Are</h4>
+  <p>Upload your CV, paste your LinkedIn profile, or simply describe what you have done in plain English. Our AI extracts every skill, including ones you did not know you had. "I organised a charity fundraiser for 200 people" becomes: Event Management, Budget Management, Team Leadership, Stakeholder Communication.</p>
+
+  <h4>Step 2: Discover Careers You Never Knew Existed</h4>
+  <p>The AI maps your skills against thousands of roles and surfaces 5-10 career paths ranked by match strength, salary potential, and transition difficulty. A teacher discovers they are a 92% match for UX Researcher. A project manager in construction learns they suit Product Manager in tech. A retail manager finds they match Operations Analyst.</p>
+
+  <h4>Step 3: See Your Career GPS</h4>
+  <p>For each suggested path, see three routes:</p>
+  <ul>
+    <li><strong>Express Route:</strong> Fastest path, may require intensive upskilling (timeline, cost, courses)</li>
+    <li><strong>Scenic Route:</strong> Stepping-stone roles that build experience gradually</li>
+    <li><strong>Wildcard Route:</strong> Unexpected paths that others with your profile took successfully</li>
+  </ul>
+
+  <h4>Step 4: Close the Gap</h4>
+  <p>For your chosen path, see exactly what skills you need to develop, with specific courses (free and paid options), estimated time commitment, and how each one improves your match score in real time.</p>
+
+  <h4>Step 5: Get Matched and Supported</h4>
+  <p>When you are ready, get matched with real job openings. A human recruiter reviews your application strategy. You join a cohort of others making similar transitions. You connect with a "Transition Twin" mentor who has already made your exact career change.</p>
+
+  <h3>Target User Personas</h3>
+
+  <div class="persona">
+    <div class="name">Sarah, 34</div>
+    <div class="role">Teacher wanting to leave education</div>
+    <p>8 years of teaching. Exhausted, underpaid, wants out. Searches for "teacher" on job boards and finds... more teaching jobs. Has no idea that her skills in stakeholder management, curriculum design, data analysis, and public speaking make her ideal for L&D, UX Research, or Customer Success roles. MMS shows her these paths and connects her with a former teacher now thriving in tech.</p>
+  </div>
+
+  <div class="persona">
+    <div class="name">James, 42</div>
+    <div class="role">Construction project manager</div>
+    <p>20 years in construction. Industry is cyclical; he wants stability. Searches for "project manager" and gets construction PM roles. MMS identifies that his budget management, risk assessment, and team leadership skills transfer directly to programme management, operations, and consulting. Shows him a 3-month upskilling path to bridge the gap.</p>
+  </div>
+
+  <div class="persona">
+    <div class="name">Lisa, 38</div>
+    <div class="role">Returning to work after caring</div>
+    <p>5-year career break raising children. Her CV has a gap. She feels invisible. MMS recognises her pre-break marketing skills plus the project management, negotiation, and multitasking skills developed through caring. It identifies roles specifically at employers with returnship programmes and flexible working policies.</p>
+  </div>
+
+  <!-- 7. HOW IT WORKS: EMPLOYERS -->
+  <h2 class="section-break">7. How It Works: Employers</h2>
+
+  <h3>The Employer Pain We Solve</h3>
+  <p>Employers waste thousands of pounds and weeks of time sifting through irrelevant applications, while the perfect candidate, someone from a different industry with exactly the right transferable skills, never applies because they did not know the role existed.</p>
+
+  <h3>The Employer Journey</h3>
+
+  <h4>Step 1: Post Your Role (or Describe It)</h4>
+  <p>Upload a job description or describe the role in plain language. Our AI extracts the underlying skills required, not just the keywords you happened to use. It also flags where your job description might be inadvertently excluding great candidates (jargon, unnecessary requirements, biased language).</p>
+
+  <h4>Step 2: See Pre-Qualified Matches</h4>
+  <p>Instead of receiving 1,500 unfiltered applications, get a shortlist of 10-20 candidates whose actual skills match your actual needs. Each candidate shows: match score, transferable skills breakdown, skills gaps (with how they are closing them), and a "Verified Potential" profile with skill demonstrations.</p>
+
+  <h4>Step 3: Blind Matching (Optional)</h4>
+  <p>Review candidate skill profiles without seeing names, photos, previous job titles, or educational background. Reduce bias. Discover talent you would have unconsciously dismissed. Only see full profiles after expressing interest.</p>
+
+  <h4>Step 4: Human Validation</h4>
+  <p>Fred's team validates the shortlist, provides context on each candidate's transition readiness, and manages the introduction. This is not a job board where you post and pray. This is curated matching with a human guarantee.</p>
+
+  <h3>Employer Pricing</h3>
+  <table>
+    <tr><th>Plan</th><th>Price</th><th>Includes</th></tr>
+    <tr><td>Starter</td><td>&pound;199/month</td><td>3 active roles, 10 AI-matched candidates per role, basic analytics</td></tr>
+    <tr><td>Growth</td><td>&pound;499/month</td><td>10 roles, unlimited matches, employer branding page, skills gap reports</td></tr>
+    <tr><td>Enterprise</td><td>&pound;999+/month</td><td>Unlimited roles, API access, dedicated account manager, bulk hiring tools</td></tr>
+    <tr><td>Pay-per-hire</td><td>&pound;500-1,500</td><td>For SMEs who hire infrequently, no subscription needed</td></tr>
+  </table>
+
+  <div class="highlight">
+    <strong>The value proposition:</strong> A typical recruitment agency charges &pound;5,250-10,000 per placement (15-20% of salary). MMS delivers better-matched candidates at a fraction of the cost. A &pound;499/month subscription that fills 2 roles saves the employer &pound;9,000-19,000 in agency fees.
+  </div>
+
+  <!-- 8. HOW IT WORKS: RECRUITMENT AGENTS -->
+  <h2 class="section-break">8. How It Works: Recruitment Agents</h2>
+
+  <h3>Not Competing With Agents. Empowering Them.</h3>
+  <p>MatchMySkillset does not seek to replace recruitment agents. We make them dramatically more effective. Fred is a recruitment agent himself. We built this tool because we know what agents need.</p>
+
+  <h3>Agent Tools</h3>
+  <ul>
+    <li><strong>AI-powered candidate discovery:</strong> Find candidates from adjacent industries that no keyword search would surface</li>
+    <li><strong>Skills translation:</strong> Instantly map a candidate's experience to a client's requirements, with a transferable skills breakdown to share with the hiring manager</li>
+    <li><strong>Market intelligence:</strong> Real-time data on skills demand, salary benchmarks, and candidate availability by region</li>
+    <li><strong>Candidate engagement:</strong> Warm candidates who are pre-qualified and genuinely interested, not cold InMail recipients</li>
+    <li><strong>"Certified MMS Recruiter" badge:</strong> Trained on skills-based recruitment methodology</li>
+  </ul>
+
+  <h3>Agent Pricing</h3>
+  <table>
+    <tr><th>Plan</th><th>Price</th><th>Includes</th></tr>
+    <tr><td>Individual</td><td>&pound;299/month</td><td>Unlimited skills matching, 50 candidate profiles/month, market data</td></tr>
+    <tr><td>Agency (per seat)</td><td>&pound;499/month</td><td>Everything in Individual + team dashboard, shared candidate pool, analytics</td></tr>
+    <tr><td>Enterprise Agency</td><td>&pound;999+/month</td><td>API access, white-label options, custom integrations with ATS (Bullhorn, Vincere)</td></tr>
+  </table>
+
+  <!-- 9. COMPETITIVE LANDSCAPE -->
+  <h2 class="section-break">9. Competitive Landscape</h2>
+
+  <table>
+    <tr><th>Competitor</th><th>What They Do</th><th>What They Miss</th></tr>
+    <tr>
+      <td><strong>LinkedIn</strong></td>
+      <td>Professional network, job recommendations by title/history</td>
+      <td>Reinforces existing career path. Never suggests non-obvious transitions. &pound;30/mo Premium adds InMails, not intelligence.</td>
+    </tr>
+    <tr>
+      <td><strong>Indeed / Reed / Totaljobs</strong></td>
+      <td>Job boards with basic matching</td>
+      <td>Keyword-only. No skills intelligence. Flooded with ghost jobs and irrelevant applications.</td>
+    </tr>
+    <tr>
+      <td><strong>Eightfold AI</strong></td>
+      <td>Enterprise skills matching (B2B)</td>
+      <td>Locked inside enterprise walls (&pound;100k+ contracts). Individual job seekers cannot access it.</td>
+    </tr>
+    <tr>
+      <td><strong>Otta (Welcome to the Jungle)</strong></td>
+      <td>Curated tech/startup matching</td>
+      <td>Tech-only. Preference-based, not skills-based. Acquired 2024, product diluted.</td>
+    </tr>
+    <tr>
+      <td><strong>Jobscan / SkillSyncer</strong></td>
+      <td>ATS keyword optimisation</td>
+      <td>Requires you to already have a job description. Optimises applications, never discovers new roles.</td>
+    </tr>
+    <tr>
+      <td><strong>Hired / Hackajob</strong></td>
+      <td>Reverse hiring for tech talent</td>
+      <td>Tech-only, senior candidates only. US-centric. No career transition support.</td>
+    </tr>
+    <tr>
+      <td><strong>Career Coaches</strong></td>
+      <td>1:1 human guidance</td>
+      <td>&pound;50-200/hour. Doesn't scale. No data layer. Quality varies wildly.</td>
+    </tr>
+  </table>
+
+  <div class="highlight purple">
+    <strong>The gap nobody fills:</strong> No platform takes your actual skills, discovers roles you never searched for, shows you how to get there, and connects you with real employers, all with a human recruiter validating the journey. We are building what Eightfold does for enterprises, but for individuals and SMEs. With a human touch.
+  </div>
+
+  <!-- 10. UNIQUE DIFFERENTIATORS -->
+  <h2 class="section-break">10. Unique Differentiators</h2>
+
+  <h3>1. Skills-First Discovery (not title-first search)</h3>
+  <p>Every competitor starts with "what job do you want?" We start with "what can you do?" This is a fundamentally different approach that unlocks career paths invisible to traditional search.</p>
+
+  <h3>2. AI-Assisted, Human-Led</h3>
+  <p>AI handles the 90% that scales (skills extraction, matching, gap analysis). A human recruiter handles the 10% that matters most (career direction validation, application strategy, offer negotiation). No other platform combines both.</p>
+
+  <h3>3. Fred's Network (the unfair advantage)</h3>
+  <p>Our co-founder is an active recruitment agent with a deep network of employers and candidates. This solves the chicken-and-egg problem from day one. The "Hidden Jobs" feature (unadvertised roles from Fred's network) is something no tech-only platform can replicate.</p>
+
+  <h3>4. Two-Sided Value</h3>
+  <p>Most platforms serve candidates OR employers. We create value for both simultaneously. Every candidate we match is one fewer irrelevant application an employer has to process. Every employer listing is one more opportunity for a career changer.</p>
+
+  <h3>5. Life Skills Recognition</h3>
+  <p>Our AI recognises skills from parenting, volunteering, caring, and side projects. A stay-at-home parent returning to work is not "unemployed for 5 years." They have project management, crisis resolution, budget management, and stakeholder negotiation skills. We see that. No ATS does.</p>
+
+  <h3>6. Transition Twins (mentor matching)</h3>
+  <p>We match career changers with people who have already made the exact same transition. A teacher who became a UX designer mentors a teacher considering UX. This peer network is a moat that compounds over time.</p>
+
+  <!-- 11. REVENUE MODEL -->
+  <h2 class="section-break">11. Revenue Model &amp; Income Streams</h2>
+
+  <p>MatchMySkillset has <strong>14 distinct revenue streams</strong> across four tiers, reducing dependency on any single source.</p>
+
+  <h3>Tier 1: Core Revenue (from launch)</h3>
+
+  <table>
+    <tr><th>Stream</th><th>Year 1 Monthly</th><th>Year 2 Monthly</th><th>Difficulty</th></tr>
+    <tr><td>Job seeker subscriptions (Free/Pro &pound;7.99/Premium &pound;14.99)</td><td>&pound;2,000-5,000</td><td>&pound;15,000-30,000</td><td>Medium</td></tr>
+    <tr><td>Employer subscriptions + pay-per-hire</td><td>&pound;1,000-3,000</td><td>&pound;15,000-50,000</td><td>High</td></tr>
+    <tr><td>Job API click revenue (Indeed, Adzuna CPC)</td><td>&pound;400-750</td><td>&pound;2,000-8,000</td><td>Low</td></tr>
+    <tr><td>Affiliate commissions (courses, CV tools, etc.)</td><td>&pound;500-2,000</td><td>&pound;3,000-15,000</td><td>Low</td></tr>
+    <tr><td>Fred's direct placements</td><td>&pound;10,000-20,000</td><td>&pound;15,000-30,000</td><td>Low</td></tr>
+  </table>
+
+  <h3>Tier 2: Growth Revenue (months 3-12)</h3>
+  <table>
+    <tr><th>Stream</th><th>Year 1 Monthly</th><th>Year 2 Monthly</th><th>Difficulty</th></tr>
+    <tr><td>CV writing / optimisation service</td><td>&pound;1,000-2,000</td><td>&pound;4,000-8,000</td><td>Low-Med</td></tr>
+    <tr><td>Sponsored content / featured employers</td><td>&pound;500-1,000</td><td>&pound;3,000-6,000</td><td>Medium</td></tr>
+    <tr><td>Premium features (a la carte reports)</td><td>&pound;500-1,000</td><td>&pound;2,500-5,000</td><td>Low</td></tr>
+    <tr><td>SME hiring consultancy (Fred)</td><td>&pound;2,000-5,000</td><td>&pound;5,000-15,000</td><td>Medium</td></tr>
+    <tr><td>Recruiter training workshops (Fred)</td><td>&pound;1,000-3,000</td><td>&pound;5,000-10,000</td><td>Medium</td></tr>
+  </table>
+
+  <h3>Tier 3: Scale Revenue (Year 2+)</h3>
+  <table>
+    <tr><th>Stream</th><th>Year 2 Monthly</th><th>Difficulty</th></tr>
+    <tr><td>Skills assessments &amp; certification</td><td>&pound;3,000-5,000</td><td>Medium-High</td></tr>
+    <tr><td>Mentorship marketplace (20% commission)</td><td>&pound;2,000-4,000</td><td>Medium</td></tr>
+    <tr><td>Recruitment agency tools (&pound;299-999/seat)</td><td>&pound;5,000-15,000</td><td>High</td></tr>
+    <tr><td>Events, webinars, career fairs</td><td>&pound;3,000-10,000</td><td>Medium</td></tr>
+  </table>
+
+  <h3>Tier 4: Enterprise Revenue (Year 2-3)</h3>
+  <table>
+    <tr><th>Stream</th><th>Annual Potential</th><th>Difficulty</th></tr>
+    <tr><td>White-label API licensing (universities, DWP, agencies)</td><td>&pound;120,000-240,000</td><td>High</td></tr>
+    <tr><td>Data insights / market reports</td><td>&pound;50,000-200,000</td><td>High</td></tr>
+    <tr><td>Corporate training partnerships (Growth &amp; Skills Levy)</td><td>&pound;50,000-500,000</td><td>Very High</td></tr>
+    <tr><td>Government contracts (Skills Bootcamps, DWP)</td><td>&pound;100,000-1,000,000</td><td>Very High</td></tr>
+  </table>
+
+  <!-- 12. AFFILIATE STRATEGY -->
+  <h2 class="section-break">12. Affiliate Programme Strategy</h2>
+
+  <p>Affiliate income is low-effort, high-alignment revenue. Every recommendation is genuinely useful to the user at their exact moment of need.</p>
+
+  <h3>High-Value Affiliate Partners</h3>
+  <table>
+    <tr><th>Category</th><th>Partner</th><th>Commission</th><th>User Moment</th></tr>
+    <tr><td>Online Courses</td><td>Coursera / Google Certs</td><td>15-45%</td><td>"Close your skills gap" recommendations</td></tr>
+    <tr><td>Online Courses</td><td>DataCamp</td><td>30-100%</td><td>Data/analytics career transitions</td></tr>
+    <tr><td>Online Courses</td><td>LinkedIn Learning</td><td>&pound;8 per trial / 35%</td><td>Professional development paths</td></tr>
+    <tr><td>Online Courses</td><td>FutureLearn</td><td>10-15%</td><td>UK university-backed credentials</td></tr>
+    <tr><td>CV Builders</td><td>Resume.io</td><td>Up to 30%</td><td>"Rebuild your CV for your new career"</td></tr>
+    <tr><td>CV Builders</td><td>Zety</td><td>TBC (120-day cookie)</td><td>Same as above</td></tr>
+    <tr><td>Professional Tools</td><td>Grammarly Premium</td><td>&pound;16 per conversion</td><td>"Polish your cover letters"</td></tr>
+    <tr><td>Professional Tools</td><td>Canva Pro</td><td>15-80%</td><td>"Build your portfolio"</td></tr>
+    <tr><td>Mental Health</td><td>BetterHelp</td><td>&pound;8-120 per referral</td><td>"Look after yourself during transition"</td></tr>
+    <tr><td>Mental Health</td><td>Headspace</td><td>8%</td><td>Mindfulness during career stress</td></tr>
+    <tr><td>Coworking</td><td>Regus</td><td>&pound;400 per referral</td><td>Users transitioning to freelancing</td></tr>
+    <tr><td>Coworking</td><td>WeWork</td><td>&pound;400-4,000</td><td>Same as above</td></tr>
+    <tr><td>Business Banking</td><td>Tide</td><td>Referral bonus</td><td>"Going freelance? Set up your business"</td></tr>
+    <tr><td>Books</td><td>Amazon Associates</td><td>4.5%</td><td>Curated reading lists per career path</td></tr>
+    <tr><td>Job API CPC</td><td>Indeed Publisher</td><td>&pound;0.05-0.15/click</td><td>Every job click-through earns revenue</td></tr>
+    <tr><td>Job API CPC</td><td>Adzuna</td><td>CPC revenue share</td><td>1M+ UK jobs, free API with attribution</td></tr>
+    <tr><td>Job API CPC</td><td>Jooble / Careerjet</td><td>CPC revenue share</td><td>Aggregator job feeds</td></tr>
+  </table>
+
+  <h3>Affiliate Revenue Projections</h3>
+  <table>
+    <tr><th>Scale (MAU)</th><th>Monthly Revenue</th></tr>
+    <tr><td>10,000</td><td>&pound;200-500</td></tr>
+    <tr><td>50,000</td><td>&pound;2,500-5,000</td></tr>
+    <tr><td>200,000</td><td>&pound;10,000-20,000</td></tr>
+    <tr><td>500,000</td><td>&pound;25,000-50,000</td></tr>
+  </table>
+
+  <div class="highlight">
+    <strong>Key principle:</strong> Every affiliate recommendation must be genuinely useful at that moment. "You need SQL for this career path, here is the best course" is helpful. Random banner ads are not. Authenticity drives conversion and trust.
+  </div>
+
+  <!-- 13. FRED'S ROLE -->
+  <h2 class="section-break">13. Fred's Role &amp; Revenue Contribution</h2>
+
+  <p>Fred is not just a co-founder. He is the platform's <strong>unfair advantage</strong>. His recruitment expertise and contact network solve the two hardest problems in marketplace businesses: supply and credibility.</p>
+
+  <h3>Fred's Revenue Streams</h3>
+
+  <h4>1. Direct Placements (&pound;10,000-20,000/month)</h4>
+  <p>Fred continues making placements using MMS as his tool. At 15-20% of salary on a &pound;35-50k role, each placement is worth &pound;5,250-10,000. Two placements per month funds early development entirely.</p>
+
+  <h4>2. Employer Partnership Development (&pound;3,000-9,000/month)</h4>
+  <p>Fred onboards 20-50 employers from his network in Month 1. These become the platform's first paying employers and solve the chicken-and-egg problem.</p>
+
+  <h4>3. "Hidden Jobs" Network</h4>
+  <p>Fred's contacts have unadvertised roles. This becomes a Premium feature that competitors literally cannot copy. The hidden job market (30-50% of all hires) is Fred's territory.</p>
+
+  <h4>4. SME Hiring Consultancy (&pound;2,000-5,000/month)</h4>
+  <p>"AI-Assisted Hiring Audit" at &pound;500 per engagement. Monthly retainers at &pound;500-1,500 for ongoing support. SMEs desperately need this; 62% cannot operate at full capacity due to hiring difficulties.</p>
+
+  <h4>5. Recruiter Training (&pound;1,000-3,000/month)</h4>
+  <p>Workshops at &pound;2,000-5,000/day. Online course at &pound;149. "Certified MMS Recruiter" programme at &pound;999. Positions Fred as the expert in AI-assisted, human-led recruitment.</p>
+
+  <h4>6. Speaking &amp; Thought Leadership</h4>
+  <p>RecFest, CIPD, Recruitment Agency Expo. Paid speaking at &pound;500-2,000/talk. LinkedIn content driving inbound leads. Fred becomes the public face of the platform.</p>
+
+  <h3>Fred's Total Revenue Contribution</h3>
+  <table>
+    <tr><th>Activity</th><th>Year 1 Monthly</th><th>Year 2 Monthly</th></tr>
+    <tr><td>Direct placements</td><td>&pound;10,000-20,000</td><td>&pound;15,000-30,000</td></tr>
+    <tr><td>Employer partnerships</td><td>&pound;3,000-9,000</td><td>&pound;15,000-30,000</td></tr>
+    <tr><td>SME consultancy</td><td>&pound;2,000-5,000</td><td>&pound;5,000-15,000</td></tr>
+    <tr><td>Recruiter training</td><td>&pound;1,000-3,000</td><td>&pound;5,000-10,000</td></tr>
+    <tr><td>Speaking/events</td><td>&pound;500-1,000</td><td>&pound;1,000-3,000</td></tr>
+    <tr><td><strong>Total</strong></td><td><strong>&pound;16,500-38,000</strong></td><td><strong>&pound;41,000-88,000</strong></td></tr>
+  </table>
+
+  <div class="highlight orange">
+    <strong>Critical point:</strong> Fred's revenue likely exceeds the platform's digital revenue in Year 1. This is ideal: human revenue funds technology development. As the platform scales, digital revenue overtakes. Fred transitions from "doing recruitment" to "leading business development."
+  </div>
+
+  <!-- 14. GO-TO-MARKET STRATEGY -->
+  <h2 class="section-break">14. Go-to-Market Strategy</h2>
+
+  <h3>Phase 1: Seed the Marketplace (Months 1-3)</h3>
+  <p>See Section 5 (Bootstrap Strategy) for the full approach. In summary:</p>
+  <ul>
+    <li>Launch free "Discover careers you never knew existed" skills assessment tool as the viral hook</li>
+    <li>Integrate Adzuna, Reed, Indeed Publisher, and Jooble APIs for thousands of real UK jobs from day one</li>
+    <li>Earn CPC revenue on every job click-through (revenue from week one)</li>
+    <li>Fred reviews top candidate profiles weekly, approaches employers directly with AI-matched shortlists</li>
+    <li>Fred onboards 20-50 employers from his network (free/discounted access)</li>
+    <li>Target 3 niches: Teachers leaving education, Construction/trades into corporate, Parents returning to work</li>
+    <li>SEO content: "Jobs for ex-teachers," "Career change from construction," "Back to work after kids"</li>
+    <li>Reddit/Mumsnet community engagement (genuine help, not spam)</li>
+    <li>Fred's LinkedIn content: 3 posts/week on AI-assisted recruitment</li>
+    <li>Set up all affiliate partnerships (Coursera, DataCamp, Resume.io, Grammarly, BetterHelp)</li>
+  </ul>
+
+  <h3>Phase 2: Build the Flywheel (Months 4-8)</h3>
+  <ul>
+    <li>Case studies from early users: "How Sarah went from teacher to UX researcher in 4 months"</li>
+    <li>PR push: "The AI that matches you to jobs you didn't know existed"</li>
+    <li>Partnership with career change charities and organisations</li>
+    <li>Launch transition cohorts: groups of 10-15 making similar career changes</li>
+    <li>Employer referral programme: existing clients refer other employers</li>
+    <li>University career services partnerships (white-label pilot)</li>
+  </ul>
+
+  <h3>Phase 3: Scale (Months 9-12)</h3>
+  <ul>
+    <li>Expand to all industries and transition types</li>
+    <li>Fred speaks at major recruitment conferences</li>
+    <li>Government engagement: DWP, Skills Bootcamps, Growth and Skills Levy</li>
+    <li>Launch agency tools for external recruiters</li>
+    <li>Paid acquisition (Google Ads on career change keywords)</li>
+    <li>Annual "SkillShift UK" conference/career fair</li>
+  </ul>
+
+  <h3>Initial Target Niches (Why These Three)</h3>
+  <table>
+    <tr><th>Niche</th><th>Size</th><th>Why</th></tr>
+    <tr><td>Teachers leaving education</td><td>44% of UK teachers consider leaving within 5 years</td><td>Huge transferable skills, active online communities, desperate for guidance</td></tr>
+    <tr><td>Construction/trades into corporate</td><td>250k+ shortfall in construction; many want out</td><td>Strong skills (PM, budgets, health &amp; safety) but no bridge to corporate roles</td></tr>
+    <tr><td>Career returners (parents/carers)</td><td>1.7M people on career breaks in UK</td><td>Underserved, motivated, supported by government returnship initiatives</td></tr>
+  </table>
+
+  <!-- 15. TECHNOLOGY & PLATFORM -->
+  <h2 class="section-break">15. Technology &amp; Platform</h2>
+
+  <h3>Brand &amp; Domain</h3>
+  <p>The platform will launch as <strong>MatchMySkills.com</strong>. The premium domain is available for &pound;673 (estimated value &pound;1,032). It is shorter, more memorable, and more natural than alternatives. "Match My Skills" is what a user would instinctively say when describing the product.</p>
+
+  <table>
+    <tr><th>Domain</th><th>Status</th><th>Notes</th></tr>
+    <tr><td><strong>matchmyskills.com</strong></td><td>Available: &pound;673 + &pound;19/yr</td><td>Premium domain. Shorter, cleaner, natural phrasing. Recommended.</td></tr>
+    <tr><td>matchmyskillset.com</td><td>Owned</td><td>Fallback / redirect. Longer but functional.</td></tr>
+  </table>
+
+  <p><strong>Recommendation:</strong> Launch on matchmyskillset.com (already owned) in Month 1-2. Acquire matchmyskills.com in Month 3-4 once early revenue covers the cost, then redirect matchmyskillset.com to it. Alternatively, negotiate the asking price down to &pound;400-450 and acquire immediately.</p>
+
+  <h3>Tech Stack</h3>
+  <ul>
+    <li><strong>Frontend:</strong> Next.js 16 with App Router, TypeScript, Tailwind CSS</li>
+    <li><strong>Backend:</strong> Supabase (auth, database, real-time), Vercel (hosting, edge functions)</li>
+    <li><strong>AI Engine:</strong> Claude API for skills extraction, career matching, and natural language processing</li>
+    <li><strong>Skills Ontology:</strong> O*NET + ESCO as base, augmented with proprietary adjacency model</li>
+    <li><strong>Job Data:</strong> Adzuna API, Reed API, Indeed Publisher, Jooble (free UK job feeds providing instant inventory)</li>
+    <li><strong>Labour Market Data:</strong> UK ONS, ASHE salary statistics, Lightcast job posting data</li>
+    <li><strong>Payments:</strong> Stripe (subscriptions, one-off purchases, marketplace payouts)</li>
+  </ul>
+
+  <h3>AI Architecture</h3>
+  <ol>
+    <li><strong>Skills Extraction Engine:</strong> Parses CVs, LinkedIn profiles, and plain-text descriptions. Extracts skills, assigns confidence scores, maps to standardised taxonomy.</li>
+    <li><strong>Career Matching Algorithm:</strong> Maps extracted skills against role requirements. Uses adjacency scoring (how close is skill A to required skill B?) rather than keyword matching.</li>
+    <li><strong>Gap Analysis Engine:</strong> Identifies missing skills per target role. Recommends specific courses with time/cost estimates. Updates match scores in real time as users complete learning.</li>
+    <li><strong>Transition Probability Model:</strong> Built from anonymised career transition data. Shows which career moves succeed, how long they take, and what differentiates successful transitions.</li>
+  </ol>
+
+  <h3>Data Moat</h3>
+  <p>Every user interaction improves the matching algorithm. Every successful placement validates the model. Over time, we build the UK's most comprehensive dataset on career transitions, skills adjacency, and what actually predicts successful hires. This data moat compounds and becomes increasingly difficult to replicate.</p>
+
+  <!-- 16. FINANCIAL PROJECTIONS -->
+  <h2 class="section-break">16. Financial Projections</h2>
+
+  <h3>Year 1: Foundation</h3>
+  <table>
+    <tr><th>Metric</th><th>Month 3</th><th>Month 6</th><th>Month 12</th></tr>
+    <tr><td>Registered users</td><td>5,000</td><td>20,000</td><td>100,000</td></tr>
+    <tr><td>Monthly active users</td><td>2,000</td><td>10,000</td><td>50,000</td></tr>
+    <tr><td>Paid subscribers</td><td>50</td><td>300</td><td>2,000</td></tr>
+    <tr><td>Employer accounts</td><td>20</td><td>40</td><td>100</td></tr>
+    <tr><td>Fred's placements/month</td><td>2</td><td>3</td><td>5</td></tr>
+  </table>
+
+  <h3>Revenue Projections</h3>
+  <table>
+    <tr><th>Stream</th><th>Month 3</th><th>Month 6</th><th>Month 12</th><th>Year 2 Monthly</th></tr>
+    <tr><td>Fred's placements</td><td>&pound;10,000</td><td>&pound;15,000</td><td>&pound;25,000</td><td>&pound;30,000</td></tr>
+    <tr><td>Job seeker subs</td><td>&pound;400</td><td>&pound;2,400</td><td>&pound;10,000</td><td>&pound;25,000</td></tr>
+    <tr><td>Employer subs</td><td>&pound;1,000</td><td>&pound;4,000</td><td>&pound;12,000</td><td>&pound;35,000</td></tr>
+    <tr><td>Job API CPC clicks</td><td>&pound;150</td><td>&pound;500</td><td>&pound;2,500</td><td>&pound;8,000</td></tr>
+    <tr><td>Affiliates (courses, tools)</td><td>&pound;200</td><td>&pound;800</td><td>&pound;3,000</td><td>&pound;10,000</td></tr>
+    <tr><td>CV services</td><td>&pound;500</td><td>&pound;1,500</td><td>&pound;3,000</td><td>&pound;6,000</td></tr>
+    <tr><td>SME consultancy (Fred)</td><td>&pound;1,500</td><td>&pound;3,000</td><td>&pound;5,000</td><td>&pound;10,000</td></tr>
+    <tr><td>Recruiter training (Fred)</td><td>&pound;500</td><td>&pound;2,000</td><td>&pound;3,000</td><td>&pound;8,000</td></tr>
+    <tr><td>Sponsored / featured</td><td>&pound;0</td><td>&pound;500</td><td>&pound;2,000</td><td>&pound;5,000</td></tr>
+    <tr><td>A la carte features</td><td>&pound;200</td><td>&pound;500</td><td>&pound;1,500</td><td>&pound;4,000</td></tr>
+    <tr><td>Other (events, assessments)</td><td>&pound;0</td><td>&pound;500</td><td>&pound;2,000</td><td>&pound;15,000</td></tr>
+    <tr style="font-weight:bold; background:#f4f3ff;">
+      <td><strong>TOTAL</strong></td><td><strong>&pound;14,450</strong></td><td><strong>&pound;30,700</strong></td><td><strong>&pound;69,000</strong></td><td><strong>&pound;156,000</strong></td>
+    </tr>
+  </table>
+
+  <h3>Cost Structure (Monthly)</h3>
+  <table>
+    <tr><th>Cost</th><th>Month 3</th><th>Month 12</th><th>Year 2</th></tr>
+    <tr><td>Hosting / infrastructure (Vercel, Supabase)</td><td>&pound;200</td><td>&pound;500</td><td>&pound;1,500</td></tr>
+    <tr><td>AI API costs (Claude)</td><td>&pound;300</td><td>&pound;2,000</td><td>&pound;5,000</td></tr>
+    <tr><td>Data sources (Lightcast, job feeds)</td><td>&pound;0</td><td>&pound;500</td><td>&pound;1,000</td></tr>
+    <tr><td>Marketing / paid acquisition</td><td>&pound;500</td><td>&pound;3,000</td><td>&pound;10,000</td></tr>
+    <tr><td>Stripe / payment processing (2.9%)</td><td>&pound;100</td><td>&pound;500</td><td>&pound;2,000</td></tr>
+    <tr><td>Contract staff (CV writers, mentors)</td><td>&pound;0</td><td>&pound;2,000</td><td>&pound;8,000</td></tr>
+    <tr><td>Office / misc</td><td>&pound;200</td><td>&pound;500</td><td>&pound;1,000</td></tr>
+    <tr style="font-weight:bold;">
+      <td><strong>TOTAL COSTS</strong></td><td><strong>&pound;1,300</strong></td><td><strong>&pound;9,000</strong></td><td><strong>&pound;28,500</strong></td>
+    </tr>
+    <tr style="font-weight:bold; background:#e8f5e9;">
+      <td><strong>NET PROFIT</strong></td><td><strong>&pound;13,000</strong></td><td><strong>&pound;57,500</strong></td><td><strong>&pound;119,500</strong></td>
+    </tr>
+  </table>
+
+  <div class="highlight">
+    <strong>Path to profitability:</strong> The business is profitable from Month 1 because Fred's placement revenue covers all costs. Digital revenue scales on top of a profitable base. No venture funding required to reach sustainability, though investment could accelerate growth.
+  </div>
+
+  <h3>Annual Summary</h3>
+  <table>
+    <tr><th></th><th>Year 1</th><th>Year 2</th><th>Year 3</th></tr>
+    <tr><td>Revenue</td><td>&pound;350,000-500,000</td><td>&pound;1.2M-1.8M</td><td>&pound;3M-5M</td></tr>
+    <tr><td>Costs</td><td>&pound;60,000-100,000</td><td>&pound;250,000-400,000</td><td>&pound;800,000-1.5M</td></tr>
+    <tr style="font-weight:bold; background:#e8f5e9;">
+      <td>Net Profit</td><td>&pound;250,000-400,000</td><td>&pound;800,000-1.4M</td><td>&pound;1.5M-3.5M</td></tr>
+  </table>
+
+  <!-- 17. ROADMAP -->
+  <h2 class="section-break">17. Roadmap</h2>
+
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="phase">Phase 1: Foundation</div>
+      <div class="months">Months 1-2</div>
+      <ul>
+        <li>Build MVP: skills extraction, career matching, basic profiles</li>
+        <li>Integrate Adzuna, Reed, Indeed Publisher, Jooble job APIs (thousands of jobs from day one)</li>
+        <li>Launch free "Discover careers you never knew existed" skills tool</li>
+        <li>Fred approaches employers directly to post Featured Jobs with curated candidate shortlists</li>
+        <li>Fred makes first placements using AI-matched candidates from the platform</li>
+        <li>Set up all affiliate partnerships + job CPC revenue</li>
+        <li>SEO content: 20 career transition guides</li>
+      </ul>
+    </div>
+
+    <div class="timeline-item">
+      <div class="phase">Phase 2: First Revenue</div>
+      <div class="months">Months 3-4</div>
+      <ul>
+        <li>Launch Pro subscription (&pound;7.99/month)</li>
+        <li>Launch Employer Starter plan (&pound;199/month)</li>
+        <li>CV writing service goes live</li>
+        <li>Fred starts SME consultancy</li>
+        <li>Apply for Innovate UK Smart Grant</li>
+        <li>First case studies and testimonials</li>
+      </ul>
+    </div>
+
+    <div class="timeline-item">
+      <div class="phase">Phase 3: Product Depth</div>
+      <div class="months">Months 5-8</div>
+      <ul>
+        <li>Launch Premium tier (&pound;14.99/month)</li>
+        <li>Skills assessments and certification</li>
+        <li>Mentorship marketplace (Transition Twins)</li>
+        <li>Transition cohorts (group programmes)</li>
+        <li>Fred starts recruiter training workshops</li>
+        <li>Employer branding pages and sponsored content</li>
+      </ul>
+    </div>
+
+    <div class="timeline-item">
+      <div class="phase">Phase 4: Scale</div>
+      <div class="months">Months 9-12</div>
+      <ul>
+        <li>Launch recruitment agency tools</li>
+        <li>Events programme (webinars, career fairs)</li>
+        <li>Government engagement (Skills Bootcamps, DWP)</li>
+        <li>University partnership pilots</li>
+        <li>First data insights report published</li>
+        <li>Paid acquisition begins (Google Ads)</li>
+      </ul>
+    </div>
+
+    <div class="timeline-item">
+      <div class="phase">Phase 5: Expand</div>
+      <div class="months">Year 2</div>
+      <ul>
+        <li>API licensing to universities and corporate HR</li>
+        <li>Corporate training partnerships via Growth and Skills Levy</li>
+        <li>Expand niche coverage to all industries</li>
+        <li>Annual "SkillShift UK" conference</li>
+        <li>Explore international expansion (Ireland, Australia, Canada)</li>
+        <li>Consider fundraise if metrics support acceleration</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 18. RISKS & MITIGATIONS -->
+  <h2 class="section-break">18. Risks &amp; Mitigations</h2>
+
+  <table>
+    <tr><th>Risk</th><th>Impact</th><th>Mitigation</th></tr>
+    <tr>
+      <td>Chicken-and-egg: need candidates to attract employers and vice versa</td>
+      <td>High</td>
+      <td>Fred's network provides immediate supply on both sides. Start with niche focus (3 transition types) rather than trying to be everything.</td>
+    </tr>
+    <tr>
+      <td>LinkedIn builds similar features</td>
+      <td>High</td>
+      <td>LinkedIn has had this data for years and hasn't built it. Their incentive is engagement, not career transitions (which reduce engagement). Our human-led approach and niche focus are defensible.</td>
+    </tr>
+    <tr>
+      <td>AI matching accuracy is poor initially</td>
+      <td>Medium</td>
+      <td>Fred's human validation catches AI errors. Start with constrained niches where training data is richer. Feedback loops improve the model rapidly.</td>
+    </tr>
+    <tr>
+      <td>Candidates won't pay</td>
+      <td>Medium</td>
+      <td>LinkedIn Premium growing 50% proves willingness. Multiple free-to-paid conversion points. Employer revenue doesn't depend on candidates paying.</td>
+    </tr>
+    <tr>
+      <td>Regulatory change (AI hiring legislation)</td>
+      <td>Medium</td>
+      <td>Human-in-the-loop model is specifically what regulators recommend. We are positioned on the right side of any AI hiring regulation.</td>
+    </tr>
+    <tr>
+      <td>Fred leaves / key person risk</td>
+      <td>High</td>
+      <td>Document processes. Build employer relationships at company level, not personal level. Hire additional recruiters early.</td>
+    </tr>
+    <tr>
+      <td>Data quality / matching errors damage trust</td>
+      <td>High</td>
+      <td>Human review of all matches in early stages. Quality guarantee: bad match = money back. Transparent matching logic.</td>
+    </tr>
+  </table>
+
+  <!-- 19. THE VISION -->
+  <h2 class="section-break">19. The Vision</h2>
+
+  <p>Today, 2 million people in the UK changed careers last year. 33% want to but feel stuck. They are scattered, alone, debugging their own employability from front rooms at midnight. Meanwhile, employers spend &pound;39 billion per year on a skills gap that does not need to exist, because the talent is already there, just in the wrong job title.</p>
+
+  <p>MatchMySkillset exists to close that gap. We believe that every person has skills that could transform their career, if only someone (or something) could connect the dots.</p>
+
+  <p>We are building the platform where:</p>
+  <ul>
+    <li>A nurse discovers she could be a clinical data analyst</li>
+    <li>A retail manager finds out he is perfectly suited for operations consulting</li>
+    <li>A parent returning to work learns that her caring experience translates to programme management</li>
+    <li>An employer finally finds the candidate with the right skills, not just the right CV keywords</li>
+    <li>A recruitment agent makes better matches in less time with AI-powered intelligence</li>
+  </ul>
+
+  <p><strong>AI-Assisted. Human-Led.</strong> The future of recruitment is not about replacing humans with algorithms. It is about giving humans the intelligence to make better decisions. Fred brings the expertise. The AI brings the scale. Together, we build something neither could achieve alone.</p>
+
+  <div class="highlight purple" style="text-align:center; font-size: 14pt; padding: 30px;">
+    <strong>MatchMySkillset.com</strong><br>
+    Discover careers you never knew existed.<br>
+    Find candidates you never thought to look for.<br><br>
+    <span style="font-size: 11pt;">Contact: hello@matchmyskillset.com</span>
+  </div>
+
+</div>
+
+</body>
+</html>
