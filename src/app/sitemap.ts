@@ -2,7 +2,10 @@ import type { MetadataRoute } from "next";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://matchmyskillset.com";
-  const now = new Date().toISOString();
+  // Use a fixed date so GSC doesn't re-crawl everything on every deploy
+  // Update this when content actually changes
+  const contentDate = "2026-04-03T00:00:00.000Z";
+  const now = contentDate;
 
   const professions = [
     "teachers", "nurses", "construction", "retail",
@@ -61,6 +64,42 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: now,
       changeFrequency: "monthly" as const,
       priority: 0.7,
+    })),
+    // SEO content pages
+    { url: `${siteUrl}/quiz`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.8 },
+    { url: `${siteUrl}/jobs-for-introverts`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.8 },
+    { url: `${siteUrl}/high-paying-jobs-no-degree`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.8 },
+    { url: `${siteUrl}/work-from-home-jobs`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.8 },
+    { url: `${siteUrl}/career-change-at-30`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.8 },
+    { url: `${siteUrl}/highest-paying-careers-uk`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.8 },
+    { url: `${siteUrl}/career-change-no-experience`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.8 },
+    // Standalone SEO pages batch 2
+    ...[
+      "best-jobs-for-women-returning-to-work",
+      "jobs-you-can-do-from-home-with-no-experience",
+      "career-change-at-50",
+      "best-side-hustles-uk",
+      "jobs-for-people-who-hate-their-job",
+      "highest-paying-remote-jobs-uk",
+      "career-change-from-teaching",
+      "career-change-from-nursing",
+      "career-change-from-retail",
+      "best-jobs-for-work-life-balance",
+      "jobs-that-dont-require-a-degree",
+      "how-to-write-a-cv-for-career-change",
+      "what-job-is-right-for-me",
+      "best-careers-for-the-future-uk",
+      "jobs-for-people-with-adhd",
+      "apprenticeships-for-adults-uk",
+      "freelance-careers-uk",
+      "jobs-for-empaths",
+      "career-change-with-no-money",
+      "skills-employers-want-2026",
+    ].map((slug) => ({
+      url: `${siteUrl}/${slug}`,
+      lastModified: now,
+      changeFrequency: "monthly" as const,
+      priority: 0.8,
     })),
     { url: `${siteUrl}/pricing`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
     { url: `${siteUrl}/about`, lastModified: now, changeFrequency: "monthly", priority: 0.5 },
