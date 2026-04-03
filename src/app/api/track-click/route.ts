@@ -1,31 +1,30 @@
 import { NextRequest, NextResponse } from "next/server";
-
-// In-memory click log (will move to Supabase once configured)
-const clickLog: { source: string; jobId: string; title: string; timestamp: string }[] = [];
+import { createAdminClient } from "@/lib/supabase/admin";
 
 export async function POST(request: NextRequest) {
   try {
     const { source, jobId, jobTitle, jobUrl } = await request.json();
 
-    // Fire-and-forget logging
-    clickLog.push({
-      source: source || "unknown",
-      jobId: jobId || "unknown",
-      title: jobTitle || "unknown",
-      timestamp: new Date().toISOString(),
-    });
-
-    // Keep log manageable
-    if (clickLog.length > 10000) {
-      clickLog.splice(0, 5000);
+    // Fire-and-forget to Supabase
+    try {
+      const supabase = createAdminClient();
+      supabase
+        .from("mms_job_clicks")
+        .insert({
+          source: source || "unknown",
+          job_external_id: jobId || null,
+          job_title: jobTitle || null,
+          job_url: jobUrl || null,
+        })
+        .then(({ error }) => {
+          if (error) console.error("[click] Supabase error:", error.message);
+        });
+    } catch {
+      // Supabase not configured, ignore
     }
-
-    console.log(
-      `[click] ${source} | ${jobTitle} | ${jobUrl?.slice(0, 80)}`
-    );
 
     return NextResponse.json({ ok: true });
   } catch {
-    return NextResponse.json({ ok: true }); // Never fail on tracking
+    return NextResponse.json({ ok: true });
   }
 }

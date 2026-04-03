@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { extractSkillsAndMatch } from "@/lib/apis/claude";
 import { matchSkillsToOccupations } from "@/lib/skills/matcher";
+import { createAdminClient } from "@/lib/supabase/admin";
 import crypto from "crypto";
 
 // Simple in-memory rate limiting (per IP, 5 per hour)
@@ -96,8 +97,8 @@ export async function POST(request: NextRequest) {
       const demoId = crypto.randomUUID();
       const demoResult = getDemoResult(demoId, inputHash);
       assessmentCache.set(inputHash, demoResult);
-      // Fire-and-forget email
       sendResultsEmail(email, demoResult.skills, demoResult.matches);
+      saveToSupabase(email, inputHash, trimmedText, demoResult.skills, demoResult.matches);
       return NextResponse.json(demoResult);
     }
 
@@ -141,8 +142,8 @@ export async function POST(request: NextRequest) {
     // Cache the result
     assessmentCache.set(inputHash, result);
 
-    // Fire-and-forget email
     sendResultsEmail(email, result.skills, result.matches);
+    saveToSupabase(email, inputHash, trimmedText, result.skills, result.matches);
 
     return NextResponse.json(result);
   } catch (error) {
@@ -154,6 +155,60 @@ export async function POST(request: NextRequest) {
       },
       { status: 500 }
     );
+  }
+}
+
+// Save assessment + email lead to Supabase (fire-and-forget)
+function saveToSupabase(email: string, inputHash: string, inputText: string, skills: unknown, matches: unknown) {
+  try {
+    const supabase = createAdminClient();
+
+    // Save assessment
+    supabase
+      .from("mms_skill_assessments")
+      .insert({
+        email,
+        input_hash: inputHash,
+        input_text: inputText.slice(0, 5000),
+        extracted_skills: skills,
+        career_matches: matches,
+      })
+      .then(({ error }) => {
+        if (error) console.error("[assess] Supabase assessment save error:", error.message);
+      });
+
+    // Save email lead
+    const matchArr = matches as Array<{ title?: string; matchPercentage?: number }>;
+    supabase
+      .from("mms_email_leads")
+      .upsert(
+        {
+          email,
+          top_match: matchArr?.[0]?.title || null,
+          match_percentage: matchArr?.[0]?.matchPercentage || null,
+          skills_count: Array.isArray(skills) ? (skills as unknown[]).length : 0,
+          source: "discover",
+        },
+        { onConflict: "email" }
+      )
+      .then(({ error }) => {
+        if (error) console.error("[assess] Supabase lead save error:", error.message);
+      });
+
+    // Log search
+    supabase
+      .from("mms_search_logs")
+      .insert({
+        search_type: "assessment",
+        query_text: inputText.slice(0, 200),
+        results_count: Array.isArray(matches) ? (matches as unknown[]).length : 0,
+        email,
+      })
+      .then(({ error }) => {
+        if (error) console.error("[assess] Supabase log error:", error.message);
+      });
+  } catch (err) {
+    console.error("[assess] Supabase save failed:", err);
   }
 }
 
