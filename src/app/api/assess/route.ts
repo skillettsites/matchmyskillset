@@ -163,13 +163,13 @@ function saveToSupabase(email: string, inputHash: string, inputText: string, ski
   try {
     const supabase = createAdminClient();
 
-    // Save assessment
+    // Save full assessment including CV text (no truncation)
     supabase
       .from("mms_skill_assessments")
       .insert({
         email,
         input_hash: inputHash,
-        input_text: inputText.slice(0, 5000),
+        input_text: inputText,
         extracted_skills: skills,
         career_matches: matches,
       })
@@ -177,16 +177,34 @@ function saveToSupabase(email: string, inputHash: string, inputText: string, ski
         if (error) console.error("[assess] Supabase assessment save error:", error.message);
       });
 
-    // Save email lead
+    // Save/update email lead with CV, skills summary, and matches for Fred
     const matchArr = matches as Array<{ title?: string; matchPercentage?: number }>;
+    const skillArr = skills as Array<{ name?: string; category?: string; confidence?: number }>;
+
+    // Build skills summary string for quick scanning
+    const skillsSummary = skillArr
+      ?.sort((a, b) => (b.confidence || 0) - (a.confidence || 0))
+      .slice(0, 15)
+      .map((s) => s.name)
+      .join(", ") || "";
+
+    // Top 5 matches for quick view
+    const top5 = matchArr?.slice(0, 5).map((m) => ({
+      title: m.title,
+      match: m.matchPercentage,
+    })) || [];
+
     supabase
       .from("mms_email_leads")
       .upsert(
         {
           email,
+          cv_text: inputText,
+          skills_summary: skillsSummary,
           top_match: matchArr?.[0]?.title || null,
           match_percentage: matchArr?.[0]?.matchPercentage || null,
-          skills_count: Array.isArray(skills) ? (skills as unknown[]).length : 0,
+          skills_count: skillArr?.length || 0,
+          top_5_matches: top5,
           source: "discover",
         },
         { onConflict: "email" }

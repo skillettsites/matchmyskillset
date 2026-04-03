@@ -2,6 +2,26 @@
 
 import { useState, useEffect, useCallback } from "react";
 
+interface AdminData {
+  leads: Array<{
+    id: string;
+    email: string;
+    cv_text?: string;
+    skills_summary?: string;
+    top_match?: string;
+    match_percentage?: number;
+    skills_count?: number;
+    top_5_matches?: Array<{ title: string; match: number }>;
+    created_at: string;
+  }>;
+  totalAssessments: number;
+  totalLeads: number;
+  totalClicks: number;
+  totalSearches: number;
+  clicksBySource: Record<string, number>;
+  popularMatches: Array<{ title: string; count: number }>;
+}
+
 interface FeaturedJob {
   id: string;
   title: string;
@@ -21,6 +41,8 @@ type Tab = "jobs" | "candidates" | "analytics";
 
 export default function EmployersPage() {
   const [activeTab, setActiveTab] = useState<Tab>("jobs");
+  const [adminData, setAdminData] = useState<AdminData | null>(null);
+  const [expandedLead, setExpandedLead] = useState<string | null>(null);
   const [jobs, setJobs] = useState<FeaturedJob[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -35,7 +57,10 @@ export default function EmployersPage() {
     setJobs(data.jobs || []);
   }, []);
 
-  useEffect(() => { loadJobs(); }, [loadJobs]);
+  useEffect(() => {
+    loadJobs();
+    fetch("/api/admin").then((r) => r.json()).then(setAdminData).catch(() => {});
+  }, [loadJobs]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -193,46 +218,105 @@ export default function EmployersPage() {
       {/* CANDIDATES TAB */}
       {activeTab === "candidates" && (
         <div>
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Candidate Browser</h2>
-          <p className="text-sm text-gray-500 mb-6">View candidates who have completed skills assessments and opted in to be visible to employers.</p>
-
-          <div className="bg-white rounded-xl border border-gray-100 p-8 text-center">
-            <div className="text-4xl mb-3">👥</div>
-            <h3 className="font-semibold text-gray-700 mb-2">Candidates will appear here</h3>
-            <p className="text-sm text-gray-500 max-w-md mx-auto mb-4">
-              As users complete skills assessments and create accounts, their anonymised skill profiles will be available here for you to review and match to your featured jobs.
-            </p>
-            <div className="bg-gray-50 rounded-lg p-4 max-w-lg mx-auto text-left">
-              <h4 className="text-sm font-medium text-gray-700 mb-2">What you will see for each candidate:</h4>
-              <ul className="text-sm text-gray-500 space-y-1">
-                <li>Extracted skills with confidence scores</li>
-                <li>Top career matches and match percentages</li>
-                <li>Skills gap analysis</li>
-                <li>Experience summary (anonymised until they opt in)</li>
-                <li>Contact option to introduce them to employers</li>
-              </ul>
-            </div>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-gray-900">Candidates ({adminData?.leads?.length || 0})</h2>
           </div>
 
-          {/* Demo candidate cards */}
-          <div className="mt-6 space-y-3">
-            <div className="bg-white rounded-xl border border-gray-100 p-5 opacity-60">
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 font-bold">S</div>
-                <div className="flex-1">
-                  <div className="font-medium text-gray-900">Candidate #1</div>
-                  <div className="text-sm text-gray-500">14 skills extracted, top match: L&D Manager (87%)</div>
-                  <div className="flex flex-wrap gap-1 mt-1">
-                    <span className="text-xs bg-green-50 text-green-700 px-2 py-0.5 rounded-full">Teaching</span>
-                    <span className="text-xs bg-green-50 text-green-700 px-2 py-0.5 rounded-full">Training Delivery</span>
-                    <span className="text-xs bg-green-50 text-green-700 px-2 py-0.5 rounded-full">Team Leadership</span>
-                    <span className="text-xs bg-green-50 text-green-700 px-2 py-0.5 rounded-full">Mentoring</span>
-                  </div>
+          {(!adminData?.leads || adminData.leads.length === 0) ? (
+            <div className="bg-white rounded-xl border border-gray-100 p-8 text-center">
+              <div className="text-4xl mb-3">👥</div>
+              <h3 className="font-semibold text-gray-700 mb-2">No candidates yet</h3>
+              <p className="text-sm text-gray-500">Candidates will appear here as people complete skills assessments.</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {adminData.leads.map((lead) => (
+                <div key={lead.id} className="bg-white rounded-xl border border-gray-100 overflow-hidden">
+                  <button
+                    onClick={() => setExpandedLead(expandedLead === lead.id ? null : lead.id)}
+                    className="w-full p-5 text-left"
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 font-bold flex-shrink-0">
+                        {lead.email.charAt(0).toUpperCase()}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="font-medium text-gray-900">{lead.email}</div>
+                        <div className="text-sm text-gray-500">
+                          {lead.skills_count || 0} skills, top match: {lead.top_match || "N/A"} ({lead.match_percentage || 0}%)
+                        </div>
+                        {lead.skills_summary && (
+                          <div className="text-xs text-gray-400 mt-1 truncate">{lead.skills_summary}</div>
+                        )}
+                      </div>
+                      <div className="text-right flex-shrink-0">
+                        <div className="text-xs text-gray-400">{new Date(lead.created_at).toLocaleDateString("en-GB")}</div>
+                        <svg className={`w-4 h-4 text-gray-400 mt-1 transition-transform ${expandedLead === lead.id ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </div>
+                    </div>
+                  </button>
+
+                  {expandedLead === lead.id && (
+                    <div className="px-5 pb-5 border-t border-gray-50 pt-4 space-y-4">
+                      {/* Top matches */}
+                      {lead.top_5_matches && lead.top_5_matches.length > 0 && (
+                        <div>
+                          <div className="text-xs font-semibold text-gray-500 mb-2">TOP CAREER MATCHES</div>
+                          <div className="flex flex-wrap gap-2">
+                            {lead.top_5_matches.map((m, i) => (
+                              <span key={i} className="text-xs bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full font-medium">
+                                {m.title} ({m.match}%)
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Skills */}
+                      {lead.skills_summary && (
+                        <div>
+                          <div className="text-xs font-semibold text-gray-500 mb-2">SKILLS</div>
+                          <div className="flex flex-wrap gap-1">
+                            {lead.skills_summary.split(", ").map((s) => (
+                              <span key={s} className="text-xs bg-green-50 text-green-700 px-2 py-0.5 rounded-full">{s}</span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* CV Text */}
+                      {lead.cv_text && (
+                        <div>
+                          <div className="text-xs font-semibold text-gray-500 mb-2">CV / EXPERIENCE</div>
+                          <div className="bg-gray-50 rounded-lg p-3 text-sm text-gray-600 max-h-48 overflow-y-auto whitespace-pre-wrap">
+                            {lead.cv_text}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Actions */}
+                      <div className="flex gap-2">
+                        <a
+                          href={`mailto:${lead.email}?subject=Career Opportunity from MatchMySkillset&body=Hi,%0A%0AWe reviewed your skills profile on MatchMySkillset and think you could be a great match for some roles we are working on.%0A%0AWould you be open to a quick chat?`}
+                          className="text-xs bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors"
+                        >
+                          Email Candidate
+                        </a>
+                        <button
+                          onClick={() => navigator.clipboard.writeText(lead.email)}
+                          className="text-xs border border-gray-200 text-gray-600 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors"
+                        >
+                          Copy Email
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
-                <span className="text-xs text-gray-400">Demo</span>
-              </div>
+              ))}
             </div>
-          </div>
+          )}
         </div>
       )}
 
@@ -243,20 +327,20 @@ export default function EmployersPage() {
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             <div className="bg-white rounded-xl border border-gray-100 p-5">
-              <div className="text-2xl font-bold text-indigo-600">0</div>
+              <div className="text-2xl font-bold text-indigo-600">{adminData?.totalAssessments || 0}</div>
               <div className="text-sm text-gray-500">Total Assessments</div>
             </div>
             <div className="bg-white rounded-xl border border-gray-100 p-5">
-              <div className="text-2xl font-bold text-green-600">0</div>
-              <div className="text-sm text-gray-500">Registered Users</div>
+              <div className="text-2xl font-bold text-green-600">{adminData?.totalLeads || 0}</div>
+              <div className="text-sm text-gray-500">Email Leads</div>
             </div>
             <div className="bg-white rounded-xl border border-gray-100 p-5">
               <div className="text-2xl font-bold text-amber-600">{jobs.length}</div>
               <div className="text-sm text-gray-500">Featured Jobs</div>
             </div>
             <div className="bg-white rounded-xl border border-gray-100 p-5">
-              <div className="text-2xl font-bold text-purple-600">0</div>
-              <div className="text-sm text-gray-500">Job Clicks (CPC)</div>
+              <div className="text-2xl font-bold text-purple-600">{adminData?.totalClicks || 0}</div>
+              <div className="text-sm text-gray-500">Job Clicks</div>
             </div>
           </div>
 
@@ -265,53 +349,40 @@ export default function EmployersPage() {
             <div className="bg-white rounded-xl border border-gray-100 p-5">
               <h3 className="font-semibold text-gray-900 mb-3">Job Click Sources</h3>
               <div className="space-y-2">
-                {["Adzuna", "Reed", "Jooble", "Featured"].map((source) => (
-                  <div key={source} className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">{source}</span>
-                    <div className="flex items-center gap-2">
-                      <div className="w-24 h-2 bg-gray-100 rounded-full">
-                        <div className="h-2 bg-indigo-400 rounded-full" style={{ width: "0%" }} />
-                      </div>
-                      <span className="text-xs text-gray-400 w-6 text-right">0</span>
-                    </div>
-                  </div>
-                ))}
+                {Object.entries(adminData?.clicksBySource || {}).length > 0
+                  ? Object.entries(adminData?.clicksBySource || {}).map(([source, count]) => {
+                      const maxClicks = Math.max(...Object.values(adminData?.clicksBySource || {}));
+                      return (
+                        <div key={source} className="flex items-center justify-between">
+                          <span className="text-sm text-gray-600 capitalize">{source}</span>
+                          <div className="flex items-center gap-2">
+                            <div className="w-24 h-2 bg-gray-100 rounded-full">
+                              <div className="h-2 bg-indigo-400 rounded-full" style={{ width: `${(count / maxClicks) * 100}%` }} />
+                            </div>
+                            <span className="text-xs text-gray-600 w-8 text-right">{count}</span>
+                          </div>
+                        </div>
+                      );
+                    })
+                  : <p className="text-sm text-gray-400">No clicks tracked yet</p>
+                }
               </div>
-              <p className="text-xs text-gray-400 mt-3">Click data populates once users start browsing jobs</p>
             </div>
 
             {/* Top career matches */}
             <div className="bg-white rounded-xl border border-gray-100 p-5">
               <h3 className="font-semibold text-gray-900 mb-3">Popular Career Matches</h3>
               <div className="space-y-2">
-                {[
-                  { title: "L&D Manager", count: 0 },
-                  { title: "UX Researcher", count: 0 },
-                  { title: "Data Analyst", count: 0 },
-                  { title: "Product Manager", count: 0 },
-                  { title: "Project Manager", count: 0 },
-                ].map((item) => (
-                  <div key={item.title} className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">{item.title}</span>
-                    <span className="text-xs text-gray-400">{item.count} matches</span>
-                  </div>
-                ))}
+                {(adminData?.popularMatches || []).length > 0
+                  ? (adminData?.popularMatches || []).map((item) => (
+                      <div key={item.title} className="flex items-center justify-between">
+                        <span className="text-sm text-gray-600">{item.title}</span>
+                        <span className="text-xs font-medium text-indigo-600">{item.count} {item.count === 1 ? "match" : "matches"}</span>
+                      </div>
+                    ))
+                  : <p className="text-sm text-gray-400">No assessments completed yet</p>
+                }
               </div>
-              <p className="text-xs text-gray-400 mt-3">Updates as users complete assessments</p>
-            </div>
-
-            {/* Affiliate performance */}
-            <div className="bg-white rounded-xl border border-gray-100 p-5">
-              <h3 className="font-semibold text-gray-900 mb-3">Affiliate Clicks</h3>
-              <div className="space-y-2">
-                {["Coursera", "DataCamp", "Resume.io", "Grammarly", "BetterHelp"].map((name) => (
-                  <div key={name} className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">{name}</span>
-                    <span className="text-xs text-gray-400">0 clicks</span>
-                  </div>
-                ))}
-              </div>
-              <p className="text-xs text-gray-400 mt-3">Affiliate revenue tracking</p>
             </div>
 
             {/* Revenue summary */}

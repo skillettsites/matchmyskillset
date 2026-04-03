@@ -36,7 +36,27 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.7,
     })),
     { url: `${siteUrl}/what-jobs`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
-    ...["teaching-skills", "project-management-skills", "customer-service-skills", "nursing-skills", "sales-skills", "admin-skills", "management-skills", "writing-skills", "data-analysis-skills", "creative-skills", "construction-skills", "military-skills", "accounting-skills", "caring-skills", "it-support-skills", "retail-skills"].map((q) => ({
+    ...[
+      // Full PAGES (skills)
+      "teaching-skills", "project-management-skills", "customer-service-skills", "nursing-skills", "sales-skills",
+      "communication-skills", "leadership-skills", "problem-solving-skills", "excel-skills", "empathy-skills",
+      // SIMPLE_PAGES (skills)
+      "admin-skills", "management-skills", "writing-skills", "data-analysis-skills", "creative-skills",
+      "construction-skills", "military-skills", "accounting-skills", "caring-skills", "it-support-skills", "retail-skills",
+      // How to Become pages
+      "how-to-become-data-analyst", "how-to-become-ux-designer", "how-to-become-product-manager",
+      "how-to-become-project-manager", "how-to-become-software-developer", "how-to-become-digital-marketer",
+      "how-to-become-hr-manager", "how-to-become-business-analyst", "how-to-become-scrum-master",
+      "how-to-become-cybersecurity-analyst", "how-to-become-content-writer", "how-to-become-operations-manager",
+      "how-to-become-financial-analyst", "how-to-become-graphic-designer", "how-to-become-recruitment-consultant",
+      // Jobs That Pay pages
+      "jobs-that-pay-30k", "jobs-that-pay-40k", "jobs-that-pay-50k",
+      "jobs-that-pay-60k", "jobs-that-pay-70k", "jobs-that-pay-100k",
+      // Jobs For pages
+      "jobs-for-extroverts", "jobs-for-creative-people", "jobs-for-analytical-thinkers",
+      "jobs-for-people-who-like-helping", "jobs-for-over-50s", "jobs-for-career-changers",
+      "jobs-for-graduates", "jobs-for-parents", "jobs-for-ex-military", "jobs-for-people-with-anxiety",
+    ].map((q) => ({
       url: `${siteUrl}/what-jobs/${q}`,
       lastModified: now,
       changeFrequency: "monthly" as const,
