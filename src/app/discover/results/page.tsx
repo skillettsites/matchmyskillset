@@ -221,6 +221,12 @@ function CareerMatchCard({
             >
               See Matching Jobs
             </Link>
+            <Link
+              href="/career-gps"
+              className="flex-1 text-center border border-indigo-200 text-indigo-700 font-medium py-2.5 rounded-lg hover:bg-indigo-50 transition-colors text-sm"
+            >
+              View Career GPS
+            </Link>
           </div>
         </div>
       )}
