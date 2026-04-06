@@ -20,7 +20,7 @@ async function fetchFeaturedJobs(
   query: string
 ): Promise<{ jobs: UnifiedJob[]; total: number }> {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3003";
+    const baseUrl = (process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3003").trim();
     const res = await fetch(`${baseUrl}/api/featured-jobs`, {
       cache: "no-store",
     });

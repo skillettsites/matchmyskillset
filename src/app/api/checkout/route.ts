@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const origin = request.headers.get("origin") || process.env.NEXT_PUBLIC_SITE_URL || "https://matchmyskillset.com";
+    const origin = (request.headers.get("origin") || process.env.NEXT_PUBLIC_SITE_URL || "https://matchmyskillset.com").trim();
 
     const session = await stripe.checkout.sessions.create({
       mode: "subscription",

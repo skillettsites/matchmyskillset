@@ -232,7 +232,7 @@ function saveToSupabase(email: string, inputHash: string, inputText: string, ski
 
 // Fire-and-forget email with results
 function sendResultsEmail(email: string, skills: unknown, matches: unknown) {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3003";
+  const baseUrl = (process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3003").trim();
   fetch(`${baseUrl}/api/send-results`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },

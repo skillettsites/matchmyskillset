@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://matchmyskillset.com";
+  const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://matchmyskillset.com").trim();
   // Use a fixed date so GSC doesn't re-crawl everything on every deploy
   // Update this when content actually changes
   const contentDate = "2026-04-03T00:00:00.000Z";

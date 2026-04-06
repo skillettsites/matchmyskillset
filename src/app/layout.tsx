@@ -12,7 +12,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL || "https://matchmyskillset.com"
+    (process.env.NEXT_PUBLIC_SITE_URL || "https://matchmyskillset.com").trim()
   ),
   title: {
     default: "MatchMySkillset - Discover Careers You Never Knew Existed",
