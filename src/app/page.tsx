@@ -176,6 +176,106 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Career Guides */}
+      <section className="py-20 sm:py-28">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">
+              Career change guides
+            </h2>
+            <p className="mt-4 text-lg text-gray-500 max-w-2xl mx-auto">
+              In-depth guides for every stage of your career transition.
+            </p>
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-10">
+            <div>
+              <h3 className="font-semibold text-gray-900 mb-3">Career Change Guides</h3>
+              <ul className="space-y-2 text-sm">
+                <li><Link href="/career-change-at-30" className="text-gray-600 hover:text-indigo-600">Career Change at 30</Link></li>
+                <li><Link href="/career-change/career-change-at-40" className="text-gray-600 hover:text-indigo-600">Career Change at 40</Link></li>
+                <li><Link href="/career-change-at-50" className="text-gray-600 hover:text-indigo-600">Career Change at 50</Link></li>
+                <li><Link href="/career-change-no-experience" className="text-gray-600 hover:text-indigo-600">Career Change with No Experience</Link></li>
+                <li><Link href="/career-change-with-no-money" className="text-gray-600 hover:text-indigo-600">Career Change with No Money</Link></li>
+                <li><Link href="/career-change-from-teaching" className="text-gray-600 hover:text-indigo-600">Career Change from Teaching</Link></li>
+                <li><Link href="/career-change-from-nursing" className="text-gray-600 hover:text-indigo-600">Career Change from Nursing</Link></li>
+                <li><Link href="/career-change-from-retail" className="text-gray-600 hover:text-indigo-600">Career Change from Retail</Link></li>
+                <li><Link href="/how-to-write-a-cv-for-career-change" className="text-gray-600 hover:text-indigo-600">How to Write a CV for Career Change</Link></li>
+                <li><Link href="/what-job-is-right-for-me" className="text-gray-600 hover:text-indigo-600">What Job Is Right for Me?</Link></li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="font-semibold text-gray-900 mb-3">Jobs by Interest</h3>
+              <ul className="space-y-2 text-sm">
+                <li><Link href="/jobs-for-introverts" className="text-gray-600 hover:text-indigo-600">Jobs for Introverts</Link></li>
+                <li><Link href="/what-jobs/jobs-for-extroverts" className="text-gray-600 hover:text-indigo-600">Jobs for Extroverts</Link></li>
+                <li><Link href="/what-jobs/jobs-for-creative-people" className="text-gray-600 hover:text-indigo-600">Jobs for Creative People</Link></li>
+                <li><Link href="/jobs-for-empaths" className="text-gray-600 hover:text-indigo-600">Jobs for Empaths</Link></li>
+                <li><Link href="/jobs-for-people-with-adhd" className="text-gray-600 hover:text-indigo-600">Jobs for People with ADHD</Link></li>
+                <li><Link href="/what-jobs/jobs-for-people-who-like-helping" className="text-gray-600 hover:text-indigo-600">Jobs for People Who Like Helping</Link></li>
+                <li><Link href="/what-jobs/jobs-for-over-50s" className="text-gray-600 hover:text-indigo-600">Jobs for Over 50s</Link></li>
+                <li><Link href="/what-jobs/jobs-for-parents" className="text-gray-600 hover:text-indigo-600">Jobs for Parents</Link></li>
+                <li><Link href="/what-jobs/jobs-for-ex-military" className="text-gray-600 hover:text-indigo-600">Jobs for Ex-Military</Link></li>
+                <li><Link href="/jobs-for-people-who-hate-their-job" className="text-gray-600 hover:text-indigo-600">Jobs for People Who Hate Their Job</Link></li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="font-semibold text-gray-900 mb-3">Earning & Working</h3>
+              <ul className="space-y-2 text-sm">
+                <li><Link href="/highest-paying-careers-uk" className="text-gray-600 hover:text-indigo-600">Highest Paying Careers UK</Link></li>
+                <li><Link href="/highest-paying-remote-jobs-uk" className="text-gray-600 hover:text-indigo-600">Highest Paying Remote Jobs UK</Link></li>
+                <li><Link href="/high-paying-jobs-no-degree" className="text-gray-600 hover:text-indigo-600">High Paying Jobs, No Degree</Link></li>
+                <li><Link href="/work-from-home-jobs" className="text-gray-600 hover:text-indigo-600">Work from Home Jobs</Link></li>
+                <li><Link href="/best-jobs-for-work-life-balance" className="text-gray-600 hover:text-indigo-600">Best Jobs for Work-Life Balance</Link></li>
+                <li><Link href="/best-side-hustles-uk" className="text-gray-600 hover:text-indigo-600">Best Side Hustles UK</Link></li>
+                <li><Link href="/freelance-careers-uk" className="text-gray-600 hover:text-indigo-600">Freelance Careers UK</Link></li>
+                <li><Link href="/jobs-that-dont-require-a-degree" className="text-gray-600 hover:text-indigo-600">Jobs That Don&apos;t Require a Degree</Link></li>
+                <li><Link href="/apprenticeships-for-adults-uk" className="text-gray-600 hover:text-indigo-600">Apprenticeships for Adults UK</Link></li>
+                <li><Link href="/best-careers-for-the-future-uk" className="text-gray-600 hover:text-indigo-600">Best Careers for the Future UK</Link></li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="font-semibold text-gray-900 mb-3">By Salary</h3>
+              <ul className="space-y-2 text-sm">
+                <li><Link href="/what-jobs/jobs-that-pay-30k" className="text-gray-600 hover:text-indigo-600">Jobs That Pay £30k+</Link></li>
+                <li><Link href="/what-jobs/jobs-that-pay-40k" className="text-gray-600 hover:text-indigo-600">Jobs That Pay £40k+</Link></li>
+                <li><Link href="/what-jobs/jobs-that-pay-50k" className="text-gray-600 hover:text-indigo-600">Jobs That Pay £50k+</Link></li>
+                <li><Link href="/what-jobs/jobs-that-pay-60k" className="text-gray-600 hover:text-indigo-600">Jobs That Pay £60k+</Link></li>
+                <li><Link href="/what-jobs/jobs-that-pay-70k" className="text-gray-600 hover:text-indigo-600">Jobs That Pay £70k+</Link></li>
+                <li><Link href="/what-jobs/jobs-that-pay-100k" className="text-gray-600 hover:text-indigo-600">Jobs That Pay £100k+</Link></li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="font-semibold text-gray-900 mb-3">By Profession</h3>
+              <ul className="space-y-2 text-sm">
+                <li><Link href="/careers-for/teachers" className="text-gray-600 hover:text-indigo-600">Careers for Teachers</Link></li>
+                <li><Link href="/careers-for/nurses" className="text-gray-600 hover:text-indigo-600">Careers for Nurses</Link></li>
+                <li><Link href="/careers-for/retail" className="text-gray-600 hover:text-indigo-600">Careers for Retail Workers</Link></li>
+                <li><Link href="/careers-for/military" className="text-gray-600 hover:text-indigo-600">Careers for Ex-Military</Link></li>
+                <li><Link href="/careers-for/construction" className="text-gray-600 hover:text-indigo-600">Careers for Construction Workers</Link></li>
+                <li><Link href="/careers-for/admin" className="text-gray-600 hover:text-indigo-600">Careers for Admin Staff</Link></li>
+                <li><Link href="/careers-for/finance" className="text-gray-600 hover:text-indigo-600">Careers for Finance Workers</Link></li>
+                <li><Link href="/careers-for/parents" className="text-gray-600 hover:text-indigo-600">Careers for Parents</Link></li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="font-semibold text-gray-900 mb-3">Skills & How-To</h3>
+              <ul className="space-y-2 text-sm">
+                <li><Link href="/what-jobs/teaching-skills" className="text-gray-600 hover:text-indigo-600">Teaching Skills</Link></li>
+                <li><Link href="/what-jobs/project-management-skills" className="text-gray-600 hover:text-indigo-600">Project Management Skills</Link></li>
+                <li><Link href="/what-jobs/leadership-skills" className="text-gray-600 hover:text-indigo-600">Leadership Skills</Link></li>
+                <li><Link href="/what-jobs/communication-skills" className="text-gray-600 hover:text-indigo-600">Communication Skills</Link></li>
+                <li><Link href="/what-jobs/how-to-become-data-analyst" className="text-gray-600 hover:text-indigo-600">How to Become a Data Analyst</Link></li>
+                <li><Link href="/what-jobs/how-to-become-ux-designer" className="text-gray-600 hover:text-indigo-600">How to Become a UX Designer</Link></li>
+                <li><Link href="/what-jobs/how-to-become-product-manager" className="text-gray-600 hover:text-indigo-600">How to Become a Product Manager</Link></li>
+                <li><Link href="/what-jobs/how-to-become-software-developer" className="text-gray-600 hover:text-indigo-600">How to Become a Software Developer</Link></li>
+                <li><Link href="/skills-employers-want-2026" className="text-gray-600 hover:text-indigo-600">Skills Employers Want in 2026</Link></li>
+                <li><Link href="/best-jobs-for-women-returning-to-work" className="text-gray-600 hover:text-indigo-600">Best Jobs for Women Returning to Work</Link></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* CTA */}
       <section className="py-20 sm:py-28 bg-indigo-600">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
