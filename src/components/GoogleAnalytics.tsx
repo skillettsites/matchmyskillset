@@ -1,7 +1,9 @@
 import Script from "next/script";
 
 export function GoogleAnalytics() {
-  const gaId = process.env.NEXT_PUBLIC_GA_ID;
+  // Env values in this stack can carry a trailing literal "\n", which would
+  // corrupt the inline script and the gtag URL. Strip it.
+  const gaId = (process.env.NEXT_PUBLIC_GA_ID || "").replace(/\\n$/, "").trim();
   if (!gaId) return null;
 
   return (
