@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { createClient } from "@/lib/supabase/client";
 
 export default function CheckoutButton({
   planId,
@@ -18,10 +19,28 @@ export default function CheckoutButton({
     setLoading(true);
     setError("");
     try {
+      // Pass the logged-in user so the Stripe webhook can map the payment back
+      // to this account and unlock Pro. If not signed in, send them to sign up
+      // first, then back to pricing to complete the purchase.
+      let userId: string | undefined;
+      let email: string | undefined;
+      try {
+        const { data } = await createClient().auth.getUser();
+        userId = data?.user?.id;
+        email = data?.user?.email || undefined;
+      } catch {
+        /* treat as anonymous */
+      }
+
+      if (!userId) {
+        window.location.href = `/signup?plan=${planId.split("_")[0]}&next=/pricing`;
+        return;
+      }
+
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ planId }),
+        body: JSON.stringify({ planId, userId, email }),
       });
       const data = await res.json();
       if (data?.url) {

@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const { planId, email } = await request.json();
+    const { planId, email, userId } = await request.json();
 
     const plan = PLANS[planId];
     if (!plan) {
@@ -77,8 +77,13 @@ export async function POST(request: NextRequest) {
       ],
       success_url: `${origin}/dashboard?subscribed=true&plan=${planId}`,
       cancel_url: `${origin}/pricing`,
+      // client_reference_id + metadata.userId let the Stripe webhook map this
+      // payment back to the MMS account that should be unlocked to Pro.
+      client_reference_id: userId || undefined,
+      subscription_data: userId ? { metadata: { userId } } : undefined,
       metadata: {
         planId,
+        ...(userId ? { userId } : {}),
       },
     });
 

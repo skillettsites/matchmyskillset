@@ -162,6 +162,8 @@ export default function CareerGPSPage() {
   const [match, setMatch] = useState<CareerMatch | null>(null);
   const [allMatches, setAllMatches] = useState<CareerMatch[]>([]);
   const [selectedRoute, setSelectedRoute] = useState<"express" | "scenic" | "wildcard">("scenic");
+  // Career GPS is a Pro feature (per the pricing page). null = still checking.
+  const [access, setAccess] = useState<{ tier: "free" | "pro"; authenticated: boolean } | null>(null);
 
   useEffect(() => {
     const stored = sessionStorage.getItem("assessment");
@@ -179,11 +181,65 @@ export default function CareerGPSPage() {
     }
   }, [router]);
 
-  if (!match) {
+  useEffect(() => {
+    fetch("/api/me")
+      .then((r) => r.json())
+      .then((d) =>
+        setAccess({
+          tier: d?.tier === "pro" ? "pro" : "free",
+          authenticated: !!d?.authenticated,
+        })
+      )
+      .catch(() => setAccess({ tier: "free", authenticated: false }));
+  }, []);
+
+  if (!match || access === null) {
     return (
       <div className="max-w-3xl mx-auto px-4 py-20 text-center">
         <div className="w-8 h-8 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto" />
         <p className="mt-4 text-gray-500">Loading your career GPS...</p>
+      </div>
+    );
+  }
+
+  // Pro gate. Free / signed-out users see an upgrade prompt instead of the
+  // full step-by-step routes.
+  if (access.tier !== "pro") {
+    return (
+      <div className="max-w-xl mx-auto px-4 sm:px-6 py-16 text-center">
+        <div className="inline-flex items-center gap-2 bg-indigo-50 text-indigo-700 rounded-full px-4 py-1.5 text-sm font-medium mb-5">
+          🗺️ Career GPS
+        </div>
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+          Unlock your route to {match.title}
+        </h1>
+        <p className="mt-3 text-gray-500">
+          Career GPS maps three personalised transition routes (Express, Scenic
+          and Wildcard) with step-by-step timelines, skills to learn, and the
+          actions to take. It is part of MatchMySkillset Pro.
+        </p>
+        <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
+          <Link
+            href="/pricing"
+            className="bg-indigo-600 text-white font-semibold px-6 py-3 rounded-xl hover:bg-indigo-700 transition-colors"
+          >
+            Upgrade to Pro
+          </Link>
+          {!access.authenticated && (
+            <Link
+              href="/login?next=/career-gps"
+              className="border border-gray-200 text-gray-700 font-semibold px-6 py-3 rounded-xl hover:bg-gray-50 transition-colors"
+            >
+              Already Pro? Sign in
+            </Link>
+          )}
+          <Link
+            href="/discover/results"
+            className="border border-gray-200 text-gray-700 font-semibold px-6 py-3 rounded-xl hover:bg-gray-50 transition-colors"
+          >
+            Back to matches
+          </Link>
+        </div>
       </div>
     );
   }

@@ -29,7 +29,9 @@ export default function LoginPage() {
         return;
       }
 
-      router.push("/dashboard");
+      const params = new URLSearchParams(window.location.search);
+      const next = params.get("next") || "/dashboard";
+      router.push(next.startsWith("/") ? next : "/dashboard");
       router.refresh();
     } catch {
       setError("Something went wrong. Please try again.");
