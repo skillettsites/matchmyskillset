@@ -46,6 +46,9 @@ export default function EmployersPage() {
   const [jobs, setJobs] = useState<FeaturedJob[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [adminKey, setAdminKey] = useState<string | null>(null);
+  const [keyInput, setKeyInput] = useState("");
+  const [authError, setAuthError] = useState("");
   const [form, setForm] = useState({
     title: "", company: "", location: "", salaryMin: "", salaryMax: "",
     description: "", requiredSkills: "", applicationUrl: "", applicationEmail: "", isHidden: false,
@@ -57,10 +60,41 @@ export default function EmployersPage() {
     setJobs(data.jobs || []);
   }, []);
 
+  const loadAdminData = useCallback(async (key: string) => {
+    const res = await fetch("/api/admin", {
+      headers: { Authorization: `Bearer ${key}` },
+    });
+    if (res.status === 401) {
+      localStorage.removeItem("mms_admin_key");
+      setAdminKey(null);
+      setAuthError("That admin key was not accepted.");
+      return;
+    }
+    const data = await res.json();
+    setAdminData(data);
+  }, []);
+
   useEffect(() => {
+    const stored = localStorage.getItem("mms_admin_key");
+    if (stored) {
+      setAdminKey(stored);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!adminKey) return;
     loadJobs();
-    fetch("/api/admin").then((r) => r.json()).then(setAdminData).catch(() => {});
-  }, [loadJobs]);
+    loadAdminData(adminKey);
+  }, [adminKey, loadJobs, loadAdminData]);
+
+  function handleUnlock(e: React.FormEvent) {
+    e.preventDefault();
+    const key = keyInput.trim();
+    if (!key) return;
+    localStorage.setItem("mms_admin_key", key);
+    setAuthError("");
+    setAdminKey(key);
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -68,7 +102,10 @@ export default function EmployersPage() {
     try {
       const res = await fetch("/api/featured-jobs", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${adminKey || ""}`,
+        },
         body: JSON.stringify({
           ...form,
           salaryMin: form.salaryMin ? parseInt(form.salaryMin) : undefined,
@@ -92,6 +129,38 @@ export default function EmployersPage() {
     { id: "analytics", label: "Analytics" },
   ];
 
+  if (!adminKey) {
+    return (
+      <div className="max-w-sm mx-auto px-4 py-20">
+        <div className="text-center mb-8">
+          <h1 className="text-2xl font-bold text-gray-900">Admin Access</h1>
+          <p className="text-gray-500 mt-2">
+            This area is restricted. Enter your admin key to continue.
+          </p>
+        </div>
+        <form onSubmit={handleUnlock} className="space-y-4">
+          <input
+            type="password"
+            value={keyInput}
+            onChange={(e) => setKeyInput(e.target.value)}
+            autoComplete="off"
+            className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            placeholder="Admin key"
+          />
+          {authError && (
+            <div className="p-3 bg-red-50 text-red-700 text-sm rounded-lg">{authError}</div>
+          )}
+          <button
+            type="submit"
+            className="w-full bg-indigo-600 text-white font-semibold py-3 rounded-lg hover:bg-indigo-700 transition-colors"
+          >
+            Unlock
+          </button>
+        </form>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
       <div className="flex items-center justify-between mb-6">
@@ -99,6 +168,16 @@ export default function EmployersPage() {
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Admin Dashboard</h1>
           <p className="text-gray-500 mt-1">Manage jobs, candidates, and analytics</p>
         </div>
+        <button
+          onClick={() => {
+            localStorage.removeItem("mms_admin_key");
+            setAdminKey(null);
+            setAdminData(null);
+          }}
+          className="text-sm text-gray-400 hover:text-gray-600"
+        >
+          Lock
+        </button>
       </div>
 
       {/* Tabs */}

@@ -1,7 +1,12 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { isAuthorisedAdmin } from "@/lib/admin-auth";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  if (!(await isAuthorisedAdmin(request))) {
+    return NextResponse.json({ error: "Unauthorised" }, { status: 401 });
+  }
+
   try {
     const supabase = createAdminClient();
 

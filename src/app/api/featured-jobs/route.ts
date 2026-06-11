@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { isAuthorisedAdmin } from "@/lib/admin-auth";
 
 // In-memory featured jobs store (will move to Supabase)
 const featuredJobs: Array<{
@@ -24,6 +25,10 @@ export async function GET() {
 
 // POST: create a featured job (admin only - will add auth later)
 export async function POST(request: NextRequest) {
+  if (!(await isAuthorisedAdmin(request))) {
+    return NextResponse.json({ error: "Unauthorised" }, { status: 401 });
+  }
+
   try {
     const body = await request.json();
 

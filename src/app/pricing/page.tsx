@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import CheckoutButton from "./CheckoutButton";
 
 export const metadata: Metadata = {
   title: "Pricing - Free Skills Assessment & Pro Career Matching",
@@ -15,6 +16,7 @@ const tiers = [
     description: "Discover your career matches",
     cta: "Get Started Free",
     ctaHref: "/discover",
+    planId: null as string | null,
     ctaStyle: "border border-gray-200 text-gray-700 hover:bg-gray-50",
     features: [
       "1 skills assessment per month",
@@ -30,8 +32,9 @@ const tiers = [
     price: "£7.99",
     period: "/month",
     description: "Serious about your career change",
-    cta: "Start Pro Trial",
+    cta: "Get Pro",
     ctaHref: "/signup?plan=pro",
+    planId: "pro_monthly",
     ctaStyle: "bg-indigo-600 text-white hover:bg-indigo-700",
     badge: "Most Popular",
     features: [
@@ -51,8 +54,9 @@ const tiers = [
     price: "£14.99",
     period: "/month",
     description: "Expert support for your transition",
-    cta: "Start Premium Trial",
+    cta: "Get Premium",
     ctaHref: "/signup?plan=premium",
+    planId: "premium_monthly",
     ctaStyle: "border border-indigo-200 text-indigo-700 hover:bg-indigo-50",
     features: [
       "Everything in Pro",
@@ -132,12 +136,20 @@ export default function PricingPage() {
               ))}
             </ul>
 
-            <Link
-              href={tier.ctaHref}
-              className={`block text-center font-semibold py-3 rounded-xl transition-colors ${tier.ctaStyle}`}
-            >
-              {tier.cta}
-            </Link>
+            {tier.planId ? (
+              <CheckoutButton
+                planId={tier.planId}
+                label={tier.cta}
+                className={tier.ctaStyle}
+              />
+            ) : (
+              <Link
+                href={tier.ctaHref}
+                className={`block text-center font-semibold py-3 rounded-xl transition-colors ${tier.ctaStyle}`}
+              >
+                {tier.cta}
+              </Link>
+            )}
           </div>
         ))}
       </div>

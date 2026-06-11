@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 
-const stripe = process.env.STRIPE_SECRET_KEY
-  ? new Stripe(process.env.STRIPE_SECRET_KEY)
-  : null;
+// Env values in this stack sometimes arrive with a trailing literal "\n"
+// (two chars), which makes Stripe reject the key. Strip it before use.
+const stripeKey = (process.env.STRIPE_SECRET_KEY || "")
+  .replace(/\\n$/, "")
+  .trim();
+
+const stripe = stripeKey ? new Stripe(stripeKey) : null;
 
 const PLANS: Record<string, { name: string; priceInPence: number; interval: "month" | "year" }> = {
   pro_monthly: {
