@@ -2,7 +2,15 @@ import { NextRequest, NextResponse } from "next/server";
 import { extractSkillsAndMatch } from "@/lib/apis/claude";
 import { matchSkillsToOccupations } from "@/lib/skills/matcher";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { isAllowedOrigin, rateLimit } from "@/lib/api-guard";
 import crypto from "crypto";
+
+// Per-IP ceiling, checked before anything else. The per-email limit below is keyed
+// on a value the caller supplies, so randomising the address defeats it completely.
+// This route is the most expensive model call in the portfolio (Sonnet, 4096 max
+// tokens, full taxonomy in the system prompt), so it gets the tightest ceiling.
+const IP_RATE_LIMIT = 10;
+const IP_RATE_WINDOW_MS = 60 * 60 * 1000; // per hour per IP
 
 // Simple in-memory rate limiting (per IP, 5 per hour)
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
@@ -32,6 +40,23 @@ const assessmentCache = new Map<
 
 export async function POST(request: NextRequest) {
   try {
+    if (!isAllowedOrigin(request)) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    const { allowed, retryAfter } = rateLimit(
+      request,
+      "assess",
+      IP_RATE_LIMIT,
+      IP_RATE_WINDOW_MS
+    );
+    if (!allowed) {
+      return NextResponse.json(
+        { error: "Too many requests. Please try again shortly." },
+        { status: 429, headers: { "Retry-After": String(retryAfter) } }
+      );
+    }
+
     const { text, email } = await request.json();
 
     // Validate email
