@@ -80,7 +80,7 @@ export function roleWords(value: string): string[] {
 export function coreTitle(title: string): string {
   const first = title
     .replace(/\([^)]*\)|\[[^\]]*\]/g, " ")
-    .split(/\s+[-–—|:]\s+|\s+\/\s+|,/)[0]
+    .split(/\s+[-\u2013\u2014|:]\s+|\s+\/\s+|,/)[0]
     .replace(/\s+/g, " ")
     .trim();
   return first.length >= 3 ? first : title;

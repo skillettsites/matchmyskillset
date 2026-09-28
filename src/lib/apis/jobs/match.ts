@@ -169,7 +169,7 @@ const SENIORITY = /^(senior|snr|junior|jnr|principal|lead|trainee|graduate|inter
 export function searchableRole(role: string | null | undefined): string {
   if (!role) return "";
   let r = role.replace(/\([^)]*\)/g, " ");
-  r = r.split(/\s+[-–—|/]\s+|,|;|\s+at\s+/i)[0] ?? r;
+  r = r.split(/\s+[-\u2013\u2014|/]\s+|,|;|\s+at\s+/i)[0] ?? r;
   r = r.replace(/\s+/g, " ").trim();
   for (let i = 0; i < 2; i++) r = r.replace(SENIORITY, "");
   const words = r.split(" ").filter(Boolean);
