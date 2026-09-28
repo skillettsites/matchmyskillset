@@ -1,216 +1,353 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import type { ReactNode } from "react";
+import { Breadcrumbs, DataTable, FaqSection, PageHeader, Prose, SourceNote, ToolCallout, formatGBP } from "@/components/content";
+import { guideMetadata, REVAMP_DATE } from "@/components/guides/meta";
+import { ArticleJsonLd, GuideSection, GuideShell, OnThisPage, RelatedLinks } from "@/components/guides/GuideShell";
+import { AsheSourceNote, entryApprenticeship, occupationPayById, UK_FT_MEDIAN, type OccupationPay } from "@/components/guides/pay";
 
-export const metadata: Metadata = {
-  title: "What Job Is Right for Me? (Find Out in 2 Minutes)",
-  description:
-    "Not sure what career suits you? Structured framework to figure out what job is right for you based on your skills, values, personality, and lifestyle needs.",
-  keywords: [
-    "what job is right for me",
-    "how to find the right career",
-    "what career suits me",
-    "career guidance UK",
-    "career choice help",
-    "find the right job",
-  ],
-  openGraph: {
-    title: "What Job Is Right for Me? (2026 Guide)",
-    description: "Structured approach to figuring out the right career for your skills, values, and lifestyle.",
-    type: "article",
+const PATH = "/what-job-is-right-for-me";
+const TITLE = "What job is right for me? A UK guide with real pay data";
+const DESCRIPTION =
+  "Narrow down the right job by skills, values, working style and pay, with example jobs for sociable, creative, analytical and caring people and ONS pay.";
+const H1 = "What job is right for me?";
+
+export const metadata: Metadata = guideMetadata({ path: PATH, title: TITLE, description: DESCRIPTION });
+
+const NCS_ASSESSMENT_URL = "https://nationalcareers.service.gov.uk/discover-your-skills-and-careers";
+
+interface TypeGroup {
+  id: string;
+  title: string;
+  intro: ReactNode;
+  ids: string[];
+}
+
+// Example jobs for each type. The grouping is our editorial judgement, not a test result.
+const GROUPS: TypeGroup[] = [
+  {
+    id: "people",
+    title: "If you like being around people",
+    intro: (
+      <>
+        If you get energy from other people (the classic extrovert), look at jobs built on conversations: selling,
+        recruiting, representing an organisation or running events. Before you accept a sales or recruitment job, ask how
+        targets and commission work.
+      </>
+    ),
+    ids: ["business-development-manager", "sales-representative", "pr-officer", "recruitment-consultant", "events-manager", "estate-agent"],
   },
-};
+  {
+    id: "creative",
+    title: "If you are creative",
+    intro: (
+      <>
+        Creative jobs that pay a steady wage usually mix ideas with a brief, a client and a deadline. Expect to be asked
+        for examples of your work, so start building a portfolio now.
+      </>
+    ),
+    ids: ["web-developer", "ux-designer", "copywriter", "social-media-manager", "marketing-executive"],
+  },
+  {
+    id: "analytical",
+    title: "If you are analytical",
+    intro: (
+      <>
+        If you like finding patterns, checking detail and working problems through, look at jobs built on data, systems
+        or rules. Many have apprenticeships, and several pay well above the UK median.
+      </>
+    ),
+    ids: ["cyber-security-analyst", "business-analyst", "accountant", "software-tester", "intelligence-analyst", "data-analyst"],
+  },
+  {
+    id: "helping",
+    title: "If you like helping people",
+    intro: (
+      <>
+        Caring and support jobs range from roles with a level 2 apprenticeship to regulated professions that need a degree
+        and registration. Pay varies widely, so check the figure before you commit to training.
+      </>
+    ),
+    ids: ["paramedic", "social-worker", "occupational-therapist", "youth-worker", "careers-adviser", "counsellor", "healthcare-assistant"],
+  },
+  {
+    id: "graduates",
+    title: "If you have a degree",
+    intro: (
+      <>
+        A degree opens the professions that require one, and some accept a degree in any subject. The Solicitors
+        Regulation Authority, for example, says the degree for the SQE route can be in any subject or an equivalent level
+        6 qualification (
+        <a href="https://www.sra.org.uk/become-solicitor/sqe/" className="link" rel="noopener">
+          SRA
+        </a>
+        ). These are examples where a degree or degree apprenticeship is the usual way in.
+      </>
+    ),
+    ids: ["data-scientist", "solicitor", "quantity-surveyor", "secondary-school-teacher", "nurse", "town-planner"],
+  },
+];
 
-export default function WhatJobIsRightPage() {
+function Ext({ href, children }: { href: string; children: ReactNode }) {
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12 sm:py-20">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "Article",
-            headline: "What Job Is Right for Me? (2026 Guide)",
-            description: "Framework to find the right career based on skills, values, personality, and lifestyle.",
-            author: { "@type": "Organization", name: "MatchMySkillset" },
-            publisher: { "@type": "Organization", name: "MatchMySkillset", url: "https://matchmyskillset.com" },
-            datePublished: "2026-04-01",
-            dateModified: "2026-04-01",
-          }),
-        }}
+    <a href={href} className="link" rel="noopener">
+      {children}
+    </a>
+  );
+}
+
+function WayIn({ p }: { p: OccupationPay }) {
+  const s = entryApprenticeship(p);
+  if (p.degreeUsuallyRequired) {
+    return (
+      <>
+        Usually a degree
+        {s && (
+          <>
+            . Apprenticeship: <Ext href={s.url}>{s.title}</Ext> (level {s.level})
+          </>
+        )}
+      </>
+    );
+  }
+  if (!s) {
+    return p.ncsUrl ? <Ext href={p.ncsUrl}>See the National Careers Service profile</Ext> : <>No apprenticeship listed</>;
+  }
+  return (
+    <>
+      <Ext href={s.url}>{s.title}</Ext> apprenticeship, level {s.level}
+    </>
+  );
+}
+
+interface Row {
+  id: string;
+  p: OccupationPay;
+  median: number | null;
+}
+
+function GroupTable({ group }: { group: TypeGroup }) {
+  const rows: Row[] = group.ids
+    .map((id) => {
+      const p = occupationPayById(id);
+      return { id, p, median: p.median };
+    })
+    .sort((a, b) => (b.median ?? -1) - (a.median ?? -1));
+  return (
+    <DataTable<Row>
+      caption={`Example jobs ${group.title.replace(/^If you /, "for people who ")}`}
+      columns={[
+        {
+          key: "job",
+          header: "Job",
+          rowHeader: true,
+          render: (r) => (
+            <>
+              {r.p.title}
+              {r.p.payNote && <span className="mt-1 block text-sm font-normal text-muted">{r.p.payNote}</span>}
+            </>
+          ),
+        },
+        {
+          key: "median",
+          header: "Median pay",
+          numeric: true,
+          render: (r) => (r.median === null ? <span className="text-muted">Not published</span> : formatGBP(r.median)),
+        },
+        { key: "way", header: "Usual way in", render: (r) => <WayIn p={r.p} /> },
+      ]}
+      rows={rows}
+      rowKey={(r) => r.id}
+      source={<AsheSourceNote />}
+    />
+  );
+}
+
+export default function Page() {
+  const analyst = occupationPayById("data-analyst");
+  const recruiter = occupationPayById("recruitment-consultant");
+  const ux = occupationPayById("ux-designer");
+
+  return (
+    <GuideShell>
+      <ArticleJsonLd path={PATH} headline={H1} description={DESCRIPTION} dateModified={REVAMP_DATE} />
+      <PageHeader
+        breadcrumbs={<Breadcrumbs items={[{ name: "Career change", href: "/career-change" }, { name: "What job is right for me?" }]} />}
+        kicker="Choosing a career"
+        title={H1}
+        intro={
+          <p>
+            No quiz can tell you for certain. What works is narrowing it down with four things you can check: what you are
+            good at, what you want from work, how you like to work and what you need to earn. Our free{" "}
+            <Link href="/quiz" className="link">
+              career quiz
+            </Link>{" "}
+            starts from how you like to work; our{" "}
+            <Link href="/discover" className="link">
+              CV tool
+            </Link>{" "}
+            starts from what you have already done.
+          </p>
+        }
+        updated={REVAMP_DATE}
       />
 
-      <div className="text-sm text-gray-400 mb-6">
-        <Link href="/" className="hover:text-indigo-600">Home</Link>
-        {" / "}<span className="text-gray-600">What Job Is Right for Me</span>
-      </div>
+      <OnThisPage
+        items={[
+          { id: "tools", label: "Two free ways to start" },
+          { id: "questions", label: "Four questions to narrow it down" },
+          { id: "people", label: "If you like being around people" },
+          { id: "creative", label: "If you are creative" },
+          { id: "analytical", label: "If you are analytical" },
+          { id: "helping", label: "If you like helping people" },
+          { id: "graduates", label: "If you have a degree" },
+          { id: "limits", label: "What a quiz cannot tell you" },
+        ]}
+      />
 
-      <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-        What Job Is Right for Me?
-      </h1>
-
-      <div className="flex items-center gap-3 text-sm text-gray-400 mb-8">
-        <span>Updated April 2026</span>
-        <span>|</span>
-        <span>10 min read</span>
-      </div>
-
-      <p className="text-lg text-gray-600 leading-relaxed mb-4">
-        "What should I do with my life?" is one of the most searched career questions in the UK. And most answers are unhelpfully vague: "follow your passion" or "do what makes you happy." That advice sounds lovely but gives you nothing to act on.
-      </p>
-      <p className="text-gray-600 leading-relaxed mb-4">
-        Finding the right career is not about discovering a hidden calling. It is about matching four practical factors: your skills, your values, your personality, and your lifestyle needs. When these align, work feels purposeful rather than painful.
-      </p>
-      <p className="text-gray-600 leading-relaxed mb-10">
-        This guide gives you a structured framework to figure it out, not through vague reflection, but through concrete analysis.
-      </p>
-
-      {/* CTA 1 */}
-      <div className="bg-indigo-50 rounded-xl p-5 mb-10 flex flex-col sm:flex-row items-center gap-4">
-        <div className="flex-1">
-          <div className="font-semibold text-gray-900">Skip the soul-searching. Let data decide.</div>
-          <div className="text-sm text-gray-500">Upload your CV and our AI will match your actual skills and experience to careers you qualify for. 2 minutes.</div>
+      <GuideSection id="tools" title="Two free ways to start">
+        <div className="mt-6 grid max-w-reading gap-4 sm:grid-cols-2">
+          <div className="rounded-lg border border-rule bg-surface p-5">
+            <h3 className="font-serif text-h3 font-semibold text-ink">Take the career quiz</h3>
+            <p className="mt-2 text-ink-2">
+              A short multiple-choice quiz about what you enjoy and how you like to work. Good if you have no idea where
+              to start.
+            </p>
+            <Link href="/quiz" className="btn btn-secondary mt-4">
+              Start the quiz
+            </Link>
+          </div>
+          <div className="rounded-lg border border-rule bg-surface p-5">
+            <h3 className="font-serif text-h3 font-semibold text-ink">Analyse your CV</h3>
+            <p className="mt-2 text-ink-2">
+              Paste your CV and see the skills you already have and the jobs they lead to. Good if you have been working
+              for a while.
+            </p>
+            <Link href="/discover" className="btn btn-secondary mt-4">
+              Analyse my CV
+            </Link>
+          </div>
         </div>
-        <Link href="/discover" className="bg-indigo-600 text-white font-medium px-6 py-2.5 rounded-lg hover:bg-indigo-700 transition-colors text-sm whitespace-nowrap">
-          Analyse My Skills Free
-        </Link>
+        <Prose className="mt-6">
+          <p>
+            The National Careers Service also has a free{" "}
+            <Ext href={NCS_ASSESSMENT_URL}>Discover your skills and careers</Ext> assessment: 40 multiple-choice questions
+            that take 5 to 10 minutes and give career suggestions to compare.
+          </p>
+        </Prose>
+      </GuideSection>
+
+      <GuideSection id="questions" title="Four questions to narrow it down">
+        <Prose className="mt-4">
+          <h3>1. What are you good at?</h3>
+          <p>
+            Not what you enjoy yet, but what you do well. What do colleagues ask you to help with? What comes easily to
+            you that others find hard? What could you teach someone? Our{" "}
+            <Link href="/transferable-skills">transferable skills guide</Link> helps you name these in the words
+            employers use.
+          </p>
+
+          <h3>2. What do you want from work?</h3>
+          <p>
+            Put these in order: security, pay, flexibility, independence, helping people, creativity, status, variety.
+            Then check every option against your top two or three, and be honest about them.
+          </p>
+
+          <h3>3. How do you like to work?</h3>
+          <p>
+            Alone or in a team? With the public or behind the scenes? Routine or variety? Desk, outdoors or on your feet?
+            If you prefer quiet, focused work, see our guide to <Link href="/jobs-for-introverts">jobs for introverts</Link>
+            .
+          </p>
+
+          <h3>4. What do you need to earn?</h3>
+          <p>
+            Work out the minimum you need, then check each job against it. For reference, the UK median for full-time
+            employee jobs was {formatGBP(UK_FT_MEDIAN)} in the tax year to April 2025. Our pages on jobs that pay{" "}
+            <Link href="/what-jobs/jobs-that-pay-30k">£30k</Link>, <Link href="/what-jobs/jobs-that-pay-40k">£40k</Link>{" "}
+            and <Link href="/what-jobs/jobs-that-pay-50k">£50k</Link> list options at each level.
+          </p>
+        </Prose>
+      </GuideSection>
+
+      <div className="mt-14">
+        <ToolCallout />
       </div>
 
-      {/* Factor 1: Skills */}
-      <section className="mb-10">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">Factor 1: What are you actually good at?</h2>
-        <p className="text-gray-600 leading-relaxed mb-4">
-          Not what you enjoy (that comes later). What are you genuinely skilled at? The distinction matters because enjoyment without competence leads to frustration, while competence without enjoyment is tolerable and often turns into engagement over time.
-        </p>
-        <div className="bg-white rounded-xl border border-gray-100 p-6 mb-4">
-          <h3 className="font-semibold text-gray-900 mb-3">Skill audit questions</h3>
-          <ul className="text-sm text-gray-600 space-y-2">
-            <li>What tasks do colleagues ask you for help with?</li>
-            <li>What comes easily to you that others find difficult?</li>
-            <li>What have you been complimented on at work (not just praised for completing)?</li>
-            <li>If you were freelancing tomorrow, what service could you sell?</li>
-            <li>What could you teach someone else to do?</li>
+      {GROUPS.map((group) => (
+        <GuideSection key={group.id} id={group.id} title={group.title} intro={<p>{group.intro}</p>}>
+          <GroupTable group={group} />
+        </GuideSection>
+      ))}
+
+      <SourceNote
+        className="mt-6 max-w-reading"
+        label="Note"
+        source="Apprenticeships from Skills England; entry routes from ONS SOC 2020 and National Careers Service job profiles"
+        note="Checked 28 September 2026. Which jobs appear under each heading is our judgement, and “usually a degree” is our reading of the published entry routes. Medians cover everyone in the job, not starting salaries."
+      />
+
+      <GuideSection id="limits" title="What a quiz cannot tell you">
+        <Prose className="mt-4">
+          <ul>
+            <li>
+              <strong>What a normal day is like.</strong> Talk to two or three people who do the job before you spend money
+              on training.
+            </li>
+            <li>
+              <strong>What employers near you pay.</strong> ONS medians are for the whole UK. Check{" "}
+              <Link href="/jobs">live vacancies</Link> in your area.
+            </li>
+            <li>
+              <strong>Whether you will enjoy it.</strong> Try it in a small way first: a short course, a project, a day of
+              shadowing or some volunteering.
+            </li>
           </ul>
-        </div>
-        <p className="text-sm text-gray-500">
-          Your answers point to your natural strengths. These are the skills that should drive your career choice, because you will always outperform in areas of natural competence.
-        </p>
-      </section>
+          <p>
+            When you have a shortlist, our guide to{" "}
+            <Link href="/career-change/how-to-change-careers">changing careers step by step</Link> covers pay, training and
+            funding.
+          </p>
+        </Prose>
+      </GuideSection>
 
-      {/* Factor 2: Values */}
-      <section className="mb-10">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">Factor 2: What do you actually value?</h2>
-        <p className="text-gray-600 leading-relaxed mb-4">
-          Values misalignment is the hidden cause of most career dissatisfaction. You can be good at a job and still hate it if it clashes with what you care about.
-        </p>
-        <div className="grid sm:grid-cols-2 gap-4">
-          {[
-            { value: "Autonomy", careers: "Freelancing, consulting, self-employment, research" },
-            { value: "Security", careers: "Civil service, NHS, teaching, established corporates" },
-            { value: "Impact", careers: "Charity, healthcare, education, social enterprise" },
-            { value: "Creativity", careers: "Design, writing, marketing, architecture, media" },
-            { value: "Money", careers: "Sales, finance, tech, law, consulting" },
-            { value: "Flexibility", careers: "Remote work, freelancing, portfolio careers" },
-            { value: "Status", careers: "Law, medicine, management consulting, finance" },
-            { value: "Teamwork", careers: "Project management, healthcare, events, agency" },
-          ].map((v) => (
-            <div key={v.value} className="bg-white rounded-xl border border-gray-100 p-4">
-              <div className="font-semibold text-indigo-600 text-sm mb-1">{v.value}</div>
-              <p className="text-xs text-gray-600">{v.careers}</p>
-            </div>
-          ))}
-        </div>
-      </section>
+      <FaqSection
+        items={[
+          {
+            question: "How do I know what job is right for me?",
+            answer:
+              "Narrow it down with four checks: what you are good at, what you want from work, how you like to work and what you need to earn. Then test the shortlist by talking to people who do the jobs and trying the work in a small way before you commit to training.",
+          },
+          {
+            question: "Is there a free career test in the UK?",
+            answer:
+              "Yes. Our career quiz is free with no account. The National Careers Service also has a free Discover your skills and careers assessment with 40 multiple-choice questions that takes 5 to 10 minutes.",
+          },
+          {
+            question: "What jobs suit extroverts?",
+            answer: `Jobs built on conversations, such as recruitment, sales, public relations and events. The ONS full-time median for recruitment consultants' occupation group was ${formatGBP(recruiter.median ?? 0)} in 2025 (ONS ASHE 2025).`,
+          },
+          {
+            question: "What jobs suit creative people?",
+            answer: `Design, writing, marketing and web development, where you work to a brief. The ONS full-time median for the occupation group that includes UX designers was ${formatGBP(ux.median ?? 0)} in 2025 (ONS ASHE 2025). Expect employers to ask for examples of your work.`,
+          },
+          {
+            question: "What jobs suit analytical people?",
+            answer: `Jobs built on data, systems or rules, such as data analysis, business analysis, accountancy and cyber security. The ONS full-time median for data analysts' occupation group was ${formatGBP(analyst.median ?? 0)} in 2025 (ONS ASHE 2025).`,
+          },
+        ]}
+      />
 
-      {/* CTA 2 */}
-      <div className="bg-gray-900 text-white rounded-xl p-6 text-center mb-10">
-        <h3 className="text-lg font-semibold mb-2">Still not sure? Let the AI figure it out.</h3>
-        <p className="text-gray-300 text-sm mb-4">Upload your CV or describe your experience and our AI will analyse your skills, spot patterns, and match you to careers.</p>
-        <Link href="/discover" className="inline-flex items-center bg-white text-gray-900 font-semibold px-6 py-3 rounded-lg hover:bg-gray-100 transition-colors text-sm">
-          Get My Personalised Matches
-        </Link>
-      </div>
-
-      {/* Factor 3: Personality */}
-      <section className="mb-10">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">Factor 3: What is your working style?</h2>
-        <div className="space-y-4">
-          {[
-            { style: "I prefer working alone", suggestion: "Data analysis, writing, software development, research. See our guide to jobs for introverts." },
-            { style: "I thrive with people", suggestion: "Sales, HR, teaching, events, recruitment, management consulting." },
-            { style: "I need variety and change", suggestion: "Journalism, consulting, project management, emergency services." },
-            { style: "I like routine and predictability", suggestion: "Accounting, compliance, quality assurance, civil service, library science." },
-            { style: "I want to solve problems", suggestion: "Engineering, data science, cybersecurity, medicine, UX research." },
-            { style: "I want to create things", suggestion: "Design, writing, video production, architecture, software development." },
-          ].map((item) => (
-            <div key={item.style} className="bg-white rounded-xl border border-gray-100 p-5">
-              <h3 className="font-semibold text-gray-900 text-sm mb-1">{item.style}</h3>
-              <p className="text-sm text-gray-600">{item.suggestion}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Factor 4: Lifestyle */}
-      <section className="mb-10">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">Factor 4: What lifestyle do you need?</h2>
-        <p className="text-gray-600 leading-relaxed mb-4">
-          The best career for you is not just about the work itself. It is about whether the job fits around the life you want to live.
-        </p>
-        <div className="grid sm:grid-cols-2 gap-4">
-          <div className="bg-green-50 rounded-xl p-5 border border-green-100">
-            <h3 className="font-semibold text-gray-900 mb-2">Need flexible hours?</h3>
-            <p className="text-sm text-gray-600">Freelancing, remote tech roles, portfolio careers, and output-based roles (where results matter more than hours) offer the most schedule control.</p>
-          </div>
-          <div className="bg-green-50 rounded-xl p-5 border border-green-100">
-            <h3 className="font-semibold text-gray-900 mb-2">Need high income?</h3>
-            <p className="text-sm text-gray-600">Tech, sales, finance, consulting, and skilled trades offer the highest earning potential. Sales and trades have the lowest barriers to entry.</p>
-          </div>
-          <div className="bg-green-50 rounded-xl p-5 border border-green-100">
-            <h3 className="font-semibold text-gray-900 mb-2">Need low stress?</h3>
-            <p className="text-sm text-gray-600">Library work, data entry, technical writing, and archiving are among the lowest-stress careers. Avoid client-facing sales and emergency services.</p>
-          </div>
-          <div className="bg-green-50 rounded-xl p-5 border border-green-100">
-            <h3 className="font-semibold text-gray-900 mb-2">Need to work from home?</h3>
-            <p className="text-sm text-gray-600">Software development, content writing, data analysis, virtual assistance, and digital marketing are fully remote in most companies.</p>
-          </div>
-        </div>
-      </section>
-
-      <div className="border-l-4 border-indigo-600 bg-indigo-50 rounded-r-xl p-5 mb-10">
-        <p className="text-gray-700 text-sm">
-          <span className="font-semibold">The fastest way to answer "What job is right for me?" is to analyse what you already bring to the table.</span> Our AI does this in 2 minutes.{" "}
-          <Link href="/discover" className="text-indigo-600 font-medium hover:text-indigo-700">Try it free</Link>.
-        </p>
-      </div>
-
-      <p className="text-gray-600 mb-10">
-        Want a personalised answer?{" "}
-        <Link href="/discover" className="text-indigo-600 font-medium hover:text-indigo-700">
-          Upload your CV and see your career matches &rarr;
-        </Link>
-      </p>
-
-      <section className="bg-indigo-50 rounded-xl p-8 text-center mb-10">
-        <h2 className="text-xl font-semibold text-gray-900 mb-3">Get your personalised career matches</h2>
-        <p className="text-gray-500 mb-6 max-w-lg mx-auto">Upload your CV or describe your experience and our AI will match you to careers based on your actual skills. Free. 2 minutes.</p>
-        <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <Link href="/discover" className="inline-flex items-center justify-center bg-indigo-600 text-white font-semibold px-8 py-4 rounded-xl hover:bg-indigo-700 transition-colors">Discover My Career Matches</Link>
-          <Link href="/quiz" className="inline-flex items-center justify-center border border-gray-200 text-gray-700 font-medium px-8 py-4 rounded-xl hover:bg-white transition-colors">Take the Career Quiz</Link>
-        </div>
-      </section>
-
-      <div className="pt-8 border-t border-gray-100">
-        <h3 className="text-sm font-semibold text-gray-500 mb-3">Related Pages</h3>
-        <div className="flex flex-wrap gap-2">
-          <Link href="/jobs-for-introverts" className="text-sm text-indigo-600 hover:text-indigo-700">Jobs for Introverts</Link>
-          <span className="text-gray-300">|</span>
-          <Link href="/jobs-for-people-who-hate-their-job" className="text-sm text-indigo-600 hover:text-indigo-700">I Hate My Job</Link>
-          <span className="text-gray-300">|</span>
-          <Link href="/career-change-at-30" className="text-sm text-indigo-600 hover:text-indigo-700">Career Change at 30</Link>
-          <span className="text-gray-300">|</span>
-          <Link href="/best-jobs-for-work-life-balance" className="text-sm text-indigo-600 hover:text-indigo-700">Work-Life Balance Jobs</Link>
-        </div>
-      </div>
-    </div>
+      <RelatedLinks
+        links={[
+          { href: "/jobs-for-people-who-hate-their-job", label: "I hate my job: what should I do?" },
+          { href: "/jobs-for-introverts", label: "Jobs for introverts" },
+          { href: "/low-stress-jobs-uk", label: "Low-stress jobs in the UK" },
+          { href: "/jobs-without-a-degree", label: "Jobs without a degree" },
+          { href: "/highest-paying-careers-uk", label: "Highest paying careers in the UK" },
+          { href: "/career-change", label: "All career change guides" },
+        ]}
+      />
+    </GuideShell>
   );
 }

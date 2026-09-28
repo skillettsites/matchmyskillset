@@ -1,244 +1,392 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import type { ReactNode } from "react";
+import { Breadcrumbs, DataTable, FaqSection, PageHeader, Prose, SourceNote, ToolCallout, formatGBP } from "@/components/content";
+import { guideMetadata, REVAMP_DATE } from "@/components/guides/meta";
+import { ArticleJsonLd, GuideSection, GuideShell, OnThisPage, RelatedLinks } from "@/components/guides/GuideShell";
+import { AsheSourceNote, entryApprenticeship, occupationPayById, UK_FT_MEDIAN, type OccupationPay } from "@/components/guides/pay";
 
-export const metadata: Metadata = {
-  title: "I Hate My Job: What to Do Next (Practical Guide 2026)",
-  description:
-    "Stuck in a job you hate? Practical steps to figure out what you actually want, whether to quit, and how to transition. No toxic positivity, just honest advice.",
-  keywords: [
-    "I hate my job what should I do",
-    "want to quit my job",
-    "hate my job UK",
-    "stuck in a job I hate",
-    "should I quit my job",
-    "unhappy at work",
-  ],
-  openGraph: {
-    title: "I Hate My Job: What to Do Next",
-    description: "Practical guide for people who hate their job. Honest advice on whether to stay, fix, or leave.",
-    type: "article",
-  },
-};
+const PATH = "/jobs-for-people-who-hate-their-job";
+const TITLE = "I hate my job: what to do next (UK guide)";
+const DESCRIPTION =
+  "Hate your job? Work out if it is the manager, the pay or the work itself, look after your health, know your notice rights, and plan a way out.";
+const H1 = "I hate my job: what should I do?";
 
-export default function HateMyJobPage() {
+export const metadata: Metadata = guideMetadata({ path: PATH, title: TITLE, description: DESCRIPTION });
+
+const HSE_STRESS_URL = "https://www.hse.gov.uk/Statistics/assets/docs/stress.pdf";
+const NOTICE_URL = "https://www.gov.uk/handing-in-your-notice/giving-notice";
+const FIT_NOTE_URL = "https://www.gov.uk/taking-sick-leave";
+const TALKING_THERAPIES_URL =
+  "https://www.nhs.uk/nhs-services/mental-health-services/find-nhs-talking-therapies-for-anxiety-and-depression/";
+const CONSTRUCTIVE_URL = "https://www.acas.org.uk/dismissals/constructive-dismissal";
+const GRIEVANCE_URL = "https://www.acas.org.uk/grievance-procedure-step-by-step";
+
+// Jobs paying above the UK full-time median where ONS or the National Careers
+// Service describe a way in below degree level. Selection is ours.
+const KEEP_PAY_IDS = [
+  "project-manager",
+  "business-development-manager",
+  "railway-signaller",
+  "business-analyst",
+  "compliance-officer",
+  "health-and-safety-adviser",
+  "train-conductor",
+  "engineering-technician",
+  "firefighter",
+  "facilities-manager",
+];
+
+function Ext({ href, children }: { href: string; children: ReactNode }) {
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12 sm:py-20">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "Article",
-            headline: "I Hate My Job: What to Do Next (2026 Guide)",
-            description: "Practical guide for people stuck in a job they hate, with honest advice on next steps.",
-            author: { "@type": "Organization", name: "MatchMySkillset" },
-            publisher: { "@type": "Organization", name: "MatchMySkillset", url: "https://matchmyskillset.com" },
-            datePublished: "2026-04-01",
-            dateModified: "2026-04-01",
-          }),
-        }}
+    <a href={href} className="link" rel="noopener">
+      {children}
+    </a>
+  );
+}
+
+interface ProblemRow {
+  problem: string;
+  signs: string;
+  helps: ReactNode;
+}
+
+const PROBLEMS: ProblemRow[] = [
+  {
+    problem: "Your manager",
+    signs: "You liked the work before they arrived, and the dread started with them.",
+    helps: "A move to another team or employer in the same kind of job. The work may be fine.",
+  },
+  {
+    problem: "The employer or culture",
+    signs: "Unreasonable expectations, poor treatment or values that clash with yours.",
+    helps: "The same job at a different organisation. Ask people who work there before you accept.",
+  },
+  {
+    problem: "The pay",
+    signs: "You like the work but resent what you are paid for it.",
+    helps: (
+      <>
+        Check what the job pays elsewhere (<Link href="/what-jobs">ONS pay by job</Link>), then ask for a review or move
+        employer.
+      </>
+    ),
+  },
+  {
+    problem: "The hours",
+    signs: "The work is fine but the hours or commute are not.",
+    helps: "A flexible working request, which you can make from your first day in a job.",
+  },
+  {
+    problem: "Burnout",
+    signs: "You used to cope, but now feel exhausted, cynical and less effective.",
+    helps: "Rest and support first, decisions later. See your GP if it is affecting your health.",
+  },
+  {
+    problem: "The work itself",
+    signs: "Even on good days the tasks bore or drain you, and it has been that way for a long time.",
+    helps: "A career change. A new manager or employer will not change the work.",
+  },
+];
+
+interface PayRow {
+  id: string;
+  p: OccupationPay;
+  median: number | null;
+}
+
+export default function Page() {
+  const payRows: PayRow[] = KEEP_PAY_IDS.map((id) => {
+    const p = occupationPayById(id);
+    return { id, p, median: p.median };
+  }).sort((a, b) => (b.median ?? -1) - (a.median ?? -1));
+
+  return (
+    <GuideShell>
+      <ArticleJsonLd path={PATH} headline={H1} description={DESCRIPTION} dateModified={REVAMP_DATE} />
+      <PageHeader
+        breadcrumbs={<Breadcrumbs items={[{ name: "Career change", href: "/career-change" }, { name: "I hate my job" }]} />}
+        kicker="Leaving your job"
+        title={H1}
+        intro={
+          <p>
+            Work out which part you hate before you decide anything: the manager, the employer, the pay, the hours or the
+            work itself. Only the last one needs a new career. If the job is affecting your health, deal with that first:
+            HSE estimates that 964,000 workers in Great Britain had work-related stress, depression or anxiety in 2024/25.
+          </p>
+        }
+        updated={REVAMP_DATE}
       />
 
-      <div className="text-sm text-gray-400 mb-6">
-        <Link href="/" className="hover:text-indigo-600">Home</Link>
-        {" / "}<span className="text-gray-600">I Hate My Job</span>
-      </div>
+      <OnThisPage
+        items={[
+          { id: "diagnose", label: "Work out what you actually hate" },
+          { id: "health", label: "If it is affecting your health" },
+          { id: "fix", label: "Try to fix it where you are" },
+          { id: "quit", label: "Should you quit?" },
+          { id: "new-work", label: "If the work itself is the problem" },
+          { id: "exit", label: "Plan your way out" },
+          { id: "faq", label: "Common questions" },
+        ]}
+      />
 
-      <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-        I Hate My Job: What to Do Next
-      </h1>
+      <GuideSection
+        id="diagnose"
+        title="Work out what you actually hate"
+        intro={<p>The fix for a bad manager is different from the fix for work you dislike. Be honest about which this is.</p>}
+      >
+        <DataTable<ProblemRow>
+          caption="What is really wrong, and what usually helps"
+          columns={[
+            { key: "problem", header: "The problem", rowHeader: true },
+            { key: "signs", header: "Signs" },
+            { key: "helps", header: "What usually helps", render: (r) => r.helps },
+          ]}
+          rows={PROBLEMS}
+          rowKey={(r) => r.problem}
+        />
+      </GuideSection>
 
-      <div className="flex items-center gap-3 text-sm text-gray-400 mb-8">
-        <span>Updated April 2026</span>
-        <span>|</span>
-        <span>10 min read</span>
-      </div>
-
-      <p className="text-lg text-gray-600 leading-relaxed mb-4">
-        If you typed "I hate my job" into a search engine, you are not alone. CIPD research shows that 1 in 4 UK workers is actively unhappy at work, and a further 33% are disengaged (doing the minimum, mentally checked out, counting down to Friday). That is over half the workforce not enjoying what they spend 40+ hours a week doing.
-      </p>
-      <p className="text-gray-600 leading-relaxed mb-4">
-        This page is not going to tell you to "find your passion" or "just be grateful you have a job." Those responses are useless when you are dreading Monday morning. Instead, this is a structured process to figure out what is actually wrong, whether it can be fixed, and what to do if it cannot.
-      </p>
-      <p className="text-gray-600 leading-relaxed mb-10">
-        The feeling of hating your job is a signal, not a character flaw. Treat it like data.
-      </p>
-
-      {/* Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-10">
-        <div className="bg-red-50 rounded-xl p-4 text-center">
-          <div className="text-2xl font-bold text-red-600">1 in 4</div>
-          <div className="text-xs text-gray-500">UK workers actively unhappy</div>
-        </div>
-        <div className="bg-amber-50 rounded-xl p-4 text-center">
-          <div className="text-2xl font-bold text-amber-600">33%</div>
-          <div className="text-xs text-gray-500">Mentally disengaged at work</div>
-        </div>
-        <div className="bg-indigo-50 rounded-xl p-4 text-center">
-          <div className="text-2xl font-bold text-indigo-600">5-7</div>
-          <div className="text-xs text-gray-500">Career changes in a lifetime</div>
-        </div>
-        <div className="bg-green-50 rounded-xl p-4 text-center">
-          <div className="text-2xl font-bold text-green-600">76%</div>
-          <div className="text-xs text-gray-500">Employers value skills over loyalty</div>
-        </div>
-      </div>
-
-      {/* Section 1: Diagnose */}
-      <section className="mb-10">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">Step 1: Diagnose what you actually hate</h2>
-        <p className="text-gray-600 leading-relaxed mb-4">
-          "I hate my job" is too broad to act on. The solution for hating your boss is different from hating your industry. Before you do anything, figure out which of these is the real problem:
-        </p>
-        <div className="space-y-4">
-          {[
-            { problem: "You hate your manager", sign: "You liked the work before they arrived. Sunday dread started when they did.", fix: "Internal transfer, new team, or new company in the same role. The work is fine; the management is not." },
-            { problem: "You hate the culture", sign: "Toxic colleagues, unreasonable expectations, no work-life balance, or values that clash with yours.", fix: "Same role at a different company. Culture varies massively even within the same industry." },
-            { problem: "You hate the actual work", sign: "Even on your best days, the tasks themselves bore or drain you. This started years ago and is getting worse.", fix: "Career change. No amount of culture or management fixes will make you enjoy work you fundamentally dislike." },
-            { problem: "You are burned out", sign: "You used to enjoy this job. Now you feel exhausted, cynical, and ineffective. Everything feels pointless.", fix: "Rest first, decide second. Burnout distorts your thinking. Take leave, reduce hours, or see your GP before making permanent decisions." },
-            { problem: "You are underpaid", sign: "You enjoy the work but feel resentful because you know you are worth more.", fix: "Negotiate a raise, or take the same role elsewhere at market rate. Do not let salary resentment destroy a career you otherwise enjoy." },
-            { problem: "You have outgrown the role", sign: "The job is too easy now. You are bored, not stressed. No challenge left.", fix: "Seek promotion, take on a stretch project, or move to a more senior role elsewhere. Your skills need a bigger stage." },
-          ].map((item) => (
-            <div key={item.problem} className="bg-white rounded-xl border border-gray-100 p-6">
-              <h3 className="font-semibold text-gray-900 mb-2">{item.problem}</h3>
-              <div className="grid sm:grid-cols-2 gap-3">
-                <div className="bg-red-50 rounded-lg p-3">
-                  <div className="text-xs font-semibold text-red-700 mb-1">Signs</div>
-                  <p className="text-xs text-red-800">{item.sign}</p>
-                </div>
-                <div className="bg-green-50 rounded-lg p-3">
-                  <div className="text-xs font-semibold text-green-700 mb-1">What to do</div>
-                  <p className="text-xs text-green-800">{item.fix}</p>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* CTA 1 - Style A */}
-      <div className="bg-indigo-50 rounded-xl p-5 mb-10 flex flex-col sm:flex-row items-center gap-4">
-        <div className="flex-1">
-          <div className="font-semibold text-gray-900">Not sure what you would rather be doing?</div>
-          <div className="text-sm text-gray-500">Upload your CV and our AI will show you careers you qualify for that you might not have considered.</div>
-        </div>
-        <Link href="/discover" className="bg-indigo-600 text-white font-medium px-6 py-2.5 rounded-lg hover:bg-indigo-700 transition-colors text-sm whitespace-nowrap">
-          Analyse My Skills Free
-        </Link>
-      </div>
-
-      {/* Section 2: Should you quit? */}
-      <section className="mb-10">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">Step 2: Should you quit? The honest checklist</h2>
-        <div className="grid sm:grid-cols-2 gap-4">
-          <div className="bg-green-50 rounded-xl p-5 border border-green-100">
-            <h3 className="font-semibold text-green-800 mb-2">Quit if:</h3>
-            <ul className="text-sm text-green-700 space-y-2">
-              <li>Your mental or physical health is deteriorating</li>
-              <li>You have tried to fix it (new team, conversation with boss) and nothing changed</li>
-              <li>You have been unhappy for over 12 months consistently</li>
-              <li>You have savings or another offer lined up</li>
-              <li>The work itself conflicts with your values</li>
-            </ul>
-          </div>
-          <div className="bg-red-50 rounded-xl p-5 border border-red-100">
-            <h3 className="font-semibold text-red-800 mb-2">Do not quit yet if:</h3>
-            <ul className="text-sm text-red-700 space-y-2">
-              <li>You have not tried to fix the specific problem</li>
-              <li>The unhappiness started recently (under 3 months)</li>
-              <li>You have no financial safety net</li>
-              <li>You are making the decision while burned out or after a bad week</li>
-              <li>You have no idea what you would do instead</li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA 2 - Style B */}
-      <div className="bg-gray-900 text-white rounded-xl p-6 text-center mb-10">
-        <h3 className="text-lg font-semibold mb-2">Knowing your options makes everything clearer</h3>
-        <p className="text-gray-300 text-sm mb-4">The fear of the unknown keeps people in jobs they hate. Once you see what else is out there, the decision becomes rational, not emotional.</p>
-        <Link href="/discover" className="inline-flex items-center bg-white text-gray-900 font-semibold px-6 py-3 rounded-lg hover:bg-gray-100 transition-colors text-sm">
-          Get My Personalised Matches
-        </Link>
-      </div>
-
-      {/* Section 3: Exit plan */}
-      <section className="mb-10">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">Step 3: Build your exit plan</h2>
-        <div className="space-y-6">
-          {[
-            { step: "Calculate your runway", detail: "How many months could you survive without income? This determines how aggressive or cautious your exit needs to be. Aim for 3-6 months of expenses saved before leaving without another job lined up." },
-            { step: "Identify what you want instead", detail: "Do not just run from something bad. Run towards something better. What tasks energise you? What work conditions do you need? Use our career matching tool to discover roles that fit." },
-            { step: "Start applying while employed", detail: "It is always easier to find a job when you have one. Your negotiating position is stronger. You can be selective. Dedicate 5-10 hours per week to your job search while employed." },
-            { step: "Upskill in gaps (not from scratch)", detail: "If your target career requires skills you lack, close the gap with a short course, not a degree. Most transitions need weeks of learning, not years." },
-            { step: "Leave professionally", detail: "Resist the urge to burn bridges. Give proper notice. Write a professional resignation letter. You never know when you will cross paths with former colleagues." },
-          ].map((s, i) => (
-            <div key={i} className="bg-white rounded-xl border border-gray-100 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                <span className="text-indigo-600 mr-2">{i + 1}.</span>{s.step}
-              </h3>
-              <p className="text-sm text-gray-600">{s.detail}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* CTA 3 - Style C */}
-      <div className="border-l-4 border-indigo-600 bg-indigo-50 rounded-r-xl p-5 mb-10">
-        <p className="text-gray-700 text-sm">
-          <span className="font-semibold">The average person changes careers 5-7 times.</span> Leaving a job you hate is not failure. It is self-awareness. Upload your CV and{" "}
-          <Link href="/discover" className="text-indigo-600 font-medium hover:text-indigo-700">see what you qualify for</Link>.
-        </p>
-      </div>
-
-      {/* Section: Mental health */}
-      <section className="mb-10">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">If it is affecting your mental health</h2>
-        <p className="text-gray-600 leading-relaxed mb-4">
-          A job you hate is not just unpleasant. It can cause anxiety, depression, insomnia, and physical health problems. If you are experiencing any of these, please take action:
-        </p>
-        <div className="bg-white rounded-xl border border-gray-100 p-6">
-          <ul className="text-sm text-gray-600 space-y-3">
-            <li><strong>Talk to your GP.</strong> Work-related mental health issues are valid medical concerns. Your GP can sign you off, refer you for therapy, or support a phased return.</li>
-            <li><strong>Call the Samaritans</strong> on 116 123 (free, 24/7) if you are in crisis.</li>
-            <li><strong>Contact Mind</strong> at mind.org.uk for workplace mental health resources and advice.</li>
-            <li><strong>Know your rights.</strong> You are legally protected from being dismissed for taking sick leave due to mental health. ACAS (acas.org.uk) provides free employment advice.</li>
+      <GuideSection id="health" title="If it is affecting your health">
+        <Prose className="mt-4">
+          <p>
+            You are far from the only one. In 2024/25 an estimated 964,000 workers in Great Britain had work-related
+            stress, depression or anxiety, a rate of 2,770 per 100,000 workers, and 22.1 million working days were lost
+            to it. Over 2022/23 to 2024/25, rates were higher than average in public administration and defence, human
+            health and social work, and education. The main causes workers gave were workload, including tight deadlines and too much
+            responsibility, and a lack of support from managers.
+          </p>
+        </Prose>
+        <SourceNote
+          className="mt-2 max-w-reading"
+          source="HSE, Work-related stress, depression or anxiety statistics in Great Britain, 2025"
+          href={HSE_STRESS_URL}
+          published="2025-11-20"
+          note="The causes come from Labour Force Survey questions asked in 2009/10 to 2011/12."
+        />
+        <Prose className="mt-6">
+          <ul>
+            <li>
+              <strong>Talk to your GP.</strong> If you are off sick for more than 7 days in a row you need a fit note,
+              which can come from a GP, hospital doctor, registered nurse, occupational therapist, pharmacist or
+              physiotherapist. For 7 days or less you do not need one (<Ext href={FIT_NOTE_URL}>GOV.UK</Ext>).
+            </li>
+            <li>
+              <strong>Refer yourself for talking therapy.</strong> In England, adults can refer themselves to NHS talking
+              therapies for anxiety and depression without going through a GP, and you do not need a diagnosis (
+              <Ext href={TALKING_THERAPIES_URL}>NHS</Ext>).
+            </li>
+            <li>
+              <strong>If you are struggling to cope,</strong> call Samaritans free on 116 123, 24 hours a day, 365 days a
+              year (<Ext href="https://www.samaritans.org/">Samaritans</Ext>). <Ext href="https://www.mind.org.uk/">Mind</Ext>{" "}
+              has information on mental health at work.
+            </li>
           </ul>
-        </div>
-      </section>
+        </Prose>
+      </GuideSection>
 
-      {/* Simple text CTA */}
-      <p className="text-gray-600 mb-10">
-        Ready to see what is out there?{" "}
-        <Link href="/discover" className="text-indigo-600 font-medium hover:text-indigo-700">
-          Upload your CV and discover your options in 2 minutes &rarr;
-        </Link>
-      </p>
+      <GuideSection id="fix" title="Try to fix it where you are">
+        <Prose className="mt-4">
+          <ul>
+            <li>
+              <strong>Say what is wrong.</strong> A specific conversation with your manager, or their manager, about one
+              or two changes is more likely to get somewhere than a general complaint.
+            </li>
+            <li>
+              <strong>Ask for flexible working.</strong> Every employee can request changes to their hours, start and
+              finish times, days or place of work from their first day in a job (
+              <Ext href="https://www.gov.uk/flexible-working">GOV.UK</Ext>).
+            </li>
+            <li>
+              <strong>Raise a formal grievance</strong> if talking has not worked. Acas explains the{" "}
+              <Ext href={GRIEVANCE_URL}>grievance procedure step by step</Ext>.
+            </li>
+            <li>
+              <strong>Look at internal moves.</strong> A different team can fix a manager or culture problem while you keep
+              your pay, pension and service.
+            </li>
+          </ul>
+        </Prose>
+      </GuideSection>
 
-      {/* Final CTA */}
-      <section className="bg-indigo-50 rounded-xl p-8 text-center mb-10">
-        <h2 className="text-xl font-semibold text-gray-900 mb-3">You deserve to enjoy your work</h2>
-        <p className="text-gray-500 mb-6 max-w-lg mx-auto">Upload your CV and discover careers that match your skills but not your current misery. Free. 2 minutes. No judgement.</p>
-        <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <Link href="/discover" className="inline-flex items-center justify-center bg-indigo-600 text-white font-semibold px-8 py-4 rounded-xl hover:bg-indigo-700 transition-colors">Discover My Career Matches</Link>
-          <Link href="/quiz" className="inline-flex items-center justify-center border border-gray-200 text-gray-700 font-medium px-8 py-4 rounded-xl hover:bg-white transition-colors">Take the Career Quiz</Link>
+      <GuideSection id="quit" title="Should you quit? An honest checklist">
+        <div className="mt-6 grid max-w-reading gap-4 sm:grid-cols-2">
+          <div className="rounded-lg border border-rule bg-surface p-5">
+            <h3 className="font-serif text-h3 font-semibold text-ink">Leaving makes sense if</h3>
+            <ul className="mt-3 list-disc space-y-2 pl-5 text-ink-2">
+              <li>your health is getting worse</li>
+              <li>you have tried to fix the specific problem and nothing changed</li>
+              <li>you have felt this way for a long time, rather than a bad few weeks</li>
+              <li>you have savings to live on or another offer</li>
+            </ul>
+          </div>
+          <div className="rounded-lg border border-rule bg-surface p-5">
+            <h3 className="font-serif text-h3 font-semibold text-ink">Wait a little if</h3>
+            <ul className="mt-3 list-disc space-y-2 pl-5 text-ink-2">
+              <li>you have not yet tried to fix the problem</li>
+              <li>it started recently</li>
+              <li>you have no money to fall back on</li>
+              <li>you are deciding in the middle of burnout or after one bad day</li>
+            </ul>
+          </div>
         </div>
-      </section>
+        <Prose className="mt-6">
+          <p>
+            <strong>Give proper notice.</strong> The legal minimum is one week once you have been in the job for more
+            than a month, but your contract can ask for more, and leaving without enough notice can breach it (
+            <Ext href={NOTICE_URL}>GOV.UK</Ext>).
+          </p>
+          <p>
+            <strong>If your employer has treated you very badly,</strong> you may be able to claim constructive dismissal:
+            resigning because your employer seriously breached your contract. Acas says to get legal advice before you
+            resign. You usually need 2 years&apos; service to claim, with exceptions for some reasons such as
+            whistleblowing, and the time limit is 3 months minus 1 day (
+            <Ext href={CONSTRUCTIVE_URL}>Acas, updated 18 February 2026</Ext>).
+          </p>
+        </Prose>
+      </GuideSection>
 
-      {/* Related */}
-      <div className="pt-8 border-t border-gray-100">
-        <h3 className="text-sm font-semibold text-gray-500 mb-3">Related Pages</h3>
-        <div className="flex flex-wrap gap-2">
-          <Link href="/career-change-at-30" className="text-sm text-indigo-600 hover:text-indigo-700">Career Change at 30</Link>
-          <span className="text-gray-300">|</span>
-          <Link href="/career-change-at-50" className="text-sm text-indigo-600 hover:text-indigo-700">Career Change at 50</Link>
-          <span className="text-gray-300">|</span>
-          <Link href="/career-change-with-no-money" className="text-sm text-indigo-600 hover:text-indigo-700">Career Change With No Money</Link>
-          <span className="text-gray-300">|</span>
-          <Link href="/best-jobs-for-work-life-balance" className="text-sm text-indigo-600 hover:text-indigo-700">Jobs With Work-Life Balance</Link>
-        </div>
+      <GuideSection
+        id="new-work"
+        title="If the work itself is the problem"
+        intro={
+          <p>
+            Start from what you want to be different: less contact with the public, more variety, more purpose, better
+            hours. Our guides to <Link href="/what-job-is-right-for-me">what job is right for me</Link>,{" "}
+            <Link href="/low-stress-jobs-uk">low-stress jobs</Link> and{" "}
+            <Link href="/best-jobs-for-work-life-balance">jobs with a good work-life balance</Link> help you narrow it
+            down.
+          </p>
+        }
+      >
+        <Prose className="mt-4">
+          <p>
+            If you need to keep your income, the jobs below all have an ONS full-time median above the UK median of{" "}
+            {formatGBP(UK_FT_MEDIAN)}, and ONS or the National Careers Service describe a way in without a degree.
+          </p>
+        </Prose>
+        <DataTable<PayRow>
+          caption="Jobs paying above the UK median without a degree"
+          columns={[
+            {
+              key: "job",
+              header: "Job",
+              rowHeader: true,
+              render: (r) => (
+                <>
+                  {r.p.title}
+                  {r.p.payNote && <span className="mt-1 block text-sm font-normal text-muted">{r.p.payNote}</span>}
+                </>
+              ),
+            },
+            {
+              key: "median",
+              header: "Median pay",
+              numeric: true,
+              render: (r) => (r.median === null ? <span className="text-muted">Not published</span> : formatGBP(r.median)),
+            },
+            {
+              key: "way",
+              header: "An apprenticeship route in (England)",
+              mobileLabel: "Apprenticeship",
+              render: (r) => {
+                const s = entryApprenticeship(r.p);
+                if (!s) return <span className="text-muted">None listed</span>;
+                return (
+                  <>
+                    <Ext href={s.url}>{s.title}</Ext>, level {s.level}, typically {s.typicalDurationMonths} months
+                  </>
+                );
+              },
+            },
+          ]}
+          rows={payRows}
+          rowKey={(r) => r.id}
+          source={
+            <>
+              <AsheSourceNote />
+              <SourceNote
+                className="mt-1"
+                source="Skills England, apprenticeship standards"
+                href="https://skillsengland.education.gov.uk/apprenticeships/"
+                note="Checked 28 September 2026. Medians include experienced staff, so starting pay is often lower."
+              />
+            </>
+          }
+        />
+      </GuideSection>
+
+      <div className="mt-14">
+        <ToolCallout heading="See where your experience could take you instead" />
       </div>
-    </div>
+
+      <GuideSection id="exit" title="Plan your way out">
+        <Prose className="mt-4">
+          <ol>
+            <li>
+              <strong>Work out your runway.</strong> How many months could you pay your bills without a salary? That
+              decides how carefully you need to plan.
+            </li>
+            <li>
+              <strong>Decide what you are moving towards,</strong> not only what you are leaving. The{" "}
+              <Link href="/career-change/how-to-change-careers">step-by-step career change guide</Link> covers checking
+              pay, entry routes and funding.
+            </li>
+            <li>
+              <strong>Apply while you are still employed</strong> if you can. You can be choosier, and you are not
+              negotiating from an empty bank account.
+            </li>
+            <li>
+              <strong>Close the gap with the shortest route that works:</strong> a course, a Skills Bootcamp or an
+              apprenticeship, rather than starting a degree by default.
+            </li>
+            <li>
+              <strong>Leave on good terms.</strong> Give your notice in writing and keep it professional; you may need a
+              reference.
+            </li>
+          </ol>
+        </Prose>
+      </GuideSection>
+
+      <FaqSection
+        items={[
+          {
+            question: "Should I quit my job without another one lined up?",
+            answer:
+              "Only if your health is at risk or you have enough savings to cover several months. Otherwise it is usually easier to look for work while you are still paid. Either way, give the notice your contract requires: at least one week if you have been in the job for more than a month.",
+          },
+          {
+            question: "Can I be signed off work with stress?",
+            answer:
+              "Yes, if a healthcare professional agrees you are not fit to work. You need a fit note if you are off sick for more than 7 days in a row; it can come from a GP, hospital doctor, registered nurse, occupational therapist, pharmacist or physiotherapist. For 7 days or less you can self-certify.",
+          },
+          {
+            question: "How much notice do I have to give?",
+            answer:
+              "At least one week if you have been in your job for more than a month, according to GOV.UK. Your contract can require more and may say notice must be in writing.",
+          },
+          {
+            question: "What is constructive dismissal?",
+            answer:
+              "Resigning because your employer seriously breached your employment contract, and then claiming at an employment tribunal. Acas says to get legal advice before resigning. You usually need 2 years' service, with some exceptions, and the time limit is 3 months minus 1 day.",
+          },
+          {
+            question: "Who can I talk to if my job is making me feel low?",
+            answer:
+              "Your GP is a good first step. In England you can also refer yourself to NHS talking therapies for anxiety and depression without seeing a GP. If you are struggling to cope, Samaritans are free to call on 116 123, 24 hours a day.",
+          },
+        ]}
+      />
+
+      <RelatedLinks
+        links={[
+          { href: "/what-job-is-right-for-me", label: "What job is right for me?" },
+          { href: "/low-stress-jobs-uk", label: "Low-stress jobs in the UK" },
+          { href: "/best-jobs-for-work-life-balance", label: "Jobs with a good work-life balance" },
+          { href: "/career-change/how-to-change-careers", label: "How to change careers in the UK" },
+          { href: "/careers-for", label: "Start from the job you do now" },
+        ]}
+      />
+    </GuideShell>
   );
 }

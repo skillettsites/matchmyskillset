@@ -1,226 +1,407 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import type { ReactNode } from "react";
+import { Breadcrumbs, DataTable, FaqSection, PageHeader, Prose, SourceNote, ToolCallout, formatGBP } from "@/components/content";
+import { guideMetadata, REVAMP_DATE } from "@/components/guides/meta";
+import { ArticleJsonLd, GuideSection, GuideShell, RelatedLinks } from "@/components/guides/GuideShell";
+import { AsheSourceNote, entryApprenticeship, occupationPayById, UK_FT_MEDIAN, type OccupationPay } from "@/components/guides/pay";
 
-export const metadata: Metadata = {
-  title: "Career Change With No Money (2026) | Free Routes to a New Career",
-  description:
-    "How to change career when you have no savings. Free training, no-cost transition strategies, and careers you can switch to without spending money. Practical UK guide.",
-  keywords: [
-    "career change with no savings",
-    "how to change career when you can't afford to",
-    "free career change UK",
-    "career change no money",
-    "change career on a budget",
-    "free retraining UK",
-  ],
-  openGraph: {
-    title: "Career Change With No Money (2026 Guide)",
-    description: "Practical strategies for changing careers when you cannot afford to. Free training routes and zero-cost transitions.",
-    type: "article",
-  },
-};
+const PATH = "/career-change-with-no-money";
+const TITLE = "Career change with no money: free and funded UK routes";
+const DESCRIPTION =
+  "How to change career without savings: free courses, Skills Bootcamps, paid apprenticeships, learner loans, and how to plan for a pay dip using ONS data.";
+const H1 = "How to change career with no money";
 
-export default function CareerChangeNoMoneyPage() {
+export const metadata: Metadata = guideMetadata({ path: PATH, title: TITLE, description: DESCRIPTION });
+
+const FCFJ_URL = "https://www.gov.uk/guidance/free-courses-for-jobs";
+const BOOTCAMP_URL = "https://www.skillsforcareers.education.gov.uk/pages/training-choice/skills-bootcamp";
+const BOOTCAMP_FUNDING_URL =
+  "https://www.gov.uk/government/publications/esfa-skills-bootcamps/dfe-skills-bootcamps-technical-funding-guide-from-august-2025";
+const BOOTCAMP_FPM_URL = "https://www.gov.uk/government/publications/skills-bootcamps-funding-and-performance-management";
+const ALL_URL = "https://www.gov.uk/advanced-learner-loan";
+const REPAY_URL = "https://www.gov.uk/repaying-your-student-loan/what-you-pay";
+const LLE_URL = "https://www.gov.uk/student-finance-on-or-after-1-january-2027";
+const FUNDING_RULES_URL =
+  "https://www.gov.uk/government/publications/apprenticeship-funding-rules-and-assessment-plan-guidance-2026-to-2027";
+const NCS_CHANGE_URL = "https://nationalcareers.service.gov.uk/service-is-changing";
+
+// Jobs with a way in you can fund without savings (an apprenticeship, and in
+// several cases a free course area too). Editorial selection; figures from the dataset.
+const DESTINATION_IDS = [
+  "hgv-driver",
+  "data-analyst",
+  "paralegal",
+  "hr-officer",
+  "it-support-technician",
+  "bookkeeper",
+  "marketing-executive",
+  "healthcare-assistant",
+];
+
+function Ext({ href, children }: { href: string; children: ReactNode }) {
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12 sm:py-20">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "Article",
-            headline: "Career Change With No Money (2026 Guide)",
-            description: "How to change career with no savings using free training and zero-cost strategies.",
-            author: { "@type": "Organization", name: "MatchMySkillset" },
-            publisher: { "@type": "Organization", name: "MatchMySkillset", url: "https://matchmyskillset.com" },
-            datePublished: "2026-04-01",
-            dateModified: "2026-04-01",
-          }),
-        }}
+    <a href={href} className="link" rel="noopener">
+      {children}
+    </a>
+  );
+}
+
+function money(value: number | null) {
+  return value === null ? <span className="text-muted">Not published</span> : formatGBP(value);
+}
+
+function WayIn({ p }: { p: OccupationPay }) {
+  const s = entryApprenticeship(p);
+  if (!s) return <span className="text-muted">No apprenticeship listed</span>;
+  return (
+    <>
+      <Ext href={s.url}>{s.title}</Ext> apprenticeship, level {s.level}, typically {s.typicalDurationMonths} months
+    </>
+  );
+}
+
+interface RouteRow {
+  route: string;
+  who: ReactNode;
+  cost: ReactNode;
+  source: ReactNode;
+}
+
+interface DestRow {
+  id: string;
+  p: OccupationPay;
+  median: number | null;
+  p25: number | null;
+}
+
+export default function Page() {
+  const routes: RouteRow[] = [
+    {
+      route: "Apprenticeship",
+      who: <>Aged 16 or over, living in England and not in full-time education. No upper age limit.</>,
+      cost: (
+        <>
+          Nothing for the training, and you are paid: at least £8.00 an hour in the first year, then the minimum wage for
+          your age (£12.71 an hour at 21 and over, from April 2026).
+        </>
+      ),
+      source: (
+        <>
+          <Ext href="https://www.gov.uk/become-apprentice/pay-and-conditions">GOV.UK: apprentice pay</Ext>;{" "}
+          <Ext href={FUNDING_RULES_URL}>funding rules 2026 to 2027</Ext>
+        </>
+      ),
+    },
+    {
+      route: "Free Courses for Jobs",
+      who: (
+        <>
+          Aged 19 or over and earning below £25,750, or unemployed. Some areas set slightly different rules.
+        </>
+      ),
+      cost: (
+        <>
+          Free. Covers a level 3 qualification in subjects such as accounting, digital, health and social care or
+          engineering, or a level 2 in construction, engineering or manufacturing.
+        </>
+      ),
+      source: <Ext href={FCFJ_URL}>GOV.UK, updated July 2025</Ext>,
+    },
+    {
+      route: "Skills Bootcamp",
+      who: <>Aged 19 or over. Most need no previous knowledge of the subject.</>,
+      cost: (
+        <>
+          Free to you. Up to 16 weeks, with a guaranteed job interview at the end. If your employer puts you on one to
+          upskill you, the employer pays 10% (fewer than 250 staff) or 30% (250 or more).
+        </>
+      ),
+      source: (
+        <>
+          <Ext href={BOOTCAMP_URL}>Department for Education</Ext>;{" "}
+          <Ext href={BOOTCAMP_FUNDING_URL}>funding guide from August 2025</Ext>
+        </>
+      ),
+    },
+    {
+      route: "Advanced Learner Loan",
+      who: <>Aged 19 or over, for a level 3 to 6 course at an approved college or provider in England.</>,
+      cost: (
+        <>
+          A loan for course fees only, with no credit check. You repay 9% of your income over £25,000 a year, and
+          interest is charged from the first payment.
+        </>
+      ),
+      source: (
+        <>
+          <Ext href={ALL_URL}>GOV.UK: Advanced Learner Loan</Ext>; <Ext href={REPAY_URL}>repayment plans</Ext>
+        </>
+      ),
+    },
+    {
+      route: "Learner Support",
+      who: <>Aged 19 or over, on a further education course at level 3 or below, and in financial hardship.</>,
+      cost: (
+        <>
+          Money from your college for travel, equipment, a laptop or childcare (20 or over for childcare). It may be a
+          grant or a loan.
+        </>
+      ),
+      source: <Ext href="https://www.gov.uk/learner-support">GOV.UK: Learner Support</Ext>,
+    },
+  ];
+
+  const rows: DestRow[] = DESTINATION_IDS.map((id) => {
+    const p = occupationPayById(id);
+    return { id, p, median: p.median, p25: p.p25 };
+  }).sort((a, b) => (b.p25 ?? -1) - (a.p25 ?? -1));
+  const notes = rows.filter((r) => r.p.payNote);
+
+  // Worked example: someone on the UK full-time median moving to IT support.
+  const it = occupationPayById("it-support-technician");
+  const itLow = it.p25;
+  const gap = itLow === null ? null : UK_FT_MEDIAN - itLow;
+  const apprenticeYear = Math.round(8 * 37.5 * 52);
+
+  return (
+    <GuideShell>
+      <ArticleJsonLd path={PATH} headline={H1} description={DESCRIPTION} dateModified={REVAMP_DATE} />
+      <PageHeader
+        breadcrumbs={
+          <Breadcrumbs items={[{ name: "Career change", href: "/career-change" }, { name: "Career change with no money" }]} />
+        }
+        kicker="Career change"
+        title={H1}
+        intro={
+          <p>
+            You can change career without savings if you choose a route that pays you or costs nothing up front. In
+            England that means an apprenticeship (paid, at least £8.00 an hour in the first year), a free course such as
+            Free Courses for Jobs or a Skills Bootcamp, or a loan you only repay once you earn over £25,000. Then plan
+            for any drop in pay, using real figures rather than hope.
+          </p>
+        }
+        updated={REVAMP_DATE}
       />
 
-      <div className="text-sm text-gray-400 mb-6">
-        <Link href="/" className="hover:text-indigo-600">Home</Link>
-        {" / "}<span className="text-gray-600">Career Change With No Money</span>
-      </div>
+      <GuideSection
+        id="routes"
+        title="Free and funded ways to retrain"
+        intro={
+          <p>
+            These are the main routes in England that do not need savings. Scotland, Wales and Northern Ireland have
+            their own schemes.
+          </p>
+        }
+      >
+        <DataTable<RouteRow>
+          className="mt-8"
+          caption="Ways to retrain without paying up front"
+          columns={[
+            { key: "route", header: "Route", rowHeader: true },
+            { key: "who", header: "Who can use it", render: (r) => r.who },
+            { key: "cost", header: "What it costs you", render: (r) => r.cost },
+            { key: "source", header: "Source", render: (r) => r.source },
+          ]}
+          rows={routes}
+          rowKey={(r) => r.route}
+          source={<SourceNote source="GOV.UK and Department for Education pages linked in each row" note="Checked 28 September 2026." />}
+        />
+        <Prose className="mt-6">
+          <p>
+            <strong>On Universal Credit?</strong> GOV.UK says you can apply for a Free Courses for Jobs course if it will
+            improve your chances of getting work, and that many claimants can take full-time training for up to 16 weeks
+            and keep claiming. Ask your work coach before you enrol.
+          </p>
+          <p>
+            <strong>Degree-level study.</strong> From 1 January 2027, student finance for certain level 4 to 6 courses
+            and modules, including most undergraduate courses, moves to the{" "}
+            <Ext href={LLE_URL}>Lifelong Learning Entitlement</Ext>, with Tuition Fee Loans of up
+            to £39,160 in total, repaid once you earn over £25,000 a year. Applications open at the end of October 2026.
+          </p>
+          <p>
+            Skills Bootcamps are described as free in the Department for Education&apos;s{" "}
+            <Ext href={BOOTCAMP_FPM_URL}>funding and performance management guidance</Ext>. Find one, or a free course,
+            with the <Ext href="https://nationalcareers.service.gov.uk/find-a-course">course finder</Ext>. For more on
+            paid training, see <Link href="/apprenticeships-for-adults-uk">apprenticeships for adults</Link>.
+          </p>
+        </Prose>
+      </GuideSection>
 
-      <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-        How to Change Career When You Cannot Afford To
-      </h1>
+      <GuideSection id="careers-advice" title="Free careers advice changes on 1 October 2026">
+        <Prose className="mt-4">
+          <p>
+            The National Careers Service website is being renamed &quot;Get careers information and advice&quot; from 1
+            October 2026. The address stays the same, and the job profiles, skills assessment and course finder stay
+            online. What changes is personal advice: you will no longer be able to chat online, email or ask for a call
+            through the site. Adults in England will instead get careers advice from the Department for Work and Pensions
+            Careers Service, and the government&apos;s new{" "}
+            <Ext href="https://www.jobs.service.gov.uk/">Jobs and Careers Service</Ext> has a CV builder and job search.
+          </p>
+          <p>
+            Source: <Ext href={NCS_CHANGE_URL}>National Careers Service, &quot;The National Careers Service is changing&quot;</Ext>
+            , checked 28 September 2026.
+          </p>
+        </Prose>
+      </GuideSection>
 
-      <div className="flex items-center gap-3 text-sm text-gray-400 mb-8">
-        <span>Updated April 2026</span>
-        <span>|</span>
-        <span>11 min read</span>
-      </div>
+      <GuideSection
+        id="pay-dip"
+        title="Plan for the pay dip"
+        intro={
+          <p>
+            ONS annual pay only covers people who have been in the same job for more than a year, so a median is not a
+            starting salary. The lower quartile, the level a quarter of full-time employees earn less than, is a more
+            careful figure to plan with.
+          </p>
+        }
+      >
+        <DataTable<DestRow>
+          className="mt-8"
+          caption="Jobs you can train for without savings, with UK pay"
+          description={<>Full-time employees. The UK median for all full-time employees is {formatGBP(UK_FT_MEDIAN)}.</>}
+          columns={[
+            { key: "job", header: "Job", rowHeader: true, render: (r) => r.p.title },
+            {
+              key: "p25",
+              header: "Lower quartile",
+              mobileLabel: "A quarter earn less than",
+              numeric: true,
+              render: (r) => money(r.p25),
+            },
+            { key: "median", header: "Median pay", numeric: true, render: (r) => money(r.median) },
+            { key: "route", header: "Paid way in", render: (r) => <WayIn p={r.p} /> },
+          ]}
+          rows={rows}
+          rowKey={(r) => r.id}
+          source={
+            <>
+              <AsheSourceNote />
+              <SourceNote
+                className="mt-1"
+                source="Skills England, apprenticeship standards"
+                href="https://skillsengland.education.gov.uk/apprenticeships/"
+                note="Checked 28 September 2026. Apprenticeship standards cover England."
+              />
+            </>
+          }
+          notes={
+            notes.length > 0 ? (
+              <ul className="space-y-1 text-xs text-muted">
+                {notes.map((r) => (
+                  <li key={r.id}>
+                    {r.p.title}: {r.p.payNote}
+                  </li>
+                ))}
+              </ul>
+            ) : undefined
+          }
+        />
+        <Prose className="mt-6">
+          <p>
+            A worked example. If you earn the UK full-time median of {formatGBP(UK_FT_MEDIAN)} and move into IT support,
+            planning on the lower quartile of {money(itLow)} means{" "}
+            {gap === null ? (
+              "working out the gap from a real job offer"
+            ) : (
+              <>
+                a gap of about {formatGBP(gap)} a year before tax, or {formatGBP(Math.round(gap / 12))} a month
+              </>
+            )}
+            . Going in through an apprenticeship on the £8.00 minimum would pay {formatGBP(apprenticeYear)} a year at 37.5
+            hours a week in the first year, so ask employers what they really pay.
+          </p>
+          <ol>
+            <li>Work out your monthly gap from the figures above, or better, from real job adverts.</li>
+            <li>Count how many months you could cover it, from savings, a partner&apos;s income or overtime before you move.</li>
+            <li>
+              Check whether you would get any benefits on the lower income with a{" "}
+              <Ext href="https://www.gov.uk/benefits-calculators">GOV.UK benefits calculator</Ext>.
+            </li>
+            <li>If the gap is too big, look at the ways to switch without a gap below.</li>
+          </ol>
+        </Prose>
+      </GuideSection>
 
-      <p className="text-lg text-gray-600 leading-relaxed mb-4">
-        The biggest barrier to career change is not skills, confidence, or age. It is money. "I cannot afford to retrain" and "I cannot afford a pay cut while I transition" are the two most common reasons people stay in careers they hate. Both are valid concerns. Neither is insurmountable.
-      </p>
-      <p className="text-gray-600 leading-relaxed mb-4">
-        This guide is for people with no savings, no financial safety net, and no ability to quit their job and study full-time. Every strategy here costs nothing or close to nothing, and every transition can be done alongside your current job.
-      </p>
-      <p className="text-gray-600 leading-relaxed mb-10">
-        The core principle: change career by leveraging skills you already have, not by paying for skills you do not.
-      </p>
+      <GuideSection id="without-losing-money" title="How to change careers without losing money">
+        <Prose className="mt-4">
+          <ul>
+            <li>
+              <strong>Train while you keep your job.</strong> Part-time and online courses let you keep your income. Every
+              employee has the right to ask for flexible working, such as compressed hours, to make time to study.{" "}
+              <Ext href="https://www.gov.uk/flexible-working">GOV.UK: flexible working</Ext>
+            </li>
+            <li>
+              <strong>Move inside your employer.</strong> A move to another team keeps your income while you change the
+              work you do. Existing staff can also become apprentices, as long as the role needs significant new skills.{" "}
+              <Ext href={FUNDING_RULES_URL}>Funding rules 2026 to 2027</Ext>
+            </li>
+            <li>
+              <strong>Take a bridge role.</strong> Move to a job that uses your current skills in the sector you want,
+              then move again from the inside. Our <Link href="/transferable-skills">transferable skills guide</Link>{" "}
+              helps you spot them.
+            </li>
+            <li>
+              <strong>If you are being made redundant,</strong> with 2 years&apos; service you can take reasonable time
+              off during your notice to look for work or arrange training, and statutory redundancy pay under £30,000 is
+              not taxed. <Ext href="https://www.gov.uk/redundancy-your-rights">GOV.UK: redundancy rights</Ext>
+            </li>
+          </ul>
+        </Prose>
+      </GuideSection>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-10">
-        <div className="bg-indigo-50 rounded-xl p-4 text-center">
-          <div className="text-2xl font-bold text-indigo-600">£0</div>
-          <div className="text-xs text-gray-500">Cost of many transitions</div>
-        </div>
-        <div className="bg-green-50 rounded-xl p-4 text-center">
-          <div className="text-2xl font-bold text-green-600">76%</div>
-          <div className="text-xs text-gray-500">Employers: skills over degrees</div>
-        </div>
-        <div className="bg-amber-50 rounded-xl p-4 text-center">
-          <div className="text-2xl font-bold text-amber-600">100+</div>
-          <div className="text-xs text-gray-500">Free certifications available</div>
-        </div>
-      </div>
+      <ToolCallout
+        className="mt-14"
+        heading="Find careers your current skills already fit"
+        body={
+          <p>
+            Tell us the job you do now, or paste your CV, and we will show the jobs people with your skills move into,
+            with ONS pay and the free or paid training that leads to each. Free, and no account needed.
+          </p>
+        }
+      />
 
-      <div className="bg-indigo-50 rounded-xl p-5 mb-10 flex flex-col sm:flex-row items-center gap-4">
-        <div className="flex-1">
-          <div className="font-semibold text-gray-900">The first step costs nothing</div>
-          <div className="text-sm text-gray-500">Upload your CV and discover which careers your existing skills qualify you for. Free. 2 minutes. No credit card.</div>
-        </div>
-        <Link href="/discover" className="bg-indigo-600 text-white font-medium px-6 py-2.5 rounded-lg hover:bg-indigo-700 transition-colors text-sm whitespace-nowrap">
-          Analyse My Skills Free
-        </Link>
-      </div>
+      <FaqSection
+        className="mt-14"
+        items={[
+          {
+            question: "How do I change careers without losing money?",
+            answer:
+              "Keep earning while you train. You can take a part-time course and ask your employer for flexible working, move to another team inside your employer, or start an apprenticeship, which pays a wage while you train. Before you move, compare the lower-quartile pay for the new job with what you earn now and work out how many months you could cover the difference.",
+          },
+          {
+            question: "Can I retrain for free in the UK?",
+            answer:
+              "In England, often yes. Free Courses for Jobs pays for a level 3 qualification if you are 19 or over and earn below £25,750 or are unemployed. Skills Bootcamps are free to learners, last up to 16 weeks and end with a guaranteed job interview. Apprenticeship training is free to the apprentice and you are paid a wage.",
+          },
+          {
+            question: "Can I retrain while claiming Universal Credit?",
+            answer:
+              "Often, yes. GOV.UK says Universal Credit claimants can apply for a free course if it will improve their chances of getting work, and that many can take full-time training for up to 16 weeks and continue to claim. Talk to your work coach first.",
+          },
+          {
+            question: "What is happening to the National Careers Service?",
+            answer:
+              "From 1 October 2026 the website is renamed Get careers information and advice. It keeps its address, job profiles and course finder, but you can no longer chat, email or ask for a call through it. Adults in England get careers advice from the Department for Work and Pensions Careers Service instead.",
+          },
+          {
+            question: "Do I have to pay back an Advanced Learner Loan?",
+            answer:
+              "Yes, but only when your income is over the threshold. For courses started since August 2023 you repay 9% of your income over £25,000 a year, and interest is charged from the first payment. If you take the loan for an Access to Higher Education course, Student Finance England writes off the balance once you complete an eligible higher education course.",
+          },
+        ]}
+      />
 
-      {/* Strategy 1: Zero-cost transitions */}
-      <section className="mb-10">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">Strategy 1: Switch without retraining</h2>
-        <p className="text-gray-600 leading-relaxed mb-4">
-          Many career changes do not require new qualifications at all. They just require reframing your existing skills for a different audience. These transitions cost zero:
-        </p>
-        <div className="space-y-4">
-          {[
-            { from: "Teacher", to: "L&D Manager, Corporate Trainer", cost: "£0", timeframe: "1-3 months" },
-            { from: "Retail Manager", to: "Recruitment Consultant, Customer Success", cost: "£0", timeframe: "Immediate" },
-            { from: "Admin/Office Worker", to: "Project Coordinator, Executive Assistant", cost: "£0", timeframe: "1-2 months" },
-            { from: "Customer Service", to: "Account Manager, Sales", cost: "£0", timeframe: "Immediate" },
-            { from: "Any manager", to: "Operations Manager in a different industry", cost: "£0", timeframe: "1-3 months" },
-          ].map((t) => (
-            <div key={t.from} className="bg-white rounded-xl border border-gray-100 p-5 flex flex-col sm:flex-row sm:items-center gap-3">
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-sm font-semibold text-gray-900">{t.from}</span>
-                  <span className="text-gray-400">&rarr;</span>
-                  <span className="text-sm font-semibold text-indigo-600">{t.to}</span>
-                </div>
-                <div className="flex gap-3">
-                  <span className="text-xs text-green-600 font-medium">Cost: {t.cost}</span>
-                  <span className="text-xs text-gray-500">Timeframe: {t.timeframe}</span>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Strategy 2: Free training */}
-      <section className="mb-10">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">Strategy 2: Free training that leads to real careers</h2>
-        <div className="space-y-4">
-          {[
-            { programme: "Google Career Certificates", subjects: "Data Analytics, UX Design, Project Management, Cybersecurity, IT Support, Digital Marketing", cost: "Free (with Google scholarship) or £30/month on Coursera", duration: "3-6 months", outcome: "Recognised by employers including Google itself. Portfolio of projects." },
-            { programme: "HubSpot Academy", subjects: "Inbound Marketing, Content Marketing, Social Media, Email Marketing, Sales", cost: "Completely free", duration: "2-10 hours per certification", outcome: "Industry-recognised certifications. Immediate LinkedIn credibility." },
-            { programme: "freeCodeCamp", subjects: "Web Development, JavaScript, Python, Data Visualisation, APIs", cost: "Completely free", duration: "Self-paced (300+ hours)", outcome: "Portfolio projects. Many freeCodeCamp alumni now work at major tech companies." },
-            { programme: "Skills Bootcamps (Government)", subjects: "Digital, Technical, Green skills", cost: "Free (government funded)", duration: "Up to 16 weeks", outcome: "Fast-track to interview with employer. Guaranteed job interview." },
-            { programme: "The Open University (OpenLearn)", subjects: "800+ free courses in business, tech, health, science", cost: "Completely free", duration: "Variable (2-24 hours)", outcome: "Digital badges and certificates. Build towards formal OU qualifications." },
-            { programme: "AWS Cloud Practitioner", subjects: "Cloud Computing fundamentals", cost: "Free training (£100 exam fee, often waived via vouchers)", duration: "20-40 hours", outcome: "Entry point to cloud careers paying £35,000+." },
-          ].map((p) => (
-            <div key={p.programme} className="bg-white rounded-xl border border-gray-100 p-6">
-              <h3 className="font-semibold text-gray-900 mb-1">{p.programme}</h3>
-              <p className="text-xs text-gray-500 mb-2">{p.subjects}</p>
-              <div className="grid grid-cols-3 gap-2 mb-2">
-                <div className="bg-green-50 rounded p-2 text-center">
-                  <div className="text-xs font-semibold text-green-700">Cost</div>
-                  <div className="text-xs text-green-800">{p.cost}</div>
-                </div>
-                <div className="bg-indigo-50 rounded p-2 text-center">
-                  <div className="text-xs font-semibold text-indigo-700">Duration</div>
-                  <div className="text-xs text-indigo-800">{p.duration}</div>
-                </div>
-                <div className="bg-amber-50 rounded p-2 text-center">
-                  <div className="text-xs font-semibold text-amber-700">Outcome</div>
-                  <div className="text-xs text-amber-800">{p.outcome}</div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* CTA 2 */}
-      <div className="bg-gray-900 text-white rounded-xl p-6 text-center mb-10">
-        <h3 className="text-lg font-semibold mb-2">Lack of money is not lack of options</h3>
-        <p className="text-gray-300 text-sm mb-4">Our AI matches your existing skills to careers, then shows you which free training closes any remaining gaps. The whole process is free.</p>
-        <Link href="/discover" className="inline-flex items-center bg-white text-gray-900 font-semibold px-6 py-3 rounded-lg hover:bg-gray-100 transition-colors text-sm">
-          Get My Personalised Matches
-        </Link>
-      </div>
-
-      {/* Strategy 3: Earn while you switch */}
-      <section className="mb-10">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">Strategy 3: Earn while you switch</h2>
-        <div className="grid sm:grid-cols-2 gap-4">
-          <div className="bg-green-50 rounded-xl p-5 border border-green-100">
-            <h3 className="font-semibold text-gray-900 mb-2">Apprenticeships</h3>
-            <p className="text-sm text-gray-600">Earn a salary while training. No age limit. No tuition fees. Degree-level qualifications available. See our <Link href="/apprenticeships-for-adults-uk" className="text-indigo-600 font-medium hover:text-indigo-700">adult apprenticeships guide</Link>.</p>
-          </div>
-          <div className="bg-green-50 rounded-xl p-5 border border-green-100">
-            <h3 className="font-semibold text-gray-900 mb-2">Internal transfers</h3>
-            <p className="text-sm text-gray-600">Your current employer may have roles in different departments. Internal moves are the lowest-risk career changes: same employer, different role, no income gap.</p>
-          </div>
-          <div className="bg-green-50 rounded-xl p-5 border border-green-100">
-            <h3 className="font-semibold text-gray-900 mb-2">Side-project-first approach</h3>
-            <p className="text-sm text-gray-600">Start your new career as a side project alongside your day job. Freelance writing, web development, or consulting evenings and weekends until income replaces your salary.</p>
-          </div>
-          <div className="bg-green-50 rounded-xl p-5 border border-green-100">
-            <h3 className="font-semibold text-gray-900 mb-2">Bridge roles</h3>
-            <p className="text-sm text-gray-600">Take a role that is halfway between your current career and your target. It maintains income while moving you closer. Example: teacher to EdTech trainer to L&D manager.</p>
-          </div>
-        </div>
-      </section>
-
-      <div className="border-l-4 border-indigo-600 bg-indigo-50 rounded-r-xl p-5 mb-10">
-        <p className="text-gray-700 text-sm">
-          <span className="font-semibold">The UK government spends billions on skills training that goes unused.</span> Free bootcamps, apprenticeships, and funded courses are available right now. The barrier is awareness, not money.{" "}
-          <Link href="/discover" className="text-indigo-600 font-medium hover:text-indigo-700">Start with a free skills analysis</Link>.
-        </p>
-      </div>
-
-      <p className="text-gray-600 mb-10">
-        No money is not no options.{" "}
-        <Link href="/discover" className="text-indigo-600 font-medium hover:text-indigo-700">
-          Upload your CV and see which career changes cost nothing &rarr;
-        </Link>
-      </p>
-
-      <section className="bg-indigo-50 rounded-xl p-8 text-center mb-10">
-        <h2 className="text-xl font-semibold text-gray-900 mb-3">Change your career for free</h2>
-        <p className="text-gray-500 mb-6 max-w-lg mx-auto">Upload your CV and discover zero-cost career transitions. Our AI finds careers your existing skills qualify you for. Free. 2 minutes.</p>
-        <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <Link href="/discover" className="inline-flex items-center justify-center bg-indigo-600 text-white font-semibold px-8 py-4 rounded-xl hover:bg-indigo-700 transition-colors">Discover My Career Matches</Link>
-          <Link href="/quiz" className="inline-flex items-center justify-center border border-gray-200 text-gray-700 font-medium px-8 py-4 rounded-xl hover:bg-white transition-colors">Take the Career Quiz</Link>
-        </div>
-      </section>
-
-      <div className="pt-8 border-t border-gray-100">
-        <h3 className="text-sm font-semibold text-gray-500 mb-3">Related Pages</h3>
-        <div className="flex flex-wrap gap-2">
-          <Link href="/apprenticeships-for-adults-uk" className="text-sm text-indigo-600 hover:text-indigo-700">Adult Apprenticeships</Link>
-          <span className="text-gray-300">|</span>
-          <Link href="/career-change-at-30" className="text-sm text-indigo-600 hover:text-indigo-700">Career Change at 30</Link>
-          <span className="text-gray-300">|</span>
-          <Link href="/jobs-for-people-who-hate-their-job" className="text-sm text-indigo-600 hover:text-indigo-700">I Hate My Job</Link>
-          <span className="text-gray-300">|</span>
-          <Link href="/how-to-write-a-cv-for-career-change" className="text-sm text-indigo-600 hover:text-indigo-700">Career Change CV Guide</Link>
-        </div>
-      </div>
-    </div>
+      <RelatedLinks
+        links={[
+          { href: "/apprenticeships-for-adults-uk", label: "Apprenticeships for adults" },
+          { href: "/career-change/how-to-change-careers", label: "How to change careers in the UK" },
+          { href: "/jobs-without-a-degree", label: "Jobs without a degree, with ONS pay" },
+          { href: "/career-change-at-30", label: "Career change at 30" },
+          { href: "/career-change-at-50", label: "Career change at 50" },
+          { href: "/jobs-for-people-who-hate-their-job", label: "Jobs for people who hate their job" },
+        ]}
+      />
+    </GuideShell>
   );
 }

@@ -1,384 +1,423 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import {
+  Breadcrumbs,
+  DataTable,
+  FaqSection,
+  PageHeader,
+  Prose,
+  SalaryFigure,
+  SourceNote,
+  ToolCallout,
+  formatGBP,
+} from "@/components/content";
+import { guideMetadata, REVAMP_DATE } from "@/components/guides/meta";
+import { ArticleJsonLd, GuideSection, GuideShell, OnThisPage, RelatedLinks } from "@/components/guides/GuideShell";
+import { AsheSourceNote, UK_FT_MEDIAN, unitGroupPay, type UnitGroupPay } from "@/components/guides/pay";
+import { SOC_SOURCE, getSocUnitGroup } from "@/data/careers";
+import { GOV, NCA_MONEY_MULES, OPN_2026 } from "../work-from-home-jobs/_data/sources";
 
-export const metadata: Metadata = {
-  title: "15 Work From Home Jobs With No Experience UK (2026)",
-  description:
-    "Genuine work from home jobs in the UK that require no prior experience or qualifications. Real roles, real pay, no scams. Salary ranges and entry routes included.",
-  keywords: [
-    "work from home no experience UK",
-    "remote jobs no qualifications",
-    "no experience work from home",
-    "entry level remote jobs UK",
-    "WFH jobs no degree",
-    "beginner remote jobs",
-  ],
-  openGraph: {
-    title: "15 Work From Home Jobs With No Experience UK (2026)",
-    description:
-      "Genuine remote jobs that need zero experience. Real pay, real opportunities, no scams.",
-    type: "article",
-  },
-};
+const PATH = "/jobs-you-can-do-from-home-with-no-experience";
+const TITLE = "Jobs you can do from home with no experience (UK)";
+const DESCRIPTION =
+  "Home-based UK jobs that take beginners (customer service, admin, data entry, typing), what ONS says they pay, how to spot job scams and where to start.";
+const H1 = "Jobs you can do from home with no experience";
 
-interface NoExpJob {
-  title: string;
-  salary: string;
-  genuinelyRemote: boolean;
-  description: string;
-  whyNoExperience: string;
-  howToStart: string;
-  watchOut: string;
-}
+export const metadata: Metadata = guideMetadata({ path: PATH, title: TITLE, description: DESCRIPTION });
 
-const JOBS: NoExpJob[] = [
-  {
-    title: "Customer Service Advisor (Remote)",
-    salary: "£20,000 - £26,000",
-    genuinelyRemote: true,
-    description: "Handle customer enquiries via phone, chat, or email for companies like Amazon, BT, or insurance firms. Many large employers now hire fully remote customer service teams.",
-    whyNoExperience: "Companies provide full training on their products and systems. Your ability to communicate clearly and stay calm is the real requirement.",
-    howToStart: "Apply directly on company careers pages. Search 'remote customer service' on Indeed or Reed. Many offer paid training.",
-    watchOut: "Avoid any role that asks you to pay for training or equipment upfront. Legitimate employers provide everything.",
-  },
-  {
-    title: "Data Entry Clerk",
-    salary: "£18,000 - £24,000",
-    genuinelyRemote: true,
-    description: "Input information into databases, spreadsheets, or CRM systems. Repetitive but straightforward work that can be done from anywhere with a computer and internet connection.",
-    whyNoExperience: "If you can type accurately and follow instructions, you qualify. Speed improves with practice.",
-    howToStart: "Temp agencies (Reed, Hays, Office Angels) frequently have remote data entry roles. Start with a typing speed test to prove your ability.",
-    watchOut: "Beware of 'data entry jobs' that require upfront payment. These are almost always scams.",
-  },
-  {
-    title: "Virtual Assistant",
-    salary: "£10 - £20/hour",
-    genuinelyRemote: true,
-    description: "Provide remote administrative support: managing diaries, emails, travel bookings, and basic tasks for businesses and entrepreneurs.",
-    whyNoExperience: "Basic organisational skills and computer literacy are the real requirements. If you can manage your own life, you can manage someone else's admin.",
-    howToStart: "Register on Time Etc, Virtalent, or Belay. Start at lower rates to build reviews, then increase as you gain experience.",
-    watchOut: "Some VA platforms take a large commission. Compare terms before signing up.",
-  },
-  {
-    title: "Online Survey Taker / User Tester",
-    salary: "£100 - £500/month (part-time)",
-    genuinelyRemote: true,
-    description: "Complete paid surveys, test websites and apps, and provide feedback on user experiences. Not a full salary, but genuine supplementary income.",
-    whyNoExperience: "Companies want opinions from real people, not experts. Your perspective as a regular consumer is exactly what they pay for.",
-    howToStart: "Register on Prolific (academic surveys, best pay), UserTesting (£8-15 per test), and Respondent.io (higher paying studies).",
-    watchOut: "This is side income, not a career. Anyone claiming you can earn £3,000/month from surveys is lying.",
-  },
-  {
-    title: "Transcriptionist",
-    salary: "£18,000 - £28,000",
-    genuinelyRemote: true,
-    description: "Convert audio recordings into written text. General transcription has a low barrier to entry. Medical and legal transcription pays more but requires training.",
-    whyNoExperience: "Good listening skills, fast typing, and attention to detail. You develop speed and accuracy with practice.",
-    howToStart: "Start on TranscribeMe or Rev for general transcription. Practice with free audio files. Specialise later for higher rates.",
-    watchOut: "Initial pay on platforms like Rev can be low (£3-5/audio hour). Rates improve as your accuracy scores increase.",
-  },
-  {
-    title: "Social Media Assistant",
-    salary: "£18,000 - £28,000",
-    genuinelyRemote: true,
-    description: "Help businesses manage their social media accounts: scheduling posts, responding to comments, and basic content creation. If you use social media daily, you already have the fundamentals.",
-    whyNoExperience: "Small businesses need help but cannot afford experienced social media managers. Your personal social media experience is relevant.",
-    howToStart: "Offer to manage social accounts for local businesses for free initially. Build a portfolio. Then pitch freelance services or apply to agencies.",
-    watchOut: "Do not pay for expensive social media courses. Free resources from HubSpot and Google are better than most paid ones.",
-  },
-  {
-    title: "Content Moderator",
-    salary: "£20,000 - £28,000",
-    genuinelyRemote: true,
-    description: "Review user-generated content on platforms to ensure it meets community guidelines. Involves reviewing text, images, and sometimes video content.",
-    whyNoExperience: "Companies train you on their specific guidelines. The core skill is judgement, which does not require formal qualifications.",
-    howToStart: "Search for content moderator roles on Indeed. Companies like Accenture, Cognizant, and Meta hire moderators regularly.",
-    watchOut: "This role can involve exposure to distressing content. Read the role description carefully and check what wellbeing support is offered.",
-  },
-  {
-    title: "Online Tutor",
-    salary: "£15 - £40/hour",
-    genuinelyRemote: true,
-    description: "Teach subjects you know via video call. English language tutoring is particularly in demand from international students. Primary school subjects are also popular.",
-    whyNoExperience: "If you are proficient in a subject, you can tutor it. Formal teaching qualifications help but are not always required.",
-    howToStart: "Register on Tutorful, MyTutor, or Preply. Set your rates. Build reviews through consistent quality.",
-    watchOut: "Demand fluctuates seasonally (peaks around exam time). Build a regular client base rather than relying on platform bookings.",
-  },
-  {
-    title: "Freelance Proofreader",
-    salary: "£20,000 - £35,000",
-    genuinelyRemote: true,
-    description: "Check written content for spelling, grammar, and consistency errors. Businesses, publishers, and students all need proofreading services.",
-    whyNoExperience: "Strong command of English and an eye for detail. A short proofreading course adds credibility but is not mandatory.",
-    howToStart: "Take the free CIEP proofreading quiz to test your skills. Register on Reedsy or PeoplePerHour. Build a portfolio from initial clients.",
-    watchOut: "Pricing varies wildly. Research market rates before setting yours too low.",
-  },
-  {
-    title: "E-commerce Reseller",
-    salary: "Variable (£200 - £3,000+/month)",
-    genuinelyRemote: true,
-    description: "Buy items cheaply (car boots, charity shops, clearance) and resell on eBay, Vinted, or Amazon. A genuine business model that thousands of UK sellers profit from.",
-    whyNoExperience: "Start with items you already own. Learn what sells through experience. Scale gradually with profits.",
-    howToStart: "List 10 items from your home on eBay or Vinted today. Learn what categories sell fast. Reinvest profits into stock.",
-    watchOut: "Track your costs carefully. HMRC requires you to declare income over the £1,000 trading allowance.",
-  },
-  {
-    title: "Delivery Driver (Flexible)",
-    salary: "£10 - £18/hour",
-    genuinelyRemote: false,
-    description: "Not desk-remote, but flexible. Deliver for Amazon Flex, Deliveroo, or DPD on your own schedule. Choose when and how long you work each day.",
-    whyNoExperience: "A driving licence and a suitable vehicle are the main requirements. Training is provided through the app.",
-    howToStart: "Sign up on Amazon Flex, Deliveroo, or Stuart. Approval usually takes 1-2 weeks. Start with a few hours to test it.",
-    watchOut: "Factor in fuel, insurance, and vehicle wear. Your actual hourly rate after expenses matters more than the headline figure.",
-  },
-  {
-    title: "Chat Support Agent",
-    salary: "£19,000 - £25,000",
-    genuinelyRemote: true,
-    description: "Handle customer queries through live chat rather than phone. Suits people who prefer written communication and can type quickly while maintaining a friendly tone.",
-    whyNoExperience: "Full training provided. If you can write clearly, type at a reasonable speed, and stay patient, you meet the requirements.",
-    howToStart: "Search 'live chat agent remote' on Indeed or LinkedIn. E-commerce and SaaS companies hire chat agents regularly.",
-    watchOut: "Some roles require you to handle multiple chat conversations simultaneously. Ask about this in interviews.",
-  },
-  {
-    title: "Subtitler / Captioner",
-    salary: "£18,000 - £30,000",
-    genuinelyRemote: true,
-    description: "Add subtitles to videos for streaming platforms, YouTube creators, and corporate content. Growing demand due to accessibility requirements and international content.",
-    whyNoExperience: "Good listening, fast typing, and timing skills. You learn subtitle formatting quickly. Bilingual skills are a bonus.",
-    howToStart: "Apply to Rev, 3Play Media, or Ai-Media. Practice with free tools like Subtitle Edit. Build accuracy before speed.",
-    watchOut: "AI is handling more basic subtitling work. Specialise in quality-critical content (broadcast, legal) for job security.",
-  },
-  {
-    title: "Affiliate Blogger",
-    salary: "Variable (£0 - £5,000+/month)",
-    genuinelyRemote: true,
-    description: "Create a blog or niche website that earns commission by recommending products. Takes months to build traffic, but generates passive income once established.",
-    whyNoExperience: "You need curiosity and willingness to learn SEO, not qualifications. Many successful affiliate bloggers started with zero experience.",
-    howToStart: "Pick a niche you know about. Start a WordPress site (under £50/year). Write helpful content. Apply to Amazon Associates and other affiliate programmes.",
-    watchOut: "This takes 6-12 months before meaningful income. Anyone promising quick riches from blogging is misleading you.",
-  },
-  {
-    title: "Mystery Shopper",
-    salary: "£50 - £300/month (part-time)",
-    genuinelyRemote: true,
-    description: "Evaluate customer experiences at shops, restaurants, and online stores. Some assignments are fully online (reviewing websites, phone services, online ordering processes).",
-    whyNoExperience: "Companies want real customer perspectives, not trained assessors. Your honest feedback is the product.",
-    howToStart: "Register with Market Force, Retail Maxim, or Grassroots. Complete your profile fully. Accept assignments in your area.",
-    watchOut: "Never pay to become a mystery shopper. Legitimate companies do not charge you.",
-  },
+/** Entry-level jobs that are advertised as home-based, keyed to their ONS SOC 2020 unit group. */
+const ENTRY_ROLES: { soc: string; name: string; detail?: string }[] = [
+  { soc: "7219", name: "Customer service adviser", detail: "Phone, email and live chat" },
+  { soc: "7211", name: "Call or contact centre agent" },
+  { soc: "7113", name: "Telesales adviser" },
+  { soc: "4159", name: "Administrator or admin assistant", detail: "ONS also codes proof readers here" },
+  { soc: "4152", name: "Data entry clerk" },
+  { soc: "4151", name: "Sales administrator" },
+  { soc: "4132", name: "Claims handler", detail: "Insurance and pensions administration" },
+  { soc: "4217", name: "Audio typist or transcriber" },
 ];
 
-export default function WFHNoExperiencePage() {
+type EntryRow = UnitGroupPay & { name: string; detail?: string; entry: string };
+
+/** The first sentences of the ONS entry-route text, up to about 250 characters. */
+function onsEntry(soc: string): string {
+  const text = getSocUnitGroup(soc)?.entryRoutes ?? "";
+  // Split only where a full stop is followed by a capital, so "e.g. marketing" stays in one sentence.
+  const sentences = text.split(/(?<=\.)\s+(?=[A-Z])/).map((x) => `${x} `);
+  let out = "";
+  for (const s of sentences) {
+    if ((out + s).length > 250 && out) break;
+    out += s;
+  }
+  return out.trim();
+}
+
+function buildRows(): EntryRow[] {
+  return ENTRY_ROLES.map((r) => ({ ...unitGroupPay(r.soc), name: r.name, detail: r.detail, entry: onsEntry(r.soc) }));
+}
+
+function jobCell(r: EntryRow) {
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12 sm:py-20">
-      {/* JSON-LD */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "Article",
-            headline: "15 Work From Home Jobs With No Experience UK (2026)",
-            description:
-              "Genuine remote jobs requiring no prior experience or qualifications, with salary ranges.",
-            author: { "@type": "Organization", name: "MatchMySkillset" },
-            publisher: {
-              "@type": "Organization",
-              name: "MatchMySkillset",
-              url: "https://matchmyskillset.com",
-            },
-            datePublished: "2026-04-01",
-            dateModified: "2026-04-01",
-          }),
-        }}
+    <span className="block">
+      <span className="block">{r.name}</span>
+      {r.detail && <span className="block text-sm font-normal text-ink-2">{r.detail}</span>}
+      <span className="block text-xs font-normal text-muted">
+        ONS group {r.soc}: {r.title}
+      </span>
+    </span>
+  );
+}
+
+function payCell(value: number | null, quality: EntryRow["quality"]) {
+  if (value === null) return <span className="text-muted">not published</span>;
+  return (
+    <span className="block">
+      {formatGBP(value)}
+      {quality && quality !== "precise" && <span className="block text-xs font-normal text-muted">ONS: {quality}</span>}
+    </span>
+  );
+}
+
+export default function WorkFromHomeNoExperiencePage() {
+  const rows = buildRows();
+  const medians = rows.map((r) => r.median).filter((m): m is number => m !== null);
+  const low = Math.min(...medians);
+  const high = Math.max(...medians);
+  const sales = OPN_2026.byOccupation.find((o) => o.code === "7")!;
+  const admin = OPN_2026.byOccupation.find((o) => o.code === "4")!;
+  const supervisors = unitGroupPay("7220");
+  const itSupport = unitGroupPay("3132");
+  const bookkeepers = unitGroupPay("4122");
+  const tutors = unitGroupPay("2319");
+  const dataEntry = rows.find((r) => r.soc === "4152")!;
+
+  const faq = [
+    {
+      question: "Can I get a work from home job with no experience?",
+      answer: `Yes, mainly in customer service, contact centres and admin, where ONS says there are no formal academic entry requirements and training is usually given on the job. They are a minority of jobs, though: in ONS's survey for ${OPN_2026.period}, ${sales.homeOnly}% of people in sales and customer service jobs worked only from home and ${sales.hybrid}% split their week. Admin work is more often home-based (${admin.homeOnly}% home only, ${admin.hybrid}% hybrid).`,
+    },
+    {
+      question: "How much do work from home jobs with no experience pay?",
+      answer: `ONS does not publish pay by where people work, but for the jobs in this guide the 2025 median for full-time employees ranges from ${formatGBP(low)} to ${formatGBP(high)} a year, against ${formatGBP(UK_FT_MEDIAN)} for all full-time jobs. Those medians cover people who have been in the job for more than a year, so starting pay is usually lower. The legal minimum from April 2026 is £12.71 an hour if you are 21 or over.`,
+    },
+    {
+      question: "Should I pay for training, equipment or a DBS check to start a job?",
+      answer:
+        "No. The Disclosure and Barring Service warns jobseekers never to send money before starting a job, including for training, uniforms or DBS checks. GOV.UK also says recruitment agencies cannot charge you a fee for finding or trying to find you work. Being asked to pay up front is one of the clearest signs of a scam.",
+    },
+    {
+      question: "Are data entry jobs from home real?",
+      answer: `Some are. ONS codes data entry clerks to its data entry administrators group, where the 2025 full-time median was ${formatGBP(dataEntry.median ?? 0)}. ONS also says entrants are expected to have relevant experience and some employers ask for a minimum typing speed, so adverts that promise high pay for simple typing with no checks deserve suspicion, especially if they ask for money or your bank details.`,
+    },
+    {
+      question: "Do I need to tell HMRC about money from online tasks or surveys?",
+      answer:
+        "If you earn money for yourself rather than through an employer, the first £1,000 of gross trading income in a tax year is covered by the trading allowance. Above that you must register for Self Assessment, by 5 October after the end of the tax year. GOV.UK has a checker for additional income if you are unsure.",
+    },
+  ];
+
+  return (
+    <GuideShell>
+      <ArticleJsonLd path={PATH} headline={H1} description={DESCRIPTION} dateModified={REVAMP_DATE} />
+      <PageHeader
+        breadcrumbs={
+          <Breadcrumbs
+            items={[{ name: "Work from home jobs", href: "/work-from-home-jobs" }, { name: "With no experience" }]}
+          />
+        }
+        kicker="Working from home"
+        title={H1}
+        intro={
+          <p>
+            Yes, but they are a small share of jobs. The home-based jobs open to people new to the work are mainly
+            in customer service, admin, data entry and typing. ONS puts median full-time pay
+            for these jobs at <SalaryFigure value={low} size="sm" showPeriod={false} /> to{" "}
+            <SalaryFigure value={high} size="sm" />, below the UK median of{" "}
+            <SalaryFigure value={UK_FT_MEDIAN} size="sm" showPeriod={false} />, and new starters usually earn less.
+            Most people in customer-facing jobs still travel to work.
+          </p>
+        }
+        updated={REVAMP_DATE}
+      >
+        <AsheSourceNote />
+      </PageHeader>
+
+      <OnThisPage
+        items={[
+          { id: "jobs", label: "Jobs that take beginners" },
+          { id: "how-many", label: "How many are really home-based" },
+          { id: "pay", label: "What you will earn at first" },
+          { id: "tutoring-and-online", label: "Tutoring, freelance and online tasks" },
+          { id: "scams", label: "Spotting job scams" },
+          { id: "faq", label: "Common questions" },
+        ]}
       />
 
-      {/* Breadcrumb */}
-      <div className="text-sm text-gray-400 mb-6">
-        <Link href="/" className="hover:text-indigo-600">Home</Link>
-        {" / "}
-        <span className="text-gray-600">Work From Home Jobs No Experience</span>
-      </div>
-
-      <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-        15 Work From Home Jobs You Can Start With No Experience (UK)
-      </h1>
-
-      <div className="flex items-center gap-3 text-sm text-gray-400 mb-8">
-        <span>Updated April 2026</span>
-        <span>|</span>
-        <span>11 min read</span>
-      </div>
-
-      <p className="text-lg text-gray-600 leading-relaxed mb-4">
-        Searching for remote jobs with no experience feels like a minefield. Half the results are scams promising £5,000 a month for "easy online work." The other half require 3 years of experience for what they call an entry-level role.
-      </p>
-      <p className="text-gray-600 leading-relaxed mb-4">
-        This guide cuts through the noise. Every role listed here is genuine, pays real money, and does not require prior professional experience. Some are full-time careers with progression. Others are flexible side income. All can be started from your home in the UK.
-      </p>
-      <p className="text-gray-600 leading-relaxed mb-10">
-        We have also included specific red flags for each role, because knowing what to avoid is just as important as knowing where to apply.
-      </p>
-
-      {/* Scam Warning */}
-      <div className="bg-red-50 rounded-xl p-5 border border-red-100 mb-10">
-        <h2 className="font-semibold text-red-800 mb-2">Scam Warning: 3 Rules That Protect You</h2>
-        <ul className="text-sm text-red-700 space-y-2">
-          <li><strong>1. Never pay to start a job.</strong> Legitimate employers do not charge application fees, training fees, or starter kit costs.</li>
-          <li><strong>2. If the salary sounds too good to be true, it is.</strong> "Earn £5,000/month from home with no skills" is a scam, every single time.</li>
-          <li><strong>3. Research the company.</strong> Check Companies House, read Glassdoor reviews, and verify the company exists before sharing personal details.</li>
-        </ul>
-      </div>
-
-      {/* CTA 1 - Style A */}
-      <div className="bg-indigo-50 rounded-xl p-5 mb-10 flex flex-col sm:flex-row items-center gap-4">
-        <div className="flex-1">
-          <div className="font-semibold text-gray-900">You have more skills than "no experience" suggests</div>
-          <div className="text-sm text-gray-500">
-            Even without formal work experience, you have life skills employers value. Our AI finds them and matches you to roles.
-          </div>
-        </div>
-        <Link
-          href="/discover"
-          className="bg-indigo-600 text-white font-medium px-6 py-2.5 rounded-lg hover:bg-indigo-700 transition-colors text-sm whitespace-nowrap"
-        >
-          Analyse My Skills Free
-        </Link>
-      </div>
-
-      {/* Job Listings */}
-      <section className="mb-12">
-        <div className="space-y-5">
-          {JOBS.map((job, idx) => (
-            <div key={job.title}>
-              <div className="bg-white rounded-xl border border-gray-100 p-6">
-                <div className="flex items-start justify-between mb-2">
-                  <h3 className="text-lg font-semibold text-gray-900">{job.title}</h3>
-                  <span className="text-sm font-bold text-green-600 flex-shrink-0 ml-4">{job.salary}</span>
-                </div>
-                {job.genuinelyRemote && (
-                  <div className="inline-flex items-center px-2 py-0.5 bg-green-50 text-green-700 rounded text-xs font-medium mb-3">
-                    100% remote
-                  </div>
-                )}
-                <p className="text-sm text-gray-600 mb-3">{job.description}</p>
-                <div className="grid sm:grid-cols-2 gap-3 mb-3">
-                  <div className="bg-green-50 rounded-lg p-3">
-                    <div className="text-xs font-semibold text-green-700 mb-1">Why no experience is needed</div>
-                    <p className="text-xs text-green-800">{job.whyNoExperience}</p>
-                  </div>
-                  <div className="bg-amber-50 rounded-lg p-3">
-                    <div className="text-xs font-semibold text-amber-700 mb-1">How to start</div>
-                    <p className="text-xs text-amber-800">{job.howToStart}</p>
-                  </div>
-                </div>
-                <div className="bg-red-50 rounded-lg p-3">
-                  <div className="text-xs font-semibold text-red-700 mb-1">Watch out for</div>
-                  <p className="text-xs text-red-800">{job.watchOut}</p>
-                </div>
-              </div>
-
-              {idx === 4 && (
-                <div className="bg-gray-900 text-white rounded-xl p-6 text-center mt-5">
-                  <h3 className="text-lg font-semibold mb-2">Even "no experience" is not quite true</h3>
-                  <p className="text-gray-300 text-sm mb-4">
-                    Organising your life, communicating with people, solving daily problems: these are all transferable skills. Our AI identifies yours and maps them to careers.
-                  </p>
-                  <Link
-                    href="/discover"
-                    className="inline-flex items-center bg-white text-gray-900 font-semibold px-6 py-3 rounded-lg hover:bg-gray-100 transition-colors text-sm"
-                  >
-                    Get My Personalised Matches
-                  </Link>
-                </div>
-              )}
-
-              {idx === 9 && (
-                <div className="border-l-4 border-indigo-600 bg-indigo-50 rounded-r-xl p-5 mt-5">
-                  <p className="text-gray-700 text-sm">
-                    <span className="font-semibold">76% of UK employers now prioritise skills over formal qualifications.</span> The "experience required" barrier is shrinking fast.{" "}
-                    <Link href="/discover" className="text-indigo-600 font-medium hover:text-indigo-700">
-                      See what roles match your existing skills
-                    </Link>.
-                  </p>
-                </div>
-              )}
+      <GuideSection
+        id="jobs"
+        title="Home-based jobs that take people without experience"
+        intro={
+          <p>
+            These are common home-based roles that do not ask for experience in the same job. Pay is the ONS median for full-time employees in the whole occupation group, wherever they work. The
+            right-hand column is ONS&apos;s own summary of how people get in.
+          </p>
+        }
+      >
+        <DataTable<EntryRow>
+          caption="Entry-level jobs that can be home-based: UK pay and entry requirements"
+          description="Median and lower-quarter gross annual pay, full-time employee jobs, UK, 2025."
+          rowKey={(r) => r.soc}
+          columns={[
+            { key: "job", header: "Job", rowHeader: true, render: jobCell },
+            { key: "median", header: "Median pay", numeric: true, render: (r) => payCell(r.median, r.quality) },
+            {
+              key: "p25",
+              header: "Lower quarter",
+              numeric: true,
+              render: (r) => (r.p25 === null ? <span className="text-muted">not published</span> : formatGBP(r.p25)),
+            },
+            { key: "entry", header: "What ONS says about getting in", render: (r) => r.entry },
+          ]}
+          rows={rows}
+          source={
+            <div className="space-y-1.5">
+              <AsheSourceNote />
+              <SourceNote
+                label="Entry text"
+                source="ONS, SOC 2020 Volume 1: structure and descriptions of unit groups"
+                href={SOC_SOURCE.pageUrl}
+                note={SOC_SOURCE.attribution}
+              />
             </div>
-          ))}
-        </div>
-      </section>
+          }
+          notes={
+            <>
+              &ldquo;Lower quarter&rdquo; is the pay a quarter of full-time employees in the group earn less than. ONS
+              grades each estimate as precise, reasonably precise or acceptable; the table shows the grade when it is
+              not &ldquo;precise&rdquo;.
+            </>
+          }
+        />
+      </GuideSection>
 
-      {/* Building Experience */}
-      <section className="mb-12">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">
-          Building Experience From Zero
-        </h2>
-        <div className="grid sm:grid-cols-2 gap-4">
-          <div className="bg-green-50 rounded-xl p-5 border border-green-100">
-            <h3 className="font-semibold text-gray-900 mb-2">Volunteer remotely</h3>
-            <p className="text-sm text-gray-600">Offer your time to charities who need admin, social media, or data entry help. This builds genuine experience you can reference in applications.</p>
-          </div>
-          <div className="bg-green-50 rounded-xl p-5 border border-green-100">
-            <h3 className="font-semibold text-gray-900 mb-2">Take free certifications</h3>
-            <p className="text-sm text-gray-600">Google, HubSpot, and Meta offer free professional certifications. They cost nothing and give you something concrete to list on your CV.</p>
-          </div>
-          <div className="bg-green-50 rounded-xl p-5 border border-green-100">
-            <h3 className="font-semibold text-gray-900 mb-2">Start a side project</h3>
-            <p className="text-sm text-gray-600">A blog, social media account, or small eBay shop proves initiative and builds practical skills employers value.</p>
-          </div>
-          <div className="bg-green-50 rounded-xl p-5 border border-green-100">
-            <h3 className="font-semibold text-gray-900 mb-2">Use temp agencies</h3>
-            <p className="text-sm text-gray-600">Reed, Hays, and Office Angels have temporary remote roles that do not require experience. These can become permanent positions.</p>
-          </div>
-        </div>
-      </section>
+      <GuideSection id="how-many" title="How many of these jobs are really done from home">
+        <Prose>
+          <p>
+            Home working is common in office jobs and rare in customer-facing ones. In the ONS Opinions and Lifestyle
+            Survey for {OPN_2026.period}, {OPN_2026.all.homeOnly}% of all working adults in Great Britain worked only
+            from home in the previous week and {OPN_2026.all.hybrid}% split their time between home and a workplace.
+          </p>
+          <ul>
+            <li>
+              <strong>Sales and customer service jobs:</strong> {sales.homeOnly}% worked only from home and{" "}
+              {sales.hybrid}% were hybrid. {sales.travelOnly}% only travelled to work.
+            </li>
+            <li>
+              <strong>Administrative and secretarial jobs:</strong> {admin.homeOnly}% worked only from home and{" "}
+              {admin.hybrid}% were hybrid, so admin is the likelier way into home working.
+            </li>
+            <li>
+              <strong>People with no qualifications:</strong> {OPN_2026.noQualifications.homeOnly}% worked only from
+              home and {OPN_2026.noQualifications.hybrid}% were hybrid, compared with {OPN_2026.degree.homeOnly}% and{" "}
+              {OPN_2026.degree.hybrid}% of people with a degree.
+            </li>
+          </ul>
+          <p>
+            So remote customer service jobs are real, but you are competing for the smaller share of roles that are
+            fully home-based. Hybrid roles outnumber fully home-based ones, so a hybrid admin job is a realistic first
+            step. Before you apply, check three things in the advert or at interview: where the training takes place,
+            whether the employer supplies the laptop and headset, and whether you need a quiet room and a wired
+            internet connection.
+          </p>
+        </Prose>
+        <SourceNote
+          className="mt-4 max-w-reading"
+          source={OPN_2026.source}
+          href={OPN_2026.href}
+          published={OPN_2026.published}
+          note={OPN_2026.note}
+        />
+      </GuideSection>
 
-      {/* Simple text CTA */}
-      <p className="text-gray-600 mb-10">
-        Ready to see what you qualify for right now?{" "}
-        <Link href="/discover" className="text-indigo-600 font-medium hover:text-indigo-700">
-          Upload your details and get matched to careers in 2 minutes &rarr;
-        </Link>
-      </p>
+      <GuideSection id="pay" title="What you will earn at first, and where it can lead">
+        <Prose>
+          <p>
+            ONS pay figures only include people who have been in the same job for more than a year, so a new starter
+            usually earns less than the median. The lower-quarter column is a better guide to early pay. The legal
+            floor from April 2026 is £12.71 an hour if you are 21 or over and £10.85 an hour at 18 to 20 (
+            <a href={GOV.minimumWage} className="link" rel="noopener">
+              GOV.UK National Minimum Wage rates
+            </a>
+            ). If you work part time, your yearly total will be lower.
+          </p>
+          <p>
+            These jobs are a way in, and a year or two of experience opens better-paid options. ONS medians for
+            full-time employees in 2025:
+          </p>
+          <ul>
+            <li>
+              Customer service supervisors and team leaders: <SalaryFigure value={supervisors.median} size="sm" />.
+            </li>
+            <li>
+              IT user support technicians, which includes help desk roles:{" "}
+              <SalaryFigure value={itSupport.median} size="sm" />.
+            </li>
+            <li>
+              Book-keepers, payroll managers and wages clerks: <SalaryFigure value={bookkeepers.median} size="sm" />.
+              They sit in the administrative group, where home and hybrid working is more common.
+            </li>
+          </ul>
+          <p>
+            For roles that pay more and are commonly done from home, see{" "}
+            <Link href="/highest-paying-remote-jobs-uk" className="link">
+              the best-paid remote-friendly jobs
+            </Link>
+            . For the wider picture of who works from home and your right to ask for it, see{" "}
+            <Link href="/work-from-home-jobs" className="link">
+              our guide to home and hybrid working
+            </Link>
+            .
+          </p>
+        </Prose>
+        <AsheSourceNote className="mt-4 max-w-reading" />
+      </GuideSection>
 
-      {/* Final CTA */}
-      <section className="bg-indigo-50 rounded-xl p-8 text-center mb-10">
-        <h2 className="text-xl font-semibold text-gray-900 mb-3">
-          Start your remote career today
-        </h2>
-        <p className="text-gray-500 mb-6 max-w-lg mx-auto">
-          Tell us about yourself and we will match you to entry-level remote roles that fit your skills. Free. No experience needed.
-        </p>
-        <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <Link
-            href="/discover"
-            className="inline-flex items-center justify-center bg-indigo-600 text-white font-semibold px-8 py-4 rounded-xl hover:bg-indigo-700 transition-colors"
-          >
-            Discover My Career Matches
-          </Link>
-          <Link
-            href="/quiz"
-            className="inline-flex items-center justify-center border border-gray-200 text-gray-700 font-medium px-8 py-4 rounded-xl hover:bg-white transition-colors"
-          >
-            Take the Career Quiz
-          </Link>
-        </div>
-      </section>
+      <GuideSection id="tutoring-and-online" title="Tutoring, freelance and online tasks">
+        <Prose>
+          <p>
+            <strong>Tutoring.</strong> For the group that includes private tutors, ONS says entry is possible with a
+            range of academic or professional qualifications or relevant experience, and that a DBS check may be
+            required. ONS&apos;s pay
+            figure for the group that includes
+            private tutors is <SalaryFigure value={tutors.median} size="sm" /> for full-time employees, but many tutors
+            work for themselves, and the survey behind that figure leaves out the self-employed. It cannot tell you
+            what tutoring through an app or agency pays.
+          </p>
+          <p>
+            <strong>Surveys, website testing and mystery shopping.</strong> These are side income, not a job. ONS did
+            not publish a reliable 2025 pay figure for market research interviewers, the group that includes mystery
+            shoppers. Treat any site that promises a full-time income from surveys with suspicion.
+          </p>
+          <p>
+            <strong>Working for yourself.</strong> If you are paid for a service or sell things regularly to make a
+            profit, GOV.UK says you are probably trading. The first £1,000 of gross trading income in a tax year is covered by the{" "}
+            <a href={GOV.tradingAllowance} className="link" rel="noopener">
+              trading allowance
+            </a>
+            ; above that you must{" "}
+            <a href={GOV.registerSelfAssessment} className="link" rel="noopener">
+              register for Self Assessment
+            </a>{" "}
+            by 5 October after the tax year ends. Our{" "}
+            <Link href="/best-side-hustles-uk" className="link">
+              side hustles guide
+            </Link>{" "}
+            and{" "}
+            <Link href="/freelance-careers-uk" className="link">
+              freelance guide
+            </Link>{" "}
+            cover the rules.
+          </p>
+        </Prose>
+      </GuideSection>
 
-      {/* Related */}
-      <div className="pt-8 border-t border-gray-100">
-        <h3 className="text-sm font-semibold text-gray-500 mb-3">Related Pages</h3>
-        <div className="flex flex-wrap gap-2">
-          <Link href="/work-from-home-jobs" className="text-sm text-indigo-600 hover:text-indigo-700">Work From Home Jobs</Link>
-          <span className="text-gray-300">|</span>
-          <Link href="/high-paying-jobs-no-degree" className="text-sm text-indigo-600 hover:text-indigo-700">High Paying Jobs No Degree</Link>
-          <span className="text-gray-300">|</span>
-          <Link href="/best-side-hustles-uk" className="text-sm text-indigo-600 hover:text-indigo-700">Best Side Hustles UK</Link>
-          <span className="text-gray-300">|</span>
-          <Link href="/jobs-for-introverts" className="text-sm text-indigo-600 hover:text-indigo-700">Jobs for Introverts</Link>
-        </div>
-      </div>
-    </div>
+      <GuideSection
+        id="scams"
+        title="How to spot a work from home job scam"
+        intro={
+          <p>
+            JobsAware, quoted by the Disclosure and Barring Service, says the rise in remote jobs and online hiring
+            has made it easier for fraudsters to fool jobseekers. These warning signs come from the DBS&apos;s{" "}
+            <a href={GOV.jobScamSigns} className="link" rel="noopener">
+              guidance on job scams
+            </a>{" "}
+            (GOV.UK, 2023) and other official sources.
+          </p>
+        }
+      >
+        <Prose>
+          <ul>
+            <li>
+              <strong>You are asked for money.</strong> Never send money before starting a job, including for
+              training, uniforms or DBS checks. Recruitment agencies{" "}
+              <a href={GOV.agencyFees} className="link" rel="noopener">
+                cannot charge you a fee
+              </a>{" "}
+              for finding or trying to find you work.
+            </li>
+            <li>
+              <strong>You get an offer without an interview</strong>, or the advert has no named contact person or
+              company email address.
+            </li>
+            <li>
+              <strong>The pay does not fit the job</strong>, or the advert leaves out basic details such as duties,
+              hours and salary.
+            </li>
+            <li>
+              <strong>The company cannot be checked.</strong> Look up any UK company on the free{" "}
+              <a href={GOV.companiesHouse} className="link" rel="noopener">
+                Companies House register
+              </a>{" "}
+              before you send your passport, driving licence or bank details.
+            </li>
+            <li>
+              <strong>The job involves your bank account.</strong> A &ldquo;job&rdquo; that asks you to receive money
+              and pass it on, or to buy crypto for someone, is money muling. The{" "}
+              <a href={NCA_MONEY_MULES} className="link" rel="noopener">
+                National Crime Agency
+              </a>{" "}
+              says it is a crime that can mean up to 14 years in prison, and that recruiters use social media job
+              offers.
+            </li>
+          </ul>
+          <h3>If you think you have been targeted</h3>
+          <p>
+            GOV.UK says to{" "}
+            <a href={GOV.reportScams} className="link" rel="noopener">
+              contact Report Fraud
+            </a>{" "}
+            on 0300 123 2040 if you have lost money and live in England or Wales, and to report it to Police Scotland if
+            you live in Scotland. Forward suspicious emails to report@phishing.gov.uk and suspicious texts to 7726.
+          </p>
+          <h3>Where to look instead</h3>
+          <p>
+            Apply through employers&apos; own careers pages, the government&apos;s{" "}
+            <a href={GOV.findAJob} className="link" rel="noopener">
+              Find a job
+            </a>{" "}
+            service (England, Scotland and Wales), or{" "}
+            <Link href="/jobs" className="link">
+              our live vacancy search
+            </Link>
+            , and check anything you find elsewhere against the signs above.
+          </p>
+        </Prose>
+      </GuideSection>
+
+      <ToolCallout
+        className="mt-14"
+        heading="No experience in a job is not the same as no skills"
+        body={
+          <p>
+            Handling complaints, keeping records, working to targets and writing clearly all count, whether you did
+            them in a shop, a warehouse or at home. Paste your CV or type the job you do now, and we will show the
+            skills that carry over and the jobs they lead to. It is free and there is no account.
+          </p>
+        }
+      />
+
+      <FaqSection items={faq} />
+
+      <RelatedLinks
+        links={[
+          { href: "/work-from-home-jobs", label: "Work from home and hybrid jobs", note: "Who works from home, the pay, and your right to ask" },
+          { href: "/highest-paying-remote-jobs-uk", label: "The best-paid remote-friendly jobs" },
+          { href: "/career-change-no-experience", label: "Changing career with no experience" },
+          { href: "/jobs-without-a-degree", label: "Well-paid jobs without a degree" },
+          { href: "/best-side-hustles-uk", label: "Side hustles and the tax rules" },
+          { href: "/transferable-skills", label: "Find your transferable skills" },
+        ]}
+      />
+    </GuideShell>
   );
 }

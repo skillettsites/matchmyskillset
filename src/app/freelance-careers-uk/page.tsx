@@ -1,198 +1,364 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import {
+  Breadcrumbs,
+  DataTable,
+  FaqSection,
+  PageHeader,
+  Prose,
+  SourceNote,
+  ToolCallout,
+  formatGBP,
+  formatNumber,
+} from "@/components/content";
+import { guideMetadata, REVAMP_DATE } from "@/components/guides/meta";
+import { ArticleJsonLd, GuideSection, GuideShell, OnThisPage, RelatedLinks } from "@/components/guides/GuideShell";
+import { AsheSourceNote, unitGroupPay, type UnitGroupPay } from "@/components/guides/pay";
+import { GOV, ONS_SELF_EMPLOYED, OPN_2026 } from "../work-from-home-jobs/_data/sources";
 
-export const metadata: Metadata = {
-  title: "Best Freelance Careers UK (2026) | How to Go Freelance",
-  description:
-    "The best freelance careers in the UK for 2026. Realistic income expectations, how to find clients, tax basics, and which skills are most in demand. Practical guide.",
-  keywords: [
-    "best freelance careers UK",
-    "how to go freelance",
-    "freelance jobs UK 2026",
-    "self employed careers",
-    "freelancing UK guide",
-    "freelance income UK",
-  ],
-  openGraph: {
-    title: "Best Freelance Careers UK (2026)",
-    description: "Practical guide to freelancing in the UK. Best careers, income expectations, and how to start.",
-    type: "article",
-  },
-};
+const PATH = "/freelance-careers-uk";
+const TITLE = "Freelance careers in the UK: the rules, tax and pay data";
+const DESCRIPTION =
+  "Going freelance in the UK: when to register as self-employed, the £1,000 trading allowance, 2026 to 2027 tax and NI rates, IR35, and what pay data can show.";
+const H1 = "Going freelance in the UK: the rules and what to expect";
+
+export const metadata: Metadata = guideMetadata({ path: PATH, title: TITLE, description: DESCRIPTION });
+
+/** Fields people often freelance in, keyed to the ONS group that employees in the same work are coded to. */
+const FIELDS: { soc: string; name: string }[] = [
+  { soc: "2134", name: "Software and web development" },
+  { soc: "2431", name: "Management consultancy" },
+  { soc: "2141", name: "Web and UX design" },
+  { soc: "3412", name: "Copywriting, editing and translation" },
+  { soc: "2319", name: "Private tutoring" },
+  { soc: "3417", name: "Photography and video" },
+  { soc: "2142", name: "Graphic design" },
+  { soc: "4122", name: "Bookkeeping and payroll" },
+];
+
+type FieldRow = UnitGroupPay & { name: string };
 
 export default function FreelanceCareersPage() {
-  const careers = [
-    { title: "Web Developer / Designer", income: "£300 - £800/day", demand: "Very High", description: "Every business needs a website. Most have a bad one. Freelance web developers who can design, build, and launch a professional site charge £1,000-5,000+ per project.", getStarted: "Learn React/Next.js or WordPress. Build 3 demo sites. Offer services to local businesses. Word-of-mouth builds quickly." },
-    { title: "Copywriter", income: "£200 - £600/day", demand: "High", description: "Write website copy, email campaigns, social media content, and sales pages. Specialist copywriters (financial, medical, SaaS) earn the most.", getStarted: "Write 5 sample pieces. List on PeoplePerHour or Upwork. Pitch businesses directly via LinkedIn. Niching increases rates." },
-    { title: "Graphic Designer", income: "£200 - £500/day", demand: "High", description: "Logos, brand identities, marketing materials, and social media graphics. Strong portfolio matters more than any qualification.", getStarted: "Master Adobe suite or Figma. Build a portfolio on Behance. Start on Fiverr to build reviews, then move to direct clients." },
-    { title: "Management Consultant", income: "£500 - £1,500/day", demand: "High", description: "Package your industry expertise as advisory services. Mid-career and senior professionals command premium day rates.", getStarted: "Define your niche expertise. Build a LinkedIn presence. Network through your existing contacts. Start with a few anchor clients." },
-    { title: "Bookkeeper / Accountant", income: "£150 - £400/day", demand: "Very High", description: "Recurring monthly income from multiple clients. Cloud accounting makes it fully remote. Small businesses need this service but cannot afford full-time staff.", getStarted: "IAB/ICB qualification. Xero/QuickBooks partner certification. Market to local small businesses and sole traders." },
-    { title: "SEO Specialist", income: "£250 - £600/day", demand: "High", description: "Help businesses rank in Google. Retainer-based work (£500-2,000/month per client) provides predictable income. Technical SEO specialists command the highest rates.", getStarted: "Learn through practical experience (optimise your own site). Google certifications. Ahrefs/SEMrush competency. Build case studies." },
-    { title: "Video Editor / Videographer", income: "£200 - £500/day", demand: "Growing", description: "Every brand needs video content for social media, YouTube, and websites. Event videography, corporate videos, and social content editing are all in demand.", getStarted: "Learn Premiere Pro or DaVinci Resolve. Build a showreel. Approach agencies and businesses directly." },
-    { title: "Virtual Assistant", income: "£15 - £30/hour", demand: "Very High", description: "Remote admin support for busy professionals. Low barrier to entry, steady demand, and the ability to scale by hiring other VAs.", getStarted: "Register on Time Etc or Virtalent. Or pitch directly to entrepreneurs on LinkedIn. Specialise for higher rates." },
-    { title: "Translator", income: "£150 - £400/day", demand: "Medium-High", description: "Translate documents, websites, or subtitles. Bilingual speakers are always in demand. Legal and medical translation pay the most.", getStarted: "Register on ProZ and TranslatorsCafe. CIOL or ITI membership adds credibility. Build a specialist niche." },
-    { title: "Photographer", income: "£200 - £600/day", demand: "Medium", description: "Corporate headshots, product photography, events, and weddings. Specialisation is key: food photographers, property photographers, and brand photographers all have distinct markets.", getStarted: "Build a niche portfolio. Google Business listing. Network with venues and agencies. Consistent quality builds referrals." },
+  const rows: FieldRow[] = FIELDS.map((f) => ({ ...unitGroupPay(f.soc), name: f.name })).sort(
+    (a, b) => (b.median ?? 0) - (a.median ?? 0),
+  );
+  const selfEmployedMillions = (ONS_SELF_EMPLOYED.thousands / 1000).toFixed(2);
+
+  const faq = [
+    {
+      question: "How much can I earn freelancing before I pay tax?",
+      answer:
+        "The first £1,000 of gross trading income in a tax year is covered by the trading allowance, and you do not need to tell HMRC about it unless another rule applies. Above that you pay tax on your profit. For 2026 to 2027 the standard Personal Allowance is £12,570 across all your income, and Class 4 National Insurance is 6% on profits between £12,570 and £50,270.",
+    },
+    {
+      question: "When do I need to register as self-employed?",
+      answer:
+        "You can start trading straight away, but you must register for Self Assessment as a sole trader if you earn more than £1,000 in a tax year (6 April to 5 April). The deadline is 5 October after that tax year ends: 5 October 2026 for the year to 5 April 2026. Registering late can mean a penalty.",
+    },
+    {
+      question: "Can I freelance while I am still employed?",
+      answer:
+        "Yes. GOV.UK says you can run a business and be employed at the same time, for example working for an employer during the day and on your own business in the evenings. Your job's tax is still paid through PAYE, and your freelance profit goes on a Self Assessment return. Check your employment contract for any rules about outside work.",
+    },
+    {
+      question: "What is IR35?",
+      answer:
+        "IR35 is the common name for the off-payroll working rules. They apply when you work through your own intermediary, usually a limited company, for a client who would have employed you if you worked for them directly, and they make you pay broadly the same Income Tax and National Insurance as an employee. For public sector clients, and clients outside the public sector that are not small, the client decides whether the rules apply. HMRC's CEST tool gives its view of a contract.",
+    },
+    {
+      question: "How much do freelancers earn in the UK?",
+      answer:
+        "The main official source of UK pay by job, the ONS Annual Survey of Hours and Earnings, covers employees only and leaves out the self-employed, so it cannot answer this. Treat any freelance day rate or income figure you see with care unless it names its source.",
+    },
   ];
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12 sm:py-20">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "Article",
-            headline: "Best Freelance Careers UK (2026)",
-            description: "Practical guide to freelancing with best careers, income expectations, and how to start.",
-            author: { "@type": "Organization", name: "MatchMySkillset" },
-            publisher: { "@type": "Organization", name: "MatchMySkillset", url: "https://matchmyskillset.com" },
-            datePublished: "2026-04-01",
-            dateModified: "2026-04-01",
-          }),
-        }}
+    <GuideShell>
+      <ArticleJsonLd path={PATH} headline={H1} description={DESCRIPTION} dateModified={REVAMP_DATE} />
+      <PageHeader
+        breadcrumbs={<Breadcrumbs items={[{ name: "Career change", href: "/career-change" }, { name: "Freelance careers" }]} />}
+        kicker="Working for yourself"
+        title={H1}
+        intro={
+          <p>
+            About {selfEmployedMillions} million people in the UK were self-employed in {ONS_SELF_EMPLOYED.period},
+            according to ONS. You can start freelancing straight away, even alongside a job, but once your income from
+            it passes £1,000 in a tax year you must register for Self Assessment. What freelancers earn is harder to
+            pin down: the main ONS pay survey covers employees only.
+          </p>
+        }
+        updated={REVAMP_DATE}
+      >
+        <SourceNote
+          source={ONS_SELF_EMPLOYED.source}
+          href={ONS_SELF_EMPLOYED.href}
+          published={ONS_SELF_EMPLOYED.published}
+          note={`${formatNumber(ONS_SELF_EMPLOYED.thousands)} thousand people aged 16 and over, ${ONS_SELF_EMPLOYED.period}.`}
+        />
+      </PageHeader>
+
+      <OnThisPage
+        items={[
+          { id: "business-or-job", label: "Freelancing or a job in disguise" },
+          { id: "tax", label: "Registering and paying tax" },
+          { id: "ir35", label: "Contracting through a company (IR35)" },
+          { id: "pay", label: "What the same skills pay in a job" },
+          { id: "before-you-leave", label: "Before you leave your job" },
+          { id: "faq", label: "Common questions" },
+        ]}
       />
 
-      <div className="text-sm text-gray-400 mb-6">
-        <Link href="/" className="hover:text-indigo-600">Home</Link>
-        {" / "}<span className="text-gray-600">Freelance Careers UK</span>
-      </div>
+      <GuideSection id="business-or-job" title="Is it freelancing, or a job in disguise?">
+        <Prose>
+          <p>
+            Freelancing means running a business, even a small one. GOV.UK says you are probably running a business
+            if you:
+          </p>
+          <ul>
+            <li>take responsibility for its success or failure</li>
+            <li>have several customers at the same time</li>
+            <li>can decide how, where and when you do your work</li>
+            <li>can hire other people at your own expense to help or to do the work for you</li>
+            <li>provide the main equipment you need</li>
+            <li>have to fix unsatisfactory work in your own time</li>
+            <li>charge an agreed fixed price for your work</li>
+          </ul>
+          <p>
+            If a single client sets your hours, supplies your equipment and treats you like staff, check your
+            employment status before you rely on being self-employed. HMRC&apos;s{" "}
+            <a href={GOV.cest} className="link" rel="noopener">
+              Check employment status for tax (CEST) tool
+            </a>{" "}
+            gives its view, and HMRC says it will stand by the result as long as the information you give is accurate.
+            Read the full list on{" "}
+            <a href={GOV.workingForYourself} className="link" rel="noopener">
+              GOV.UK&apos;s working for yourself page
+            </a>
+            .
+          </p>
+        </Prose>
+      </GuideSection>
 
-      <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-        Best Freelance Careers in the UK (2026)
-      </h1>
+      <GuideSection id="tax" title="Registering and paying tax as a sole trader">
+        <Prose>
+          <p>
+            GOV.UK says most people start out as a sole trader, the simplest business structure. The main rules, all
+            from GOV.UK:
+          </p>
+          <ul>
+            <li>
+              <strong>Registering.</strong> You can start trading without registering, but you must{" "}
+              <a href={GOV.soleTrader} className="link" rel="noopener">
+                register for Self Assessment as a sole trader
+              </a>{" "}
+              if you earn more than £1,000 in a tax year. The deadline is 5 October after the tax year ends, so 5
+              October 2026 for the year to 5 April 2026, and you could get a penalty if you are late (
+              <a href={GOV.registerSelfAssessment} className="link" rel="noopener">
+                GOV.UK
+              </a>
+              ).
+            </li>
+            <li>
+              <strong>The £1,000 trading allowance.</strong> If your gross trading income is £1,000 or less, it is
+              tax-free. If it is more, you can deduct the £1,000 allowance instead of your actual expenses, but not
+              both. You cannot use it at all in a year when you have trading income from your employer, or from a
+              company or partnership you or someone connected to you owns or controls (
+              <a href={GOV.tradingAllowance} className="link" rel="noopener">
+                HMRC guidance
+              </a>
+              ).
+            </li>
+            <li>
+              <strong>Income Tax.</strong> The standard Personal Allowance is £12,570. Above it, the basic rate of 20%
+              applies up to £50,270, the higher rate of 40% up to £125,140 and 45% above that. Scotland has different
+              bands (
+              <a href={GOV.incomeTaxRates} className="link" rel="noopener">
+                GOV.UK
+              </a>
+              ).
+            </li>
+            <li>
+              <strong>National Insurance.</strong> Class 4 is 6% on profits between £12,570 and £50,270 and 2% above
+              that. If your profits are £7,105 or more, Class 2 is treated as paid, which protects your National
+              Insurance record without you paying it. Below that you can choose to pay voluntary Class 2 at £3.65 a
+              week (
+              <a href={GOV.selfEmployedNi} className="link" rel="noopener">
+                GOV.UK
+              </a>
+              ).
+            </li>
+            <li>
+              <strong>Payments on account.</strong> Once your yearly Self Assessment bill is £1,000 or more, and you
+              paid no more than 80% of your tax at source, HMRC asks for two advance payments towards next year&apos;s
+              bill, due by 31 January and 31 July, each half of last year&apos;s tax. In the first year this applies,
+              the January bill can include both the balance for last year and the first advance payment (
+              <a href={GOV.paymentsOnAccount} className="link" rel="noopener">
+                GOV.UK
+              </a>
+              ).
+            </li>
+            <li>
+              <strong>Making Tax Digital.</strong> Sole traders and landlords whose qualifying income for 2024 to 2025
+              was over £50,000 should have started using Making Tax Digital for Income Tax from 6 April 2026. The
+              threshold falls to £30,000 (2025 to 2026 income) from 6 April 2027 and £20,000 (2026 to 2027 income)
+              from 6 April 2028 (
+              <a href={GOV.makingTaxDigital} className="link" rel="noopener">
+                HMRC
+              </a>
+              ).
+            </li>
+          </ul>
+          <p>
+            You may also need to register for VAT once your turnover is high enough, and some work needs a licence,
+            insurance or a criminal record check.{" "}
+            <a href={GOV.soleTrader} className="link" rel="noopener">
+              GOV.UK&apos;s sole trader guide
+            </a>{" "}
+            lists what to check.
+          </p>
+        </Prose>
+      </GuideSection>
 
-      <div className="flex items-center gap-3 text-sm text-gray-400 mb-8">
-        <span>Updated April 2026</span>
-        <span>|</span>
-        <span>12 min read</span>
-      </div>
+      <GuideSection id="ir35" title="Contracting through your own company: IR35">
+        <Prose>
+          <p>
+            Some freelancers work through their own limited company rather than as a sole trader. The{" "}
+            <a href={GOV.offPayroll} className="link" rel="noopener">
+              off-payroll working rules
+            </a>
+            , known as IR35, make sure that if you would be an employee were you working for the client directly, you
+            pay broadly the same Income Tax and National Insurance as an employee would.
+          </p>
+          <ul>
+            <li>
+              For public sector clients, and for clients outside the public sector that are not small, the client
+              decides whether the rules apply and should give you a status determination statement with its reasons.
+            </li>
+            <li>For a small client outside the public sector, your own company makes that decision.</li>
+            <li>The rules apply contract by contract, so one contract can be inside IR35 and another outside.</li>
+            <li>They are unlikely to apply if you are employed by an umbrella company.</li>
+          </ul>
+          <p>
+            HMRC warns that some schemes wrongly claim to get around these rules. If an arrangement promises you will
+            keep far more of your pay than an employee would, get independent advice first.
+          </p>
+        </Prose>
+      </GuideSection>
 
-      <p className="text-lg text-gray-600 leading-relaxed mb-4">
-        There are 4.4 million self-employed people in the UK, and the number is growing. Freelancing offers something no employment contract can: complete control over your time, clients, and income. The trade-off is that nobody pays you when you are ill, on holiday, or between clients.
-      </p>
-      <p className="text-gray-600 leading-relaxed mb-10">
-        This guide covers the most viable freelance careers, realistic income expectations, how to find clients, and the practical steps to go from employed to self-employed without financial disaster.
-      </p>
+      <GuideSection
+        id="pay"
+        title="What the same skills pay in a job"
+        intro={
+          <p>
+            The ONS pay survey used throughout this site leaves out the self-employed, so it cannot show what
+            freelancers earn. What it can tell you is what employers pay employees for the same kind of work, which is a
+            useful benchmark when you set your prices or weigh up going back to a job.
+          </p>
+        }
+      >
+        <DataTable<FieldRow>
+          caption="Employee pay in fields people often freelance in"
+          description="Median and lower-quarter gross annual pay, full-time employee jobs, UK, 2025. Not freelance earnings."
+          rowKey={(r) => r.soc}
+          columns={[
+            {
+              key: "field",
+              header: "Field",
+              rowHeader: true,
+              render: (r) => (
+                <span className="block">
+                  <span className="block">{r.name}</span>
+                  <span className="block text-xs font-normal text-muted">
+                    ONS group {r.soc}: {r.title}
+                  </span>
+                </span>
+              ),
+            },
+            {
+              key: "median",
+              header: "Employee median",
+              numeric: true,
+              render: (r) => (r.median === null ? <span className="text-muted">not published</span> : formatGBP(r.median)),
+            },
+            {
+              key: "p25",
+              header: "Lower quarter",
+              numeric: true,
+              render: (r) => (r.p25 === null ? <span className="text-muted">not published</span> : formatGBP(r.p25)),
+            },
+          ]}
+          rows={rows}
+          source={<AsheSourceNote />}
+          notes="Employees are entitled to paid holiday and may qualify for statutory sick pay and an employer pension contribution. A freelancer has to fund all of these from their own fees."
+        />
+        <Prose>
+          <p>
+            Self-employed people are also far more likely to work only from home. In the ONS survey for {OPN_2026.period},{" "}
+            {OPN_2026.selfEmployed.homeOnly}% of self-employed people worked only from home, compared with{" "}
+            {OPN_2026.employed.homeOnly}% of employees (
+            <a href={OPN_2026.href} className="link" rel="noopener">
+              ONS, July 2026
+            </a>
+            ). If home working is what you want and you would rather stay employed, see{" "}
+            <Link href="/work-from-home-jobs" className="link">
+              our guide to home and hybrid jobs
+            </Link>
+            .
+          </p>
+        </Prose>
+      </GuideSection>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-10">
-        <div className="bg-indigo-50 rounded-xl p-4 text-center">
-          <div className="text-2xl font-bold text-indigo-600">4.4m</div>
-          <div className="text-xs text-gray-500">Self-employed in the UK</div>
-        </div>
-        <div className="bg-green-50 rounded-xl p-4 text-center">
-          <div className="text-2xl font-bold text-green-600">£1,500</div>
-          <div className="text-xs text-gray-500">Top freelance day rates</div>
-        </div>
-        <div className="bg-amber-50 rounded-xl p-4 text-center">
-          <div className="text-2xl font-bold text-amber-600">£1,000</div>
-          <div className="text-xs text-gray-500">Tax-free trading allowance</div>
-        </div>
-      </div>
+      <GuideSection id="before-you-leave" title="Before you leave your job">
+        <Prose>
+          <ul>
+            <li>
+              <strong>Start on the side if you can.</strong> GOV.UK says you can be employed and run a business at the
+              same time. A few paying clients before you resign tell you more than any forecast. Check your contract
+              for rules on outside work first.
+            </li>
+            <li>
+              <strong>Keep records from the first job.</strong> HMRC says you must keep a record of your income even
+              if you use the trading allowance. Its examples include copies of invoices and a spreadsheet of income
+              received.
+            </li>
+            <li>
+              <strong>Plan for gaps.</strong> Nobody pays you when you are ill, on holiday or between clients, and your
+              tax bill arrives months after you earn the money. Build savings before you rely on freelance income
+              alone.
+            </li>
+            <li>
+              <strong>Try it at low cost first.</strong> Smaller gigs are covered in our{" "}
+              <Link href="/best-side-hustles-uk" className="link">
+                side hustles guide
+              </Link>
+              , including when online platforms report your sales to HMRC.
+            </li>
+          </ul>
+        </Prose>
+      </GuideSection>
 
-      <div className="bg-indigo-50 rounded-xl p-5 mb-10 flex flex-col sm:flex-row items-center gap-4">
-        <div className="flex-1">
-          <div className="font-semibold text-gray-900">Which freelance career suits your skills?</div>
-          <div className="text-sm text-gray-500">Upload your CV and our AI will identify which of your skills are most valuable on the freelance market.</div>
-        </div>
-        <Link href="/discover" className="bg-indigo-600 text-white font-medium px-6 py-2.5 rounded-lg hover:bg-indigo-700 transition-colors text-sm whitespace-nowrap">
-          Analyse My Skills Free
-        </Link>
-      </div>
+      <ToolCallout
+        className="mt-14"
+        heading="Find out which of your skills people pay for"
+        body={
+          <p>
+            Paste your CV and we will pick out the skills you already have and the jobs they lead to, with UK pay for
+            each, so you can compare freelancing with a job. It is free and there is no account.
+          </p>
+        }
+      />
 
-      <section className="mb-12">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">10 Best Freelance Careers</h2>
-        <div className="space-y-5">
-          {careers.map((career, idx) => (
-            <div key={career.title}>
-              <div className="bg-white rounded-xl border border-gray-100 p-6">
-                <div className="flex items-start justify-between mb-2">
-                  <h3 className="text-lg font-semibold text-gray-900">{career.title}</h3>
-                  <span className="text-sm font-bold text-green-600 flex-shrink-0 ml-4">{career.income}</span>
-                </div>
-                <div className="inline-flex items-center px-2 py-0.5 bg-indigo-50 text-indigo-600 rounded text-xs font-medium mb-3">
-                  Demand: {career.demand}
-                </div>
-                <p className="text-sm text-gray-600 mb-3">{career.description}</p>
-                <div>
-                  <span className="text-xs font-semibold text-gray-500">How to get started</span>
-                  <p className="text-sm text-gray-600 mt-1">{career.getStarted}</p>
-                </div>
-              </div>
+      <FaqSection items={faq} />
 
-              {idx === 3 && (
-                <div className="bg-gray-900 text-white rounded-xl p-6 text-center mt-5">
-                  <h3 className="text-lg font-semibold mb-2">Your employed skills are freelance-ready</h3>
-                  <p className="text-gray-300 text-sm mb-4">The skills you use in employment are often more valuable when sold directly. Our AI shows you which of your skills command the highest freelance rates.</p>
-                  <Link href="/discover" className="inline-flex items-center bg-white text-gray-900 font-semibold px-6 py-3 rounded-lg hover:bg-gray-100 transition-colors text-sm">
-                    Get My Personalised Matches
-                  </Link>
-                </div>
-              )}
-
-              {idx === 7 && (
-                <div className="border-l-4 border-indigo-600 bg-indigo-50 rounded-r-xl p-5 mt-5">
-                  <p className="text-gray-700 text-sm">
-                    <span className="font-semibold">The average freelancer earns 22% more than their employed equivalent</span> (IPSE data), though this varies significantly by sector and experience level.{" "}
-                    <Link href="/discover" className="text-indigo-600 font-medium hover:text-indigo-700">See your freelance potential</Link>.
-                  </p>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Tax and Practical */}
-      <section className="mb-10">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">Freelancing Practicalities</h2>
-        <div className="grid sm:grid-cols-2 gap-4">
-          <div className="bg-amber-50 rounded-xl p-5 border border-amber-100">
-            <h3 className="font-semibold text-gray-900 mb-2">Tax basics</h3>
-            <p className="text-sm text-gray-600">Register as self-employed with HMRC. You get a £1,000 trading allowance, then a £12,570 personal allowance. Set aside 25-30% of income for tax and NI. Use an accountant (worth every penny).</p>
-          </div>
-          <div className="bg-amber-50 rounded-xl p-5 border border-amber-100">
-            <h3 className="font-semibold text-gray-900 mb-2">Finding clients</h3>
-            <p className="text-sm text-gray-600">Start with your existing network. LinkedIn is your best marketing tool. Freelance platforms (Upwork, PeoplePerHour) for initial momentum. Referrals become your primary source within 12 months.</p>
-          </div>
-          <div className="bg-amber-50 rounded-xl p-5 border border-amber-100">
-            <h3 className="font-semibold text-gray-900 mb-2">Financial buffer</h3>
-            <p className="text-sm text-gray-600">Save 3-6 months of expenses before going full-time freelance. Or start freelancing alongside employment. Many successful freelancers began as side projects.</p>
-          </div>
-          <div className="bg-amber-50 rounded-xl p-5 border border-amber-100">
-            <h3 className="font-semibold text-gray-900 mb-2">Insurance</h3>
-            <p className="text-sm text-gray-600">Professional indemnity insurance is essential for most freelancers. Public liability too if you visit client sites. Income protection insurance replaces sick pay.</p>
-          </div>
-        </div>
-      </section>
-
-      <p className="text-gray-600 mb-10">
-        Ready to explore freelancing?{" "}
-        <Link href="/discover" className="text-indigo-600 font-medium hover:text-indigo-700">
-          Upload your CV and see your freelance career matches &rarr;
-        </Link>
-      </p>
-
-      <section className="bg-indigo-50 rounded-xl p-8 text-center mb-10">
-        <h2 className="text-xl font-semibold text-gray-900 mb-3">Discover your freelance potential</h2>
-        <p className="text-gray-500 mb-6 max-w-lg mx-auto">Upload your CV and find out which of your skills are most valuable on the freelance market. Free. 2 minutes.</p>
-        <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <Link href="/discover" className="inline-flex items-center justify-center bg-indigo-600 text-white font-semibold px-8 py-4 rounded-xl hover:bg-indigo-700 transition-colors">Discover My Career Matches</Link>
-          <Link href="/best-side-hustles-uk" className="inline-flex items-center justify-center border border-gray-200 text-gray-700 font-medium px-8 py-4 rounded-xl hover:bg-white transition-colors">Side Hustles UK</Link>
-        </div>
-      </section>
-
-      <div className="pt-8 border-t border-gray-100">
-        <h3 className="text-sm font-semibold text-gray-500 mb-3">Related Pages</h3>
-        <div className="flex flex-wrap gap-2">
-          <Link href="/best-side-hustles-uk" className="text-sm text-indigo-600 hover:text-indigo-700">Best Side Hustles UK</Link>
-          <span className="text-gray-300">|</span>
-          <Link href="/work-from-home-jobs" className="text-sm text-indigo-600 hover:text-indigo-700">Work From Home Jobs</Link>
-          <span className="text-gray-300">|</span>
-          <Link href="/highest-paying-remote-jobs-uk" className="text-sm text-indigo-600 hover:text-indigo-700">Highest Paying Remote Jobs</Link>
-          <span className="text-gray-300">|</span>
-          <Link href="/career-change-with-no-money" className="text-sm text-indigo-600 hover:text-indigo-700">Career Change With No Money</Link>
-        </div>
-      </div>
-    </div>
+      <RelatedLinks
+        links={[
+          { href: "/best-side-hustles-uk", label: "Side hustles and the tax rules" },
+          { href: "/work-from-home-jobs", label: "Work from home and hybrid jobs" },
+          { href: "/highest-paying-remote-jobs-uk", label: "The best-paid remote-friendly jobs" },
+          { href: "/career-change-with-no-money", label: "Changing career with no money" },
+          { href: "/transferable-skills", label: "Find your transferable skills" },
+        ]}
+      />
+    </GuideShell>
   );
 }

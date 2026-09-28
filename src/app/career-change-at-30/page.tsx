@@ -1,403 +1,360 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import type { ReactNode } from "react";
+import { Breadcrumbs, DataTable, FaqSection, PageHeader, Prose, SourceNote, ToolCallout, formatGBP } from "@/components/content";
+import { guideMetadata, REVAMP_DATE } from "@/components/guides/meta";
+import { ArticleJsonLd, GuideSection, GuideShell, RelatedLinks } from "@/components/guides/GuideShell";
+import { AsheSourceNote, entryApprenticeship, occupationPayById, UK_FT_MEDIAN, type OccupationPay } from "@/components/guides/pay";
 
-export const metadata: Metadata = {
-  title: "Career Change at 30: Why It Is the Perfect Time (2026 Guide)",
-  description:
-    "Thinking of changing careers at 30? You are not too old. Research shows your 30s are actually the ideal decade for a career change. Data, success stories, and practical steps.",
-  keywords: [
-    "career change at 30",
-    "is 30 too old to change career",
-    "changing careers in your 30s",
-    "career change 30 UK",
-    "midlife career change",
-    "career switch at 30",
-  ],
-  openGraph: {
-    title: "Career Change at 30: Why It Is the Perfect Time",
-    description: "Data-driven guide to career change in your 30s. Statistics, practical steps, and stories.",
-    type: "article",
-  },
-};
+const PATH = "/career-change-at-30";
+const TITLE = "Career change at 30: a UK guide with real pay data";
+const DESCRIPTION =
+  "How to change career at 30 in the UK: ONS pay for realistic new jobs, the free and funded ways to retrain, and what a switch could cost you in year one.";
+const H1 = "How to change career at 30 in the UK";
 
-export default function CareerChangeAt30Page() {
+export const metadata: Metadata = guideMetadata({ path: PATH, title: TITLE, description: DESCRIPTION });
+
+// ONS ASHE 2025 (provisional) Table 6.7a, gross annual pay for full-time employee
+// jobs by age group, UK, published 23 October 2025. Checked 28 September 2026.
+const AGE_TABLE_URL =
+  "https://www.ons.gov.uk/employmentandlabourmarket/peopleinwork/earningsandworkinghours/datasets/agegroupashetable6";
+const AGE_MEDIANS: { age: string; median: number }[] = [
+  { age: "22 to 29", median: 32347 },
+  { age: "30 to 39", median: 40668 },
+  { age: "40 to 49", median: 44244 },
+  { age: "50 to 59", median: 41866 },
+  { age: "60 and over", median: 36467 },
+];
+const MEDIAN_30S = 40668;
+
+// Destinations with a documented way in that does not need a new first degree.
+// The selection is editorial; pay and apprenticeship details come from the dataset.
+const DESTINATION_IDS = [
+  "train-driver",
+  "project-manager",
+  "software-developer",
+  "business-analyst",
+  "cyber-security-analyst",
+  "accountant",
+  "electrician",
+  "data-analyst",
+  "paralegal",
+  "hr-officer",
+  "it-support-technician",
+];
+
+const SPA_CHECKER_URL = "https://www.gov.uk/state-pension-age";
+const SPA_REVIEW_URL = "https://www.gov.uk/government/collections/third-state-pension-age-review";
+
+function Ext({ href, children }: { href: string; children: ReactNode }) {
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12 sm:py-20">
-      {/* JSON-LD */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "FAQPage",
-            mainEntity: [
-              {
-                "@type": "Question",
-                name: "Is 30 too old to change career?",
-                acceptedAnswer: {
-                  "@type": "Answer",
-                  text: "No. 30 is actually an ideal age for a career change. You have enough experience to demonstrate transferable skills, but enough working years ahead (35+) to build a successful second career. Research from the London School of Economics shows that career changers in their 30s report higher job satisfaction than those who stay in unsatisfying roles.",
-                },
-              },
-              {
-                "@type": "Question",
-                name: "How do I change career at 30 with no experience?",
-                acceptedAnswer: {
-                  "@type": "Answer",
-                  text: "You likely have more relevant experience than you realise. Most career changers at 30 have 8-12 years of transferable skills in communication, problem solving, stakeholder management, and project coordination. The key is reframing your existing experience to match target role requirements.",
-                },
-              },
-              {
-                "@type": "Question",
-                name: "What careers can I switch to at 30?",
-                acceptedAnswer: {
-                  "@type": "Answer",
-                  text: "Almost any career is achievable at 30. Popular transitions include moving into tech (no degree required), project management, UX design, data analysis, L&D, and consulting. The fastest transitions leverage your existing transferable skills rather than starting from scratch.",
-                },
-              },
-              {
-                "@type": "Question",
-                name: "Will I take a pay cut changing careers at 30?",
-                acceptedAnswer: {
-                  "@type": "Answer",
-                  text: "A temporary pay cut is possible but not guaranteed. Many career changers maintain or increase their salary by targeting roles that value their existing skills. The key is matching your transferable skills to roles in higher-paying industries.",
-                },
-              },
-            ],
-          }),
-        }}
+    <a href={href} className="link" rel="noopener">
+      {children}
+    </a>
+  );
+}
+
+function money(value: number | null) {
+  return value === null ? <span className="text-muted">Not published</span> : formatGBP(value);
+}
+
+function WayIn({ p }: { p: OccupationPay }) {
+  const s = entryApprenticeship(p);
+  if (!s) return <span className="text-muted">No apprenticeship listed</span>;
+  return (
+    <>
+      <Ext href={s.url}>{s.title}</Ext> apprenticeship, level {s.level}, typically {s.typicalDurationMonths} months
+    </>
+  );
+}
+
+/** A specific Skills England standard listed for an occupation in the dataset. */
+function standard(p: OccupationPay, ref: string) {
+  const s = p.apprenticeships.find((x) => x.referenceNumber === ref);
+  if (!s) throw new Error(`${p.id} has no apprenticeship ${ref} in the dataset`);
+  return s;
+}
+
+interface DestRow {
+  id: string;
+  p: OccupationPay;
+  median: number | null;
+  p25: number | null;
+}
+
+export default function Page() {
+  const rows: DestRow[] = DESTINATION_IDS.map((id) => {
+    const p = occupationPayById(id);
+    return { id, p, median: p.median, p25: p.p25 };
+  }).sort((a, b) => (b.median ?? -1) - (a.median ?? -1));
+
+  const daStd = standard(occupationPayById("data-analyst"), "ST0118");
+  const baStd = standard(occupationPayById("business-analyst"), "ST0117");
+  const notes = rows.filter((r) => r.p.payNote);
+
+  return (
+    <GuideShell>
+      <ArticleJsonLd path={PATH} headline={H1} description={DESCRIPTION} dateModified={REVAMP_DATE} />
+      <PageHeader
+        breadcrumbs={
+          <Breadcrumbs items={[{ name: "Career change", href: "/career-change" }, { name: "Career change at 30" }]} />
+        }
+        kicker="Career change"
+        title={H1}
+        intro={
+          <p>
+            Yes, you can change career at 30, and you have time to make it pay. GOV.UK puts State Pension age at 68 for
+            anyone who is 30 now, so you have around 38 working years ahead. The hard part is money: ONS puts median
+            full-time pay for people aged 30 to 39 at {formatGBP(MEDIAN_30S)}, and a trainee route such as an
+            apprenticeship can start at £8 an hour.
+          </p>
+        }
+        updated={REVAMP_DATE}
       />
 
-      {/* Breadcrumb */}
-      <div className="text-sm text-gray-400 mb-6">
-        <Link href="/" className="hover:text-indigo-600">Home</Link>
-        {" / "}
-        <Link href="/career-change" className="hover:text-indigo-600">Career Change</Link>
-        {" / "}<span className="text-gray-600">Career Change at 30</span>
-      </div>
+      <GuideSection id="can-you" title="Can you change your career at 30?">
+        <Prose className="mt-4">
+          <p>
+            Nothing in law or in the main training schemes stops you. According to{" "}
+            <Ext href="https://www.gov.uk/become-apprentice">GOV.UK</Ext>, apprenticeships in England are open to anyone
+            aged 16 or over who is not in full-time education, and{" "}
+            <Ext href="https://www.gov.uk/apply-apprenticeship">you can start one even if you already have a degree</Ext>.
+            Advanced Learner Loans, Free Courses for Jobs and Skills Bootcamps are all for people aged 19 or over. The
+            sources for each are in the funding section below.
+          </p>
+          <p>
+            Time is on your side too. Using the{" "}
+            <Ext href={SPA_CHECKER_URL}>GOV.UK State Pension age checker</Ext>, anyone who turns 30 in 2026 reaches State
+            Pension age at 68 under the current law. The government started a{" "}
+            <Ext href={SPA_REVIEW_URL}>third review of State Pension age</Ext> in July 2025, so that could change.
+          </p>
+          <p>
+            In ONS figures, median full-time pay is higher for people in their forties than for people in their
+            thirties. If a move sets you back for a year or two, the age group with the highest median pay is still in
+            front of you.
+          </p>
+        </Prose>
 
-      <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-        Career Change at 30: Why It Is the Perfect Time
-      </h1>
+        <DataTable<{ age: string; median: number }>
+          className="mt-8"
+          caption="Median full-time pay by age, UK, 2025"
+          description="Gross annual pay for full-time employee jobs, April 2025."
+          columns={[
+            { key: "age", header: "Age group", rowHeader: true },
+            { key: "median", header: "Median pay", numeric: true, format: "gbp" },
+          ]}
+          rows={AGE_MEDIANS}
+          rowKey={(r) => r.age}
+          source={
+            <SourceNote
+              source="ONS, Annual Survey of Hours and Earnings 2025 (provisional), Table 6.7a"
+              href={AGE_TABLE_URL}
+              published="2025-10-23"
+              note="Full-time employees on adult rates who had been in the same job for more than a year."
+            />
+          }
+        />
+      </GuideSection>
 
-      <div className="flex items-center gap-3 text-sm text-gray-400 mb-8">
-        <span>Updated April 2026</span>
-        <span>|</span>
-        <span>10 min read</span>
-      </div>
+      <GuideSection
+        id="destinations"
+        title="What could you earn? Realistic new careers at 30"
+        intro={
+          <p>
+            There is no single best career change at 30. A good one pays at least what you earn now within a few years,
+            has a way in you can afford, and is work you would still want to do at 50. These jobs all have an
+            apprenticeship route listed by Skills England, so you can train without going back to university.
+          </p>
+        }
+      >
+        <DataTable<DestRow>
+          className="mt-8"
+          caption="Jobs with a way in that does not need a new degree"
+          description={
+            <>
+              Median and lower-quartile pay for full-time employees. For comparison, the median for all full-time
+              employees aged 30 to 39 is {formatGBP(MEDIAN_30S)} and for all ages it is {formatGBP(UK_FT_MEDIAN)}.
+            </>
+          }
+          columns={[
+            { key: "job", header: "Job", rowHeader: true, render: (r) => r.p.title },
+            { key: "median", header: "Median pay", numeric: true, render: (r) => money(r.median) },
+            {
+              key: "p25",
+              header: "Lower quartile",
+              mobileLabel: "A quarter earn less than",
+              numeric: true,
+              render: (r) => money(r.p25),
+            },
+            { key: "route", header: "One way in", render: (r) => <WayIn p={r.p} /> },
+          ]}
+          rows={rows}
+          rowKey={(r) => r.id}
+          source={
+            <>
+              <AsheSourceNote />
+              <SourceNote
+                className="mt-1"
+                source="Skills England, apprenticeship standards"
+                href="https://skillsengland.education.gov.uk/apprenticeships/"
+                note="Checked 28 September 2026. Typical durations as published for each standard. Apprenticeship standards cover England."
+              />
+            </>
+          }
+          notes={
+            notes.length > 0 ? (
+              <ul className="space-y-1 text-xs text-muted">
+                {notes.map((r) => (
+                  <li key={r.id}>
+                    {r.p.title}: {r.p.payNote}
+                  </li>
+                ))}
+              </ul>
+            ) : undefined
+          }
+        />
+        <Prose className="mt-6">
+          <p>
+            Two things to keep in mind. ONS annual pay only counts people who have been in the same job for more than a
+            year, so these are not starting salaries. And each figure covers a whole ONS occupation group, which can
+            be wider than the job title shown. The lower quartile is a more cautious figure to plan with.
+          </p>
+        </Prose>
+      </GuideSection>
 
-      {/* Intro */}
-      <p className="text-lg text-gray-600 leading-relaxed mb-4">
-        If you have landed on this page, you are probably asking yourself a version of the same question: "Is 30 too old to change career?" The short answer is no. The longer answer is that 30 might be the single best age to make a career change, and the data backs this up.
-      </p>
-      <p className="text-gray-600 leading-relaxed mb-4">
-        One in three UK workers wants to change careers. That figure rises to 49% among 25-34 year olds. You are not having a crisis. You are having a perfectly rational response to the fact that the career you chose at 18 or 22 no longer fits the person you have become at 30.
-      </p>
-      <p className="text-gray-600 leading-relaxed mb-10">
-        This guide is built on data, not platitudes. We will show you why your 30s are ideal for a career change, the practical steps to take, and how your existing experience is more valuable than you think.
-      </p>
-
-      {/* Stats Banner */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-10">
-        <div className="bg-indigo-50 rounded-xl p-4 text-center">
-          <div className="text-2xl font-bold text-indigo-600">49%</div>
-          <div className="text-xs text-gray-500">of 25-34s want to change career</div>
-        </div>
-        <div className="bg-green-50 rounded-xl p-4 text-center">
-          <div className="text-2xl font-bold text-green-600">35+</div>
-          <div className="text-xs text-gray-500">Working years ahead of you</div>
-        </div>
-        <div className="bg-amber-50 rounded-xl p-4 text-center">
-          <div className="text-2xl font-bold text-amber-600">5-7</div>
-          <div className="text-xs text-gray-500">Avg career changes in a lifetime</div>
-        </div>
-        <div className="bg-purple-50 rounded-xl p-4 text-center">
-          <div className="text-2xl font-bold text-purple-600">88%</div>
-          <div className="text-xs text-gray-500">CVs filtered by ATS systems</div>
-        </div>
-      </div>
-
-      {/* Section 1 */}
-      <section className="mb-10">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">
-          Why 30 is actually the ideal age for a career change
-        </h2>
-        <p className="text-gray-600 leading-relaxed mb-4">
-          At 30, you sit in a rare sweet spot. You have 8-12 years of real-world experience that has built substantial transferable skills. But you also have 35+ working years ahead of you, plenty of time to build genuine expertise in a new field and progress to senior roles.
-        </p>
-        <p className="text-gray-600 leading-relaxed mb-4">
-          Compare this to changing careers at 22, when you have enthusiasm but no track record, or at 50, when you have enormous experience but potentially face ageism and financial constraints. At 30, you have the best of both worlds.
-        </p>
-
-        <div className="bg-white rounded-xl border border-gray-100 p-6 mb-4">
-          <h3 className="font-semibold text-gray-900 mb-3">The data says 30 is ideal</h3>
-          <ul className="space-y-3 text-sm text-gray-600">
-            <li className="flex gap-2">
-              <span className="text-green-600 font-bold flex-shrink-0">1.</span>
-              <span><strong>Research from the London School of Economics</strong> shows that career changers who switch in their late 20s to mid-30s report the highest levels of long-term job satisfaction.</span>
+      <GuideSection id="steps" title="How to change careers at 30, step by step">
+        <Prose className="mt-4">
+          <ol>
+            <li>
+              <strong>Name the problem.</strong> Write down what you want to leave behind: the work itself, the hours,
+              the pay, the employer or the sector. A new employer fixes some of these. Only a new career fixes the work
+              itself.
             </li>
-            <li className="flex gap-2">
-              <span className="text-green-600 font-bold flex-shrink-0">2.</span>
-              <span><strong>LinkedIn data</strong> shows that professionals who change careers at 30 reach the same seniority as non-changers within 5-7 years, and often surpass them because they bring diverse perspectives.</span>
+            <li>
+              <strong>List what you already do well.</strong> Skills like running projects, handling customers or
+              working with numbers carry across. Our <Link href="/transferable-skills">transferable skills guide</Link>{" "}
+              helps you put them into words employers use.
             </li>
-            <li className="flex gap-2">
-              <span className="text-green-600 font-bold flex-shrink-0">3.</span>
-              <span><strong>The average person changes careers 5-7 times</strong> in their lifetime. If you are on your first change at 30, you are actually behind the curve.</span>
+            <li>
+              <strong>Check the pay honestly.</strong> Compare the lower quartile in the table above with what you earn
+              now. If there is a gap, work out how many months you could cover it.
             </li>
-            <li className="flex gap-2">
-              <span className="text-green-600 font-bold flex-shrink-0">4.</span>
-              <span><strong>Neuroplasticity research</strong> confirms that your brain remains highly capable of learning new skills well into your 60s. The "too old to learn" myth is exactly that.</span>
+            <li>
+              <strong>Test it before you jump.</strong> Talk to two or three people who do the job, try a short course
+              or volunteer. It is cheaper to find out now that you dislike the work.
+            </li>
+            <li>
+              <strong>Pick a route you can fund.</strong> See the options below. Many let you keep earning.
+            </li>
+            <li>
+              <strong>Rewrite your CV for the new job.</strong> Lead with the skills the new role needs.{" "}
+              <Link href="/how-to-write-a-cv-for-career-change">How to write a CV for a career change</Link> covers the
+              layout.
+            </li>
+          </ol>
+          <p>
+            For a longer version of these steps, read{" "}
+            <Link href="/career-change/how-to-change-careers">how to change careers in the UK</Link>.
+          </p>
+        </Prose>
+      </GuideSection>
+
+      <GuideSection id="funding" title="How to pay for retraining at 30">
+        <Prose className="mt-4">
+          <ul>
+            <li>
+              <strong>Apprenticeship.</strong> You are an employee and you are paid while you train. The legal minimum is
+              £8.00 an hour in your first year, then the National Living Wage of £12.71 an hour if you are 21 or over
+              (rates from April 2026). Employers can pay more than the minimum.{" "}
+              <Ext href="https://www.gov.uk/become-apprentice/pay-and-conditions">GOV.UK: apprentice pay</Ext>
+            </li>
+            <li>
+              <strong>Free Courses for Jobs.</strong> A free level 3 course if you are 19 or over and earn below
+              £25,750 or are unemployed.{" "}
+              <Ext href="https://www.gov.uk/guidance/free-courses-for-jobs">GOV.UK, updated July 2025</Ext>
+            </li>
+            <li>
+              <strong>Skills Bootcamps.</strong> Courses of up to 16 weeks for people aged 19 or over, with a
+              guaranteed job interview at the end.{" "}
+              <Ext href="https://www.skillsforcareers.education.gov.uk/pages/training-choice/skills-bootcamp">
+                Department for Education: Skills Bootcamps
+              </Ext>
+            </li>
+            <li>
+              <strong>Advanced Learner Loan.</strong> Covers course fees for level 3 to 6 courses at approved providers
+              in England, with no credit check. On a course started since August 2023 you repay 9% of your income over
+              £25,000 a year, and interest is charged from the first payment.{" "}
+              <Ext href="https://www.gov.uk/advanced-learner-loan">GOV.UK: Advanced Learner Loan</Ext>;{" "}
+              <Ext href="https://www.gov.uk/repaying-your-student-loan/what-you-pay">repayment plans</Ext>
+            </li>
+            <li>
+              <strong>Lifelong Learning Entitlement.</strong> For level 4 to 6 courses and modules starting on or after 1
+              January 2027, student finance moves to the Lifelong Learning Entitlement, with Tuition Fee Loans of up to
+              £39,160 in total. Applications open at the end of October 2026.{" "}
+              <Ext href="https://www.gov.uk/student-finance-on-or-after-1-january-2027">GOV.UK, January 2026</Ext>
             </li>
           </ul>
-        </div>
-      </section>
+          <p>
+            As an example of timing, Skills England gives a typical {daStd.typicalDurationMonths} months for the{" "}
+            {daStd.title.toLowerCase()} apprenticeship (level {daStd.level}) and {baStd.typicalDurationMonths} months for
+            the {baStd.title.toLowerCase()} apprenticeship (level {baStd.level}). If you have no savings,
+            our guide to a <Link href="/career-change-with-no-money">career change with no money</Link> goes through each
+            option in more detail, and{" "}
+            <Link href="/apprenticeships-for-adults-uk">apprenticeships for adults</Link> covers pay and levels.
+          </p>
+        </Prose>
+      </GuideSection>
 
-      {/* CTA 1 - Box */}
-      <div className="bg-indigo-50 rounded-xl p-5 mb-10 flex flex-col sm:flex-row items-center gap-4">
-        <div className="flex-1">
-          <div className="font-semibold text-gray-900">Curious what your 8-12 years of experience qualifies you for?</div>
-          <div className="text-sm text-gray-500">Upload your CV and our AI will identify every transferable skill and match you to careers you have not considered.</div>
-        </div>
-        <Link href="/discover" className="bg-indigo-600 text-white font-medium px-6 py-2.5 rounded-lg hover:bg-indigo-700 transition-colors text-sm whitespace-nowrap">
-          Analyse My Skills Free
-        </Link>
-      </div>
+      <ToolCallout
+        className="mt-14"
+        heading="See where your experience could take you"
+        body={
+          <p>
+            Tell us the job you do now, or paste your CV, and we will show the jobs people with your skills move into,
+            with ONS pay for each. Free, and no account needed.
+          </p>
+        }
+      />
 
-      {/* Section 2 */}
-      <section className="mb-10">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">
-          Your transferable skills are worth more than you think
-        </h2>
-        <p className="text-gray-600 leading-relaxed mb-4">
-          The biggest mistake career changers make is undervaluing their existing experience. You look at a job description for a Product Manager or UX Researcher and think "I have never done that." But you almost certainly have done many of the component skills, just under different names.
-        </p>
-        <p className="text-gray-600 leading-relaxed mb-4">
-          A teacher with 8 years of experience has managed teams, designed programmes, presented to stakeholders, analysed performance data, and resolved conflicts. A nurse has made critical decisions under pressure, managed complex documentation, coordinated teams, and demonstrated extraordinary empathy. These are not soft skills. They are high-value competencies that many industries struggle to hire for.
-        </p>
+      <FaqSection
+        className="mt-14"
+        items={[
+          {
+            question: "Is 30 too old to change career?",
+            answer:
+              "No. Under current law, GOV.UK's State Pension age checker gives 68 for anyone who turns 30 in 2026, so you have around 38 working years ahead. There is no upper age limit on apprenticeships in England, and Advanced Learner Loans, Free Courses for Jobs and Skills Bootcamps are open to anyone aged 19 or over.",
+          },
+          {
+            question: "Can I change my career at 30 with no experience in the new field?",
+            answer:
+              "Yes, through routes that train you from the start. An apprenticeship pays you while you learn, and GOV.UK says you can start one even if you already have a degree. Most Skills Bootcamps need no previous knowledge of the subject, last up to 16 weeks and end with a guaranteed job interview.",
+          },
+          {
+            question: "Will I take a pay cut if I change career at 30?",
+            answer: `You might, at least at first. ONS puts the median for full-time employees aged 30 to 39 at ${formatGBP(MEDIAN_30S)} a year (ASHE 2025). The legal minimum for an apprentice in their first year is £8.00 an hour from April 2026. Compare the lower-quartile pay for your target job with what you earn now, and plan for the gap.`,
+          },
+          {
+            question: "How long does a career change take at 30?",
+            answer: `It depends on the route. Skills Bootcamps last up to 16 weeks. GOV.UK says apprenticeships take from 8 months to 6 years, and Skills England gives a typical ${daStd.typicalDurationMonths} months for the ${daStd.title.toLowerCase()} apprenticeship and ${baStd.typicalDurationMonths} months for the ${baStd.title.toLowerCase()} one.`,
+          },
+          {
+            question: "Can I get funding to retrain at 30?",
+            answer:
+              "Often, yes. Free Courses for Jobs pays for a level 3 course if you earn below £25,750 or are unemployed. Skills Bootcamps are free when you take them yourself. An Advanced Learner Loan covers fees for level 3 to 6 courses, and from 1 January 2027 level 4 to 6 courses are funded through the Lifelong Learning Entitlement.",
+          },
+        ]}
+      />
 
-        <div className="grid sm:grid-cols-2 gap-4 mb-4">
-          <div className="bg-green-50 rounded-xl p-5 border border-green-100">
-            <h3 className="font-semibold text-gray-900 mb-2">Skills you probably have (and undervalue)</h3>
-            <ul className="text-sm text-gray-600 space-y-1.5">
-              <li>Stakeholder management</li>
-              <li>Project coordination</li>
-              <li>Written and verbal communication</li>
-              <li>Problem solving under pressure</li>
-              <li>Training and mentoring</li>
-              <li>Data analysis (basic level)</li>
-              <li>Budget awareness</li>
-              <li>Conflict resolution</li>
-            </ul>
-          </div>
-          <div className="bg-amber-50 rounded-xl p-5 border border-amber-100">
-            <h3 className="font-semibold text-gray-900 mb-2">What employers actually look for</h3>
-            <ul className="text-sm text-gray-600 space-y-1.5">
-              <li>76% prioritise skills over qualifications</li>
-              <li>Problem solving is the #1 desired skill</li>
-              <li>Communication skills outrank technical ability</li>
-              <li>Diverse experience is valued for fresh perspectives</li>
-              <li>EQ (emotional intelligence) beats IQ for leadership</li>
-              <li>Adaptability is the fastest-growing requirement</li>
-              <li>Self-motivation and initiative score highly</li>
-              <li>Cultural fit often matters more than experience</li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA 2 - Dark */}
-      <div className="bg-gray-900 text-white rounded-xl p-6 text-center mb-10">
-        <h3 className="text-lg font-semibold mb-2">You have more transferable skills than you realise</h3>
-        <p className="text-gray-300 text-sm mb-4">88% of CVs are rejected by ATS systems before a human sees them. Our AI reads between the lines and finds the hidden skills that job boards miss.</p>
-        <Link href="/discover" className="inline-flex items-center bg-white text-gray-900 font-semibold px-6 py-3 rounded-lg hover:bg-gray-100 transition-colors text-sm">
-          Upload My CV for AI Analysis
-        </Link>
-      </div>
-
-      {/* Section 3 */}
-      <section className="mb-10">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">
-          Practical steps for changing careers at 30
-        </h2>
-
-        <div className="space-y-6">
-          <div className="bg-white rounded-xl border border-gray-100 p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
-              <span className="text-indigo-600 mr-2">Step 1.</span>Audit your actual skills (not your job titles)
-            </h3>
-            <p className="text-sm text-gray-600">
-              Write down every task you do in a typical month. Not your job description, but what you actually spend your time doing. Group these into skill categories: communication, analysis, leadership, creative, technical. You will be surprised how many you have. Better yet, upload your CV and let our AI do this for you in 2 minutes.
-            </p>
-          </div>
-
-          <div className="bg-white rounded-xl border border-gray-100 p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
-              <span className="text-indigo-600 mr-2">Step 2.</span>Identify target roles based on skill overlap
-            </h3>
-            <p className="text-sm text-gray-600">
-              Do not browse job boards hoping something appeals to you. Instead, work backwards from your skills. If you have 7 out of 10 skills a role requires, you are a competitive candidate. The remaining 3 can often be learned in weeks or months, not years. Our <Link href="/discover" className="text-indigo-600 hover:text-indigo-700 font-medium">career matching tool</Link> automates this process.
-            </p>
-          </div>
-
-          <div className="bg-white rounded-xl border border-gray-100 p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
-              <span className="text-indigo-600 mr-2">Step 3.</span>Close the gap without quitting your day job
-            </h3>
-            <p className="text-sm text-gray-600">
-              Most career changes do not require going back to university. A 6-week online course, a professional certification, or a portfolio of side projects is usually enough. PRINCE2 takes 1 week. Google Data Analytics takes 6 months part-time. A UX bootcamp takes 12-16 weeks. Plan your learning around your current job.
-            </p>
-          </div>
-
-          <div className="bg-white rounded-xl border border-gray-100 p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
-              <span className="text-indigo-600 mr-2">Step 4.</span>Rewrite your CV as a skills-based document
-            </h3>
-            <p className="text-sm text-gray-600">
-              A chronological CV works when you are progressing in the same field. For career changers, a skills-based format is more effective. Lead with the skills the target role needs, then provide evidence from your experience. Read our <Link href="/career-change/career-change-cv" className="text-indigo-600 hover:text-indigo-700 font-medium">career change CV guide</Link> for a step-by-step process.
-            </p>
-          </div>
-
-          <div className="bg-white rounded-xl border border-gray-100 p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
-              <span className="text-indigo-600 mr-2">Step 5.</span>Build your network in the target industry
-            </h3>
-            <p className="text-sm text-gray-600">
-              Informational interviews are the most underused tool in career change. Reach out to 5-10 people on LinkedIn who work in your target role. Ask them how they got there, what skills matter most, and what they wish they had known. Most people are happy to share their experience.
-            </p>
-          </div>
-
-          <div className="bg-white rounded-xl border border-gray-100 p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
-              <span className="text-indigo-600 mr-2">Step 6.</span>Apply strategically, not en masse
-            </h3>
-            <p className="text-sm text-gray-600">
-              Apply to 10 roles with tailored CVs and cover letters rather than 100 with the same generic application. Each application should demonstrate how your specific experience maps to their requirements. Quality beats quantity every time when you are changing careers.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA 3 - Inline text */}
-      <div className="border-l-4 border-indigo-600 bg-indigo-50 rounded-r-xl p-5 mb-10">
-        <p className="text-gray-700 text-sm">
-          <span className="font-semibold">The first step is the hardest.</span> Once you see which careers match your existing skills, the whole process becomes less daunting. Our AI identifies your transferable skills in 2 minutes.{" "}
-          <Link href="/discover" className="text-indigo-600 font-medium hover:text-indigo-700">Try it free</Link>.
-        </p>
-      </div>
-
-      {/* Section 4 - Popular transitions */}
-      <section className="mb-10">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">
-          Popular career changes at 30
-        </h2>
-        <p className="text-gray-600 leading-relaxed mb-6">
-          These are some of the most common and successful career transitions for people in their early 30s. Each leverages existing skills rather than starting from scratch.
-        </p>
-        <div className="space-y-4">
-          {[
-            { from: "Teacher", to: "L&D Manager / Instructional Designer", timeframe: "3-6 months", link: "/careers-for/teachers" },
-            { from: "Nurse", to: "Health & Safety Officer / Clinical Trials Coordinator", timeframe: "2-4 months", link: "/careers-for/nurses" },
-            { from: "Retail Manager", to: "Customer Success Manager / Recruitment Consultant", timeframe: "1-3 months", link: "/careers-for/retail" },
-            { from: "Admin/Office", to: "Project Manager / Business Analyst", timeframe: "2-6 months", link: "/careers-for/admin" },
-            { from: "Construction", to: "Operations Manager / Facilities Manager", timeframe: "1-3 months", link: "/careers-for/construction" },
-            { from: "Finance", to: "Data Analyst / Management Consultant", timeframe: "3-6 months", link: "/careers-for/finance" },
-          ].map((t) => (
-            <div key={t.from} className="bg-white rounded-xl border border-gray-100 p-5 flex flex-col sm:flex-row sm:items-center gap-3">
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-sm font-semibold text-gray-900">{t.from}</span>
-                  <span className="text-gray-400">to</span>
-                  <span className="text-sm font-semibold text-indigo-600">{t.to}</span>
-                </div>
-                <span className="text-xs text-gray-500">Typical transition: {t.timeframe}</span>
-              </div>
-              <Link href={t.link} className="text-xs text-indigo-600 font-medium hover:text-indigo-700 whitespace-nowrap">
-                Read full guide
-              </Link>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Section 5 - Common fears */}
-      <section className="mb-10">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">
-          Addressing the fears
-        </h2>
-        <div className="space-y-4">
-          <div className="bg-white rounded-xl border border-gray-100 p-6">
-            <h3 className="font-semibold text-gray-900 mb-2">"I will take a pay cut"</h3>
-            <p className="text-sm text-gray-600">Maybe temporarily, but not necessarily. Many career changers maintain or increase their salary by targeting industries that pay more for their existing skills. A teacher earning £35k who moves into L&D at £45k gets a pay rise, not a cut. The key is matching your skills to higher-paying sectors.</p>
-          </div>
-          <div className="bg-white rounded-xl border border-gray-100 p-6">
-            <h3 className="font-semibold text-gray-900 mb-2">"I have wasted my 20s"</h3>
-            <p className="text-sm text-gray-600">You have not. Every year of experience built transferable skills. Those 8-12 years of communication, problem solving, and stakeholder management give you a foundation that fresh graduates cannot match. Your experience is an asset, not a liability.</p>
-          </div>
-          <div className="bg-white rounded-xl border border-gray-100 p-6">
-            <h3 className="font-semibold text-gray-900 mb-2">"Nobody will hire a career changer"</h3>
-            <p className="text-sm text-gray-600">76% of UK employers now say they prioritise skills over qualifications. The skills-based hiring movement is growing rapidly. Companies like Google, Apple, and EY have removed degree requirements from most roles. Your diverse experience is increasingly seen as a competitive advantage.</p>
-          </div>
-          <div className="bg-white rounded-xl border border-gray-100 p-6">
-            <h3 className="font-semibold text-gray-900 mb-2">"I need to go back to university"</h3>
-            <p className="text-sm text-gray-600">Almost certainly not. Most career transitions require a short professional certification (weeks, not years) plus evidence of practical ability. Portfolios, projects, and certifications carry more weight than degrees for career changers.</p>
-          </div>
-        </div>
-      </section>
-
-      {/* Final CTA */}
-      <section className="bg-indigo-50 rounded-xl p-8 text-center mb-10">
-        <h2 className="text-xl font-semibold text-gray-900 mb-3">
-          Ready to explore what is possible?
-        </h2>
-        <p className="text-gray-500 mb-6 max-w-lg mx-auto">
-          Upload your CV or describe your experience. Our AI will show you exactly which careers match your skills, what gaps to close, and how to get there. Free. 2 minutes.
-        </p>
-        <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <Link href="/discover" className="inline-flex items-center justify-center bg-indigo-600 text-white font-semibold px-8 py-4 rounded-xl hover:bg-indigo-700 transition-colors">
-            Discover My Career Matches
-          </Link>
-          <Link href="/quiz" className="inline-flex items-center justify-center border border-gray-200 text-gray-700 font-medium px-8 py-4 rounded-xl hover:bg-white transition-colors">
-            Take the Career Quiz
-          </Link>
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section className="mb-10">
-        <h2 className="text-xl font-semibold text-gray-900 mb-6">Frequently Asked Questions</h2>
-        <div className="space-y-6">
-          <div>
-            <h3 className="font-semibold text-gray-900 mb-1">Is 30 too old to change career?</h3>
-            <p className="text-sm text-gray-600">No. With 35+ working years ahead and 8-12 years of transferable skills behind you, 30 is widely considered the best age for a career change. Research backs this up consistently.</p>
-          </div>
-          <div>
-            <h3 className="font-semibold text-gray-900 mb-1">How long does a career change take at 30?</h3>
-            <p className="text-sm text-gray-600">Most successful career changers land their new role within 3-9 months. The timeline depends on how much retraining is needed. Transitions that leverage existing skills (e.g., teacher to L&D) can happen in weeks.</p>
-          </div>
-          <div>
-            <h3 className="font-semibold text-gray-900 mb-1">What are the best careers to switch to at 30?</h3>
-            <p className="text-sm text-gray-600">The best career is the one that matches your existing skills. Popular switches include project management, data analysis, UX design, and L&D. Use our <Link href="/discover" className="text-indigo-600 hover:text-indigo-700 font-medium">career matching tool</Link> to find your specific matches.</p>
-          </div>
-          <div>
-            <h3 className="font-semibold text-gray-900 mb-1">Can I change career at 30 with no qualifications?</h3>
-            <p className="text-sm text-gray-600">Yes. Skills-based hiring means employers increasingly prioritise what you can do over what certificates you hold. See our guide to <Link href="/career-change-no-experience" className="text-indigo-600 hover:text-indigo-700 font-medium">career change with no experience</Link>.</p>
-          </div>
-        </div>
-      </section>
-
-      {/* Related */}
-      <div className="pt-8 border-t border-gray-100">
-        <h3 className="text-sm font-semibold text-gray-500 mb-3">Related Pages</h3>
-        <div className="flex flex-wrap gap-2">
-          <Link href="/career-change/career-change-at-40" className="text-sm text-indigo-600 hover:text-indigo-700">Career Change at 40</Link>
-          <span className="text-gray-300">|</span>
-          <Link href="/career-change-no-experience" className="text-sm text-indigo-600 hover:text-indigo-700">Career Change With No Experience</Link>
-          <span className="text-gray-300">|</span>
-          <Link href="/careers-for" className="text-sm text-indigo-600 hover:text-indigo-700">Career Change by Profession</Link>
-          <span className="text-gray-300">|</span>
-          <Link href="/career-change/transferable-skills-guide" className="text-sm text-indigo-600 hover:text-indigo-700">Transferable Skills Guide</Link>
-        </div>
-      </div>
-    </div>
+      <RelatedLinks
+        links={[
+          { href: "/career-change/how-to-change-careers", label: "How to change careers in the UK" },
+          { href: "/career-change-with-no-money", label: "Career change with no money" },
+          { href: "/apprenticeships-for-adults-uk", label: "Apprenticeships for adults" },
+          { href: "/transferable-skills", label: "Find your transferable skills" },
+          { href: "/jobs-without-a-degree", label: "Jobs without a degree, with ONS pay" },
+          { href: "/career-change-at-50", label: "Career change at 50" },
+        ]}
+      />
+    </GuideShell>
   );
 }

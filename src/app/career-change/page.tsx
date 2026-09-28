@@ -1,217 +1,227 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Breadcrumbs, PageHeader, Prose, SourceNote, ToolCallout, formatGBP } from "@/components/content";
+import { JsonLd } from "@/components/JsonLd";
+import { guideMetadata, REVAMP_DATE } from "@/components/guides/meta";
+import { GuideSection, GuideShell } from "@/components/guides/GuideShell";
+import { ASHE_BULLETIN_URL, ASHE_PUBLISHED, UK_FT_MEDIAN } from "@/components/guides/pay";
+import { JOB_HUBS, SITE_NAME, SITE_URL, absoluteUrl } from "@/components/site";
 
-export const metadata: Metadata = {
-  title: "Career Change Guides - Practical Advice for Changing Careers",
-  description:
-    "Comprehensive career change guides covering transferable skills, CV writing, skills-based hiring, and how to switch careers at any age. Free expert advice.",
-};
+const PATH = "/career-change";
+const TITLE = "Career change guides for the UK, with real pay data";
+const DESCRIPTION =
+  "Free UK guides to changing career: how to switch, CVs, starting with no experience and skills-based hiring, plus ONS pay for the jobs you could move to.";
+const H1 = "Changing career in the UK";
 
-const guides = [
+export const metadata: Metadata = guideMetadata({ path: PATH, title: TITLE, description: DESCRIPTION, ogType: "website" });
+
+interface GuideLink {
+  href: string;
+  label: string;
+  note?: string;
+  external?: boolean;
+}
+
+const PLANNING: GuideLink[] = [
   {
-    slug: "how-to-change-careers",
-    title: "How to Change Careers: The Complete Guide",
-    description:
-      "A step-by-step walkthrough of the career change process, from self-assessment through to landing your first role in a new field. Practical, honest, and based on what actually works.",
-    readTime: "12 min read",
-    icon: "🧭",
-    tags: ["Getting Started", "Strategy"],
+    href: "/career-change/how-to-change-careers",
+    label: "How to change careers in the UK",
+    note: "Six steps in order, with ONS pay and the official rules on notice, training time and course funding.",
   },
   {
-    slug: "transferable-skills-guide",
-    title: "Transferable Skills: Your Hidden Superpower",
-    description:
-      "Most people underestimate their skills by 40% or more. Learn how to identify, categorise, and sell the skills you already have to employers in completely different industries.",
-    readTime: "10 min read",
-    icon: "💡",
-    tags: ["Skills", "Self-Assessment"],
+    href: "/career-change-no-experience",
+    label: "Changing career with no experience",
+    note: "Routes built for new entrants, such as apprenticeships and funded courses, and what the jobs pay.",
   },
   {
-    slug: "career-change-cv",
-    title: "How to Write a Career Change CV",
-    description:
-      "Traditional CVs work against career changers. Learn the skills-first CV format that gets past ATS filters and convinces hiring managers you are the right fit, even without direct experience.",
-    readTime: "9 min read",
-    icon: "📝",
-    tags: ["CV Writing", "Applications"],
+    href: "/how-to-write-a-cv-for-career-change",
+    label: "How to write a CV for a career change",
+    note: "A skills-based structure with example lines you can adapt.",
   },
   {
-    slug: "career-change-at-40",
-    title: "Changing Careers at 40 (and Beyond)",
-    description:
-      "Your 20+ years of experience are not a liability. They are your biggest asset. Real statistics, honest advice, and a practical plan for making the switch in your 40s, 50s, or later.",
-    readTime: "11 min read",
-    icon: "🔄",
-    tags: ["Age", "Experience"],
+    href: "/career-change/skills-based-hiring",
+    label: "Skills-based hiring explained",
+    note: "How the Civil Service and apprenticeship standards assess skills rather than job titles.",
   },
-  {
-    slug: "skills-based-hiring",
-    title: "Skills-Based Hiring: What It Means for Career Changers",
-    description:
-      "The biggest shift in recruitment in decades is working in your favour. More companies are dropping degree requirements and hiring for skills. Here is how to take advantage.",
-    readTime: "8 min read",
-    icon: "🎯",
-    tags: ["Hiring Trends", "Opportunity"],
-  },
+  { href: "/transferable-skills", label: "Transferable skills" },
+  { href: "/career-change-with-no-money", label: "Changing career with no money" },
+  { href: "/apprenticeships-for-adults-uk", label: "Apprenticeships for adults" },
 ];
 
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "CollectionPage",
-  name: "Career Change Guides",
-  description:
-    "Comprehensive guides covering every aspect of changing careers, from transferable skills to CV writing and skills-based hiring.",
-  url: "https://matchmyskillset.com/career-change",
-  publisher: {
-    "@type": "Organization",
-    name: "MatchMySkillset",
-    url: "https://matchmyskillset.com",
+const DECIDING: GuideLink[] = [
+  {
+    href: "/what-job-is-right-for-me",
+    label: "What job is right for me?",
+    note: "Narrow it down by skills, values, working style and pay, with example jobs and ONS pay.",
   },
-  mainEntity: {
-    "@type": "ItemList",
-    itemListElement: guides.map((g, i) => ({
-      "@type": "ListItem",
-      position: i + 1,
-      url: `https://matchmyskillset.com/career-change/${g.slug}`,
-      name: g.title,
-    })),
+  {
+    href: "/jobs-for-people-who-hate-their-job",
+    label: "I hate my job: what should I do?",
+    note: "Work out what is really wrong before you decide, and what to do if it is affecting your health.",
   },
-};
+  { href: "/low-stress-jobs-uk", label: "Low-stress jobs in the UK" },
+  { href: "/best-jobs-for-work-life-balance", label: "Jobs with a good work-life balance" },
+  { href: "/jobs-for-introverts", label: "Jobs for introverts" },
+  { href: "/jobs-for-people-with-adhd", label: "Jobs for people with ADHD" },
+  { href: "/best-jobs-for-women-returning-to-work", label: "Jobs for women returning to work" },
+];
 
-export default function CareerChangeHubPage() {
+const BY_AGE: GuideLink[] = [
+  { href: "/career-change-at-30", label: "Career change at 30" },
+  {
+    href: "https://aicareerswap.com/guides/career-change-at-40",
+    label: "Career change at 40",
+    note: "On our sister site, AICareerSwap.",
+    external: true,
+  },
+  { href: "/career-change-at-50", label: "Career change at 50" },
+];
+
+const PAY_AND_DATA: GuideLink[] = [
+  { href: "/highest-paying-careers-uk", label: "Highest paying careers in the UK" },
+  { href: "/jobs-without-a-degree", label: "Jobs without a degree" },
+  { href: "/what-jobs", label: "What jobs can I do?" },
+  { href: "/what-jobs/jobs-that-pay-30k", label: "Jobs that pay £30k" },
+  { href: "/what-jobs/jobs-that-pay-40k", label: "Jobs that pay £40k" },
+  { href: "/what-jobs/jobs-that-pay-50k", label: "Jobs that pay £50k" },
+  { href: "/best-careers-for-the-future-uk", label: "Careers with a future in the UK" },
+  { href: "/skills-employers-want-2026", label: "Skills employers want" },
+];
+
+const WORK_STYLE: GuideLink[] = [
+  { href: "/work-from-home-jobs", label: "Work from home jobs" },
+  { href: "/jobs-you-can-do-from-home-with-no-experience", label: "Home-based jobs with no experience" },
+  { href: "/highest-paying-remote-jobs-uk", label: "Highest paying remote jobs" },
+  { href: "/freelance-careers-uk", label: "Freelance careers" },
+  { href: "/best-side-hustles-uk", label: "Side hustles" },
+];
+
+function LinkList({ links }: { links: GuideLink[] }) {
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12 sm:py-20">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+    <ul className="mt-5 max-w-reading border-t border-ink">
+      {links.map((link) => {
+        const inner = (
+          <>
+            <span className="underline-offset-4 group-hover:underline">
+              {link.label}
+              {link.external && <span className="sr-only"> (opens AICareerSwap)</span>}
+            </span>
+            {link.note && <span className="text-sm text-muted">{link.note}</span>}
+          </>
+        );
+        const className = "group flex min-h-12 flex-col justify-center py-2 text-lg text-ink hover:text-accent";
+        return (
+          <li key={link.href} className="border-b border-rule">
+            {link.external ? (
+              <a href={link.href} className={className} rel="noopener">
+                {inner}
+              </a>
+            ) : (
+              <Link href={link.href} className={className}>
+                {inner}
+              </Link>
+            )}
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
+
+export default function Page() {
+  const internal = [...PLANNING, ...DECIDING, ...BY_AGE, ...JOB_HUBS, ...PAY_AND_DATA, ...WORK_STYLE].filter(
+    (l) => !("external" in l && l.external),
+  );
+  const collection = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: H1,
+    description: DESCRIPTION,
+    url: absoluteUrl(PATH),
+    inLanguage: "en-GB",
+    dateModified: REVAMP_DATE,
+    isPartOf: { "@type": "WebSite", name: SITE_NAME, url: SITE_URL },
+    mainEntity: {
+      "@type": "ItemList",
+      itemListElement: internal.map((l, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        url: absoluteUrl(l.href),
+        name: l.label,
+      })),
+    },
+  };
+
+  return (
+    <GuideShell>
+      <JsonLd data={collection} />
+      <PageHeader
+        breadcrumbs={<Breadcrumbs items={[{ name: "Career change" }]} />}
+        kicker="Guides"
+        title={H1}
+        intro={
+          <>
+            <p>
+              Start with the guide that matches where you are. If you do not know what you want yet, begin with{" "}
+              <Link href="/what-job-is-right-for-me" className="link">
+                what job is right for me
+              </Link>
+              . If you know the job but not the route, read{" "}
+              <Link href="/career-change/how-to-change-careers" className="link">
+                how to change careers
+              </Link>
+              .
+            </p>
+            <p className="mt-3">
+              The guides use ONS pay data for the whole UK, and link each rule to GOV.UK or the body that sets it.
+            </p>
+          </>
+        }
+        updated={REVAMP_DATE}
       />
 
-      <div className="text-center mb-12">
-        <h1 className="text-3xl sm:text-4xl font-bold text-gray-900">
-          Career Change Guides
-        </h1>
-        <p className="mt-4 text-lg text-gray-500 max-w-2xl mx-auto">
-          Practical, no-nonsense advice for people thinking about changing
-          careers. Written by people who have actually done it.
+      <Prose>
+        <p>
+          A useful benchmark before you compare jobs: the median pay for full-time employee jobs in the UK was{" "}
+          <strong>{formatGBP(UK_FT_MEDIAN)}</strong> a year in the tax year to April 2025. Half of full-time jobs paid
+          more than that and half paid less.
         </p>
+      </Prose>
+      <SourceNote
+        className="mt-2 max-w-reading"
+        source="ONS, Employee earnings in the UK: 2025"
+        href={ASHE_BULLETIN_URL}
+        published={ASHE_PUBLISHED}
+        note="The 2026 figures are due on 22 October 2026."
+      />
+
+      <GuideSection id="planning" title="Planning the move">
+        <LinkList links={PLANNING} />
+      </GuideSection>
+
+      <GuideSection id="deciding" title="Deciding what to do next">
+        <LinkList links={DECIDING} />
+      </GuideSection>
+
+      <GuideSection id="by-age" title="By age">
+        <LinkList links={BY_AGE} />
+      </GuideSection>
+
+      <GuideSection id="by-job" title="Starting from the job you do now">
+        <LinkList links={JOB_HUBS.map((h) => ({ href: h.href, label: h.label }))} />
+      </GuideSection>
+
+      <div className="mt-14">
+        <ToolCallout />
       </div>
 
-      {/* Stats bar */}
-      <div className="grid grid-cols-3 gap-4 mb-12 bg-indigo-50 rounded-xl p-6">
-        <div className="text-center">
-          <div className="text-2xl font-bold text-indigo-700">33%</div>
-          <div className="text-xs text-gray-500 mt-1">
-            of UK workers want to change careers
-          </div>
-        </div>
-        <div className="text-center">
-          <div className="text-2xl font-bold text-indigo-700">72%</div>
-          <div className="text-xs text-gray-500 mt-1">
-            say they do not know where to start
-          </div>
-        </div>
-        <div className="text-center">
-          <div className="text-2xl font-bold text-indigo-700">88%</div>
-          <div className="text-xs text-gray-500 mt-1">
-            of good candidates filtered out by ATS
-          </div>
-        </div>
-      </div>
+      <GuideSection id="pay" title="Pay and data">
+        <LinkList links={PAY_AND_DATA} />
+      </GuideSection>
 
-      {/* Guide cards */}
-      <div className="space-y-4">
-        {guides.map((guide) => (
-          <Link
-            key={guide.slug}
-            href={`/career-change/${guide.slug}`}
-            className="flex items-start gap-5 bg-white rounded-xl border border-gray-100 p-6 hover:shadow-lg hover:border-indigo-100 transition-all group"
-          >
-            <div className="text-3xl flex-shrink-0 mt-0.5">{guide.icon}</div>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-3 mb-1">
-                <h2 className="text-lg font-semibold text-gray-900 group-hover:text-indigo-600 transition-colors">
-                  {guide.title}
-                </h2>
-              </div>
-              <p className="text-sm text-gray-500 mb-3">{guide.description}</p>
-              <div className="flex items-center gap-3">
-                <span className="text-xs text-gray-400">{guide.readTime}</span>
-                <div className="flex gap-1.5">
-                  {guide.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="text-xs bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded-full"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </div>
-            <svg
-              className="w-5 h-5 text-gray-300 group-hover:text-indigo-500 transition-colors flex-shrink-0 mt-1"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 5l7 7-7 7"
-              />
-            </svg>
-          </Link>
-        ))}
-      </div>
-
-      {/* CTA */}
-      <div className="mt-16 text-center bg-indigo-50 rounded-xl p-8">
-        <h2 className="text-xl font-semibold text-gray-900 mb-3">
-          Skip the reading. Discover your matches now.
-        </h2>
-        <p className="text-gray-500 mb-6">
-          Our AI analyses your skills and experience to find careers you never
-          knew existed. It takes 2 minutes and it is completely free.
-        </p>
-        <Link
-          href="/discover"
-          className="inline-flex items-center bg-indigo-600 text-white font-semibold px-8 py-4 rounded-xl hover:bg-indigo-700 transition-colors"
-        >
-          Discover My Career Matches
-        </Link>
-      </div>
-
-      {/* Related: Careers by Profession */}
-      <div className="mt-12 border-t border-gray-100 pt-8">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">
-          Related: Career Ideas by Profession
-        </h2>
-        <p className="text-sm text-gray-500 mb-4">
-          Looking for career change ideas specific to your current job? We have
-          detailed guides for specific professions.
-        </p>
-        <div className="flex flex-wrap gap-2">
-          {[
-            { slug: "teachers", label: "Teachers" },
-            { slug: "nurses", label: "Nurses" },
-            { slug: "construction", label: "Construction" },
-            { slug: "retail", label: "Retail" },
-            { slug: "military", label: "Military" },
-            { slug: "parents", label: "Parents" },
-            { slug: "admin", label: "Admin" },
-            { slug: "finance", label: "Finance" },
-          ].map((prof) => (
-            <Link
-              key={prof.slug}
-              href={`/careers-for/${prof.slug}`}
-              className="text-sm bg-gray-50 text-gray-700 px-3 py-1.5 rounded-full hover:bg-indigo-50 hover:text-indigo-700 transition-colors"
-            >
-              {prof.label}
-            </Link>
-          ))}
-        </div>
-      </div>
-    </div>
+      <GuideSection id="work-style" title="Remote, freelance and extra income">
+        <LinkList links={WORK_STYLE} />
+      </GuideSection>
+    </GuideShell>
   );
 }
