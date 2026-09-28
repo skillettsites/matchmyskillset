@@ -1,214 +1,390 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { Breadcrumbs, FaqSection, PageHeader, SourceNote, ToolCallout, formatGBP, type FaqItem } from "@/components/content";
+import {
+  ArticleJsonLd,
+  FactList,
+  FundedTraining,
+  HubPage,
+  HubPayTable,
+  HubRouteCards,
+  HubSection,
+  MethodNote,
+  OnThisPage,
+  RelatedLinks,
+  SourcesList,
+  ASHE,
+  allMedian,
+  countWord,
+  ftMedian,
+  gbpFt,
+  resolveRoutes,
+  type Fact,
+  type RouteSpec,
+} from "@/components/hubs";
+
+const PATH = "/career-change-from-retail";
+const UPDATED = "2026-09-28";
+const TITLE = "Career change from retail: better-paid jobs and how to get them";
+const DESCRIPTION =
+  "14 jobs that pay more than shop work, with ONS pay, the change against a retail assistant's pay, apprenticeships, and free courses you may qualify for. Checked September 2026.";
 
 export const metadata: Metadata = {
-  title: "Career Change From Retail UK (2026) | Better Jobs After Retail",
-  description:
-    "Leaving retail? 12 careers for people with retail experience. Your customer service, sales, and management skills transfer to higher-paying roles. UK salary data included.",
-  keywords: [
-    "career change from retail",
-    "leaving retail UK",
-    "better jobs after retail",
-    "retail worker career change",
-    "jobs after retail management",
-    "retail transferable skills",
-  ],
-  openGraph: {
-    title: "Career Change From Retail UK (2026)",
-    description: "12 careers for people leaving retail. Higher pay, better hours, and your skills transfer.",
-    type: "article",
-  },
+  title: { absolute: "Career Change From Retail UK: Better-Paid Jobs to Move Into" },
+  description: DESCRIPTION,
+  alternates: { canonical: PATH },
+  openGraph: { title: TITLE, description: DESCRIPTION, type: "article", url: PATH },
 };
 
-export default function CareerChangeFromRetailPage() {
-  const careers = [
-    { title: "Recruitment Consultant", salary: "£22,000 - £55,000+ (OTE)", transition: "Immediate", description: "Selling is selling, whether it is a pair of shoes or a job candidate. Retail experience gives you resilience, target management, and people skills that recruitment agencies crave.", howToGet: "Apply directly. No qualifications needed. Your ability to hit targets and handle rejection is your CV." },
-    { title: "Customer Success Manager", salary: "£28,000 - £50,000", transition: "1-3 months", description: "Help business customers get value from a software product. Your instinct for customer satisfaction, upselling, and relationship management transfers directly from retail.", howToGet: "Apply to SaaS companies. Highlight your customer retention metrics, upselling experience, and complaint resolution track record." },
-    { title: "Estate Agent", salary: "£20,000 - £50,000+ (OTE)", transition: "Immediate", description: "Commission-based, people-focused, and target-driven. If you enjoyed the sales side of retail, estate agency rewards the same skills with higher earning potential.", howToGet: "Direct application. No qualifications required to start. Your sales floor experience is immediately relevant." },
-    { title: "Insurance Broker / Advisor", salary: "£22,000 - £45,000", transition: "2-4 months", description: "Advisory sales in a more professional environment. Your ability to understand customer needs and recommend appropriate products is the core skill.", howToGet: "CII Certificate in Insurance (study on the job). Many brokerages train from scratch and value retail customer experience." },
-    { title: "Buyer / Merchandiser", salary: "£25,000 - £50,000", transition: "1-3 months", description: "Stay in retail but move to the commercial side. Your shop floor experience gives you genuine insight into what sells, what does not, and why. Buyers with frontline experience are valued.", howToGet: "Apply to retail head offices. Start as assistant buyer/merchandiser. Your product knowledge and customer insight are your advantage." },
-    { title: "Events Coordinator", salary: "£22,000 - £38,000", transition: "1-2 months", description: "Organise events, conferences, and corporate functions. Retail managers already manage logistics, staffing, suppliers, and tight deadlines. Event coordination is the same skill set in a different wrapper.", howToGet: "CIM or event management qualification helps but is not essential. Start with smaller events companies or in-house corporate events teams." },
-    { title: "Sales Executive (B2B)", salary: "£25,000 - £55,000+ (OTE)", transition: "1-2 months", description: "Business-to-business sales pays more than retail sales, and the core skill is identical: understanding customer needs and presenting solutions. B2B sales often includes hybrid/remote working.", howToGet: "Apply to SDR (Sales Development Representative) roles. Your face-to-face sales experience is a genuine advantage over candidates with no sales background." },
-    { title: "L&D / Training Coordinator", salary: "£24,000 - £38,000", transition: "1-3 months", description: "If you trained new starters in retail, you were already doing learning and development. Corporate L&D roles pay better and value your practical training experience.", howToGet: "Highlight your training experience on your CV. CIPD Level 3 is a bonus. Apply to large organisations with dedicated L&D teams." },
-    { title: "Logistics / Supply Chain Coordinator", salary: "£24,000 - £38,000", transition: "1-3 months", description: "If you managed stock, dealt with deliveries, and ensured shelves were filled on time, you already understand supply chain fundamentals. Move upstream for better pay.", howToGet: "Apply to logistics companies or distribution centres. CILT membership is helpful. Your practical stock management experience counts." },
-    { title: "Bank / Building Society Advisor", salary: "£22,000 - £32,000", transition: "1-2 months", description: "Customer advisory roles in banking are essentially retail but with better hours, no physical stock, and structured progression. Your customer service skills transfer entirely.", howToGet: "Apply directly. Banks train extensively. Your retail customer experience and sales skills are valued." },
-    { title: "Office / Operations Manager", salary: "£25,000 - £42,000", transition: "1-3 months", description: "Retail managers are operations managers by another name. You manage teams, rotas, budgets, customer satisfaction, stock, and targets. Office management is the same in a different environment.", howToGet: "Apply to operations or office manager roles. Your P&L awareness, team management, and operational experience translate directly." },
-    { title: "Contact Centre Team Leader", salary: "£24,000 - £35,000", transition: "Immediate", description: "Lead a team of customer service advisors. Same people management skills as retail but without the physical demands. Many offer hybrid or remote working.", howToGet: "Apply directly. Your retail team leadership experience is the primary qualification. Progress to operations manager." },
+const ASSISTANT = "7111";
+const SUPERVISOR = "7132";
+const MANAGER = "1150";
+
+const NMW = "https://www.gov.uk/national-minimum-wage-rates";
+const FCFJ = "https://www.gov.uk/guidance/free-courses-for-jobs";
+
+const CUSTOMER_SALES: RouteSpec[] = [
+  {
+    id: "customer-service-manager",
+    why: "Handling complaints, coaching staff and hitting service targets is the job, moved from a shop floor to a contact centre or service team.",
+  },
+  {
+    id: "sales-representative",
+    why: "Selling face to face, knowing your products and reading customers carry into business-to-business sales, where you sell to organisations instead of shoppers.",
+    aiSlug: "sales-representative",
+    jobsQuery: "sales executive",
+  },
+  {
+    id: "estate-agent",
+    why: "Talking to the public all day, following up leads and closing a sale are estate agency basics.",
+    aiSlug: "estate-agent",
+  },
+  {
+    id: "mortgage-adviser",
+    why: "Explaining products clearly and handling money conversations with care. It is regulated work, so expect exams and checks.",
+    note: "The National Careers Service says you register as an approved person with the Financial Conduct Authority.",
+    aiSlug: "mortgage-broker",
+  },
+  {
+    id: "recruitment-consultant",
+    why: "Recruitment is sales with people as the product: targets, phone work and building relationships with clients and candidates.",
+    aiSlug: "recruitment-consultant",
+  },
+];
+
+const OFFICE: RouteSpec[] = [
+  {
+    id: "office-manager",
+    why: "Rotas, ordering, cash reconciliation and staff issues are office management already, just in a shop.",
+    aiSlug: "office-manager",
+  },
+  {
+    id: "hr-officer",
+    why: "Supervisors and managers already recruit, induct and manage staff, and deal with absence and disciplinaries. HR does that full time.",
+  },
+  {
+    id: "bookkeeper",
+    why: "Cashing up, reconciling tills and spotting discrepancies build the accuracy bookkeeping needs.",
+    aiSlug: "bookkeeper",
+  },
+  {
+    id: "civil-service-executive-officer",
+    why: "Dealing with the public, following procedures and working to targets. The National Careers Service says a university qualification is not essential.",
+    aiSlug: "civil-servant",
+    jobsQuery: "civil service executive officer",
+  },
+];
+
+const OPERATIONS: RouteSpec[] = [
+  {
+    id: "warehouse-manager",
+    why: "Stock control, deliveries, rotas and health and safety are shared with warehouse work.",
+  },
+  {
+    id: "train-conductor",
+    why: "Customer service, safety announcements and handling difficult passengers, at a much higher median than shop work.",
+  },
+  {
+    id: "bus-driver",
+    why: "Serving the public all day, from the driving seat. You need the bus licence and the Driver CPC.",
+  },
+];
+
+const TECH_CARE: RouteSpec[] = [
+  {
+    id: "it-support-technician",
+    why: "Patient, step-by-step help for someone who is stuck is customer service. The technical knowledge is new, and the level 3 apprenticeship teaches it on the job.",
+  },
+  {
+    id: "healthcare-assistant",
+    why: "Being calm and kind with the public is central to healthcare support work, and the level 2 apprenticeship is the shortest on this page.",
+    aiSlug: "care-assistant",
+  },
+];
+
+const GROUPS = [
+  { id: "customer-sales", title: "Customer and sales roles that pay more", intro: "The skills you use every day, in jobs where they are paid better at the median.", specs: CUSTOMER_SALES },
+  {
+    id: "office",
+    title: "Office, people and money",
+    intro: "Good moves from supervisor level. If you already manage a store, note that HR officer and office manager medians are close to or below the retail manager median.",
+    specs: OFFICE,
+  },
+  { id: "operations", title: "Operations and transport", intro: "Shift work you are used to, at higher medians than shop work.", specs: OPERATIONS },
+  { id: "tech-care", title: "Tech support and care", intro: "Two routes with short apprenticeships: typically 8 months for healthcare support and 18 for IT support.", specs: TECH_CARE },
+];
+
+const ALL_SPECS = GROUPS.flatMap((g) => g.specs);
+
+export default function RetailHubPage() {
+  const assistant = ftMedian(ASSISTANT) as number;
+  const assistantAll = allMedian(ASSISTANT) as number;
+  const manager = ftMedian(MANAGER) as number;
+  const routes = resolveRoutes(ALL_SPECS);
+  const aboveManager = routes.filter((r) => r.basis === "ft" && r.median !== null && r.median > manager);
+  const top = [...routes].filter((r) => r.basis === "ft").sort((a, b) => (b.median ?? 0) - (a.median ?? 0))[0];
+
+  const facts: Fact[] = [
+    {
+      figure: formatGBP(assistant),
+      text: (
+        <>
+          ONS median full-time pay for sales and retail assistants, tax year to April 2025. Counting part-time jobs too,
+          the median was {formatGBP(assistantAll)}.
+        </>
+      ),
+      source: ASHE.short,
+      href: ASHE.href,
+      published: ASHE.published,
+    },
+    {
+      figure: gbpFt(MANAGER),
+      text: <>ONS median full-time pay for managers and directors in retail and wholesale. Retail sales supervisors: {gbpFt(SUPERVISOR)}.</>,
+      source: ASHE.short,
+      href: ASHE.href,
+      published: ASHE.published,
+    },
+    {
+      figure: "£12.71",
+      text: "an hour: the National Living Wage for workers aged 21 and over from April 2026.",
+      source: "GOV.UK, National Minimum Wage and National Living Wage rates",
+      href: NMW,
+      published: "checked 28 September 2026",
+    },
+    {
+      figure: "£25,750",
+      text: "the earnings limit for Free Courses for Jobs in England. Earn below it and you can get a level 3 qualification free. The full-time retail assistant median is below it.",
+      source: "GOV.UK, Free courses for jobs",
+      href: FCFJ,
+      published: "2025-07-29",
+    },
+    {
+      figure: "£8",
+      text: "an hour: the minimum an employer can pay in the first year of an apprenticeship, even if you are over 19. Check the advertised pay before you leave a better-paid job.",
+      source: "GOV.UK, National Minimum Wage and National Living Wage rates",
+      href: NMW,
+      published: "checked 28 September 2026",
+    },
+  ];
+
+  const faqs: FaqItem[] = [
+    {
+      question: "What jobs can I do after working in retail?",
+      answer: `Customer service management, business sales, estate agency, mortgage advice, recruitment, office and HR work, bookkeeping, the Civil Service, warehouse management, rail and bus work, IT support and healthcare support all use retail skills. All 14 on this page have a higher ONS full-time median than sales and retail assistants (${formatGBP(assistant)}, ONS ASHE 2025).`,
+    },
+    {
+      question: "What pays more than retail without a degree?",
+      answer: `None of the 14 jobs on this page usually needs a degree. The highest ONS full-time median among them is ${top.title.toLowerCase()} at ${formatGBP(top.median as number)}, then train conductor at ${gbpFt("6214")} (ONS ASHE 2025). Both have a level 2 or 3 apprenticeship.`,
+    },
+    {
+      question: "Can I get a free qualification if I work in retail?",
+      answer:
+        "Often, yes. In England, if you are 19 or over and earn below £25,750 or are unemployed, Free Courses for Jobs pays for a level 3 qualification, in subjects including accounting, business management, digital, and health and social care. Skills Bootcamps are free courses of up to 16 weeks with a guaranteed job interview at the end.",
+    },
+    {
+      question: "How do I move from retail into an office job?",
+      answer:
+        "Start from what you already do: rotas, cash handling, stock and staff issues. Office manager, HR officer, bookkeeper and civil service executive officer roles all have documented routes without a degree, and most have a level 2 or 3 apprenticeship. Put figures on your CV, such as team size, takings or targets met.",
+    },
+    {
+      question: "Can a retail manager move into HR?",
+      answer: `Yes, but check the pay. The ONS full-time median for HR officers was ${gbpFt("3571")}, below the ${formatGBP(manager)} median for retail managers, while HR managers had ${gbpFt("1136")} (ONS ASHE 2025). The National Careers Service names CIPD qualifications for HR roles, and the level 5 People professional apprenticeship is typically 22 months.`,
+    },
+    {
+      question: "Is recruitment a good move from retail?",
+      answer: `It uses the same sales and people skills. The ONS full-time median for the group that includes recruitment consultants was ${gbpFt("3571")} (ONS ASHE 2025), ${formatGBP((ftMedian("3571") as number) - assistant)} more than retail assistants. The Skills England Recruiter apprenticeship is level 3 and typically 18 months.`,
+    },
+    {
+      question: "Can I become a mortgage adviser without a degree?",
+      answer:
+        "Yes. The National Careers Service lists college, apprenticeship and on-the-job routes. The Skills England Mortgage adviser apprenticeship is level 3 and typically 12 months. You register as an approved person with the Financial Conduct Authority and pass a credit check and background checks.",
+    },
+    {
+      question: "What does a train conductor earn?",
+      answer: `The ONS full-time median for rail travel assistants, which includes conductors, was ${gbpFt("6214")} (ONS ASHE 2025). The Skills England Passenger transport operative apprenticeship is level 2 and typically 12 months. The National Careers Service lists a medical check and drug and alcohol screening.`,
+    },
+    {
+      question: "Can I do an apprenticeship if I already work in retail?",
+      answer:
+        "Yes. GOV.UK's only age rule is that you are 16 or over, and you can already hold qualifications, including a degree. Your employer and provider cannot charge you for the training. Check the pay: employers can pay £8 an hour in your first year, even if you are over 19.",
+    },
+    {
+      question: "What is the National Living Wage in 2026?",
+      answer:
+        "£12.71 an hour for workers aged 21 and over from April 2026, £10.85 for 18 to 20 year olds, and £8 for under-18s and apprentices in their first year (GOV.UK).",
+    },
+    {
+      question: "Why is ONS retail pay so much lower for all employees?",
+      answer: `Because many retail jobs are part time. The ONS median for sales and retail assistants was ${formatGBP(assistant)} for full-time jobs but ${formatGBP(assistantAll)} across all jobs, including part-time ones (ONS ASHE 2025). This page compares full-time figures only.`,
+    },
+    {
+      question: "How long does it take to leave retail?",
+      answer:
+        "Direct applications, such as customer service or recruitment roles, can take as long as a normal job search. Most apprenticeships on this page take 8 to 18 months while you are paid, and a Skills Bootcamp is up to 16 weeks.",
+    },
   ];
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12 sm:py-20">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "Article",
-            headline: "Career Change From Retail UK (2026)",
-            description: "12 careers for people leaving retail with salary data and transition guides.",
-            author: { "@type": "Organization", name: "MatchMySkillset" },
-            publisher: { "@type": "Organization", name: "MatchMySkillset", url: "https://matchmyskillset.com" },
-            datePublished: "2026-04-01",
-            dateModified: "2026-04-01",
-          }),
-        }}
+    <HubPage>
+      <ArticleJsonLd path={PATH} headline={TITLE} description={DESCRIPTION} dateModified={UPDATED} />
+      <PageHeader
+        breadcrumbs={<Breadcrumbs items={[{ name: "Leaving your job", href: "/careers-for" }, { name: "Leaving retail" }]} />}
+        kicker="Leaving retail"
+        title={TITLE}
+        updated={UPDATED}
+        intro={
+          <p>
+            Full-time sales and retail assistants had a median of {formatGBP(assistant)} in 2025 (ONS ASHE). All 14 jobs
+            below pay more at the median, none usually needs a degree, and most have a paid apprenticeship. The best paid
+            is {top.title.toLowerCase()} at {formatGBP(top.median as number)}.{" "}
+            {countWord(aboveManager.length)} beat the {formatGBP(manager)} retail manager median too.
+          </p>
+        }
+      >
+        <OnThisPage
+          items={[
+            { href: "#in-numbers", label: "Retail pay in numbers" },
+            { href: "#at-a-glance", label: "14 routes at a glance" },
+            { href: "#routes", label: "Each route in detail" },
+            { href: "#funded", label: "Free and funded retraining" },
+            { href: "#faq", label: "Common questions" },
+            { href: "#method", label: "How we worked this out" },
+          ]}
+        />
+      </PageHeader>
+
+      <HubSection id="in-numbers" title="Retail pay in numbers" intro={<p>The figures to know before you move, each from the body that publishes it.</p>}>
+        <FactList facts={facts} />
+      </HubSection>
+
+      <ToolCallout
+        current="retail assistant"
+        heading="Leaving retail? See where your own experience fits"
+        body={
+          <p>
+            Paste your CV and get a free analysis of the skills you already have and which of these routes they point to.
+            No account, and nothing to pay.
+          </p>
+        }
+        className="mt-12"
       />
 
-      <div className="text-sm text-gray-400 mb-6">
-        <Link href="/" className="hover:text-indigo-600">Home</Link>
-        {" / "}
-        <Link href="/careers-for" className="hover:text-indigo-600">Career Change</Link>
-        {" / "}<span className="text-gray-600">From Retail</span>
-      </div>
+      <HubSection
+        id="at-a-glance"
+        title="14 routes out of retail at a glance"
+        intro={
+          <p>
+            The change column compares each job&apos;s ONS full-time median with the {formatGBP(assistant)} full-time
+            median for sales and retail assistants. If you manage a store, compare with {formatGBP(manager)} instead.
+          </p>
+        }
+      >
+        <HubPayTable
+          caption="Where retail workers can go, and what it pays"
+          description="Median gross annual pay for full-time employees, UK, tax year to April 2025."
+          routes={routes}
+          comparator={{ header: "Change vs retail assistant", mobileLabel: "vs retail assistant", value: assistant }}
+        />
+      </HubSection>
 
-      <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-        Career Change From Retail: Better Jobs That Use Your Skills
-      </h1>
 
-      <div className="flex items-center gap-3 text-sm text-gray-400 mb-8">
-        <span>Updated April 2026</span>
-        <span>|</span>
-        <span>11 min read</span>
-      </div>
-
-      <p className="text-lg text-gray-600 leading-relaxed mb-4">
-        Retail workers are some of the most under-valued professionals in the UK. You manage teams, hit sales targets, handle difficult customers, manage stock worth thousands, and keep operations running on tight margins. Then you get paid £22,000 and work weekends.
-      </p>
-      <p className="text-gray-600 leading-relaxed mb-4">
-        The skills you built in retail are worth significantly more in other sectors. Customer service, sales ability, team management, conflict resolution, commercial awareness, and the ability to perform under pressure. Employers outside retail will pay a premium for these competencies.
-      </p>
-      <p className="text-gray-600 leading-relaxed mb-10">
-        This guide covers 12 careers you can move into from retail, most of which require no additional qualifications and can be started within weeks.
-      </p>
-
-      {/* Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-10">
-        <div className="bg-indigo-50 rounded-xl p-4 text-center">
-          <div className="text-2xl font-bold text-indigo-600">3m</div>
-          <div className="text-xs text-gray-500">UK retail workers</div>
-        </div>
-        <div className="bg-green-50 rounded-xl p-4 text-center">
-          <div className="text-2xl font-bold text-green-600">£55k+</div>
-          <div className="text-xs text-gray-500">Top salary potential</div>
-        </div>
-        <div className="bg-amber-50 rounded-xl p-4 text-center">
-          <div className="text-2xl font-bold text-amber-600">0</div>
-          <div className="text-xs text-gray-500">New qualifications needed (most roles)</div>
-        </div>
-        <div className="bg-purple-50 rounded-xl p-4 text-center">
-          <div className="text-2xl font-bold text-purple-600">76%</div>
-          <div className="text-xs text-gray-500">Employers value skills over degrees</div>
-        </div>
-      </div>
-
-      {/* CTA 1 */}
-      <div className="bg-indigo-50 rounded-xl p-5 mb-10 flex flex-col sm:flex-row items-center gap-4">
-        <div className="flex-1">
-          <div className="font-semibold text-gray-900">Your retail skills are worth more than retail pay</div>
-          <div className="text-sm text-gray-500">Upload your CV and our AI will match your retail experience to higher-paying careers.</div>
-        </div>
-        <Link href="/discover" className="bg-indigo-600 text-white font-medium px-6 py-2.5 rounded-lg hover:bg-indigo-700 transition-colors text-sm whitespace-nowrap">
-          Analyse My Skills Free
-        </Link>
-      </div>
-
-      {/* Skills Translation */}
-      <section className="mb-10">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">Translating your retail skills</h2>
-        <div className="bg-white rounded-xl border border-gray-100 p-6">
-          <div className="grid sm:grid-cols-2 gap-x-6 gap-y-3 text-sm">
-            {[
-              ["Till management / cash handling", "Financial operations / reconciliation"],
-              ["Visual merchandising", "Marketing / brand presentation"],
-              ["Upselling", "Sales strategy / revenue growth"],
-              ["Complaint handling", "Client relationship management"],
-              ["Rota management", "Resource planning / workforce management"],
-              ["Stock management", "Supply chain / inventory control"],
-              ["Training new starters", "L&D / onboarding design"],
-              ["KPI targets", "Performance management / commercial awareness"],
-            ].map(([retail, corporate]) => (
-              <div key={retail} className="flex items-center gap-2 py-1">
-                <span className="text-gray-500">{retail}</span>
-                <span className="text-gray-400">&rarr;</span>
-                <span className="font-medium text-indigo-600">{corporate}</span>
-              </div>
-            ))}
+      <HubSection
+        id="routes"
+        title="Each route in detail"
+        intro={<p>For each job: why retail skills carry over, the realistic way in, the checks listed for it, and the ONS figure with its caveats.</p>}
+      >
+        {GROUPS.map((g) => (
+          <div key={g.id} id={g.id} className="mt-10 scroll-mt-24">
+            <h3 className="font-sans text-2xl font-bold text-ink">{g.title}</h3>
+            <p className="mt-2 max-w-reading text-ink-2">{g.intro}</p>
+            <HubRouteCards
+              routes={routes.filter((r) => g.specs.some((s) => s.id === r.id))}
+              from="Retail assistant"
+              fromPay={assistant}
+              headingLevel={4}
+            />
           </div>
-        </div>
-      </section>
+        ))}
+      </HubSection>
 
-      {/* Career Listings */}
-      <section className="mb-12">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">12 Careers After Retail</h2>
-        <div className="space-y-5">
-          {careers.map((career, idx) => (
-            <div key={career.title}>
-              <div className="bg-white rounded-xl border border-gray-100 p-6">
-                <div className="flex items-start justify-between mb-2">
-                  <h3 className="text-lg font-semibold text-gray-900">{career.title}</h3>
-                  <span className="text-sm font-bold text-green-600 flex-shrink-0 ml-4">{career.salary}</span>
-                </div>
-                <div className="inline-flex items-center px-2 py-0.5 bg-indigo-50 text-indigo-600 rounded text-xs font-medium mb-3">
-                  Transition: {career.transition}
-                </div>
-                <p className="text-sm text-gray-600 mb-3">{career.description}</p>
-                <div>
-                  <span className="text-xs font-semibold text-gray-500">How to get there</span>
-                  <p className="text-sm text-gray-600 mt-1">{career.howToGet}</p>
-                </div>
-              </div>
+      <HubSection id="funded" title="Free and funded ways to retrain">
+        <FundedTraining
+          lead={
+            <p>
+              Retail pay often qualifies you for free training. If you earn under £25,750, Free Courses for Jobs can cover
+              a level 3 qualification, and an apprenticeship lets you earn while you train. These are the schemes for
+              England; Scotland, Wales and Northern Ireland run their own.
+            </p>
+          }
+          bootcampFit="Subjects include digital skills, business and administration, HGV driving, and health and social care."
+        >
+          <div className="mt-4">
+            <SourceNote source="GOV.UK, Free courses for jobs" href={FCFJ} published="2025-07-29" />
+          </div>
+        </FundedTraining>
+      </HubSection>
 
-              {idx === 3 && (
-                <div className="bg-gray-900 text-white rounded-xl p-6 text-center mt-5">
-                  <h3 className="text-lg font-semibold mb-2">Retail gave you skills most graduates lack</h3>
-                  <p className="text-gray-300 text-sm mb-4">Our AI identifies every transferable skill from your retail experience and matches you to roles that pay what you are actually worth.</p>
-                  <Link href="/discover" className="inline-flex items-center bg-white text-gray-900 font-semibold px-6 py-3 rounded-lg hover:bg-gray-100 transition-colors text-sm">
-                    Get My Personalised Matches
-                  </Link>
-                </div>
-              )}
+      <ToolCallout
+        id="check-your-options-2"
+        current="retail assistant"
+        heading="Not sure which route fits you?"
+        body={<p>Tell us your role, or paste your CV, and see which of these jobs your experience points to, with the gaps to close.</p>}
+        className="mt-14"
+      />
 
-              {idx === 7 && (
-                <div className="border-l-4 border-indigo-600 bg-indigo-50 rounded-r-xl p-5 mt-5">
-                  <p className="text-gray-700 text-sm">
-                    <span className="font-semibold">Retail managers who move into recruitment or B2B sales typically double their income within 2 years.</span> The sales skills are identical; the commission structures are better.{" "}
-                    <Link href="/discover" className="text-indigo-600 font-medium hover:text-indigo-700">See your matches</Link>.
-                  </p>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      </section>
+      <FaqSection items={faqs} intro="Short answers, each with its source. Pay figures are ONS ASHE 2025 full-time medians unless stated." />
 
-      <p className="text-gray-600 mb-10">
-        Ready for better pay and better hours?{" "}
-        <Link href="/discover" className="text-indigo-600 font-medium hover:text-indigo-700">
-          Upload your CV and see your matches in 2 minutes &rarr;
-        </Link>
-      </p>
+      <MethodNote
+        baseline={
+          <>
+            Pay changes compare each job&apos;s full-time median with the ONS full-time median for sales and retail
+            assistants (SOC 7111), {formatGBP(assistant)}. Retail managers (SOC 1150, {formatGBP(manager)}) and retail
+            sales supervisors (SOC 7132, {gbpFt(SUPERVISOR)}) are shown for comparison.
+          </>
+        }
+      />
 
-      <section className="bg-indigo-50 rounded-xl p-8 text-center mb-10">
-        <h2 className="text-xl font-semibold text-gray-900 mb-3">Your retail experience is your qualification</h2>
-        <p className="text-gray-500 mb-6 max-w-lg mx-auto">Upload your CV and discover which careers value your retail skills the most. Free. 2 minutes.</p>
-        <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <Link href="/discover" className="inline-flex items-center justify-center bg-indigo-600 text-white font-semibold px-8 py-4 rounded-xl hover:bg-indigo-700 transition-colors">Discover My Career Matches</Link>
-          <Link href="/careers-for/retail" className="inline-flex items-center justify-center border border-gray-200 text-gray-700 font-medium px-8 py-4 rounded-xl hover:bg-white transition-colors">Full Retail Guide</Link>
-        </div>
-      </section>
+      <SourcesList
+        items={[
+          { name: "ONS, Earnings and hours worked, occupation by four-digit SOC: ASHE Table 14 (2025 provisional)", href: ASHE.href, date: "published 23 October 2025" },
+          { name: "GOV.UK, National Minimum Wage and National Living Wage rates", href: NMW, date: "checked 28 September 2026" },
+          { name: "GOV.UK, Free courses for jobs (DWP)", href: FCFJ, date: "updated 29 July 2025" },
+          { name: "National Careers Service job profiles (routes, checks and requirements for each job)", href: "https://nationalcareers.service.gov.uk/job-profiles/mortgage-adviser", date: "retrieved 28 September 2026" },
+          { name: "Skills England, apprenticeship standards", href: "https://skillsengland.education.gov.uk/apprenticeships/", date: "retrieved 28 September 2026" },
+        ]}
+      />
 
-      <div className="pt-8 border-t border-gray-100">
-        <h3 className="text-sm font-semibold text-gray-500 mb-3">Related Pages</h3>
-        <div className="flex flex-wrap gap-2">
-          <Link href="/career-change-from-teaching" className="text-sm text-indigo-600 hover:text-indigo-700">Career Change From Teaching</Link>
-          <span className="text-gray-300">|</span>
-          <Link href="/high-paying-jobs-no-degree" className="text-sm text-indigo-600 hover:text-indigo-700">High Paying Jobs No Degree</Link>
-          <span className="text-gray-300">|</span>
-          <Link href="/career-change-at-30" className="text-sm text-indigo-600 hover:text-indigo-700">Career Change at 30</Link>
-          <span className="text-gray-300">|</span>
-          <Link href="/careers-for/retail" className="text-sm text-indigo-600 hover:text-indigo-700">Careers for Retail Workers</Link>
-        </div>
-      </div>
-    </div>
+      <RelatedLinks
+        links={[
+          { href: "/discover?current=retail%20assistant", label: "Analyse my CV", note: "Free, no account: see which routes your experience fits." },
+          { href: "/jobs?q=customer%20service", label: "Live customer service jobs", note: "Search current UK vacancies." },
+          { href: "/jobs-without-a-degree", label: "Jobs without a degree", note: "More well-paid routes with no degree needed." },
+          { href: "/transferable-skills", label: "Transferable skills", note: "How to describe shop-floor skills to other employers." },
+          { href: "/career-change-at-30", label: "Career change at 30" },
+          { href: "/career-change-at-50", label: "Career change at 50" },
+          { href: "https://aicareerswap.com/will-ai-replace/retail-cashier", label: "Will AI replace retail cashiers?", note: "Our sister site on AI and retail." },
+          { href: "/careers-for", label: "Career change from other jobs", note: "Hospitality, cabin crew, hairdressing and more." },
+        ]}
+      />
+    </HubPage>
   );
 }

@@ -1,215 +1,572 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Breadcrumbs, FaqSection, PageHeader, SourceNote, ToolCallout, type FaqItem } from "@/components/content";
+import {
+  ArticleJsonLd,
+  FactList,
+  FundedTraining,
+  HubPage,
+  HubPayTable,
+  HubRouteCards,
+  HubSection,
+  MethodNote,
+  OnThisPage,
+  RelatedLinks,
+  SourcesList,
+  ASHE,
+  countWord,
+  ftMedian,
+  gbpFt,
+  resolveRoutes,
+  type Fact,
+  type RouteSpec,
+} from "@/components/hubs";
+import { formatGBP } from "@/components/content";
+
+const PATH = "/career-change-from-teaching";
+const UPDATED = "2026-09-28";
+const TITLE = "Jobs for ex-teachers in the UK: where teachers go and what it pays";
+const DESCRIPTION =
+  "15 realistic jobs for ex-teachers with ONS pay, the change against a teacher's salary, how to get in, and free or funded retraining in England. Checked September 2026.";
 
 export const metadata: Metadata = {
-  title: "Career Change From Teaching UK (2026) | What Ex-Teachers Do",
-  description:
-    "Thinking of leaving teaching? Guide for UK teachers exploring career changes. 12 realistic career options, transferable skills analysis, and how to make the switch without starting over.",
-  keywords: [
-    "leaving teaching UK",
-    "what can I do instead of teaching",
-    "career change from teaching",
-    "ex teacher careers",
-    "quitting teaching UK",
-    "teacher career change",
-  ],
-  openGraph: {
-    title: "Career Change From Teaching UK (2026)",
-    description: "12 careers for ex-teachers with salary data and transition guides. Your teaching skills are worth more than you think.",
-    type: "article",
-  },
+  title: { absolute: "Jobs for Ex-Teachers UK: Where Teachers Go and What It Pays" },
+  description: DESCRIPTION,
+  alternates: { canonical: PATH },
+  openGraph: { title: TITLE, description: DESCRIPTION, type: "article", url: PATH },
 };
 
-export default function CareerChangeFromTeachingPage() {
-  const careers = [
-    { title: "Learning & Development Manager", salary: "£35,000 - £60,000", transition: "1-3 months", match: "95%", description: "Design and deliver training programmes for corporate employees. Your lesson planning, facilitation, and assessment skills transfer directly. This is teaching adults in a better-paid environment.", howToGet: "Apply directly. Your teaching experience is the qualification. CIPD Level 5 in L&D is a bonus but often not required." },
-    { title: "Instructional Designer", salary: "£30,000 - £55,000", transition: "2-4 months", match: "90%", description: "Create e-learning courses, training materials, and educational content for businesses. If you have ever built a scheme of work or adapted resources for different learners, you have done this.", howToGet: "Learn Articulate Storyline or Rise 360 (1-2 weeks). Build 2-3 sample e-learning modules. Apply to L&D teams or e-learning agencies." },
-    { title: "Education Technology (EdTech) Specialist", salary: "£30,000 - £55,000", transition: "1-2 months", match: "90%", description: "Work for companies building educational software. Your classroom experience gives you insight that pure tech people lack: what actually works for learners.", howToGet: "Target EdTech companies like Pearson, Oak National, or Twinkl. Apply to product, content, or training roles." },
-    { title: "HR / People Manager", salary: "£30,000 - £55,000", transition: "3-6 months", match: "80%", description: "Teachers manage people every day: students, parents, teaching assistants, external agencies. HR requires the same skills of empathy, communication, conflict resolution, and organisation.", howToGet: "CIPD Level 5 qualification (6-12 months part-time). Or start with HR admin roles and progress internally." },
-    { title: "Project Manager", salary: "£32,000 - £65,000", transition: "2-4 months", match: "85%", description: "Planning a school year, coordinating trips, managing department budgets, and hitting Ofsted deadlines IS project management. You just called it teaching.", howToGet: "PRINCE2 Foundation (1 week, ~£500). Apply to any sector. Your organisational skills are immediately transferable." },
-    { title: "UX Researcher", salary: "£30,000 - £55,000", transition: "3-6 months", match: "80%", description: "Conduct user research to improve digital products. Teachers understand how people learn, how to ask the right questions, and how to synthesise qualitative data. These are core UX research skills.", howToGet: "Google UX Design Certificate or bootcamp (12-16 weeks). Build 2-3 case studies. Target junior UX researcher roles." },
-    { title: "Content Writer / Copywriter", salary: "£25,000 - £50,000", transition: "1-2 months", match: "85%", description: "Teachers are professional communicators who simplify complex ideas. Content writing requires exactly the same skill: making information clear, engaging, and accessible.", howToGet: "Build a portfolio of blog posts or articles. Start freelancing alongside teaching. Transition when income is stable." },
-    { title: "Civil Service Fast Stream", salary: "£28,000 - £34,000 (starting)", transition: "3-6 months", match: "75%", description: "The Civil Service actively recruits career changers. Teachers' skills in analysis, communication, and stakeholder management align with policy, operational delivery, and project roles.", howToGet: "Apply via the Civil Service Jobs portal. Fast Stream applications open annually. Also direct-entry roles at EO/HEO level." },
-    { title: "Sales / Account Management", salary: "£25,000 - £60,000+ (OTE)", transition: "1-3 months", match: "75%", description: "Teaching is persuasion. You sell concepts to reluctant audiences every day. Business sales requires the same presentation skills, resilience, and ability to read a room.", howToGet: "Apply directly. SaaS and EdTech sales roles value teaching backgrounds. Commission structures can significantly boost earnings." },
-    { title: "Business Analyst", salary: "£30,000 - £55,000", transition: "3-6 months", match: "75%", description: "Analyse business processes and recommend improvements. Teachers already gather data, identify patterns, and design solutions. The analytical mindset transfers.", howToGet: "BCS Foundation Certificate in Business Analysis (1 week). Apply to consulting firms or internal BA teams." },
-    { title: "Charity / Education Programme Manager", salary: "£28,000 - £48,000", transition: "1-2 months", match: "90%", description: "Manage educational programmes for charities, museums, or cultural organisations. Apply your teaching expertise in a less pressured environment with better work-life balance.", howToGet: "Search charity job boards (CharityJob, Third Sector Jobs). Your teaching experience is often the primary requirement." },
-    { title: "Data Analyst", salary: "£25,000 - £50,000", transition: "3-6 months", match: "70%", description: "If you tracked student progress, analysed assessment data, and used spreadsheets to identify trends, you have performed basic data analysis. A structured learning path can take you further.", howToGet: "Google Data Analytics Certificate (6 months part-time). Learn SQL and basic Python. Build portfolio projects with education data." },
+/* Source job: ONS SOC 2020 unit groups for classroom teachers. */
+const SECONDARY = "2313";
+const PRIMARY = "2314";
+
+const DFE_SWF = "https://explore-education-statistics.service.gov.uk/find-statistics/school-workforce-in-england/2025";
+const GIT_PAY = "https://getintoteaching.education.gov.uk/life-as-a-teacher/pay-and-benefits/teacher-pay";
+const HSE_STRESS = "https://www.hse.gov.uk/Statistics/assets/docs/stress.pdf";
+const NASUWT_NOTICE = "https://www.nasuwt.org.uk/advice/conditions-of-service/teachers-notice-periods-resigning-from-your-job.html";
+const SOUTHWARK_DATES = "https://education.southwark.gov.uk/assets/attach/6428/Resignation-dates.pdf";
+const GIT_VETERANS_FE = "https://getintoteaching.education.gov.uk/funding-and-support/if-youre-a-veteran";
+const RETURN_TO_TEACHING = "https://teaching-vacancies.service.gov.uk/jobseeker-guides/return-to-teaching-in-england/return-to-teaching/";
+const QTS_GUIDE = "https://www.gov.uk/guidance/qualified-teacher-status-qts";
+
+/* ------------------------------------------------------------------ */
+/* Routes, grouped. "why" is our reading of how the skills carry over. */
+/* ------------------------------------------------------------------ */
+
+const EDUCATION: RouteSpec[] = [
+  {
+    id: "school-business-manager",
+    why: "You already know how a school spends its budget, staffs its timetable and reports to governors, because you have lived with those decisions. This role runs them.",
+  },
+  {
+    id: "ofsted-inspector",
+    why: "Inspection and school improvement are judged on classroom and leadership experience. Lesson observation, curriculum review and writing clear reports are the core of the job.",
+    note: "The National Careers Service says you need QTS to inspect schools, and at least 5 years' leadership experience, such as headteacher, to become one of His Majesty's Inspectors.",
+  },
+  {
+    id: "further-education-lecturer",
+    why: "The teaching craft is the same. The learners are 16 and over, often adults, and many courses are vocational, so a subject you know well can become the thing you teach.",
+    note: "Get Into Teaching says you do not need a degree or QTS to teach in further education.",
+  },
+  {
+    id: "careers-adviser",
+    why: "Guiding students through options, applications and UCAS is careers work. This job does it one to one, with young people and adults.",
+    note: "The National Careers Service notes that people often take the postgraduate career guidance qualification after working in teaching. It takes 1 year full time or 2 years part time.",
+  },
+  {
+    id: "private-tutor",
+    why: "The most direct use of your subject knowledge, with no marking load or behaviour policy, and you can test it alongside your current job before relying on it.",
+    note: "ONS pay covers employed tutors only. ASHE says nothing about self-employed tutoring income.",
+  },
+];
+
+const ADULT_LEARNING: RouteSpec[] = [
+  {
+    id: "learning-and-development-adviser",
+    why: "Planning a sequence of sessions, delivering them to a room and checking what stuck is the job. The audience changes from pupils to staff, and success is measured against business goals instead of exam results.",
+    note: "The National Careers Service lists a CIPD-accredited postgraduate qualification among the university routes.",
+  },
+  {
+    id: "learning-and-development-manager",
+    why: "Heads of department and senior leaders already run CPD, induction and appraisal for colleagues. L&D management is that leadership role inside a company.",
+  },
+  {
+    id: "e-learning-developer",
+    why: "Breaking a topic into short, assessed steps is lesson design. The new parts are authoring software and working to a client brief.",
+    jobsQuery: "instructional designer",
+  },
+];
+
+const PUBLIC_SERVICE: RouteSpec[] = [
+  {
+    id: "civil-service-executive-officer",
+    why: "Casework, fixed deadlines, writing for different readers and applying policy consistently are daily work in both jobs.",
+    note: "The National Careers Service says a university qualification is not essential to join the Civil Service.",
+    aiSlug: "civil-servant",
+    jobsQuery: "civil service executive officer",
+  },
+  {
+    id: "policy-officer",
+    why: "You have seen how national education policy lands in a real classroom. Policy teams in government, councils and charities need people who can explain that and write it down clearly.",
+    aiSlug: "civil-servant",
+  },
+];
+
+const ANALYSIS: RouteSpec[] = [
+  {
+    id: "data-analyst",
+    why: "Tracking attainment, spotting which groups are falling behind and presenting it to leaders is data analysis. To move across you would need to show analysis tools as well as that experience.",
+    aiSlug: "data-analyst",
+  },
+  {
+    id: "user-researcher",
+    why: "Watching how people learn, asking open questions without leading, and noticing where someone gets stuck are the core of user research on digital services.",
+    aiSlug: "ux-designer",
+  },
+  {
+    id: "project-manager",
+    why: "An exam season, a trip abroad or a new scheme of work are projects with fixed deadlines, budgets, risks and people who need to be kept informed.",
+    aiSlug: "project-manager",
+  },
+];
+
+const FAMILIES: RouteSpec[] = [
+  {
+    id: "social-worker",
+    why: "Safeguarding training, work with families and multi-agency meetings give teachers a head start. The job is statutory casework, so expect a new qualification.",
+    note: "The National Careers Service says a postgraduate social work degree normally takes 2 years if you have a degree in another subject, and a social work bursary may be available.",
+    aiSlug: "social-worker",
+  },
+  {
+    id: "family-support-worker",
+    why: "Pastoral work on attendance, behaviour and home life is the centre of family support, without the teaching timetable.",
+  },
+];
+
+const GROUPS = [
+  {
+    id: "stay-in-education",
+    title: "Stay in education, out of the classroom",
+    intro: "These keep your subject knowledge and school experience in play. One of them, school inspection, requires QTS.",
+    specs: EDUCATION,
+  },
+  {
+    id: "adult-learning",
+    title: "Teach adults at work",
+    intro: "Workplace learning uses the skills teachers use every day. Pay varies widely between adviser and manager level, as the ONS figures show.",
+    specs: ADULT_LEARNING,
+  },
+  {
+    id: "public-service",
+    title: "Public service and policy",
+    intro: "The National Careers Service says a university qualification is not essential to join the Civil Service, and there is a level 4 policy officer apprenticeship.",
+    specs: PUBLIC_SERVICE,
+  },
+  {
+    id: "analysis-projects",
+    title: "Analysis, research and projects",
+    intro: "Project management pays more than teaching at the median; data and research roles pay less. In all three you will need to show the tools or methods, not only the teaching experience behind them.",
+    specs: ANALYSIS,
+  },
+  {
+    id: "children-families",
+    title: "Work with children and families",
+    intro: "For teachers who want to keep working with young people but leave the classroom. Both roles pay less than teaching at the median.",
+    specs: FAMILIES,
+  },
+];
+
+const ALL_SPECS = GROUPS.flatMap((g) => g.specs);
+
+export default function TeachingHubPage() {
+  const secondary = ftMedian(SECONDARY) as number;
+  const primary = ftMedian(PRIMARY) as number;
+  const routes = resolveRoutes(ALL_SPECS);
+  const higher = routes.filter((r) => r.basis === "ft" && r.median !== null && r.median > secondary);
+  const top = [...routes].filter((r) => r.basis === "ft").sort((a, b) => (b.median ?? 0) - (a.median ?? 0))[0];
+  const noDegree = routes.filter((r) => !r.degreeUsuallyRequired).length;
+
+  const facts: Fact[] = [
+    {
+      figure: "38,600",
+      text: "full-time-equivalent teachers left state-funded schools in England in 2024/25: 1 in 12 (8.5%) of qualified teachers.",
+      source: "DfE, School workforce in England, reporting year 2025",
+      href: DFE_SWF,
+      published: "2026-06-04",
+    },
+    {
+      figure: "91%",
+      text: "of those leavers left for reasons other than retirement, for example a change of career or a move to another UK education sector.",
+      source: "DfE, School workforce in England, reporting year 2025",
+      href: DFE_SWF,
+      published: "2026-06-04",
+    },
+    {
+      figure: gbpFt(SECONDARY),
+      text: (
+        <>
+          ONS median full-time pay for secondary teachers ({gbpFt(PRIMARY)} for primary), tax year to April 2025. The pay
+          changes on this page are measured against the secondary figure.
+        </>
+      ),
+      source: ASHE.short,
+      href: ASHE.href,
+      published: ASHE.published,
+    },
+    {
+      figure: "£34,069 to £52,835",
+      text: "the qualified teacher pay range in England outside London from 1 September 2026, after the 3.5% award.",
+      source: "Get Into Teaching (DfE), Teacher pay",
+      href: GIT_PAY,
+      published: "checked 28 September 2026",
+    },
+    {
+      figure: "28.6%",
+      text: "employer contribution to the Teachers' Pension Scheme. When you compare a job offer, compare the whole package, not only the salary.",
+      source: "Get Into Teaching (DfE), Teacher pay",
+      href: GIT_PAY,
+      published: "checked 28 September 2026",
+    },
+    {
+      figure: "2,620",
+      text: "workers per 100,000 in education reported work-related stress, depression or anxiety (2022/23 to 2024/25), against 2,040 across all industries.",
+      source: "HSE, Work-related stress, depression or anxiety statistics, 2025",
+      href: HSE_STRESS,
+      published: "2025-11-20",
+    },
+  ];
+
+  const faqs: FaqItem[] = [
+    {
+      question: "What jobs can ex-teachers do in the UK?",
+      answer: `Routes that use teaching skills directly include learning and development, e-learning design, further education, careers advice, school business management and inspection. Others use the organisational side of teaching: civil service casework, policy, data analysis, user research and project management. This page lists 15 with ONS pay for each. Only ${higher.length} have a higher full-time median than secondary teaching (${formatGBP(secondary)}, ONS ASHE 2025).`,
+    },
+    {
+      question: "What is the best-paid job for an ex-teacher?",
+      answer: `Of the 15 routes here, ${top.title.toLowerCase()} has the highest ONS full-time median at ${formatGBP(top.median as number)}, against ${formatGBP(secondary)} for secondary teachers (ONS ASHE 2025). Policy work and L&D management are close behind, though their ONS figures cover broad groups that include other jobs. A median covers everyone in the job, including people with years of experience, so it is not a starting salary.`,
+    },
+    {
+      question: "Can a teacher become a civil servant without another degree?",
+      answer:
+        "Yes. The National Careers Service says a university qualification is not essential to join the Civil Service, and executive officer roles are open to direct application. You will need to pass background checks and meet the nationality rules. The ONS full-time median for national government administrative jobs, which include executive officers, was " +
+        `${gbpFt("4111")} in 2025, below the secondary teacher median.`,
+    },
+    {
+      question: "Can I leave teaching without taking a pay cut?",
+      answer: `Sometimes, but not usually straight away. ${countWord(higher.length)} of the 15 routes on this page have a higher ONS full-time median than secondary teaching. Most pay less at the median, and every median includes people with years in the job. Remember the Teachers' Pension Scheme employer contribution of 28.6% (DfE) when you compare offers.`,
+    },
+    {
+      question: "How many teachers leave teaching each year?",
+      answer:
+        "In 2024/25, 38,600 full-time-equivalent teachers left state-funded schools in England, 1 in 12 (8.5%) of qualified teachers and 2,100 fewer than the year before. 91% left for reasons other than retirement (DfE, School workforce in England, published 4 June 2026).",
+    },
+    {
+      question: "When do teachers have to hand in their notice?",
+      answer:
+        "Under the Burgundy Book, which sets notice periods in local authority maintained schools and which most publicly funded schools follow, the deadlines are 31 October to leave on 31 December, 28 February to leave on 30 April, and 31 May to leave on 31 August. Your contract states your own notice terms, so check it. Your school can agree to release you early but does not have to (NASUWT; Southwark Council schools HR).",
+    },
+    {
+      question: "Do I need a new degree to leave teaching?",
+      answer:
+        "For most routes on this page, no. You already have a degree, and civil service, L&D, school business management, data and project roles all have documented routes that do not need another one. Social work and cognitive behavioural therapy normally need a new postgraduate qualification (National Careers Service).",
+    },
+    {
+      question: "Is learning and development a good move for teachers?",
+      answer: `It is the closest match to what you do now. The pay depends on level: the ONS full-time median was ${gbpFt("3574")} for trainers and L&D advisers, and ${gbpFt("1136")} for the HR managers and directors group that includes L&D managers (ONS ASHE 2025).`,
+    },
+    {
+      question: "Can teachers become instructional designers in the UK?",
+      answer:
+        "Yes. ONS codes the job as an e-learning developer, inside the same unit group as software developers, so its pay figure describes that whole group and will overstate typical e-learning pay. Skills England has a level 5 Digital learning designer apprenticeship, typically 24 months.",
+    },
+    {
+      question: "Can I retrain for free?",
+      answer:
+        "In England, often yes. Skills Bootcamps are free courses of up to 16 weeks for adults aged 19 and over, with a guaranteed job interview at the end. Apprenticeships have no upper age limit and your employer and provider cannot charge you for the training. If you earn under £25,750 or are unemployed, Free Courses for Jobs can pay for a level 3 qualification.",
+    },
+    {
+      question: "Can I do an apprenticeship after teaching, at 35 or 45?",
+      answer:
+        "Yes. GOV.UK's only age rule is that you are 16 or over, you can already have a degree, and you are paid as an employee. Check the pay: employers can pay £8 an hour in the first year of an apprenticeship even if you are over 19 (National Minimum Wage rates, April 2026).",
+    },
+    {
+      question: "Can I teach in a college without QTS?",
+      answer:
+        "Yes. Get Into Teaching says you do not need a degree or QTS to teach in further education. The Teach in Further Education service says industry experience is not a requirement but can make you a stronger candidate. The Skills England Learning and skills teacher apprenticeship is level 5 and typically 18 months.",
+    },
+    {
+      question: "Can I go back to teaching later?",
+      answer:
+        "Yes. The Department for Education's Teaching Vacancies service runs a return-to-teaching guide and says schools are interested in recruiting former teachers. QTS is still usually needed to teach in a state school in England, so keep your QTS details and teacher reference number.",
+    },
+    {
+      question: "How long does it take to change career from teaching?",
+      answer:
+        "It depends on the route. Direct applications, such as civil service or L&D roles, can take as long as a normal job search. A Skills Bootcamp is up to 16 weeks. The level 4 apprenticeships on this page typically take 18 to 24 months while you are paid. A postgraduate social work degree normally takes 2 years, and a career guidance qualification 1 year full time.",
+    },
+    {
+      question: "Are teachers more stressed than other workers?",
+      answer:
+        "HSE's Labour Force Survey figures put education at 2,620 cases of work-related stress, depression or anxiety per 100,000 workers over 2022/23 to 2024/25, significantly above the 2,040 average for all industries. Teaching and other educational professionals were one of the occupational groups with a statistically higher rate (HSE, November 2025).",
+    },
+    {
+      question: "Is private tutoring a realistic full-time job?",
+      answer: `It can be. ONS publishes a full-time median of ${gbpFt("2319")} for the teaching professionals group that includes employed tutors, but ASHE does not cover the self-employed, so it says nothing about what freelance tutors earn. You can test tutoring alongside your current job before relying on it.`,
+    },
   ];
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12 sm:py-20">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "Article",
-            headline: "Career Change From Teaching UK (2026)",
-            description: "Guide for UK teachers exploring career changes with 12 realistic options and transition timelines.",
-            author: { "@type": "Organization", name: "MatchMySkillset" },
-            publisher: { "@type": "Organization", name: "MatchMySkillset", url: "https://matchmyskillset.com" },
-            datePublished: "2026-04-01",
-            dateModified: "2026-04-01",
-          }),
-        }}
+    <HubPage>
+      <ArticleJsonLd path={PATH} headline={TITLE} description={DESCRIPTION} dateModified={UPDATED} />
+      <PageHeader
+        breadcrumbs={<Breadcrumbs items={[{ name: "Leaving your job", href: "/careers-for" }, { name: "Leaving teaching" }]} />}
+        kicker="Leaving teaching"
+        title={TITLE}
+        updated={UPDATED}
+        intro={
+          <p>
+            About 38,600 full-time-equivalent teachers left England&apos;s state schools in 2024/25, and 91% left for
+            reasons other than retirement (DfE, June 2026). Below are 15 realistic next jobs with ONS pay for each. Only{" "}
+            {higher.length} pay more than the {formatGBP(secondary)} median for secondary teachers (ONS ASHE 2025), and{" "}
+            {noDegree} of the 15 do not usually need a new degree.
+          </p>
+        }
+      >
+        <OnThisPage
+          items={[
+            { href: "#in-numbers", label: "Leaving teaching in numbers" },
+            { href: "#at-a-glance", label: "15 routes at a glance" },
+            { href: "#routes", label: "Each route in detail" },
+            { href: "#before-you-resign", label: "Before you hand in your notice" },
+            { href: "#qts", label: "What QTS is worth outside schools" },
+            { href: "#funded", label: "Free and funded retraining" },
+            { href: "#faq", label: "Common questions" },
+            { href: "#method", label: "How we worked this out" },
+          ]}
+        />
+      </PageHeader>
+
+      <HubSection
+        id="in-numbers"
+        title="Leaving teaching in numbers"
+        intro={
+          <p>
+            These are the figures that matter when you weigh up a move, each from the body that publishes it. The
+            Department for Education&apos;s own median pay for school teachers was £51,048 in November 2025. That is a
+            later date and a different source from ONS, so we use ONS on both sides of every pay comparison.
+          </p>
+        }
+      >
+        <FactList facts={facts} />
+      </HubSection>
+
+      <ToolCallout
+        current="teacher"
+        heading="Leaving teaching? See where your own experience fits"
+        body={
+          <p>
+            Paste your CV and get a free analysis of the skills you already have and which of these routes they point to.
+            No account, and nothing to pay.
+          </p>
+        }
+        className="mt-12"
       />
 
-      <div className="text-sm text-gray-400 mb-6">
-        <Link href="/" className="hover:text-indigo-600">Home</Link>
-        {" / "}
-        <Link href="/careers-for" className="hover:text-indigo-600">Career Change</Link>
-        {" / "}<span className="text-gray-600">From Teaching</span>
-      </div>
+      <HubSection
+        id="at-a-glance"
+        title="15 routes out of teaching at a glance"
+        intro={
+          <p>
+            Sorted into five groups below. The pay change compares each job&apos;s ONS full-time median with the{" "}
+            {formatGBP(secondary)} median for secondary teachers. For primary teachers ({formatGBP(primary)}), add{" "}
+            {formatGBP(secondary - primary)} to each change.
+          </p>
+        }
+      >
+        <HubPayTable
+          caption="Where teachers can go, and what it pays"
+          description="Median gross annual pay for full-time employees, UK, tax year to April 2025."
+          routes={routes}
+          comparator={{ header: "Change vs secondary teacher", mobileLabel: "vs teacher", value: secondary }}
+        />
+      </HubSection>
 
-      <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-        Career Change From Teaching: What Ex-Teachers Actually Do
-      </h1>
 
-      <div className="flex items-center gap-3 text-sm text-gray-400 mb-8">
-        <span>Updated April 2026</span>
-        <span>|</span>
-        <span>13 min read</span>
-      </div>
-
-      <p className="text-lg text-gray-600 leading-relaxed mb-4">
-        Leaving teaching is not giving up. According to the NEU, 44% of teachers plan to leave the profession within the next 5 years, citing workload, accountability pressure, and pay that has not kept pace with inflation. If you are among them, this guide is for you.
-      </p>
-      <p className="text-gray-600 leading-relaxed mb-4">
-        Here is what nobody tells you when you are inside the teaching bubble: your skills are exceptionally valuable outside education. Communication, stakeholder management, data analysis, programme design, presentation skills, and the ability to manage 30 unpredictable humans at once. Employers in every sector want these skills.
-      </p>
-      <p className="text-gray-600 leading-relaxed mb-10">
-        The challenge is not that you lack skills. It is that you have never had to articulate them in non-teaching language. This guide helps you translate.
-      </p>
-
-      {/* Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-10">
-        <div className="bg-red-50 rounded-xl p-4 text-center">
-          <div className="text-2xl font-bold text-red-600">44%</div>
-          <div className="text-xs text-gray-500">Plan to leave teaching</div>
-        </div>
-        <div className="bg-green-50 rounded-xl p-4 text-center">
-          <div className="text-2xl font-bold text-green-600">12</div>
-          <div className="text-xs text-gray-500">Careers listed here</div>
-        </div>
-        <div className="bg-indigo-50 rounded-xl p-4 text-center">
-          <div className="text-2xl font-bold text-indigo-600">£65k+</div>
-          <div className="text-xs text-gray-500">Top salary potential</div>
-        </div>
-        <div className="bg-amber-50 rounded-xl p-4 text-center">
-          <div className="text-2xl font-bold text-amber-600">1-6</div>
-          <div className="text-xs text-gray-500">Months to transition</div>
-        </div>
-      </div>
-
-      {/* CTA 1 */}
-      <div className="bg-indigo-50 rounded-xl p-5 mb-10 flex flex-col sm:flex-row items-center gap-4">
-        <div className="flex-1">
-          <div className="font-semibold text-gray-900">Your teaching skills are worth more than your teaching salary</div>
-          <div className="text-sm text-gray-500">Upload your CV and see which careers match your specific teaching experience and subject expertise.</div>
-        </div>
-        <Link href="/discover" className="bg-indigo-600 text-white font-medium px-6 py-2.5 rounded-lg hover:bg-indigo-700 transition-colors text-sm whitespace-nowrap">
-          Analyse My Skills Free
-        </Link>
-      </div>
-
-      {/* Skills Translation */}
-      <section className="mb-10">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">Translating your teaching skills</h2>
-        <div className="bg-white rounded-xl border border-gray-100 p-6">
-          <div className="grid sm:grid-cols-2 gap-x-6 gap-y-3 text-sm">
-            {[
-              ["Lesson planning", "Programme design / project planning"],
-              ["Differentiation", "User-centred design / personalisation"],
-              ["Marking and assessment", "Data analysis / quality assurance"],
-              ["Parents' evenings", "Stakeholder management / client relations"],
-              ["Behaviour management", "Conflict resolution / team management"],
-              ["Ofsted preparation", "Compliance / audit readiness"],
-              ["Department meetings", "Cross-functional collaboration"],
-              ["School trips", "Event management / risk assessment"],
-            ].map(([teaching, corporate]) => (
-              <div key={teaching} className="flex items-center gap-2 py-1">
-                <span className="text-gray-500">{teaching}</span>
-                <span className="text-gray-400">&rarr;</span>
-                <span className="font-medium text-indigo-600">{corporate}</span>
-              </div>
-            ))}
+      <HubSection
+        id="routes"
+        title="Each route in detail"
+        intro={
+          <p>
+            For each job: why teaching skills carry over, the realistic way in, whether you need a degree, and the ONS
+            figure with its caveats. Apprenticeship durations are Skills England&apos;s typical figures for England.
+          </p>
+        }
+      >
+        {GROUPS.map((g) => (
+          <div key={g.id} id={g.id} className="mt-10 scroll-mt-24">
+            <h3 className="font-sans text-2xl font-bold text-ink">{g.title}</h3>
+            <p className="mt-2 max-w-reading text-ink-2">{g.intro}</p>
+            <HubRouteCards
+              routes={routes.filter((r) => g.specs.some((s) => s.id === r.id))}
+              from="Secondary teacher"
+              fromPay={secondary}
+              headingLevel={4}
+            />
           </div>
+        ))}
+      </HubSection>
+
+      <HubSection
+        id="before-you-resign"
+        title="Before you hand in your notice"
+        intro={
+          <>
+            <p>
+              Teaching has fixed resignation dates. The Burgundy Book sets notice periods in local authority maintained
+              schools, and most publicly funded schools follow it: you give notice by <strong>31 October</strong> to leave
+              on 31 December, by <strong>28 February</strong> to leave on 30 April, and by <strong>31 May</strong> to
+              leave on 31 August. Miss a date and you may have to wait for the next one, although your school can agree
+              to release you sooner. Your contract states your own notice terms, so read it.
+            </p>
+            <p>
+              Two money points are easy to miss. The Teachers&apos; Pension Scheme has an employer contribution of
+              28.6%, so a private-sector salary that looks the same may be worth less once the pension is counted. And
+              teacher pay is rising: 3.5% from September 2026 and 3% from September 2027, which moves the qualified
+              range outside London to £34,069 to £52,835 this year.
+            </p>
+            <p>
+              If you are unsure, test a route before you resign. Tutoring, exam marking, a Skills Bootcamp or a short
+              course can run alongside the job, and a live job search on{" "}
+              <Link href="/jobs?q=former%20teacher">MatchMySkillset jobs</Link> shows what employers are asking for right
+              now.
+            </p>
+          </>
+        }
+      >
+        <div className="mt-4 space-y-1">
+          <SourceNote source="NASUWT, Teachers' notice periods and resigning from your job" href={NASUWT_NOTICE} published="checked 28 September 2026" />
+          <SourceNote
+            source="Southwark Council schools HR, Teacher resignation dates (Burgundy Book, August 2000 edition)"
+            href={SOUTHWARK_DATES}
+            published="checked 28 September 2026"
+          />
+          <SourceNote
+            source="Department for Education, Teachers to benefit from multi-year pay deal"
+            href="https://www.gov.uk/government/news/teachers-to-benefit-from-multi-year-pay-deal"
+            published="2026-07-01"
+          />
         </div>
-      </section>
+      </HubSection>
 
-      {/* Career Listings */}
-      <section className="mb-12">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">12 Careers for Ex-Teachers</h2>
-        <div className="space-y-5">
-          {careers.map((career, idx) => (
-            <div key={career.title}>
-              <div className="bg-white rounded-xl border border-gray-100 p-6">
-                <div className="flex items-start justify-between mb-2">
-                  <h3 className="text-lg font-semibold text-gray-900">{career.title}</h3>
-                  <span className="text-sm font-bold text-green-600 flex-shrink-0 ml-4">{career.salary}</span>
-                </div>
-                <div className="flex flex-wrap gap-2 mb-3">
-                  <span className="px-2 py-0.5 bg-indigo-50 text-indigo-600 rounded text-xs font-medium">Transition: {career.transition}</span>
-                  <span className="px-2 py-0.5 bg-green-50 text-green-700 rounded text-xs font-medium">Skill match: {career.match}</span>
-                </div>
-                <p className="text-sm text-gray-600 mb-3">{career.description}</p>
-                <div>
-                  <span className="text-xs font-semibold text-gray-500">How to get there</span>
-                  <p className="text-sm text-gray-600 mt-1">{career.howToGet}</p>
-                </div>
-              </div>
-
-              {idx === 3 && (
-                <div className="bg-gray-900 text-white rounded-xl p-6 text-center mt-5">
-                  <h3 className="text-lg font-semibold mb-2">Every lesson you planned was project management</h3>
-                  <p className="text-gray-300 text-sm mb-4">Our AI translates your teaching experience into corporate language and matches you to roles where your skills command higher salaries.</p>
-                  <Link href="/discover" className="inline-flex items-center bg-white text-gray-900 font-semibold px-6 py-3 rounded-lg hover:bg-gray-100 transition-colors text-sm">
-                    Get My Personalised Matches
-                  </Link>
-                </div>
-              )}
-
-              {idx === 8 && (
-                <div className="border-l-4 border-indigo-600 bg-indigo-50 rounded-r-xl p-5 mt-5">
-                  <p className="text-gray-700 text-sm">
-                    <span className="font-semibold">Teachers who move into L&D roles typically see a £10,000-£20,000 salary increase</span> while doing broadly similar work with significantly less stress.{" "}
-                    <Link href="/discover" className="text-indigo-600 font-medium hover:text-indigo-700">See your matches</Link>.
-                  </p>
-                </div>
-              )}
-            </div>
-          ))}
+      <HubSection
+        id="qts"
+        title="What QTS is worth outside schools"
+        intro={
+          <>
+            <p>
+              Qualified teacher status is usually needed to teach in a state school in England, and the National Careers
+              Service says it is needed to inspect schools for Ofsted. Outside those, it is a signal of training rather
+              than a requirement.
+            </p>
+            <ul>
+              <li>
+                <strong>Further education and early years:</strong> Get Into Teaching says you do not need a degree or
+                QTS to teach in either.
+              </li>
+              <li>
+                <strong>Tutoring:</strong> the National Careers Service says you might need QTS if you teach academic
+                qualifications, and some agencies ask for it.
+              </li>
+              <li>
+                <strong>Corporate training, civil service, data and projects:</strong> employers look at what you
+                delivered, not the letters. Describe outcomes, such as results you moved or staff you trained.
+              </li>
+              <li>
+                <strong>Coming back:</strong> the Department for Education runs a{" "}
+                <a href={RETURN_TO_TEACHING} rel="noopener">
+                  return-to-teaching guide
+                </a>{" "}
+                for former teachers.
+              </li>
+            </ul>
+          </>
+        }
+      >
+        <div className="mt-4 space-y-1">
+          <SourceNote source="GOV.UK, Qualified teacher status (QTS)" href={QTS_GUIDE} published="checked 28 September 2026" />
+          <SourceNote source="Get Into Teaching (DfE), Funding and support if you're a veteran: other routes into teaching" href={GIT_VETERANS_FE} published="checked 28 September 2026" />
         </div>
-      </section>
+      </HubSection>
 
-      <p className="text-gray-600 mb-10">
-        Ready to see what your teaching experience qualifies you for?{" "}
-        <Link href="/discover" className="text-indigo-600 font-medium hover:text-indigo-700">
-          Upload your CV and find out in 2 minutes &rarr;
-        </Link>
-      </p>
+      <HubSection id="funded" title="Free and funded ways to retrain">
+        <FundedTraining
+          lead={
+            <p>
+              A degree does not stop you starting an apprenticeship, and most Skills Bootcamps need no previous knowledge
+              of the subject. These are the schemes for England; Scotland, Wales and Northern Ireland run their own.
+            </p>
+          }
+          bootcampFit="Subjects include digital skills such as data and marketing, business skills such as project management, and early years. Courses run at colleges, with other training providers or online."
+        />
+      </HubSection>
 
-      <section className="bg-indigo-50 rounded-xl p-8 text-center mb-10">
-        <h2 className="text-xl font-semibold text-gray-900 mb-3">Your teaching career was training for what comes next</h2>
-        <p className="text-gray-500 mb-6 max-w-lg mx-auto">Upload your CV and discover which careers value your teaching skills the most. Free. 2 minutes.</p>
-        <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <Link href="/discover" className="inline-flex items-center justify-center bg-indigo-600 text-white font-semibold px-8 py-4 rounded-xl hover:bg-indigo-700 transition-colors">Discover My Career Matches</Link>
-          <Link href="/careers-for/teachers" className="inline-flex items-center justify-center border border-gray-200 text-gray-700 font-medium px-8 py-4 rounded-xl hover:bg-white transition-colors">Full Teachers Guide</Link>
-        </div>
-      </section>
+      <ToolCallout
+        id="check-your-options-2"
+        current="teacher"
+        heading="Not sure which route fits you?"
+        body={
+          <p>
+            Tell us what you teach, or paste your CV, and see which of these jobs your experience points to, with the gaps
+            to close for each.
+          </p>
+        }
+        className="mt-14"
+      />
 
-      <div className="pt-8 border-t border-gray-100">
-        <h3 className="text-sm font-semibold text-gray-500 mb-3">Related Pages</h3>
-        <div className="flex flex-wrap gap-2">
-          <Link href="/career-change-from-nursing" className="text-sm text-indigo-600 hover:text-indigo-700">Career Change From Nursing</Link>
-          <span className="text-gray-300">|</span>
-          <Link href="/career-change-at-30" className="text-sm text-indigo-600 hover:text-indigo-700">Career Change at 30</Link>
-          <span className="text-gray-300">|</span>
-          <Link href="/how-to-write-a-cv-for-career-change" className="text-sm text-indigo-600 hover:text-indigo-700">Career Change CV Guide</Link>
-          <span className="text-gray-300">|</span>
-          <Link href="/careers-for/teachers" className="text-sm text-indigo-600 hover:text-indigo-700">Careers for Teachers</Link>
-        </div>
-      </div>
-    </div>
+      <FaqSection
+        items={faqs}
+        intro="Short answers, each with its source. Pay figures are ONS ASHE 2025 full-time medians unless stated."
+      />
+
+      <MethodNote
+        baseline={
+          <>
+            Pay changes compare each job&apos;s full-time median with the ONS full-time median for secondary education
+            teaching professionals (SOC 2313), {formatGBP(secondary)}. The primary figure (SOC 2314) was{" "}
+            {formatGBP(primary)}. We do not mix in the DfE&apos;s £51,048 school teacher median, because it is for a
+            later date (November 2025) and a different source.
+          </>
+        }
+      />
+
+      <SourcesList
+        items={[
+          { name: "ONS, Earnings and hours worked, occupation by four-digit SOC: ASHE Table 14 (2025 provisional)", href: ASHE.href, date: "published 23 October 2025" },
+          { name: "Department for Education, School workforce in England: reporting year 2025", href: DFE_SWF, date: "published 4 June 2026, updated 17 August 2026" },
+          { name: "Get Into Teaching (DfE), Teacher pay (amounts from 1 September 2026)", href: GIT_PAY, date: "checked 28 September 2026" },
+          { name: "Department for Education, Teachers to benefit from multi-year pay deal", href: "https://www.gov.uk/government/news/teachers-to-benefit-from-multi-year-pay-deal", date: "published 1 July 2026" },
+          { name: "HSE, Work-related stress, depression or anxiety statistics in Great Britain, 2025", href: HSE_STRESS, date: "published 20 November 2025" },
+          { name: "NASUWT, Teachers' notice periods and resigning from your job", href: NASUWT_NOTICE, date: "checked 28 September 2026" },
+          { name: "Southwark Council schools HR, Teacher resignation dates (citing the Burgundy Book, August 2000)", href: SOUTHWARK_DATES, date: "checked 28 September 2026" },
+          { name: "Get Into Teaching (DfE), Funding and support if you're a veteran (other routes into teaching)", href: GIT_VETERANS_FE, date: "checked 28 September 2026" },
+          { name: "National Careers Service job profiles (routes and requirements for each job)", href: "https://nationalcareers.service.gov.uk/job-profiles/careers-adviser", date: "retrieved 28 September 2026" },
+          { name: "Skills England, apprenticeship standards", href: "https://skillsengland.education.gov.uk/apprenticeships/", date: "retrieved 28 September 2026" },
+        ]}
+      />
+
+      <RelatedLinks
+        links={[
+          { href: "/discover?current=teacher", label: "Analyse my CV", note: "Free, no account: see which routes your experience fits." },
+          { href: "/jobs?q=former%20teacher", label: "Live jobs for former teachers", note: "Search current UK vacancies." },
+          { href: "/transferable-skills", label: "Transferable skills", note: "How to describe teaching skills to other employers." },
+          { href: "/jobs-without-a-degree", label: "Jobs without a degree", note: "Useful if you are weighing up apprenticeships." },
+          { href: "/highest-paying-careers-uk", label: "Highest-paying careers in the UK", note: "The ONS top of the table, for context." },
+          { href: "/career-change-at-30", label: "Career change at 30" },
+          { href: "/career-change-at-50", label: "Career change at 50" },
+          { href: "https://aicareerswap.com/will-ai-replace/teacher", label: "Will AI replace teachers?", note: "Our sister site on AI and teaching." },
+          { href: "/careers-for", label: "Career change from other jobs", note: "Nursing, policing, the armed forces, retail and more." },
+        ]}
+      />
+    </HubPage>
   );
 }
