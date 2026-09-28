@@ -6,7 +6,7 @@ import { RECRUITER_SHARING_ENABLED } from "@/lib/site";
 import { createAdminClient, isSupabaseConfigured } from "@/lib/supabase/admin";
 import { ClaudeCallError, ClaudeUnavailableError, extractProfile } from "@/lib/apis/claude";
 import { DatabaseUnavailableError, insertReport, newToken } from "@/lib/apis/reports-db";
-import { findJobByTitle, getCurrentJob, type CurrentJob } from "@/lib/skills/job-lookup";
+import { findJobByTitle, getCurrentJob, jobModeSkills, type CurrentJob } from "@/lib/skills/job-lookup";
 import { SCORING_METHOD, scoreProfile } from "@/lib/skills/scoring";
 import { NO_PREFERENCES, type MatchesDoc, type Preferences, type ProfileSkill, type SkillsDoc } from "@/lib/skills/profile";
 import { skillName } from "@/lib/skills/taxonomy";
@@ -99,7 +99,7 @@ export async function POST(request: NextRequest) {
     const jobKey = typeof body.jobKey === "string" ? body.jobKey.slice(0, 120) : "";
     current = getCurrentJob(jobKey);
     if (!current) return json(400, { error: "Please pick your job from the list." });
-    const skills: ProfileSkill[] = current.skills.map((s) => ({ id: s.id, strength: s.importance >= 3 ? "strong" : "some" }));
+    const skills: ProfileSkill[] = jobModeSkills(current);
     doc = {
       v: 2,
       source: "job",

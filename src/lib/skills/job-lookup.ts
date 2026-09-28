@@ -3,8 +3,10 @@
 // starting-jobs.ts. Server-side only (it pulls in the careers dataset).
 
 import { CAREER_OCCUPATIONS, getCareerOccupation } from "@/data/careers";
+import { STARTING_JOBS as CARRY_OVER_JOBS } from "@/app/transferable-skills/starting-jobs";
 import { rankTitles, type TitleCandidate } from "./fuzzy";
 import { STARTING_JOBS, getStartingJob } from "./starting-jobs";
+import type { ProfileSkill } from "./profile";
 
 export interface JobIndexEntry extends TitleCandidate {
   /** "occ:<occupation id>" for curated occupations, "job:<key>" for starting jobs. */
@@ -66,6 +68,52 @@ export function getCurrentJob(key: string): CurrentJob | undefined {
     };
   }
   return undefined;
+}
+
+/**
+ * Job index keys that have a "skills that usually carry over" list in the
+ * /transferable-skills tool (src/app/transferable-skills/starting-jobs.ts),
+ * mapped to that list's key.
+ */
+const CARRY_OVER_KEY: Record<string, string> = {
+  "occ:secondary-school-teacher": "secondary-teacher",
+  "job:primary-school-teacher": "primary-teacher",
+  "occ:teaching-assistant": "teaching-assistant",
+  "occ:nurse": "nurse",
+  "occ:healthcare-assistant": "healthcare-assistant",
+  "job:care-worker": "care-worker",
+  "occ:social-worker": "social-worker",
+  "occ:police-officer": "police-officer",
+  "job:armed-forces-other-ranks": "armed-forces",
+  "job:sales-assistant": "retail-assistant",
+  "job:retail-manager": "retail-manager",
+  "job:customer-service-adviser": "customer-service-adviser",
+  "job:chef": "chef",
+  "job:restaurant-manager": "hospitality-manager",
+  "job:hotel-manager": "hospitality-manager",
+  "job:administrator": "administrator",
+  "occ:bookkeeper": "bookkeeper",
+  "job:warehouse-operative": "warehouse-operative",
+  "occ:hgv-driver": "hgv-driver",
+};
+
+/**
+ * The skills profile used when someone starts from a job title rather than a
+ * CV: the skills the job involves plus, where the /transferable-skills tool
+ * lists them, the skills that usually carry over from it (for example the
+ * investigation and risk work in policing). Both lists are editorial. A skill
+ * in both keeps its higher importance; importance 3 or more counts as a clear
+ * skill, below that as a partial one.
+ */
+export function jobModeSkills(current: CurrentJob): ProfileSkill[] {
+  const importance = new Map<string, number>();
+  for (const s of current.skills) importance.set(s.id, Math.max(importance.get(s.id) ?? 0, s.importance));
+  const carryKey = CARRY_OVER_KEY[current.key];
+  const carry = carryKey ? CARRY_OVER_JOBS.find((j) => j.key === carryKey) : undefined;
+  for (const s of carry?.skills ?? []) importance.set(s.id, Math.max(importance.get(s.id) ?? 0, s.importance));
+  return [...importance.entries()]
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+    .map(([id, imp]) => ({ id, strength: imp >= 3 ? "strong" : "some" }));
 }
 
 /** Best guesses for what a typed job title means. */

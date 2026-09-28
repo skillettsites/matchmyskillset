@@ -21,6 +21,7 @@ import {
   type Fact,
   type RouteSpec,
 } from "@/components/hubs";
+import { assertHubRoutes } from "@/lib/skills/families";
 import { formatGBP } from "@/components/content";
 
 const PATH = "/career-change-from-teaching";
@@ -177,6 +178,8 @@ const GROUPS = [
 ];
 
 const ALL_SPECS = GROUPS.flatMap((g) => g.specs);
+// The matcher boosts these routes for people from this line of work; this keeps the two lists the same.
+assertHubRoutes("teachers", ALL_SPECS);
 
 export default function TeachingHubPage() {
   const secondary = ftMedian(SECONDARY) as number;

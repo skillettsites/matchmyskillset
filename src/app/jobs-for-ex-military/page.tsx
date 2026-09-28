@@ -28,6 +28,7 @@ import {
   type Fact,
   type RouteSpec,
 } from "@/components/hubs";
+import { assertHubRoutes } from "@/lib/skills/families";
 
 const PATH = "/jobs-for-ex-military";
 const UPDATED = "2026-09-28";
@@ -151,6 +152,8 @@ const GROUPS = [
 ];
 
 const ALL_SPECS = GROUPS.flatMap((g) => g.specs);
+// The matcher boosts these routes for people from this line of work; this keeps the two lists the same.
+assertHubRoutes("military", ALL_SPECS);
 
 interface ResettlementRow {
   who: string;

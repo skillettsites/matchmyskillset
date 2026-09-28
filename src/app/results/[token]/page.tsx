@@ -7,8 +7,8 @@ import { getCareerOccupation } from "@/data/careers";
 import { getReportByToken } from "@/lib/apis/reports-db";
 import { REPORT_PRICE_LABEL } from "@/lib/apis/report-product";
 import { isMatchesDoc, isSkillsDoc } from "@/lib/skills/profile";
-import { FLAG_TEXT, presentMatch, profileSkillNames, resolveCurrentJob, type PresentedMatch } from "@/lib/skills/present";
-import { METHOD_SUMMARY } from "@/lib/skills/scoring";
+import { presentMatch, profileSkillNames, resolveCurrentJob, type PresentedMatch } from "@/lib/skills/present";
+import { methodSummary } from "@/lib/skills/scoring";
 import { coursesForSkill, occupationCourseLinks, skillsBootcampLink, FIND_APPRENTICESHIP_URL } from "@/lib/affiliate/courses";
 import { AffiliateLink } from "@/lib/affiliate/AffiliateLink";
 import { CONTACT_EMAIL } from "@/lib/site";
@@ -63,11 +63,19 @@ function MatchCard({
 
       <p className="mt-3 pl-8 text-[0.9375rem] text-muted">{match.description}</p>
 
-      {match.flags.length > 0 && (
+      {match.flagNotes.length > 0 && (
         <ul className="mt-3 space-y-1 pl-8 text-sm text-ink-2">
-          {match.flags.map((f) => (
-            <li key={f} className="rounded bg-paper-2 px-2 py-1">
-              {FLAG_TEXT[f] ?? f}
+          {match.flagNotes.map((n) => (
+            <li key={n.flag} className="rounded bg-paper-2 px-2 py-1">
+              {n.text}
+              {n.href && (
+                <>
+                  {" "}
+                  <Link href={n.href} className="link">
+                    Read the guide
+                  </Link>
+                </>
+              )}
             </li>
           ))}
         </ul>
@@ -172,7 +180,7 @@ export default async function ResultsPage({ params, searchParams }: { params: Pa
       )}
 
       <p className="mt-6 max-w-reading text-sm text-muted">
-        <strong className="text-ink-2">How we score:</strong> {METHOD_SUMMARY}
+        <strong className="text-ink-2">How we score:</strong> {methodSummary(isMatchesDoc(report.matches) ? report.matches.method : null)}
       </p>
 
       {prefs && (prefs.noDegree || prefs.earnMore || unchecked.length > 0) && (

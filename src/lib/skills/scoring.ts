@@ -5,13 +5,29 @@
 import { CAREER_OCCUPATIONS, getAsheUnitGroup, type CareerOccupation } from "@/data/careers";
 import { areRelated } from "./taxonomy";
 import { normaliseTitle, titleScore } from "./fuzzy";
+import { FAMILIES, familyForSoc } from "./families";
 import type { MatchEntry, MatchSkillRef, Preferences, ProfileSkill } from "./profile";
 
-export const SCORING_METHOD = "skills-overlap-v1";
+export const SCORING_METHOD = "skills-overlap-v2";
 
-/** One line for the results page. Keep it in step with scoreOccupation(). */
-export const METHOD_SUMMARY =
-  "Skill match is the share of a job's key skills, weighted by how essential each is, that we found in your profile (skills shown only in part count 60%, closely related ones half), so the same profile always gets the same score.";
+/**
+ * One line for the results page, per scoring version, so an older results
+ * link still describes the method that produced it. Keep the current one in
+ * step with scoreOccupation() and scoreProfile().
+ */
+export const METHOD_SUMMARIES: Record<string, string> = {
+  "skills-overlap-v1":
+    "Skill match is the share of a job's key skills, weighted by how essential each is, that we found in your profile (skills shown only in part count 60%, closely related ones half), so the same profile always gets the same score.",
+  "skills-overlap-v2":
+    "Skill match is the share of a job's key skills that we found in your profile, weighted by how essential each skill is to the job and by how few of our 141 careers need it, so everyday skills such as communication count for less (skills shown only in part count 60%, closely related ones half). We then order the list: routes our guides suggest for your line of work and jobs you asked for move up; jobs close to your own, jobs paying over a fifth less than yours, jobs where you do not yet show the most essential skill, routes meant for other professions and jobs that clash with what you told us move down. The same profile always gets the same result.",
+};
+
+export const METHOD_SUMMARY = METHOD_SUMMARIES[SCORING_METHOD];
+
+/** The summary for the method a stored result was scored with. */
+export function methodSummary(method: string | null | undefined): string {
+  return (method && METHOD_SUMMARIES[method]) || METHOD_SUMMARY;
+}
 
 const STRENGTH_WEIGHT = { strong: 1, some: 0.6 } as const;
 const RELATED_CREDIT = 0.5;
@@ -27,6 +43,142 @@ const PAY_PENALTY = 0.8;
  */
 const SIMILAR_PENALTY = 0.75;
 const NEAR_DUPLICATE_SCORE = 90;
+/**
+ * ONS median more than a fifth below the current job's, like for like. Moves
+ * down by default; not when the person said they want less stress or fewer hours.
+ */
+const BIG_PAY_DROP_RATIO = 0.8;
+const BIG_PAY_DROP_PENALTY = 0.6;
+/** A route on the hub page for the person's line of work (see families.ts). */
+const HUB_ROUTE_BOOST = 1.5;
+/** Our career data marks the destination as suiting the person's line of work. */
+const AUDIENCE_BOOST = 1.1;
+/** The job's title or other names match something the person said they want (CV route). */
+const ASKED_BOOST = 1.5;
+/** None of the job's most essential skills (importance 5, or its highest) is in the profile itself. */
+const CORE_GAP_PENALTY = 0.8;
+/**
+ * Our career data lists the job only for particular professions (no "general"
+ * audience), and the person is not from one of them: for example nurse
+ * educator for a teacher.
+ */
+const OTHER_GROUP_PENALTY = 0.8;
+
+// ---------------------------------------------------------------------------
+// Skill rarity
+// ---------------------------------------------------------------------------
+
+/**
+ * How distinctive a skill is across the curated careers: ln(careers / careers
+ * that need it). Attention to detail (needed by 55 of 141) weighs about 0.9;
+ * a skill needed by one career weighs about 5.
+ */
+const RARITY: ReadonlyMap<string, number> = (() => {
+  const counts = new Map<string, number>();
+  for (const o of CAREER_OCCUPATIONS) {
+    for (const id of new Set(o.skills.map((s) => s.skillId))) counts.set(id, (counts.get(id) ?? 0) + 1);
+  }
+  const n = CAREER_OCCUPATIONS.length;
+  const weights = new Map<string, number>();
+  for (const [id, count] of counts) weights.set(id, Math.log(n / count));
+  return weights;
+})();
+
+export function rarityWeight(skillId: string): number {
+  return RARITY.get(skillId) ?? Math.log(CAREER_OCCUPATIONS.length);
+}
+
+// ---------------------------------------------------------------------------
+// What the person said they want (CV route)
+// ---------------------------------------------------------------------------
+
+/** Role nouns and filler that say nothing about the kind of work. */
+const IGNORED_WORDS = new Set(
+  (
+    "a an and or of the to in into on at by for from with as is be are was were am it its this that these those my me i " +
+    "want wants wanted wanting would like likes looking look interested interest interests keen prefer prefers preferred ideally " +
+    "move moving change changing switch step get getting find finding do doing use using more most better new good great something " +
+    "somewhere anything role roles job jobs work working career careers field fields area areas sector sectors industry kind type " +
+    "skills skill experience day days week weeks hours hour pay paid salary money earn earning earnings home online remote " +
+    "people person team teams business support service services staff professional general " +
+    "manager managers officer officers adviser advisers advisor advisors assistant assistants worker workers executive executives " +
+    "practitioner practitioners specialist specialists coordinator coordinators lead leads leader leaders senior junior head"
+  ).split(" ")
+);
+
+/** Words that turn the rest of their sentence into something the person does not want. */
+const NEGATIONS = /^(no|not|never|without|avoid|avoiding|away|less|fewer|stop|leave|leaving|quit|hate|dislike|dislikes|don't|dont|rather|except|instead)$/;
+
+function words(text: string): string[] {
+  return text.match(/[A-Za-z][A-Za-z']*/g) ?? [];
+}
+
+/** Lower case, with a plural "s" dropped from longer words. Acronyms stay in capitals. */
+function normWord(w: string): string {
+  if (w.length <= 3 && w === w.toUpperCase()) return w;
+  const lower = w.toLowerCase();
+  return lower.length > 4 && lower.endsWith("s") && !lower.endsWith("ss") ? lower.slice(0, -1) : lower;
+}
+
+/** HR, IT, UX, HGV: kept in capitals by normWord. */
+function isAcronym(w: string): boolean {
+  return w.length <= 4 && /^[A-Z&]+$/.test(w);
+}
+
+function sameWord(a: string, b: string): boolean {
+  if (a === b) return true;
+  // "investigations" and "investigator": long words sharing their first 8 letters
+  // (7 would also pair "operations" with "operative").
+  return a.length >= 8 && b.length >= 8 && a.slice(0, 8) === b.slice(0, 8);
+}
+
+/** Words the person asked for, from the short note the CV reader writes. Negated words are left out. */
+export function askedTerms(note: string | undefined): string[] {
+  if (!note) return [];
+  const out = new Set<string>();
+  for (const sentence of note.split(/[.;!?]|\bbut\b|\bhowever\b/i)) {
+    for (const raw of words(sentence)) {
+      if (NEGATIONS.test(raw.toLowerCase())) break;
+      // Two and three letter words count only as capitalised acronyms (HR, IT, UX), never "it" or "and".
+      if (raw.length <= 3 && raw !== raw.toUpperCase()) continue;
+      const w = normWord(raw);
+      if (w.length < 2 || (!isAcronym(w) && IGNORED_WORDS.has(w))) continue;
+      out.add(w);
+    }
+  }
+  return [...out];
+}
+
+const TITLE_WORDS = new Map<string, string[]>(
+  CAREER_OCCUPATIONS.map((o) => {
+    const set = new Set<string>();
+    for (const name of [o.title, ...o.aliases]) {
+      for (const raw of words(name)) {
+        if (raw.length <= 3 && raw !== raw.toUpperCase()) continue;
+        const w = normWord(raw);
+        if (w.length >= 2 && (isAcronym(w) || !IGNORED_WORDS.has(w))) set.add(w);
+      }
+    }
+    return [o.id, [...set]];
+  })
+);
+
+function matchesAsked(occupation: CareerOccupation, terms: string[]): boolean {
+  if (terms.length === 0) return false;
+  const titleWords = TITLE_WORDS.get(occupation.id) ?? [];
+  return terms.some((t) => titleWords.some((w) => sameWord(t, w)));
+}
+
+const EASIER = /\b(stress|stressful|pressure|burn ?out|burnt out|calmer|slower pace|fewer hours|shorter hours|less hours|reduced hours|part[- ]time|work[- ]life balance)\b/i;
+
+/** The person said they want less stress or fewer hours, so lower pay is not held against a job. */
+export function wantsEasierWork(preferences: Preferences): boolean {
+  return preferences.partTime || EASIER.test(preferences.note ?? "");
+}
+
+// ---------------------------------------------------------------------------
+// Scoring
+// ---------------------------------------------------------------------------
 
 export interface CurrentContext {
   occupationId?: string;
@@ -52,13 +204,13 @@ function median(soc: string): { ft: number | null; all: number | null } {
   return { ft: ug?.ft.median ?? null, all: ug?.all.median ?? null };
 }
 
-/** Destination pay is lower than the current job's, comparing like with like. */
-function paysLess(destSoc: string, currentSoc: string): boolean {
+/** Destination median over current median, comparing like with like, or null. */
+function payRatio(destSoc: string, currentSoc: string): number | null {
   const d = median(destSoc);
   const c = median(currentSoc);
-  if (d.ft !== null && c.ft !== null) return d.ft < c.ft;
-  if (d.all !== null && c.all !== null) return d.all < c.all;
-  return false;
+  if (d.ft !== null && c.ft !== null && c.ft > 0) return d.ft / c.ft;
+  if (d.all !== null && c.all !== null && c.all > 0) return d.all / c.all;
+  return null;
 }
 
 export function scoreOccupation(occupation: CareerOccupation, skills: ProfileSkill[]): Omit<MatchEntry, "flags"> {
@@ -70,10 +222,11 @@ export function scoreOccupation(occupation: CareerOccupation, skills: ProfileSki
   const gaps: MatchSkillRef[] = [];
 
   for (const req of occupation.skills) {
-    total += req.importance;
+    const weight = req.importance * rarityWeight(req.skillId);
+    total += weight;
     const direct = have.get(req.skillId);
     if (direct) {
-      credit += req.importance * STRENGTH_WEIGHT[direct.strength];
+      credit += weight * STRENGTH_WEIGHT[direct.strength];
       matched.push({ id: req.skillId, importance: req.importance });
       continue;
     }
@@ -90,7 +243,7 @@ export function scoreOccupation(occupation: CareerOccupation, skills: ProfileSki
       }
     }
     if (best) {
-      credit += req.importance * RELATED_CREDIT * STRENGTH_WEIGHT[best.strength];
+      credit += weight * RELATED_CREDIT * STRENGTH_WEIGHT[best.strength];
       related.push({ id: req.skillId, importance: req.importance, via: best.id });
     } else {
       gaps.push({ id: req.skillId, importance: req.importance });
@@ -125,15 +278,24 @@ function isOwnJob(occupation: CareerOccupation, current: CurrentContext | undefi
 
 /**
  * Top matches for a profile. Excludes the person's own job and anything in the
- * same ONS unit group, keeps one job per unit group (they share pay figures),
- * and moves jobs down the list, never off it, when they are in the same ONS
- * minor group as the current job (a similar job rather than a career change)
- * and for preferences the data can check: "no degree" against the degree
- * flag, "earn more" against ONS pay. The displayed score never changes.
+ * same ONS unit group, and keeps one job per unit group (they share pay
+ * figures). The order starts from the skill match and then moves jobs up or
+ * down, never off the list: up for routes on the hub page for the person's
+ * line of work (and, less, for destinations our data marks as suiting it) and
+ * for jobs they named in what matters to them; down for jobs in the same ONS
+ * minor group as the current job (a similar job rather than a career change),
+ * for ONS pay more than a fifth below the current job's unless they want less
+ * stress or fewer hours, and for preferences the data can check: "no degree"
+ * against the degree flag, "earn more" against ONS pay. The displayed score
+ * never changes, and each move is recorded in `flags` for the results page.
  */
 export function scoreProfile({ skills, preferences, current, limit = 8 }: ScoreOptions): MatchEntry[] {
   if (skills.length === 0) return [];
   const scored: Scored[] = [];
+  const family = familyForSoc(current?.soc);
+  const familySpec = family ? FAMILIES[family] : null;
+  const asked = askedTerms(preferences.note);
+  const easier = wantsEasierWork(preferences);
 
   for (const occupation of CAREER_OCCUPATIONS) {
     if (isOwnJob(occupation, current)) continue;
@@ -142,7 +304,31 @@ export function scoreProfile({ skills, preferences, current, limit = 8 }: ScoreO
 
     const flags: string[] = [];
     let rank = base.score;
-    if (current?.soc && occupation.soc.slice(0, 3) === current.soc.slice(0, 3)) {
+    const hubRoute = Boolean(familySpec?.routes.includes(occupation.id));
+    const forYourGroup = Boolean(familySpec?.audience && occupation.audiences.includes(familySpec.audience));
+
+    if (hubRoute) {
+      rank *= HUB_ROUTE_BOOST;
+      flags.push("route");
+    } else if (forYourGroup) {
+      rank *= AUDIENCE_BOOST;
+      flags.push("audience");
+    } else if (!occupation.audiences.includes("general")) {
+      rank *= OTHER_GROUP_PENALTY;
+      flags.push("other");
+    }
+    if (matchesAsked(occupation, asked)) {
+      rank *= ASKED_BOOST;
+      flags.push("asked");
+    }
+    const top = Math.max(...occupation.skills.map((r) => r.importance));
+    if (!occupation.skills.some((r) => r.importance === top && base.matched.some((m) => m.id === r.skillId))) {
+      rank *= CORE_GAP_PENALTY;
+      flags.push("core");
+    }
+    // A hub route is a career change the hub page recommends, even when ONS
+    // puts it in the same minor group (police officer to fraud investigator).
+    if (!hubRoute && current?.soc && occupation.soc.slice(0, 3) === current.soc.slice(0, 3)) {
       if (base.score >= NEAR_DUPLICATE_SCORE) continue;
       rank *= SIMILAR_PENALTY;
       flags.push("similar");
@@ -151,7 +337,12 @@ export function scoreProfile({ skills, preferences, current, limit = 8 }: ScoreO
       rank *= DEGREE_PENALTY;
       flags.push("degree");
     }
-    if (preferences.earnMore && current?.soc && paysLess(occupation.soc, current.soc)) {
+    const ratio = current?.soc ? payRatio(occupation.soc, current.soc) : null;
+    if (ratio !== null && ratio < BIG_PAY_DROP_RATIO && !easier) {
+      rank *= BIG_PAY_DROP_PENALTY;
+      if (preferences.earnMore) rank *= PAY_PENALTY;
+      flags.push("paydrop");
+    } else if (ratio !== null && ratio < 1 && preferences.earnMore) {
       rank *= PAY_PENALTY;
       flags.push("pay");
     }
