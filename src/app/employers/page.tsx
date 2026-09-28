@@ -5,6 +5,7 @@ import { DashboardMockup } from "@/components/employer/DashboardMockup";
 import { EnquiryForm } from "@/components/employer/EnquiryForm";
 import { Faq, faqJsonLd } from "@/components/employer/Faq";
 import { PricingCards } from "@/components/employer/PricingCards";
+import { isStripeReady } from "@/lib/apis/stripe";
 import { Building, Chart, ChevronRight, Inbox, Search, Shield, Target } from "@/components/employer/icons";
 import { EMPLOYER_FAQS } from "@/lib/employer/faqs";
 import { LISTING_DAYS } from "@/lib/employer/plans";
@@ -29,6 +30,7 @@ function More({ href, children }: { href: string; children: React.ReactNode }) {
 }
 
 export default async function EmployersPage() {
+  const paymentsOpen = await isStripeReady().catch(() => false);
   const stats = await publicEmployerStats();
   const showPool = stats.discoverable >= SHOW_POOL_FROM;
   const showJobs = stats.liveJobs >= SHOW_JOBS_FROM;
@@ -200,7 +202,7 @@ export default async function EmployersPage() {
           <p className="lede mx-auto mt-5 max-w-[620px]">Pick the number of live jobs you need. No set-up fee, no minimum term.</p>
         </div>
         <div className="mt-12">
-          <PricingCards mode="public" />
+          <PricingCards mode="public" paymentsOpen={paymentsOpen} />
         </div>
       </section>
 

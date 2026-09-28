@@ -1,12 +1,14 @@
 import Link from "next/link";
-import { EVERY_PLAN, PRICING_TIERS, type PlanId } from "@/lib/employer/plans";
+import { EVERY_PLAN, JOBS_EMAIL, PRICING_TIERS, type PlanId } from "@/lib/employer/plans";
 import { CheckoutButton } from "./CheckoutButton";
 import { Check } from "./icons";
 
 // The four employer tiers. On public pages the Starter and Growth buttons go
-// to sign-in and then billing; inside the dashboard they start checkout.
+// to sign-in and then billing; inside the dashboard they start checkout. While
+// card payments cannot be taken (isStripeReady), those two say so and offer
+// an email instead of a button that would fail.
 
-export function PricingCards({ mode, currentPlan = null }: { mode: "public" | "dashboard"; currentPlan?: PlanId | null }) {
+export function PricingCards({ mode, currentPlan = null, paymentsOpen = true }: { mode: "public" | "dashboard"; currentPlan?: PlanId | null; paymentsOpen?: boolean }) {
   return (
     <div>
       <div className="mx-auto grid max-w-[1180px] gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -37,6 +39,16 @@ export function PricingCards({ mode, currentPlan = null }: { mode: "public" | "d
                   <a href="#enquiry" className={`btn w-full ${dark ? "btn-primary" : "btn-dark"}`}>
                     Talk to us
                   </a>
+                ) : !paymentsOpen ? (
+                  <div>
+                    <p className={`mb-3 text-center text-[14px] leading-snug ${dark ? "text-white/80" : "text-ink-2"}`}>Card payments open shortly. Email us and we will set you up today.</p>
+                    <a
+                      href={`mailto:${JOBS_EMAIL}?subject=${encodeURIComponent(`${tier.name} plan`)}`}
+                      className={`btn w-full ${dark ? "btn-primary" : "btn-dark"}`}
+                    >
+                      Email us to start
+                    </a>
+                  </div>
                 ) : mode === "dashboard" ? (
                   <CheckoutButton
                     plan={tier.id as "starter" | "growth"}
@@ -67,7 +79,7 @@ export function PricingCards({ mode, currentPlan = null }: { mode: "public" | "d
           ))}
         </ul>
         <p className="mx-auto mt-5 max-w-[720px] text-center text-[14px] leading-relaxed text-mute">
-          Starter and Growth are paid monthly by card through Stripe. Cancel any time: your plan runs to the end of the month you have paid for.
+          Starter and Growth are paid monthly by card through Stripe{paymentsOpen ? "" : " once card payments open"}. Cancel any time: your plan runs to the end of the month you have paid for.
           Job seekers never pay to apply.
         </p>
       </div>

@@ -5,6 +5,7 @@ import { effectivePlan, isPlanId, JOBS_EMAIL, limitsFor, PLAN_NAMES, STATUS_LABE
 import { EnquiryForm } from "@/components/employer/EnquiryForm";
 import { PortalButton } from "@/components/employer/PortalButton";
 import { PricingCards } from "@/components/employer/PricingCards";
+import { isStripeReady } from "@/lib/apis/stripe";
 import { Badge, Notice, PageHead } from "@/components/employer/ui";
 
 export const metadata: Metadata = { title: "Plan and billing", robots: { index: false, follow: false } };
@@ -15,7 +16,7 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
   const { checkout, plan: chosen } = await searchParams;
   const plan = effectivePlan(account);
   const limits = limitsFor(plan);
-  const { live, pending } = await countActiveListings(account.id);
+  const [{ live, pending }, paymentsOpen] = await Promise.all([countActiveListings(account.id), isStripeReady().catch(() => false)]);
   const status = (account.plan_status as PlanStatus) ?? "inactive";
 
   return (
@@ -65,7 +66,7 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
       <h2 className="mt-12 text-[22px] font-bold tracking-[-0.02em] text-ink">{plan ? "Change plan" : "Choose a plan"}</h2>
       <p className="mt-1 text-[15px] text-mute">Monthly, no minimum term. Moving to another plan by card replaces your current subscription.</p>
       <div className="mt-6">
-        <PricingCards mode="dashboard" currentPlan={plan} />
+        <PricingCards mode="dashboard" currentPlan={plan} paymentsOpen={paymentsOpen} />
       </div>
 
       <div id="enquiry" className="mt-14 scroll-mt-24">

@@ -91,7 +91,20 @@ export function EmailLinkForm({ token }: { token: string }) {
   );
 }
 
-export function ReportCheckout({ token, occupationId, title, position }: { token: string; occupationId: string; title: string; position: number }) {
+export function ReportCheckout({
+  token,
+  occupationId,
+  title,
+  position,
+  paymentsOpen = true,
+}: {
+  token: string;
+  occupationId: string;
+  title: string;
+  position: number;
+  /** False while card payments cannot be taken (checked on the server, at most hourly). */
+  paymentsOpen?: boolean;
+}) {
   const [open, setOpen] = useState(false);
   const [consent, setConsent] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -123,6 +136,17 @@ export function ReportCheckout({ token, occupationId, title, position }: { token
       setError("We could not reach the server. Please try again.");
     }
     setBusy(false);
+  }
+
+  if (!paymentsOpen) {
+    return (
+      <div className="rounded-2xl bg-cloud px-4 py-3">
+        <p className="text-[15px] font-semibold text-ink">Career Change Reports open shortly</p>
+        <p className="mt-1 text-[14px] text-mute">
+          We cannot take card payments just yet, so the {REPORT_PRICE_LABEL} report for {title} is not on sale today. Everything on this page is free and stays here.
+        </p>
+      </div>
+    );
   }
 
   if (!open) {

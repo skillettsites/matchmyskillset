@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { EnquiryForm } from "@/components/employer/EnquiryForm";
 import { Faq, faqJsonLd } from "@/components/employer/Faq";
 import { PricingCards } from "@/components/employer/PricingCards";
+import { isStripeReady } from "@/lib/apis/stripe";
 import { EMPLOYER_FAQS } from "@/lib/employer/faqs";
 import { PRICING_TIERS } from "@/lib/employer/plans";
 import { SITE_URL } from "@/components/site";
@@ -13,7 +14,11 @@ export const metadata: Metadata = {
   alternates: { canonical: "/employers/pricing" },
 };
 
-export default function EmployerPricingPage() {
+/** Rebuilt every 10 minutes, so the plan buttons follow whether card payments are open (isStripeReady). */
+export const revalidate = 600;
+
+export default async function EmployerPricingPage() {
+  const paymentsOpen = await isStripeReady().catch(() => false);
   const offers = {
     "@context": "https://schema.org",
     "@type": "Service",
@@ -49,7 +54,7 @@ export default function EmployerPricingPage() {
       </section>
 
       <section className="px-5 pb-20" aria-label="Plans">
-        <PricingCards mode="public" />
+        <PricingCards mode="public" paymentsOpen={paymentsOpen} />
       </section>
 
       <section id="enquiry" className="scroll-mt-20 bg-cloud px-5 py-20 md:py-24" aria-labelledby="enquiry-title">

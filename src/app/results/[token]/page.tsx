@@ -4,11 +4,12 @@ import { notFound } from "next/navigation";
 import { formatDate } from "@/components/content";
 import { getReportByToken } from "@/lib/apis/reports-db";
 import { REPORT_PRICE_LABEL } from "@/lib/apis/report-product";
+import { isStripeReady } from "@/lib/apis/stripe";
 import { isMatchesDoc, isSkillsDoc } from "@/lib/skills/profile";
 import { presentMatch, profileSkillNames, resolveCurrentJob, type PresentedMatch } from "@/lib/skills/present";
 import { methodSummary } from "@/lib/skills/scoring";
 import { JOB_FIT_SUMMARY } from "@/lib/apis/jobs/fit";
-import { isFresh, placeFromDoc, snapshotFrom, type JobsSnapshot } from "@/lib/apis/jobs/match";
+import { isFresh, placeFromDoc, snapshotFrom, withoutClosedMmsJobs } from "@/lib/apis/jobs/match";
 import { coursesForSkill, occupationCourseLinks, skillHasCourses, skillsBootcampLink, FIND_APPRENTICESHIP_URL } from "@/lib/affiliate/courses";
 import { AffiliateLink } from "@/lib/affiliate/AffiliateLink";
 import { CONTACT_EMAIL } from "@/lib/site";
@@ -43,6 +44,7 @@ function CareerCard({
   fromTitle,
   jobCount,
   place,
+  paymentsOpen,
 }: {
   match: PresentedMatch;
   rank: number;
@@ -50,6 +52,7 @@ function CareerCard({
   fromTitle: string | null;
   jobCount: number | null;
   place: string | null;
+  paymentsOpen: boolean;
 }) {
   return (
     <article id={`match-${match.occupationId}`} className="card-white scroll-mt-24 p-5 sm:p-7">
@@ -140,16 +143,10 @@ function CareerCard({
       </div>
 
       <div className="mt-6 border-t border-hair pt-6">
-        <ReportCheckout token={token} occupationId={match.occupationId} title={match.title} position={rank} />
+        <ReportCheckout token={token} occupationId={match.occupationId} title={match.title} position={rank} paymentsOpen={paymentsOpen} />
       </div>
     </article>
   );
-}
-
-function sourcesLine(s: JobsSnapshot | null): string {
-  const names = (s?.sources ?? []).filter((x) => x.found > 0 || x.id === "mms").map((x) => x.label);
-  const list = names.length ? names.join(", ") : "Reed, Adzuna, GOV.UK Teaching Vacancies, Himalayas and Remotive";
-  return `Adverts come from ${list}. We do not write or check them: each links to the board that listed it, where you apply. Adverts dated more than 60 days ago are left out. Teaching Vacancies listings contain public sector information licensed under the Open Government Licence v3.0.`;
 }
 
 export default async function ResultsPage({ params, searchParams }: { params: Params; searchParams: Search }) {
@@ -165,7 +162,9 @@ export default async function ResultsPage({ params, searchParams }: { params: Pa
   const fromTitle = doc?.currentRole ?? report.current_role ?? null;
   const skills = profileSkillNames(doc?.skills ?? []);
   const cancelled = sp.checkout === "cancelled";
-  const snapshot = snapshotFrom(report.matches);
+  // Jobs posted on the site that have closed since the list was stored are left out here, checked live.
+  const stored = snapshotFrom(report.matches);
+  const [snapshot, paymentsOpen] = await Promise.all([stored ? withoutClosedMmsJobs(stored) : null, isStripeReady().catch(() => false)]);
   const place = doc ? placeFromDoc(doc) : null;
   const top = matches[0];
   const topCourseGaps = top ? top.gaps.filter((g) => skillHasCourses(g.id)).slice(0, 3) : [];
@@ -215,7 +214,7 @@ export default async function ResultsPage({ params, searchParams }: { params: Pa
         <ol className="mt-8 space-y-6">
           {matches.map((m, i) => (
             <li key={m.occupationId}>
-              <CareerCard match={m} rank={i + 1} token={token} fromTitle={fromTitle} jobCount={jobCountFor(m.occupationId)} place={place?.label ?? null} />
+              <CareerCard match={m} rank={i + 1} token={token} fromTitle={fromTitle} jobCount={jobCountFor(m.occupationId)} place={place?.label ?? null} paymentsOpen={paymentsOpen} />
             </li>
           ))}
         </ol>
@@ -295,7 +294,8 @@ export default async function ResultsPage({ params, searchParams }: { params: Pa
         </h3>
         <p className="mt-2 max-w-[720px] text-[17px] text-ink-2">
           The Career Change Report ({REPORT_PRICE_LABEL}, one payment) takes one career from your list and sets out the pay picture, the ways in with typical length and
-          funding, a plan for each gap, a 90-day plan, CV wording for that job and interview talking points. Pick a career above to get it.{" "}
+          funding, a plan for each gap, a 90-day plan, CV wording for that job and interview talking points.{" "}
+          {paymentsOpen ? "Pick a career above to get it." : "Reports open shortly: we cannot take card payments just yet."}{" "}
           <Link href="/pricing" className="text-link hover:underline">
             What is free and what is paid
           </Link>
@@ -411,7 +411,6 @@ export default async function ResultsPage({ params, searchParams }: { params: Pa
           careers={careersPanel}
           skills={skillsPanel}
           side={side}
-          sourcesNote={sourcesLine(snapshot)}
         />
       </div>
     </div>

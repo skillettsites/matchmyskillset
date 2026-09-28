@@ -3,7 +3,7 @@ import { isAllowedOrigin } from "@/lib/api-guard";
 import { checkRateLimit, clientIp } from "@/lib/rate-limit";
 import { TOKEN_PATTERN, getReportByToken } from "@/lib/apis/reports-db";
 import { isMatchesDoc, isSkillsDoc } from "@/lib/skills/profile";
-import { MAX_PASSES, gatherJobs, isFresh, placeFromDoc, saveSnapshot, snapshotFrom } from "@/lib/apis/jobs/match";
+import { MAX_PASSES, gatherJobs, isFresh, placeFromDoc, saveSnapshot, snapshotFrom, withoutClosedMmsJobs } from "@/lib/apis/jobs/match";
 
 // Live jobs for one results link.
 //   { token, action: "load" }     the stored list if it is under 12 hours old,
@@ -47,7 +47,9 @@ export async function POST(request: NextRequest) {
   const items = isMatchesDoc(report.matches) ? report.matches.items : [];
   if (!doc) return json(422, { error: "These results are too old to search jobs from. Please run a new check." });
 
-  const existing = snapshotFrom(report.matches);
+  // A stored list never shows a job posted on the site that has closed since (checked live).
+  const stored = snapshotFrom(report.matches);
+  const existing = stored ? await withoutClosedMmsJobs(stored) : null;
   if (action === "load" && existing && isFresh(existing)) return json(200, { snapshot: existing, cached: true });
   if (action === "refresh" && existing && Date.now() - Date.parse(existing.fetchedAt) < REFRESH_MIN_MS) {
     return json(200, { snapshot: existing, cached: true });

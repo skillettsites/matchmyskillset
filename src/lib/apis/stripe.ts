@@ -1,4 +1,5 @@
 import Stripe from "stripe";
+import { unstable_cache } from "next/cache";
 import { env } from "@/lib/env";
 
 // Stripe for the one-off Career Change Report. Server-side only.
@@ -25,3 +26,27 @@ export function isStripeConfigError(err: unknown): boolean {
 export function webhookSecret(): string {
   return env("STRIPE_WEBHOOK_SECRET");
 }
+
+/**
+ * Whether card payments can be taken right now, checked with one cheap Stripe
+ * call (the account balance) at most once an hour. A missing, expired or
+ * revoked key, or one without permission, means not ready, and the pay buttons
+ * say "Reports open shortly" instead. Any other failure (a network blip)
+ * counts as ready: checkout still shows a friendly message if it fails.
+ */
+export const isStripeReady = unstable_cache(
+  async (): Promise<boolean> => {
+    const s = getStripe();
+    if (!s) return false;
+    try {
+      await s.balance.retrieve();
+      return true;
+    } catch (err) {
+      if (isStripeConfigError(err)) return false;
+      console.warn("[stripe] readiness check failed:", err instanceof Error ? err.message : err);
+      return true;
+    }
+  },
+  ["mms-stripe-ready-v1"],
+  { revalidate: 3600 }
+);
