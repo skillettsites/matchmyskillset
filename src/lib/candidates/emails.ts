@@ -287,7 +287,7 @@ export async function sendApplicationReceipt(to: string, a: ApplicationMail): Pr
     `Your application: ${a.jobTitle}`,
     `${h1("Your application has been sent")}
      ${p(`Your application for <strong>${esc(a.jobTitle)}</strong> at <strong>${esc(a.company)}</strong> has gone to the employer: your name, email${a.phone ? ", phone number" : ""}, CV${a.note ? " and note" : ""}.`)}
-     ${a.match !== null ? p(`The employer sees a ${a.match}% skills match: the share of the skills in their advert that we found in your CV.`) : ""}
+     ${a.match !== null ? p(`The employer sees your skills match for this job: ${a.match}%, the share of the skills in their advert that we found in your CV.`) : ""}
      ${p(`${esc(a.company)} will contact you directly if they want to take it further. We do not hear back from them, so please follow up with them if you need to.`)}
      ${button(absolute(a.jobUrl), "View the job")}`,
     "This is a one-off receipt for an application you made on MatchMySkillset. We keep a copy of your application for 12 months, then delete it."

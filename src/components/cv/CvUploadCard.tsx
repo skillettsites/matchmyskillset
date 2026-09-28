@@ -528,7 +528,7 @@ export function CvUploadCard({ variant = "page" }: { variant?: "hero" | "page" }
       </button>
       <p className="mt-3 text-center text-[13px] text-mute">
         No sign-up. We don&apos;t keep your CV unless you ask us to.{" "}
-        <Link href="/privacy#cv" className="text-link hover:underline">
+        <Link href="/privacy#cv" className="text-link underline underline-offset-2">
           How we use it
         </Link>
       </p>

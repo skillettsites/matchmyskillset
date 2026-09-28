@@ -6,7 +6,8 @@ import { effectivePlan, PLAN_NAMES } from "@/lib/employer/plans";
 import { signOut } from "./actions";
 
 export const metadata: Metadata = {
-  title: "Employer dashboard",
+  // Pages below name themselves ("Applicants", "Plan and billing"), followed by where they are.
+  title: { default: "Employer dashboard | MatchMySkillset", template: "%s | Employer dashboard | MatchMySkillset" },
   robots: { index: false, follow: false },
 };
 

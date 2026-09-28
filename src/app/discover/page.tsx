@@ -87,7 +87,7 @@ export default function DiscoverPage() {
           <p className="mt-8 text-[15px] text-mute">
             Your CV text is used for the analysis and not kept afterwards, unless you later ask us to share it with an employer. Your results are saved behind a private
             link for 12 months. See our{" "}
-            <Link href="/privacy" className="text-link hover:underline">
+            <Link href="/privacy" className="text-link underline underline-offset-2">
               privacy policy
             </Link>
             .

@@ -60,7 +60,7 @@ export default async function EmployerPricingPage() {
       <section id="enquiry" className="scroll-mt-20 bg-cloud px-5 py-20 md:py-24" aria-labelledby="enquiry-title">
         <div className="mx-auto grid max-w-[1080px] gap-10 lg:grid-cols-[1fr_1.3fr] lg:items-start">
           <div>
-            <p className="eyebrow text-blue">Enterprise and pay per hire</p>
+            <p className="eyebrow text-link">Enterprise and pay per hire</p>
             <h2 id="enquiry-title" className="headline mt-2">
               Talk to us.
             </h2>

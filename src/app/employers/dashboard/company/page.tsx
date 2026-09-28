@@ -5,7 +5,7 @@ import { hasCompanyPage, initials } from "@/lib/employer/company";
 import { AccountDetailsForm, CompanyPageForm } from "@/components/employer/CompanyForms";
 import { Notice, PageHead } from "@/components/employer/ui";
 
-export const metadata: Metadata = { title: "Company", robots: { index: false, follow: false } };
+export const metadata: Metadata = { title: "Company profile", robots: { index: false, follow: false } };
 export const dynamic = "force-dynamic";
 
 export default async function CompanyPage() {

@@ -24,7 +24,7 @@ import { JobTabs } from "@/components/employer/JobTabs";
 import { Badge, Notice, PageHead, SkillChip, Stat } from "@/components/employer/ui";
 import { jobCommand } from "../../actions";
 
-export const metadata: Metadata = { title: "Job", robots: { index: false, follow: false } };
+export const metadata: Metadata = { title: "Job details", robots: { index: false, follow: false } };
 export const dynamic = "force-dynamic";
 
 const NOTICES: Record<string, { tone: "blue" | "amber" | "green"; text: string }> = {

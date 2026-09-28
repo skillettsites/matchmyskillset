@@ -2,6 +2,7 @@ import { Resend } from "resend";
 import { env } from "@/lib/env";
 import { SITE_URL } from "@/components/site";
 import { CONTACT_EMAIL } from "@/lib/site";
+import { titleInSentence, withArticle } from "@/lib/text";
 
 // Server-only. Two one-off emails, each sent only because the person asked:
 //   sendResultsLink()  the free results link, from /results/<token>
@@ -145,14 +146,14 @@ export async function sendReportLink(
   const html = layout(
     `Your Career Change Report: ${opts.destination}`,
     `<h1 style="font-size:20px;margin:0 0 12px 0;">Your Career Change Report is ready</h1>
-     <p style="margin:0;line-height:1.5;">Thank you for your order. Your report on becoming a ${esc(opts.destination.toLowerCase())} is ready to read, print or save as a PDF.</p>
+     <p style="margin:0;line-height:1.5;">Thank you for your order. Your report on becoming ${esc(withArticle(titleInSentence(opts.destination)))} is ready to read, print or save as a PDF.</p>
      ${button(url, "Open my report")}
      <p style="margin:0;font-size:13px;color:#58625d;line-height:1.5;">Keep this email: the link is how you get back to your report. It works for 12 months. Anyone with the link can open the report.</p>`,
     note
   );
   const text = [
     "Your Career Change Report is ready.",
-    `\nYour report on becoming a ${opts.destination.toLowerCase()} is here: ${url}`,
+    `\nYour report on becoming ${withArticle(titleInSentence(opts.destination))} is here: ${url}`,
     "\nKeep this email: the link is how you get back to your report. It works for 12 months. Anyone with the link can open the report.",
     `\n${note}`,
   ].join("\n");

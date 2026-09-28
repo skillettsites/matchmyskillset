@@ -1,7 +1,10 @@
 import type { MetadataRoute } from "next";
-import fs from "node:fs";
-import path from "node:path";
 import { JOB_HUBS, SITE_URL } from "@/components/site";
+import hubRedirects from "@/data/redirects/hubs.json";
+import pageRedirects from "@/data/redirects/pages.json";
+import { createAdminClient, isSupabaseConfigured } from "@/lib/supabase/admin";
+import { isLiveRow } from "@/lib/apis/jobs/mms";
+import { hasCompanyPage } from "@/lib/employer/company";
 
 /**
  * Every live, indexable page, with the date its content last changed.
@@ -11,7 +14,14 @@ import { JOB_HUBS, SITE_URL } from "@/components/site";
  *
  * Anything listed as a redirect source in src/data/redirects/*.json is
  * dropped automatically, so a redirected URL can never appear here.
+ *
+ * Jobs posted on MatchMySkillset (/jobs/mms/[id]) are listed while they are
+ * live, and company pages (/companies/[slug]) while the account's plan
+ * includes one and it has a live job (the page is noindex otherwise). The
+ * sitemap is rebuilt hourly for them.
  */
+export const revalidate = 3600;
+
 const REVAMP = "2026-09-28";
 
 type Route = { path: string; lastModified: string; priority?: number };
@@ -72,30 +82,64 @@ const ROUTES: Route[] = [
   { path: "/terms", lastModified: REVAMP, priority: 0.2 },
 ];
 
-/** Sources of every redirect in src/data/redirects/*.json. */
+/** Sources of every redirect in src/data/redirects/*.json (imported, so they are there when the sitemap is rebuilt on the server). */
 function redirectedPaths(): Set<string> {
-  const dir = path.join(process.cwd(), "src", "data", "redirects");
   const out = new Set<string>();
-  if (!fs.existsSync(dir)) return out;
-  for (const file of fs.readdirSync(dir)) {
-    if (!file.endsWith(".json")) continue;
-    const entries = JSON.parse(fs.readFileSync(path.join(dir, file), "utf8")) as { source: string }[];
-    for (const e of entries) out.add(e.source);
-  }
+  for (const list of [hubRedirects, pageRedirects] as { source: string }[][]) for (const e of list) out.add(e.source);
   return out;
 }
 
-export default function sitemap(): MetadataRoute.Sitemap {
+/** Live posted jobs, and company pages that have at least one of them. */
+async function jobBoardRoutes(): Promise<Route[]> {
+  if (!isSupabaseConfigured()) return [];
+  try {
+    const admin = createAdminClient();
+    const { data: jobs, error } = await admin.from("mms_jobs").select("id, status, expires_at, updated_at, account_id").eq("status", "live").limit(1000);
+    if (error) throw new Error(error.message);
+    const now = Date.now();
+    const live = (jobs ?? []).filter((j) => isLiveRow(j as { status: string; expires_at: string | null }, now)) as {
+      id: string;
+      updated_at: string;
+      account_id: string | null;
+      expires_at: string | null;
+    }[];
+    const routes: Route[] = live.map((j) => ({ path: `/jobs/mms/${j.id}`, lastModified: j.updated_at.slice(0, 10), priority: 0.5 }));
+    // The company page lists jobs that have an expiry date still to come.
+    const withPage = new Map<string, string>();
+    for (const j of live) {
+      if (!j.account_id || !j.expires_at) continue;
+      const prev = withPage.get(j.account_id);
+      if (!prev || j.updated_at > prev) withPage.set(j.account_id, j.updated_at);
+    }
+    if (withPage.size) {
+      const { data: accounts, error: accError } = await admin.from("mms_employer_accounts").select("id, slug, plan, plan_status, company_name").in("id", [...withPage.keys()]);
+      if (accError) throw new Error(accError.message);
+      for (const a of (accounts ?? []) as { id: string; slug: string | null; plan: string; plan_status: string; company_name: string | null }[]) {
+        if (!a.slug || !a.company_name || !hasCompanyPage(a)) continue;
+        routes.push({ path: `/companies/${a.slug}`, lastModified: (withPage.get(a.id) ?? "").slice(0, 10) || REVAMP, priority: 0.4 });
+      }
+    }
+    return routes;
+  } catch (err) {
+    console.warn("[sitemap] job board pages left out:", err instanceof Error ? err.message : err);
+    return [];
+  }
+}
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const redirected = redirectedPaths();
   const seen = new Set<string>();
-  return ROUTES.filter((r) => {
-    if (redirected.has(r.path) || seen.has(r.path)) return false;
-    seen.add(r.path);
-    return true;
-  }).map((r) => ({
-    url: r.path === "/" ? SITE_URL : `${SITE_URL}${r.path}`,
-    lastModified: r.lastModified,
-    changeFrequency: "monthly",
-    priority: r.priority,
-  }));
+  const routes = [...ROUTES, ...(await jobBoardRoutes())];
+  return routes
+    .filter((r) => {
+      if (redirected.has(r.path) || seen.has(r.path)) return false;
+      seen.add(r.path);
+      return true;
+    })
+    .map((r) => ({
+      url: r.path === "/" ? SITE_URL : `${SITE_URL}${r.path}`,
+      lastModified: r.lastModified,
+      changeFrequency: r.path.startsWith("/jobs/mms/") || r.path.startsWith("/companies/") ? "daily" : "monthly",
+      priority: r.priority,
+    }));
 }

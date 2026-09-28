@@ -12,7 +12,7 @@ import { JobTabs } from "@/components/employer/JobTabs";
 import { Badge, EmptyState, MatchBar, PageHead, SkillChip, type Tone } from "@/components/employer/ui";
 import { setApplicationStatus } from "../../../actions";
 
-export const metadata: Metadata = { title: "Applicants", robots: { index: false, follow: false } };
+export const metadata: Metadata = { title: "Applicants for your job", robots: { index: false, follow: false } };
 export const dynamic = "force-dynamic";
 
 const STATUS: Record<string, { label: string; tone: Tone }> = {

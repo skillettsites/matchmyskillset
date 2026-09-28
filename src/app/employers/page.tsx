@@ -14,7 +14,7 @@ import { publicEmployerStats, SHOW_JOBS_FROM, SHOW_POOL_FROM } from "@/lib/emplo
 export const revalidate = 600;
 
 export const metadata: Metadata = {
-  title: { absolute: "Post a job and hire on skills | MatchMySkillset for employers" },
+  title: { absolute: "Post a job and hire on skills | MatchMySkillset" },
   description:
     "Post a UK job and we match it to job seekers whose CV skills fit. Applicants arrive in your dashboard and inbox. Plans from £199 a month.",
   alternates: { canonical: "/employers" },
@@ -91,7 +91,7 @@ export default async function EmployersPage() {
       <section className="bg-cloud px-5 py-20 md:py-28" aria-labelledby="how">
         <div className="mx-auto max-w-[1080px]">
           <div className="mx-auto max-w-[760px] text-center">
-            <p className="eyebrow text-blue">How it works</p>
+            <p className="eyebrow text-link">How it works</p>
             <h2 id="how" className="headline mt-2">
               From advert to applicants,
               <br className="hidden sm:block" /> matched on skills.
@@ -210,7 +210,7 @@ export default async function EmployersPage() {
       <section id="enquiry" className="scroll-mt-20 bg-cloud px-5 py-20 md:py-28" aria-labelledby="enquiry-title">
         <div className="mx-auto grid max-w-[1080px] gap-10 lg:grid-cols-[1fr_1.3fr] lg:items-start">
           <div>
-            <p className="eyebrow text-blue">Enterprise and pay per hire</p>
+            <p className="eyebrow text-link">Enterprise and pay per hire</p>
             <h2 id="enquiry-title" className="headline mt-2">
               Talk to us.
             </h2>
