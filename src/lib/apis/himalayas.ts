@@ -38,7 +38,7 @@ function formatSalary(min?: number, max?: number, currency?: string): string | u
 function normalise(result: HimalayasJob): UnifiedJob {
   return {
     id: `himalayas_${result.guid || Math.random().toString(36).slice(2)}`,
-    source: "adzuna", // Display as generic for now since UI only has adzuna/reed/jooble/featured
+    source: "himalayas",
     title: result.title,
     company: result.companyName || "Unknown",
     location: result.locationRestrictions?.join(", ") || "Remote",

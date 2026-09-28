@@ -1,3 +1,16 @@
+-- =============================================================================
+-- WARNING: DO NOT RUN THIS FILE. HISTORY ONLY.
+-- It does not match the live database (see supabase/README.md and
+-- supabase/rollback/2026-09-28-before.sql for what is really live).
+-- Re-running it on the shared Supabase project would:
+--   * create mms_assessments_select_own, whose "auth.uid() IS NULL AND
+--     user_id IS NULL" clause lets ANYONE with the public anon key read every
+--     stored CV (the app never set user_id);
+--   * recreate the on_auth_user_created_mms trigger on the shared auth.users
+--     table, which fires on every sign-up for every site;
+--   * fail part-way on CREATE TABLE statements for tables that already exist.
+-- =============================================================================
+
 -- MatchMySkillset Database Schema
 -- All tables prefixed with mms_ to avoid conflicts with other projects
 
