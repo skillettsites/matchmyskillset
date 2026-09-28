@@ -1,16 +1,16 @@
 import { createClient } from "@supabase/supabase-js";
+import { env } from "@/lib/env";
 
-// Some env values in this stack arrive with a trailing literal "\n" (two
-// chars). That silently breaks the service-role key, so strip it before use.
-function clean(value: string | undefined | null): string {
-  return (value || "").replace(/\\n$/, "").trim();
+// Service-role client for server routes only. It bypasses RLS, which is the
+// point: after migrations 003 and 004 the anon and authenticated roles have no
+// access to any mms_ table. NEVER import this into a client component.
+export function createAdminClient() {
+  return createClient(env("NEXT_PUBLIC_SUPABASE_URL"), env("SUPABASE_SERVICE_ROLE_KEY"), {
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
 }
 
-// Service role client for API routes. Bypasses RLS.
-// NEVER expose this on the client side.
-export function createAdminClient() {
-  return createClient(
-    clean(process.env.NEXT_PUBLIC_SUPABASE_URL),
-    clean(process.env.SUPABASE_SERVICE_ROLE_KEY)
-  );
+/** True when both values the service-role client needs are present. */
+export function isSupabaseConfigured(): boolean {
+  return Boolean(env("NEXT_PUBLIC_SUPABASE_URL") && env("SUPABASE_SERVICE_ROLE_KEY"));
 }

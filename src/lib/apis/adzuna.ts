@@ -1,4 +1,5 @@
 import type { UnifiedJob } from "@/lib/types";
+import { env } from "@/lib/env";
 
 const BASE_URL = "https://api.adzuna.com/v1/api/jobs/gb/search";
 
@@ -61,8 +62,8 @@ export async function searchAdzuna(params: {
   page?: number;
   limit?: number;
 }): Promise<{ jobs: UnifiedJob[]; total: number }> {
-  const appId = process.env.ADZUNA_APP_ID;
-  const appKey = process.env.ADZUNA_APP_KEY;
+  const appId = env("ADZUNA_APP_ID");
+  const appKey = env("ADZUNA_APP_KEY");
 
   if (!appId || !appKey) {
     console.warn("[adzuna] API keys not configured, skipping");

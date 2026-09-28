@@ -1,4 +1,5 @@
 import type { UnifiedJob } from "@/lib/types";
+import { env } from "@/lib/env";
 
 const BASE_URL = "https://www.reed.co.uk/api/1.0";
 
@@ -64,7 +65,7 @@ export async function searchReed(params: {
   page?: number;
   limit?: number;
 }): Promise<{ jobs: UnifiedJob[]; total: number }> {
-  const apiKey = process.env.REED_API_KEY;
+  const apiKey = env("REED_API_KEY");
 
   if (!apiKey) {
     console.warn("[reed] API key not configured, skipping");

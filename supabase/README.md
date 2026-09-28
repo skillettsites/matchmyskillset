@@ -37,8 +37,8 @@ history.
 |---|---|---|
 | `001_initial_schema.sql` | Original schema. Does not match live. | History only. Never re-run. |
 | `002_add_cv_to_leads.sql` | Added CV text to leads. | History only. Never re-run. |
-| `003_revamp_cleanup.sql` | Removes the MMS trigger on `auth.users` and its function; drops the anon policies on `mms_employers`, `mms_featured_jobs`, `mms_email_leads`, `mms_job_clicks`, `mms_search_logs`; revokes anon/authenticated privileges on every `mms_` table; keeps RLS on. | Written, **not applied**. Needs owner approval. |
-| `004_revamp_tables.sql` | Creates `mms_reports`, `mms_purchases`, `mms_stripe_events`, `mms_rate_limits` and `mms_rate_limit_hit()`. RLS on, no policies, service role only. | Written, **not applied**. Needs owner approval. |
+| `003_revamp_cleanup.sql` | Removes the MMS trigger on `auth.users` and its function; drops the anon policies on `mms_employers`, `mms_featured_jobs`, `mms_email_leads`, `mms_job_clicks`, `mms_search_logs`; revokes anon/authenticated privileges on every `mms_` table; keeps RLS on. | Written, **not applied**. Owner has approved; the coordinator reviews and runs it. |
+| `004_revamp_tables.sql` | Creates `mms_reports`, `mms_purchases`, `mms_stripe_events`, `mms_rate_limits` and `mms_rate_limit_hit()` (RLS on, no policies, service role only), and adds the opt-in recruiter consent columns to `mms_email_leads` (existing rows get `recruiter_consent = false`). | Written, **not applied**. Owner has approved; the coordinator reviews and runs it. |
 | `rollback/2026-09-28-before.sql` | Live definitions captured before 003/004 (trigger, function, 12 policies, grants). Restores the old state if 003 has to be undone. | Reference. |
 
 Apply 003 then 004, each as one transaction (both files contain `BEGIN`/`COMMIT`), with
@@ -71,16 +71,37 @@ quotes column names for you.
 
 Raw CV text is never written to any of these tables. The privacy policy promises this.
 
+### Opt-in recruiter sharing (`mms_email_leads`, columns added by 004)
+
+The recruiter feature stays, strictly opt-in. A row in `mms_email_leads` is a person who
+ticked the optional, unticked-by-default box "Let a UK recruitment partner contact me about
+roles that fit my skills (optional)".
+
+| Column | Meaning |
+|---|---|
+| `recruiter_consent boolean not null default false` | True only when the box was ticked. Existing rows are false. |
+| `consent_at timestamptz` | When they ticked it. Consent lasts 12 months from here. |
+| `consent_text text` | The exact checkbox wording they agreed to. |
+| `consent_withdrawn_at timestamptz` | Set when they ask to be removed. |
+| `first_name text`, `"current_role" text` | Optional extras shown to the recruiter if collected. |
+
+Rules for writers (the `/discover` and `/api/assess` rewrite):
+- Only write a lead, and only keep `cv_text`, when `recruiter_consent` is true.
+- Always set `consent_at` and `consent_text` together with `recruiter_consent = true`.
+- `GET /api/admin` (used by `/employers`) returns only rows with `recruiter_consent = true`,
+  `consent_withdrawn_at IS NULL` and `consent_at` within the last 12 months, and only the
+  columns a recruiter needs.
+
 ### Existing (unchanged by the revamp code, still live)
 
 | Table | Rows (28 Sep 2026) | Notes |
 |---|---|---|
 | `mms_skill_assessments` | 3 | `input_text` holds full CV text (Apr and May 2026). Still written by `/api/assess` until the product rewrite lands. |
-| `mms_email_leads` | 3 | `cv_text` holds full CV text. Same. CommandCenter reads this table (service role). |
+| `mms_email_leads` | 3 | `cv_text` holds full CV text; none of the 3 opted in to recruiter sharing (the box did not exist). Kept as the opt-in recruiter lead store (see above). CommandCenter reads this table (service role). |
 | `mms_search_logs` | 3 | `query_text` holds the first 200 characters of the CV. |
 | `mms_job_clicks` | 0 | Written by `/api/track-click` (no personal identifiers). |
 | `mms_profiles` | 0 | Account profiles; accounts removed. CommandCenter reads this table. |
-| `mms_employers`, `mms_featured_jobs` | 0 / 0 | Recruiter features removed. |
+| `mms_employers`, `mms_featured_jobs` | 0 / 0 | Unused. Featured and hidden jobs were removed; the recruiter view reads opted-in leads only. |
 
 Do not drop any of these without asking the owner, and update CommandCenter
 (`src/lib/signup-attribution.ts`, `src/app/api/signups/route.ts`) first if
@@ -95,6 +116,10 @@ for example a daily Vercel cron route using the service-role client:
 DELETE FROM public.mms_reports WHERE expires_at < now();
 DELETE FROM public.mms_purchases WHERE created_at < now() - interval '6 years';
 DELETE FROM public.mms_stripe_events WHERE created_at < now() - interval '90 days';
+-- Recruiter leads: kept 12 months from consent, or until withdrawn
+DELETE FROM public.mms_email_leads
+  WHERE recruiter_consent
+    AND (consent_withdrawn_at IS NOT NULL OR consent_at < now() - interval '12 months');
 ```
 
 ## Owner decision: the 3 stored CVs

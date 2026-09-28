@@ -3,7 +3,7 @@
 --
 -- Runs on the SHARED Supabase project noxczmrnyyosgvvjlqca. Needs the owner's
 -- approval before it is run. Safe to run more than once (IF NOT EXISTS /
--- OR REPLACE throughout). Creates only new mms_ objects; touches nothing else.
+-- OR REPLACE throughout). Touches only mms_ objects.
 --
 -- New tables for the revamp (no accounts, one-off paid report, guest checkout):
 --   mms_reports        results behind a shareable token link, kept 12 months
@@ -11,7 +11,9 @@
 --   mms_stripe_events  webhook idempotency for MMS only (replaces MMS use of
 --                      the shared, unprefixed stripe_events table)
 --   mms_rate_limits    fixed-window counters used by src/lib/rate-limit.ts
--- plus mms_rate_limit_hit(), an atomic increment for mms_rate_limits.
+-- plus mms_rate_limit_hit(), an atomic increment for mms_rate_limits,
+-- and opt-in recruiter consent columns on the existing mms_email_leads
+-- (existing rows get recruiter_consent = false).
 --
 -- Access model: RLS ON, NO policies, and no privileges for anon or
 -- authenticated. Only the service-role key used by server routes can read or
@@ -117,6 +119,31 @@ $fn$;
 
 REVOKE ALL ON FUNCTION public.mms_rate_limit_hit(text, timestamptz) FROM PUBLIC, anon, authenticated;
 GRANT EXECUTE ON FUNCTION public.mms_rate_limit_hit(text, timestamptz) TO service_role;
+
+-- -----------------------------------------------------------------------------
+-- mms_email_leads: opt-in sharing with the recruitment partner
+-- A lead is shown to the partner (GET /api/admin) only when
+-- recruiter_consent = true, consent_at is within the last 12 months and
+-- consent_withdrawn_at is null. Existing rows get recruiter_consent = false.
+-- first_name and "current_role" are nullable extras the admin view shows when
+-- the product collects them.
+-- -----------------------------------------------------------------------------
+ALTER TABLE public.mms_email_leads
+  ADD COLUMN IF NOT EXISTS recruiter_consent boolean NOT NULL DEFAULT false,
+  ADD COLUMN IF NOT EXISTS consent_at timestamptz,
+  ADD COLUMN IF NOT EXISTS consent_text text,
+  ADD COLUMN IF NOT EXISTS consent_withdrawn_at timestamptz,
+  ADD COLUMN IF NOT EXISTS first_name text,
+  ADD COLUMN IF NOT EXISTS "current_role" text;
+
+CREATE INDEX IF NOT EXISTS idx_mms_email_leads_consented
+  ON public.mms_email_leads (consent_at)
+  WHERE recruiter_consent;
+
+COMMENT ON COLUMN public.mms_email_leads.recruiter_consent IS
+  'True only when the person ticked the optional recruiter box. cv_text must only be kept when this is true.';
+COMMENT ON COLUMN public.mms_email_leads.consent_text IS
+  'Exact wording of the checkbox the person agreed to.';
 
 -- -----------------------------------------------------------------------------
 -- RLS on, no policies, service role only

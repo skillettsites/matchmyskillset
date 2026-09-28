@@ -1,4 +1,5 @@
 import type { UnifiedJob } from "@/lib/types";
+import { env } from "@/lib/env";
 
 interface JoobleResult {
   title: string;
@@ -67,7 +68,7 @@ export async function searchJooble(params: {
   page?: number;
   limit?: number;
 }): Promise<{ jobs: UnifiedJob[]; total: number }> {
-  const apiKey = process.env.JOOBLE_API_KEY;
+  const apiKey = env("JOOBLE_API_KEY");
 
   if (!apiKey) {
     console.warn("[jooble] API key not configured, skipping");
