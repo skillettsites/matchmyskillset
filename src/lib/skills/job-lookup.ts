@@ -4,7 +4,7 @@
 
 import { CAREER_OCCUPATIONS, getCareerOccupation } from "@/data/careers";
 import { STARTING_JOBS as CARRY_OVER_JOBS } from "@/app/transferable-skills/starting-jobs";
-import { rankTitles, type TitleCandidate } from "./fuzzy";
+import { normaliseTitle, rankTitles, type TitleCandidate } from "./fuzzy";
 import { STARTING_JOBS, getStartingJob } from "./starting-jobs";
 import type { ProfileSkill } from "./profile";
 
@@ -135,8 +135,35 @@ export function findJobByTitle(title: string | null | undefined): CurrentJob | u
   let best: { key: string; score: number } | null = null;
   for (const piece of pieces) {
     if (piece.trim().length < 3) continue;
-    const [top] = rankTitles(piece, getJobIndex(), 1, 0.75);
+    // The fuzzy score lets "operations" meet "operational", so a close score
+    // also needs every word that says what the job is to be in the title:
+    // "Operations Manager" is not "Operational risk manager".
+    const top = rankTitles(piece, getJobIndex(), 5, 0.75).find((c) => contentWordsIn(c.matchedOn, piece));
     if (top && (!best || top.score > best.score)) best = { key: top.entry.key, score: top.score };
   }
   return best ? getCurrentJob(best.key) : undefined;
+}
+
+/** Words that say how a job is pitched, not what it is. */
+const PITCH_WORDS = new Set(
+  "manager officer assistant adviser advisor executive analyst engineer technician consultant coordinator administrator specialist operative worker lead leader supervisor director associate head senior junior trainee deputy chief principal".split(" ")
+);
+
+function wordSet(value: string): Set<string> {
+  return new Set(
+    normaliseTitle(value)
+      .split(" ")
+      .filter(Boolean)
+      .map((w) => (w.length > 3 && w.endsWith("s") && !/(ss|us|is)$/.test(w) ? w.slice(0, -1) : w))
+  );
+}
+
+/** True when every word of `name` that says what the work is (brackets aside) is a whole word of `title`. */
+function contentWordsIn(name: string, title: string): boolean {
+  const have = wordSet(title);
+  for (const w of wordSet(name.replace(/\([^)]*\)/g, " "))) {
+    if (PITCH_WORDS.has(w) || w === "and" || w === "of" || w === "the") continue;
+    if (!have.has(w)) return false;
+  }
+  return true;
 }
