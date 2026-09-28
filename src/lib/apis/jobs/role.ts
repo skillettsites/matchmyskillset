@@ -267,8 +267,13 @@ const US_ONLY_TITLE: RegExp[] = [
 export function usOnly(title: string, text: string, remote: boolean): boolean {
   if (US_ONLY_TEXT.some((re) => re.test(text) || re.test(title))) return true;
   const titleRules = remote ? US_ONLY_TITLE : US_ONLY_TITLE.slice(0, 2);
-  return titleRules.some((re) => re.test(title));
+  if (titleRules.some((re) => re.test(title))) return true;
+  // A remote clinical role asking for a professional "license" or "licensure" (US
+  // spelling; UK adverts ask for NMC, HCPC or GMC registration) needs a US licence.
+  return remote && CLINICAL.test(`${title} ${text}`) && /\blicens(e|ed|ure)\b/i.test(text) && !/\b(NMC|HCPC|GMC|GPhC|GDC)\b/.test(text);
 }
+
+const CLINICAL = /\b(nurse|nurses|nursing|RN|clinical|clinician|patient care|pharmacist|therapist|physician|medical provider)\b/i;
 
 // ---------------------------------------------------------------------------
 // Seniority
