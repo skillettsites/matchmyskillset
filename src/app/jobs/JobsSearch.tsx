@@ -1,11 +1,23 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { JobCard } from "@/components/ui/JobCard";
+import { MatchJobCard, type CardJob } from "@/components/jobs/MatchJobCard";
+import { forgetResults, lastResultsToken } from "@/components/cv/storage";
 import type { JobListing, JobSearchResponse } from "@/lib/apis/jobs/types";
 
-type Sort = "newest" | "salary";
+type Sort = "relevance" | "match" | "salary";
+
+interface Fit {
+  match: number;
+  reason: string;
+  explain: string;
+  matched: string[];
+  missing: string[];
+}
+type ScoredListing = JobListing & { fit?: Fit };
+type Response = Omit<JobSearchResponse, "jobs"> & { jobs: ScoredListing[]; scored?: boolean };
 
 const SUGGESTIONS = ["Data analyst", "Project manager", "Learning and development adviser", "Teaching assistant", "Customer service manager", "HR officer"];
 
@@ -45,9 +57,28 @@ function toQuery(s: SearchState): string {
   return p.toString();
 }
 
-/** "the South West", but "Wales" and "Yorkshire and the Humber". */
 function regionPhrase(region: string): string {
   return /^(Wales|Scotland|Northern Ireland|London|Yorkshire and the Humber)$/.test(region) ? region : `the ${region}`;
+}
+
+function toCard(j: ScoredListing): CardJob {
+  return {
+    id: j.id,
+    source: j.source,
+    sourceLabel: j.sourceLabel,
+    title: j.title,
+    company: j.company,
+    location: j.location,
+    url: j.url,
+    salary: j.salary,
+    contractText: j.contractType,
+    postedAt: j.postedAt,
+    workplace: j.mms ? j.mms.workplace : j.remote === "yes" ? "remote" : null,
+    snippet: j.snippet,
+    ...(j.fit
+      ? { match: j.fit.match, reason: j.fit.reason, explain: j.fit.explain, matchedNames: j.fit.matched, missingNames: j.fit.missing }
+      : {}),
+  };
 }
 
 export function JobsSearch() {
@@ -55,39 +86,50 @@ export function JobsSearch() {
   const initial = useMemo(() => fromParams(new URLSearchParams(params.toString())), [params]);
 
   const [form, setForm] = useState<SearchState>(initial);
-  const [result, setResult] = useState<JobSearchResponse | null>(null);
+  const [result, setResult] = useState<Response | null>(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [sort, setSort] = useState<Sort>("newest");
+  const [sort, setSort] = useState<Sort>("relevance");
+  const [token, setToken] = useState<string | null>(null);
+  const [tokenChecked, setTokenChecked] = useState(false);
   const listTop = useRef<HTMLDivElement>(null);
 
-  const run = useCallback(async (s: SearchState, scroll = false) => {
-    if (s.q.trim().length < 2) return;
-    setLoading(true);
-    setError("");
-    try {
-      const qs = toQuery(s);
-      window.history.replaceState(null, "", `/jobs?${qs}`);
-      const res = await fetch(`/api/jobs/search?${qs}`);
-      const data = await res.json();
-      if (!res.ok) {
-        setResult(null);
-        setError(data.error || "We could not search the job boards just now.");
-        return;
-      }
-      setResult(data as JobSearchResponse);
-      if (scroll) listTop.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-    } catch {
-      setResult(null);
-      setError("We could not reach the job search. Please check your connection and try again.");
-    } finally {
-      setLoading(false);
-    }
+  useEffect(() => {
+    setToken(lastResultsToken());
+    setTokenChecked(true);
   }, []);
 
+  const run = useCallback(
+    async (s: SearchState, scroll = false) => {
+      if (s.q.trim().length < 2) return;
+      setLoading(true);
+      setError("");
+      try {
+        const qs = toQuery(s);
+        window.history.replaceState(null, "", `/jobs?${qs}`);
+        const res = await fetch(`/api/jobs/search?${qs}${token ? `&token=${encodeURIComponent(token)}` : ""}`);
+        const data = await res.json();
+        if (!res.ok) {
+          setResult(null);
+          setError(data.error || "We could not search the job boards just now.");
+          return;
+        }
+        setResult(data as Response);
+        if ((data as Response).scored) setSort("match");
+        if (scroll) listTop.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      } catch {
+        setResult(null);
+        setError("We could not reach the job search. Please check your connection and try again.");
+      } finally {
+        setLoading(false);
+      }
+    },
+    [token]
+  );
+
   useEffect(() => {
-    if (initial.q) void run(initial);
-  }, [initial, run]);
+    if (tokenChecked && initial.q) void run(initial);
+  }, [initial, run, tokenChecked]);
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -102,68 +144,52 @@ export function JobsSearch() {
     void run(next, true);
   }
 
-  const jobs: JobListing[] = useMemo(() => {
+  const jobs = useMemo(() => {
     const list = [...(result?.jobs ?? [])];
-    if (sort === "salary") {
-      list.sort((a, b) => (b.salaryMax ?? b.salaryMin ?? 0) - (a.salaryMax ?? a.salaryMin ?? 0));
-    }
+    const mmsFirst = (a: ScoredListing, b: ScoredListing) => Number(b.source === "mms") - Number(a.source === "mms");
+    if (sort === "salary") list.sort((a, b) => mmsFirst(a, b) || (b.salaryMax ?? b.salaryMin ?? 0) - (a.salaryMax ?? a.salaryMin ?? 0));
+    if (sort === "match") list.sort((a, b) => mmsFirst(a, b) || (b.fit?.match ?? -1) - (a.fit?.match ?? -1));
     return list;
   }, [result, sort]);
 
-  const boardTotals = (result?.sources ?? []).filter((s) => s.total !== null && s.total > 0);
+  const boardTotals = (result?.sources ?? []).filter((s) => s.total !== null && s.total > 0 && s.id !== "mms");
 
   return (
-    <div className="mt-8">
-      <form onSubmit={submit} className="rounded-lg border border-rule bg-surface p-4 shadow-card sm:p-5" role="search">
-        <div className="grid gap-3 sm:grid-cols-[1.4fr_1fr_auto] sm:items-end">
+    <div className="mt-10">
+      <form onSubmit={submit} className="card-white p-4 sm:p-6" role="search">
+        <div className="grid gap-3 md:grid-cols-[1.4fr_1fr_auto] md:items-end">
           <div>
-            <label htmlFor="jobs-q" className="block text-sm font-semibold text-ink">
+            <label htmlFor="jobs-q" className="field-label">
               Job title or skill
             </label>
-            <input
-              id="jobs-q"
-              type="text"
-              value={form.q}
-              onChange={(e) => setForm({ ...form, q: e.target.value })}
-              placeholder="For example, data analyst"
-              className="mt-1 min-h-12 w-full rounded-md border border-rule-strong bg-white px-3 text-base text-ink placeholder:text-muted focus:border-accent"
-            />
+            <input id="jobs-q" type="text" className="field" value={form.q} onChange={(e) => setForm({ ...form, q: e.target.value })} placeholder="For example, data analyst" />
           </div>
           <div>
-            <label htmlFor="jobs-loc" className="block text-sm font-semibold text-ink">
-              Town, city, postcode or region
+            <label htmlFor="jobs-loc" className="field-label">
+              Town, postcode or region
             </label>
             <input
               id="jobs-loc"
               type="text"
+              className="field"
               value={form.remote ? "" : form.location}
               disabled={form.remote}
               onChange={(e) => setForm({ ...form, location: e.target.value })}
               placeholder={form.remote ? "Not needed for remote jobs" : "Anywhere in the UK"}
-              className="mt-1 min-h-12 w-full rounded-md border border-rule-strong bg-white px-3 text-base text-ink placeholder:text-muted focus:border-accent disabled:bg-paper-2"
             />
           </div>
-          <button type="submit" disabled={loading || form.q.trim().length < 2} className="btn btn-primary min-h-12">
+          <button type="submit" disabled={loading || form.q.trim().length < 2} className="btn btn-primary">
             {loading ? "Searching…" : "Search jobs"}
           </button>
         </div>
-        <div className="mt-3 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm">
-          <label className="flex min-h-11 cursor-pointer items-center gap-2 text-ink">
-            <input
-              type="checkbox"
-              checked={form.remote}
-              onChange={(e) => setForm({ ...form, remote: e.target.checked })}
-              className="h-5 w-5 accent-[var(--color-accent)]"
-            />
+        <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-3 text-[15px]">
+          <label className="flex cursor-pointer items-center gap-2 text-ink">
+            <input type="checkbox" checked={form.remote} onChange={(e) => setForm({ ...form, remote: e.target.checked })} className="h-5 w-5 accent-[#0071e3]" />
             Remote jobs only
           </label>
           <label className="flex items-center gap-2 text-ink">
             <span>Salary</span>
-            <select
-              value={form.salaryMin}
-              onChange={(e) => setForm({ ...form, salaryMin: e.target.value })}
-              className="min-h-11 rounded-md border border-rule-strong bg-white px-2 text-sm"
-            >
+            <select value={form.salaryMin} onChange={(e) => setForm({ ...form, salaryMin: e.target.value })} className="rounded-xl border border-line bg-white px-3 py-2 text-[15px]">
               {SALARY_OPTIONS.map((o) => (
                 <option key={o.value} value={o.value}>
                   {o.label}
@@ -174,26 +200,62 @@ export function JobsSearch() {
         </div>
       </form>
 
+      {tokenChecked &&
+        (token ? (
+          <p className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-[14px] text-mute">
+            <span className="inline-flex items-center gap-2">
+              <span className="live-dot" aria-hidden="true" /> Match scores use your latest results.
+            </span>
+            <Link href={`/results/${token}`} className="text-link hover:underline">
+              Open my results
+            </Link>
+            <button
+              type="button"
+              className="text-link hover:underline"
+              onClick={() => {
+                forgetResults();
+                setToken(null);
+              }}
+            >
+              Stop using them
+            </button>
+          </p>
+        ) : (
+          <div className="tile mt-5 flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-[17px] font-semibold tracking-[-0.02em] text-ink">See how well each job fits you</p>
+              <p className="text-[15px] text-mute">Upload your CV and every job gets a match score, with the skills you have that it asks for.</p>
+            </div>
+            <Link href="/discover#cv" className="btn btn-primary btn-sm shrink-0">
+              Upload my CV
+            </Link>
+          </div>
+        ))}
+
       <div ref={listTop} className="scroll-mt-24" />
 
-      {error && <p className="mt-6 rounded-md border border-negative/30 bg-negative-soft px-4 py-3 text-negative">{error}</p>}
+      {error && (
+        <p className="mt-6 rounded-2xl bg-[#fff2f2] px-4 py-3 text-[15px] text-[#b3261e]" role="alert">
+          {error}
+        </p>
+      )}
 
       {loading && (
-        <p className="mt-8 text-muted" role="status">
+        <p className="mt-8 text-mute" role="status">
           Searching the job boards…
         </p>
       )}
 
       {!loading && result && (
-        <div className="mt-6">
+        <div className="mt-8">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-            <div>
+            <div className="text-[15px]">
               <p className="text-ink">
                 <span className="font-semibold">{jobs.length}</span> {jobs.length === 1 ? "advert" : "adverts"} on this page
                 {result.page > 1 ? ` (page ${result.page})` : ""}.
               </p>
               {boardTotals.length > 0 && (
-                <p className="mt-1 text-sm text-muted">
+                <p className="mt-1 text-[14px] text-mute">
                   Boards report{" "}
                   {boardTotals.map((s, i) => (
                     <span key={s.id}>
@@ -205,26 +267,25 @@ export function JobsSearch() {
                 </p>
               )}
               {result.region && (
-                <p className="mt-1 text-sm text-muted">
+                <p className="mt-1 text-[14px] text-mute">
                   {`Showing adverts in ${regionPhrase(result.region)} only, checked against each advert's location.`}
                   {result.skippedForRegion && result.skippedForRegion.length > 0 && (
                     <>
                       {" "}
-                      {result.skippedForRegion.join(" and ")} cannot be narrowed to a region, so{" "}
-                      {result.skippedForRegion.length === 1 ? "it is" : "they are"} left out of this search.
+                      {result.skippedForRegion.join(" and ")} cannot be narrowed to a region, so {result.skippedForRegion.length === 1 ? "it is" : "they are"} left out of this
+                      search.
                     </>
                   )}
                 </p>
               )}
-              {result.relaxed && jobs.length > 0 && (
-                <p className="mt-1 text-sm text-muted">Few adverts matched that job title closely, so these include looser matches.</p>
-              )}
+              {result.relaxed && jobs.length > 0 && <p className="mt-1 text-[14px] text-mute">Few adverts matched that job title closely, so these include looser matches.</p>}
             </div>
             {jobs.length > 1 && (
-              <label className="flex items-center gap-2 text-sm text-ink">
+              <label className="flex items-center gap-2 text-[14px] text-ink">
                 Sort
-                <select value={sort} onChange={(e) => setSort(e.target.value as Sort)} className="min-h-11 rounded-md border border-rule-strong bg-white px-2">
-                  <option value="newest">Newest first</option>
+                <select value={sort} onChange={(e) => setSort(e.target.value as Sort)} className="rounded-xl border border-line bg-white px-3 py-2">
+                  <option value="relevance">Newest first</option>
+                  {result.scored && <option value="match">Best match for me</option>}
                   <option value="salary">Highest advertised salary</option>
                 </select>
               </label>
@@ -232,16 +293,15 @@ export function JobsSearch() {
           </div>
 
           {jobs.length === 0 ? (
-            <p className="mt-6 text-ink-2">
+            <p className="tile mt-6 p-5 text-[15px] text-ink-2">
               No adverts matched{form.q ? ` "${form.q}"` : ""}
-              {form.location && !form.remote ? ` near ${form.location}` : ""}. Try a shorter job title, another place, or remote
-              jobs only.
+              {form.location && !form.remote ? ` near ${form.location}` : ""}. Try a shorter job title, another place, or remote jobs only.
             </p>
           ) : (
-            <ul className="mt-5 space-y-3">
+            <ul className="mt-5 space-y-4">
               {jobs.map((job, i) => (
                 <li key={job.id}>
-                  <JobCard job={job} position={(result.page - 1) * 25 + i + 1} />
+                  <MatchJobCard job={toCard(job)} position={(result.page - 1) * 25 + i + 1} />
                 </li>
               ))}
             </ul>
@@ -249,34 +309,33 @@ export function JobsSearch() {
 
           {(result.page > 1 || result.hasMore) && (
             <nav aria-label="Result pages" className="mt-6 flex items-center justify-between gap-3">
-              <button type="button" className="btn btn-secondary" disabled={result.page <= 1 || loading} onClick={() => goToPage(result.page - 1)}>
+              <button type="button" className="btn btn-secondary btn-sm" disabled={result.page <= 1 || loading} onClick={() => goToPage(result.page - 1)}>
                 Previous page
               </button>
-              <span className="text-sm text-muted">Page {result.page}</span>
-              <button type="button" className="btn btn-secondary" disabled={!result.hasMore || loading} onClick={() => goToPage(result.page + 1)}>
+              <span className="text-[14px] text-mute">Page {result.page}</span>
+              <button type="button" className="btn btn-secondary btn-sm" disabled={!result.hasMore || loading} onClick={() => goToPage(result.page + 1)}>
                 Next page
               </button>
             </nav>
           )}
 
-          <p className="mt-8 text-xs leading-relaxed text-muted">
+          <p className="mt-8 text-[12px] leading-relaxed text-mute">
             Adverts come from{" "}
             {result.sources.map((s, i) => (
               <span key={s.id}>
                 {i > 0 && (i === result.sources.length - 1 ? " and " : ", ")}
-                {s.label}
+                {s.id === "mms" ? "employers posting on MatchMySkillset" : s.label}
               </span>
             ))}
-            . We do not write or check them; the board that listed a job is shown on each advert, and applying happens on its
-            site. Adverts a board dates more than {result.maxAgeDays} days ago are left out. Teaching Vacancies listings
-            contain public sector information licensed under the Open Government Licence v3.0.
+            . We do not write or check board adverts; the board that listed a job is shown on each one, and applying happens on its site. Adverts a board dates more
+            than {result.maxAgeDays} days ago are left out. Teaching Vacancies listings contain public sector information licensed under the Open Government Licence v3.0.
           </p>
         </div>
       )}
 
       {!loading && !result && !error && (
         <div className="mt-8">
-          <p className="text-ink-2">Try one of these:</p>
+          <p className="text-[15px] text-ink-2">Try one of these:</p>
           <div className="mt-3 flex flex-wrap gap-2">
             {SUGGESTIONS.map((s) => (
               <button
@@ -287,7 +346,7 @@ export function JobsSearch() {
                   setForm(next);
                   void run(next);
                 }}
-                className="min-h-11 rounded-full border border-rule bg-surface px-4 text-sm text-ink-2 hover:border-accent hover:text-accent"
+                className="pill bg-cloud text-ink hover:bg-hair"
               >
                 {s}
               </button>

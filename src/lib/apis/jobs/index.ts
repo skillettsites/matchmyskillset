@@ -1,9 +1,11 @@
 // Searches every enabled job board in parallel and merges the results.
-// Server-side only. Listings are never stored or given their own pages: each
-// card links to the original advert on the board that supplied it.
+// Server-side only. Board listings are never given their own pages: each card
+// links to the original advert on the board that supplied it. Jobs posted on
+// MatchMySkillset (source "mms") link to their page on this site and always
+// come first.
 
-import { JOB_SOURCES, adzunaTitleCount, describeSourceError } from "./sources";
-import type { JobListing, JobQuery, JobSearchResponse, SourceSummary } from "./types";
+import { JOB_SOURCES, adzunaTitleCount, describeSourceError, getJobSource } from "./sources";
+import type { JobListing, JobQuery, JobSearchResponse, SourceId, SourceSummary } from "./types";
 import { dedupeKey, titleIsRelevant } from "./util";
 
 export type { JobListing, JobQuery, JobSearchResponse, SourceSummary } from "./types";
@@ -19,6 +21,33 @@ function isFresh(job: JobListing, cutoff: number): boolean {
   if (!job.postedAt) return true;
   const t = Date.parse(job.postedAt);
   return Number.isNaN(t) || t >= cutoff;
+}
+
+export interface SourceRun {
+  id: SourceId;
+  label: string;
+  jobs: JobListing[];
+  total: number | null;
+  error?: string;
+}
+
+/**
+ * Asks one board, if it is switched on and applies to the query. Never
+ * throws: a failure comes back as `error` with no jobs. Stale adverts (older
+ * than MAX_AGE_DAYS by the board's date) are dropped.
+ */
+export async function runSource(id: SourceId, q: JobQuery): Promise<SourceRun | null> {
+  const s = getJobSource(id);
+  if (!s || !s.enabled() || !s.appliesTo(q)) return null;
+  const cutoff = Date.now() - MAX_AGE_DAYS * 86_400_000;
+  try {
+    const r = await s.search(q);
+    return { id: s.id, label: s.label, jobs: r.jobs.filter((j) => isFresh(j, cutoff)), total: r.total, ...(r.error ? { error: r.error } : {}) };
+  } catch (err) {
+    const reason = describeSourceError(err);
+    console.warn(`[jobs] ${s.id} failed: ${reason}`);
+    return { id: s.id, label: s.label, jobs: [], total: null, error: reason };
+  }
 }
 
 export async function searchJobs(q: JobQuery): Promise<JobSearchResponse> {
@@ -55,8 +84,12 @@ export async function searchJobs(q: JobQuery): Promise<JobSearchResponse> {
     unique.push(job);
   }
 
-  // Newest first; ads without a date go last, in board order.
-  unique.sort((a, b) => (b.postedAt ? Date.parse(b.postedAt) : 0) - (a.postedAt ? Date.parse(a.postedAt) : 0));
+  // Jobs posted on MatchMySkillset first, then newest first; ads without a date go last, in board order.
+  unique.sort(
+    (a, b) =>
+      Number(b.source === "mms") - Number(a.source === "mms") ||
+      (b.postedAt ? Date.parse(b.postedAt) : 0) - (a.postedAt ? Date.parse(a.postedAt) : 0)
+  );
 
   const sources: SourceSummary[] = settled.map((r) => ({
     id: r.source.id,

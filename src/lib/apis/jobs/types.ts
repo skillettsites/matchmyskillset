@@ -3,9 +3,12 @@
 
 import type { UkRegion } from "@/lib/apis/regions";
 
-export type SourceId = "reed" | "adzuna" | "teaching-vacancies" | "careerjet" | "jooble" | "himalayas" | "remotive";
+export type SourceId = "mms" | "reed" | "adzuna" | "teaching-vacancies" | "careerjet" | "jooble" | "himalayas" | "remotive";
 
-export const SOURCE_IDS: readonly SourceId[] = ["reed", "adzuna", "teaching-vacancies", "careerjet", "jooble", "himalayas", "remotive"];
+export const SOURCE_IDS: readonly SourceId[] = ["mms", "reed", "adzuna", "teaching-vacancies", "careerjet", "jooble", "himalayas", "remotive"];
+
+/** Where the job is done, as the advert (or the employer's form) says. */
+export type Workplace = "onsite" | "hybrid" | "remote";
 
 export interface JobListing {
   /** "<source>_<id on that board>" */
@@ -30,6 +33,23 @@ export interface JobListing {
   /** ISO 8601 date the ad was posted, when the board gives one. */
   postedAt?: string;
   contractType?: string;
+  /** UK region, when the board gives one or it could be worked out from the location. */
+  region?: UkRegion;
+  /** Jobs posted on MatchMySkillset only. */
+  mms?: MmsJobExtra;
+}
+
+/** Extra fields for jobs posted on MatchMySkillset (source "mms"). */
+export interface MmsJobExtra {
+  id: string;
+  workplace: Workplace;
+  /** Full advert text, for scoring against a CV. Never sent to the browser in bulk. */
+  description: string;
+  /** Skill ids the employer's advert was tagged with. */
+  skillIds: string[];
+  hours?: string | null;
+  contract?: string | null;
+  closesAt?: string | null;
 }
 
 export interface JobQuery {

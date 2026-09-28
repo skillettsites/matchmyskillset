@@ -21,8 +21,8 @@ export function PayBlock({
   if (pay.median === null) {
     return (
       <div>
-        <p className="text-[0.9375rem] text-ink-2">ONS did not publish a reliable pay figure for this group of jobs.</p>
-        {note && <p className="mt-1 text-sm text-muted">{note}</p>}
+        <p className="text-[15px] text-ink-2">ONS did not publish a reliable pay figure for this group of jobs.</p>
+        {note && <p className="mt-1 text-[14px] text-mute">{note}</p>}
         <SourceNote className="mt-1" source={PAY_SOURCE.name} href={PAY_SOURCE.href} published={PAY_SOURCE.published} />
       </div>
     );
@@ -30,12 +30,12 @@ export function PayBlock({
   return (
     <div>
       <p className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
-        <span className="text-sm text-muted">Median pay, {pay.basis === "ft" ? "full-time" : "all employees"}</span>
+        <span className="text-[14px] text-mute">Median pay, {pay.basis === "ft" ? "full-time" : "all employees"}</span>
         <SalaryFigure value={pay.median} size="md" />
         {change && fromTitle && (
           <span
-            className={`inline-flex items-baseline gap-1 rounded px-2 py-0.5 text-sm font-semibold tabular-nums ${
-              change.change < 0 ? "bg-negative-soft text-negative" : "bg-highlight-soft text-highlight-ink"
+            className={`inline-flex items-baseline gap-1 rounded-full px-2.5 py-0.5 text-[13px] font-semibold tabular-nums ${
+              change.change < 0 ? "bg-[#fff2f2] text-[#b3261e]" : "bg-green-soft text-green"
             }`}
           >
             {formatGBPChange(change.change)}
@@ -44,18 +44,18 @@ export function PayBlock({
         )}
       </p>
       {pay.p25 !== null && pay.p75 !== null && (
-        <p className="mt-1 text-[0.9375rem] text-ink-2">
+        <p className="mt-1 text-[15px] text-ink-2">
           The middle half earn between <span className="font-semibold tabular-nums text-ink">{formatGBP(pay.p25)}</span> and{" "}
           <span className="font-semibold tabular-nums text-ink">{formatGBP(pay.p75)}</span> a year.
         </p>
       )}
       {detailed && pay.p10 !== null && pay.p90 !== null && (
-        <p className="mt-1 text-[0.9375rem] text-ink-2">
+        <p className="mt-1 text-[15px] text-ink-2">
           One in ten earn under <span className="font-semibold tabular-nums text-ink">{formatGBP(pay.p10)}</span> and one in ten
           over <span className="font-semibold tabular-nums text-ink">{formatGBP(pay.p90)}</span>.
         </p>
       )}
-      {pay.basis === "all" && <p className="mt-1 text-sm text-muted">This is for all employees, including part-time, because ONS did not publish a reliable full-time figure.</p>}
+      {pay.basis === "all" && <p className="mt-1 text-[14px] text-mute">This is for all employees, including part-time, because ONS did not publish a reliable full-time figure.</p>}
       <SourceNote
         className="mt-1.5"
         source={PAY_SOURCE.name}
@@ -78,18 +78,18 @@ export function SkillChips({ skills, tone }: { skills: NamedSkill[]; tone: "have
   if (skills.length === 0) return null;
   const style =
     tone === "have"
-      ? "border-accent/30 bg-accent-wash text-ink"
+      ? "border-transparent bg-green-soft text-green font-medium"
       : tone === "close"
-        ? "border-rule-strong bg-surface text-ink-2"
+        ? "border-line bg-white text-ink-2"
         : tone === "gap"
-          ? "border-dashed border-rule-strong bg-paper text-ink-2"
-          : "border-rule bg-surface text-ink";
+          ? "border-dashed border-line bg-white text-mute"
+          : "border-transparent bg-cloud text-ink";
   return (
     <ul className="flex flex-wrap gap-1.5">
       {skills.map((s) => (
-        <li key={`${tone}-${s.id}`} className={`rounded-full border px-2.5 py-1 text-sm ${style}`}>
+        <li key={`${tone}-${s.id}`} className={`rounded-full border px-2.5 py-1 text-[13px] ${style}`}>
           {s.name}
-          {tone === "close" && s.viaName && <span className="text-muted"> (close to your {s.viaName})</span>}
+          {tone === "close" && s.viaName && <span className="text-mute"> (close to your {s.viaName})</span>}
         </li>
       ))}
     </ul>
@@ -100,7 +100,7 @@ export function SkillChips({ skills, tone }: { skills: NamedSkill[]; tone: "have
 export function WaysIn({ match, limit = 2 }: { match: PresentedMatch; limit?: number }) {
   const apps = match.apprenticeships.slice(0, limit);
   return (
-    <div className="space-y-2 text-[0.9375rem] text-ink-2">
+    <div className="space-y-2 text-[15px] text-ink-2">
       <p>
         {match.degreeUsuallyRequired
           ? "A degree (or a degree apprenticeship) is the usual way in."
@@ -111,10 +111,10 @@ export function WaysIn({ match, limit = 2 }: { match: PresentedMatch; limit?: nu
         <ul className="space-y-1">
           {apps.map((a) => (
             <li key={a.referenceNumber}>
-              <a href={a.url} className="link" rel="noopener" target="_blank">
+              <a href={a.url} className="text-link hover:underline" rel="noopener" target="_blank">
                 {a.title} apprenticeship
               </a>{" "}
-              <span className="text-muted">({describeApprenticeship(a)})</span>
+              <span className="text-mute">({describeApprenticeship(a)})</span>
             </li>
           ))}
         </ul>
@@ -125,7 +125,7 @@ export function WaysIn({ match, limit = 2 }: { match: PresentedMatch; limit?: nu
           {match.licences.map((l, i) => (
             <span key={l.name}>
               {i > 0 && ", "}
-              <a href={l.url} className="link" rel="noopener" target="_blank">
+              <a href={l.url} className="text-link hover:underline" rel="noopener" target="_blank">
                 {l.name}
               </a>
               {l.scope ? ` (${l.scope})` : ""}

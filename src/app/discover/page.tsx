@@ -1,71 +1,98 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { CvUploadCard } from "@/components/cv/CvUploadCard";
+import { JOB_FIT_SUMMARY } from "@/lib/apis/jobs/fit";
 import { CAREER_OCCUPATIONS } from "@/data/careers";
-import { getJobIndex, suggestJobs } from "@/lib/skills/job-lookup";
-import { UK_REGIONS } from "@/lib/apis/regions";
-import { RECRUITER_SHARING_ENABLED, RECRUITMENT_PARTNER_NAME } from "@/lib/site";
-import { recruiterConsentText } from "./consent";
-import { DiscoverClient } from "./DiscoverClient";
 
 export const metadata: Metadata = {
-  title: "Free career change check: your job or CV",
+  title: "Upload your CV, see UK jobs that match it",
   description:
-    "Type your job or paste your CV to see UK careers that use your skills, with ONS pay, the ways in and live vacancies. Free, and no account or email needed.",
+    "Upload your CV and get live UK jobs from Reed, Adzuna and more, each scored against your skills, plus careers that fit you with ONS pay. Free, no sign-up.",
   alternates: { canonical: "/discover" },
 };
 
-export default async function DiscoverPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
-  const sp = await searchParams;
-  const raw = typeof sp.current === "string" ? sp.current : "";
-  const current = raw.replace(/\s+/g, " ").trim().slice(0, 80);
-  const suggestions = current
-    ? suggestJobs(current, 6).map((r) => ({ key: r.entry.key, title: r.entry.title, matchedOn: r.matchedOn }))
-    : [];
+const STEPS: [string, string][] = [
+  ["Add your CV", "Drop in a PDF or Word file, or paste it. Add where you want to work."],
+  ["See live jobs that fit", "Each job gets a match score, the skills you have that it asks for, and the ones you would need."],
+  ["Apply or get alerts", "Apply on the original advert, or with MatchMySkillset for jobs posted here. Get new matches by email."],
+];
 
+export default function DiscoverPage() {
   return (
-    <div className="mx-auto max-w-page px-4 py-10 sm:px-6 sm:py-14">
-      <div className="max-w-reading">
-        <p className="kicker text-accent">Free, no account or email needed</p>
-        <h1 className="mt-2 font-serif text-h1 font-semibold text-ink">See where your experience could take you</h1>
-        <p className="mt-3 text-lede text-ink-2">
-          Start from the job you do now for an instant answer, or paste your CV for results built on your own experience.
-          Either way you get UK careers that use your skills, what they pay according to the Office for National
-          Statistics, and how people get in.
-        </p>
-      </div>
+    <div className="relative overflow-hidden">
+      <div className="hero-glow top-[-8%] !opacity-[0.18]" aria-hidden="true" />
+      <section className="relative px-4 pb-16 pt-12 sm:px-5 md:pt-20">
+        <div className="mx-auto grid max-w-[1120px] gap-12 lg:grid-cols-[1fr_520px] lg:items-start">
+          <div className="lg:pt-8">
+            <p className="eyebrow rise text-blue">Free CV job match</p>
+            <h1 className="display rise rise-1 mt-2">
+              Jobs that fit
+              <br />
+              <span className="gradient-text">your CV.</span>
+            </h1>
+            <p className="lede rise rise-2 mt-6 max-w-[520px]">
+              Upload your CV and see live UK jobs you could apply for today, each scored on the skills you actually have. Plus the careers your skills could take you
+              to, with pay from the Office for National Statistics.
+            </p>
+            <ol className="rise rise-3 mt-10 space-y-5">
+              {STEPS.map(([t, d], i) => (
+                <li key={t} className="flex gap-4">
+                  <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-ink text-[14px] font-semibold text-white">{i + 1}</span>
+                  <div>
+                    <p className="text-[17px] font-semibold tracking-[-0.02em] text-ink">{t}</p>
+                    <p className="text-[15px] text-mute">{d}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </div>
+          <div className="rise rise-2">
+            <CvUploadCard variant="page" />
+          </div>
+        </div>
+      </section>
 
-      <DiscoverClient
-        index={getJobIndex()}
-        initialCurrent={current}
-        initialSuggestions={suggestions}
-        regions={[...UK_REGIONS]}
-        recruiter={RECRUITER_SHARING_ENABLED ? { partner: RECRUITMENT_PARTNER_NAME, text: recruiterConsentText() } : null}
-      />
-
-      <section aria-labelledby="how-title" className="mt-14 max-w-reading">
-        <h2 id="how-title" className="font-serif text-h3 font-semibold text-ink">
-          How the check works
-        </h2>
-        <ol className="mt-3 list-decimal space-y-2 pl-5 text-ink-2">
-          <li>
-            We turn your job or CV into a list of skills from our skills list. For a CV, an AI model (Claude, by Anthropic)
-            reads the text and picks the skills; it does not choose your careers.
-          </li>
-          <li>
-            We compare those skills with {CAREER_OCCUPATIONS.length}{" "}UK careers that people commonly move into. The score is the share of each
-            career&apos;s key skills we found, weighted by how essential each skill is and by how few careers need it, so
-            everyday skills such as communication count for less. The same profile always gets the
-            same score.
-          </li>
-          <li>
-            Pay comes from the ONS Annual Survey of Hours and Earnings. Ways in come from the National Careers Service and
-            Skills England.
-          </li>
-        </ol>
-        <p className="mt-4 text-sm text-muted">
-          Your CV text is used for the analysis and not kept afterwards. Your results are saved behind a private link for
-          12 months. See our <Link href="/privacy" className="link">privacy policy</Link>.
-        </p>
+      <section aria-labelledby="how-title" className="relative border-t border-hair bg-snow px-4 py-16 sm:px-5">
+        <div className="mx-auto max-w-[860px]">
+          <h2 id="how-title" className="headline !text-[32px] sm:!text-[40px]">
+            How the matching works
+          </h2>
+          <div className="mt-8 grid gap-5 md:grid-cols-2">
+            <div className="card-white p-6">
+              <p className="text-[17px] font-semibold tracking-[-0.02em] text-ink">Your skills</p>
+              <p className="mt-2 text-[15px] text-ink-2">
+                An AI model (Claude, by Anthropic) reads your CV and picks your skills from our fixed list of skills. It does not choose your jobs or careers. Starting
+                from a job title instead uses the skills that job usually involves, with no AI.
+              </p>
+            </div>
+            <div className="card-white p-6">
+              <p className="text-[17px] font-semibold tracking-[-0.02em] text-ink">Live jobs</p>
+              <p className="mt-2 text-[15px] text-ink-2">
+                We search Reed, Adzuna, GOV.UK Teaching Vacancies, remote job boards and jobs posted on MatchMySkillset for your own job and your closest careers, near
+                where you want to work. Adverts more than 60 days old are left out.
+              </p>
+            </div>
+            <div className="card-white p-6">
+              <p className="text-[17px] font-semibold tracking-[-0.02em] text-ink">The match score</p>
+              <p className="mt-2 text-[15px] text-ink-2">{JOB_FIT_SUMMARY}</p>
+            </div>
+            <div className="card-white p-6">
+              <p className="text-[17px] font-semibold tracking-[-0.02em] text-ink">Careers that fit</p>
+              <p className="mt-2 text-[15px] text-ink-2">
+                We also compare your skills with {CAREER_OCCUPATIONS.length} UK careers people commonly move into, with ONS pay and the ways in from the National Careers
+                Service and Skills England.
+              </p>
+            </div>
+          </div>
+          <p className="mt-8 text-[15px] text-mute">
+            Your CV text is used for the analysis and not kept afterwards, unless you later ask us to share it with an employer. Your results are saved behind a private
+            link for 12 months. See our{" "}
+            <Link href="/privacy" className="text-link hover:underline">
+              privacy policy
+            </Link>
+            .
+          </p>
+        </div>
       </section>
     </div>
   );

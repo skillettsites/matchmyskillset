@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { CookieSettingsButton } from "@/components/GoogleAnalytics";
+import { ALERT_CONSENT_TEXT, PROFILE_CONSENT_TEXT } from "@/lib/candidates/consent";
 import {
   CONTACT_EMAIL,
   LEGAL_ENTITY_NAME,
@@ -42,7 +43,12 @@ export default function PrivacyPage() {
             <li>
               Your CV text is sent to Anthropic (the company behind the Claude AI model) in the
               United States to identify your skills. We do not keep the raw CV text once the
-              analysis has finished.
+              analysis has finished, unless you apply for a job posted here or choose to add it to
+              an employer-visible profile.
+            </li>
+            <li>
+              To find live jobs for you we send job titles and the place you typed (never your name,
+              email or CV) to the job boards we search.
             </li>
             <li>
               We keep your results (skills, career matches, the job title you gave, and for a CV a few
@@ -52,10 +58,12 @@ export default function PrivacyPage() {
             <li>Payments are handled by Stripe. We keep purchase records for 6 years for tax.</li>
             <li>Google Analytics cookies are only used if you click Accept.</li>
             <li>
-              We do not sell your data.{" "}
+              We do not sell your data. An employer only gets your CV and contact details if you
+              apply for their job on MatchMySkillset (ticking a box that names them) or accept their
+              request to contact you.
               {RECRUITER_SHARING_ENABLED
-                ? `We only pass your CV to a recruitment agency (${RECRUITMENT_PARTNER_NAME}) if you tick the optional box asking us to, and you can withdraw at any time.`
-                : "We do not pass your CV to recruiters or employers."}
+                ? ` We only pass your CV to a recruitment agency (${RECRUITMENT_PARTNER_NAME}) if you tick the optional box asking us to, and you can withdraw at any time.`
+                : ""}
             </li>
           </ul>
         </div>
@@ -69,15 +77,22 @@ export default function PrivacyPage() {
 
         <h2 className={h2}>2. What we collect and why</h2>
 
-        <h3 className={h3}>Your CV or job title</h3>
+        <h3 className={h3} id="cv">Your CV or job title</h3>
         <p>
           When you use the free check, you either paste or upload your CV, or type your current job
           title. We send that text to Anthropic to pick out your skills and compare them with UK
           occupations. The raw CV text, and any file you upload, is used only for that analysis and
-          is not stored by us afterwards
+          is not stored by us afterwards, except when you ask us to: when you apply for a job posted
+          on MatchMySkillset (see &ldquo;Applying for a job posted here&rdquo;), or when you add your
+          CV to a profile employers can find (see &ldquo;Letting employers find you&rdquo;)
           {RECRUITER_SHARING_ENABLED
-            ? ", unless you tick the optional recruiter box (see section 4a)."
+            ? ", or when you tick the optional recruiter box (see section 4a)."
             : "."}
+        </p>
+        <p>
+          So you do not have to upload it again, your browser keeps a copy of your CV text in its
+          session storage for the tab you used, until you close that tab. It stays on your device and
+          is only sent to us if you use it to apply for a job or add it to a profile.
         </p>
         <p>
           <strong>Lawful basis:</strong> contract. We need the text to give you the result you asked
@@ -87,8 +102,9 @@ export default function PrivacyPage() {
         <h3 className={h3}>Your results</h3>
         <p>
           We store the output of the analysis: the skills we found, your career matches, the job
-          title you gave (if any), the region you picked (if any) and a random code that makes up
-          your private results link. For a CV we also store 4 to 8 short achievement points, a
+          title you gave (if any), the town, postcode or region you typed for where you want to work
+          (if any), the list of live jobs we found and scored for you, and a random code that makes
+          up your private results link. For a CV we also store 4 to 8 short achievement points, a
           short summary of anything you said matters to you, and for each skill a note of up to 10
           words on where it shows in your CV (for example &ldquo;led a department of four
           teachers&rdquo;), all paraphrased by the AI model without names or contact details, so the
@@ -122,6 +138,15 @@ export default function PrivacyPage() {
 
         <h3 className={h3}>Job searches</h3>
         <p>
+          On your results page we search for live jobs for you: we send the job title of your own job
+          and of your closest career matches, and the town, postcode or region you typed, to Reed,
+          Adzuna and Himalayas (GOV.UK Teaching Vacancies and Remotive listings are fetched in bulk
+          and filtered on our side). No board receives your name, email or CV. We work out the match
+          scores ourselves. When you type a town, the letters you type are sent from our server to
+          postcodes.io (a free UK postcode and place-name service) to suggest places and find the
+          region; your IP address is not passed to it.
+        </p>
+        <p>
           When you search for jobs, the words and location you type are sent to the job boards we
           use (Reed, Adzuna and Himalayas, and Careerjet and Jooble when we use them) to fetch live
           listings. GOV.UK Teaching Vacancies and Remotive listings are fetched in bulk and filtered
@@ -134,6 +159,57 @@ export default function PrivacyPage() {
         </p>
         <p>
           <strong>Lawful basis:</strong> legitimate interests in running and improving the service.
+        </p>
+
+        <h3 className={h3} id="alerts">Job alerts</h3>
+        <p>
+          If you ask for job alerts, we keep your email address, how often you want them, the skill
+          codes and job titles from your results (not your CV), the place you searched and a list of
+          jobs we have already sent you, so we never send the same job twice. The box you tick
+          reads: &ldquo;{ALERT_CONSENT_TEXT}&rdquo; Every alert email has a link to change or pause the
+          alert, and a one-click unsubscribe, which deletes it.
+        </p>
+        <p>
+          <strong>Lawful basis:</strong> consent, which you can withdraw at any time by unsubscribing.
+        </p>
+
+        <h3 className={h3} id="applying">Applying for a job posted here</h3>
+        <p>
+          Some jobs are posted on MatchMySkillset by employers. When you apply for one, you tick a box
+          that names the employer and the job. We then make your name, email address, phone number
+          (if you gave it), CV, note (if you wrote one), your match score and the skills from the
+          advert we found in your CV available to that employer in their MatchMySkillset account, and
+          email them to say you applied. For a job we posted for an employer without an account, we
+          email the application to the address they gave us instead. We keep the application so the
+          employer can see it and so you can ask us about it, and we email you a receipt. Once the employer has your application they are a separate controller
+          and handle it under their own privacy policy.
+        </p>
+        <p>
+          <strong>Lawful basis:</strong> consent, given by the tick box, and contract, to send the
+          application you asked us to send.
+        </p>
+
+        <h3 className={h3} id="employers-find-me">Letting employers find you</h3>
+        <p>
+          You can choose to create a profile that employers using MatchMySkillset can search. The box
+          is unticked until you tick it, and reads: &ldquo;{PROFILE_CONSENT_TEXT}&rdquo; We keep your
+          first name, email address, headline, job title, town, region, years of experience, skills
+          and, only if you add it, your CV. The profile stays hidden until you switch it on from the
+          email we send you, so we know the address is yours.
+        </p>
+        <p>
+          Employers see only the headline, job title, region, years of experience and skills. They
+          never see your name, email or CV unless they ask to contact you and you accept, from the
+          link we email you. If you accept, that employer can see your first name, email address and
+          CV (if you added one) in their MatchMySkillset account, we email them to say you accepted,
+          and they become a separate controller for those details. If you decline, they are told, and
+          get nothing about you. You can edit the profile, switch it off or delete it,
+          with your contact requests and our copies of your applications and job alerts, from your
+          private profile link at any time.
+        </p>
+        <p id="contact-requests">
+          <strong>Lawful basis:</strong> consent, which you can withdraw at any time by switching the
+          profile off or deleting it.
         </p>
 
         <h3 className={h3}>Security and abuse prevention</h3>
@@ -193,7 +269,18 @@ export default function PrivacyPage() {
             in the European Union (Ireland).
           </li>
           <li>
-            <strong>Resend</strong> (United States): sends the emails you ask for.
+            <strong>Resend</strong> (United States): sends the emails you ask for, including job
+            alerts and the application and contact emails we send to employers for you.
+          </li>
+          <li>
+            <strong>postcodes.io</strong> (a free service from Ideal Postcodes): receives the place names and
+            postcodes typed into the location box, from our server, to suggest places and find the
+            region.
+          </li>
+          <li>
+            <strong>Employers who post jobs on MatchMySkillset</strong>: only when you apply for their
+            job or accept their request to contact you, as described in section 2. They receive your
+            details as separate controllers.
           </li>
           <li>
             <strong>Stripe</strong>: processes payments. For some purposes, such as preventing fraud
@@ -218,10 +305,9 @@ export default function PrivacyPage() {
           )}
         </ul>
         <p>
-          We may also disclose information if the law requires it. We do not sell personal data
-          {RECRUITER_SHARING_ENABLED
-            ? ", and we only share your CV, results or contact details with a recruitment agency if you ask us to."
-            : ", and we do not share your CV, results or contact details with recruiters or employers."}
+          We may also disclose information if the law requires it. We do not sell personal data, and
+          we only share your CV or contact details with an employer
+          {RECRUITER_SHARING_ENABLED ? " or recruitment agency" : ""} when you ask us to.
         </p>
 
         {RECRUITER_SHARING_ENABLED && (
@@ -283,6 +369,20 @@ export default function PrivacyPage() {
             </li>
           )}
           <li>
+            <strong>Job alerts:</strong> until you unsubscribe, or 12 months after you set the alert
+            up, whichever is sooner.
+          </li>
+          <li>
+            <strong>Profiles employers can find</strong> (including a CV you added): until you
+            delete the profile, or 12 months after you created it. A profile you never switch on is
+            deleted after 14 days. Contact requests are deleted with the profile.
+          </li>
+          <li>
+            <strong>Applications for jobs posted here:</strong> our copy is deleted 12 months after
+            you applied, or sooner if you ask. The employer keeps the copy we sent them under their own
+            policy.
+          </li>
+          <li>
             <strong>Hashed IP addresses used for abuse prevention:</strong> up to 24 hours.
           </li>
           <li>
@@ -307,6 +407,13 @@ export default function PrivacyPage() {
           necessary for the banner to work and does not track you.
         </p>
         <p>
+          Two more things are kept in your browser to make features you use work, not to track you:
+          your latest results link is kept in local storage for up to 30 days so the job search page
+          can show how well each job matches you (you can clear it there with &ldquo;Stop using
+          them&rdquo;), and your CV text is kept in session storage for the tab you used until you close
+          it (see section 2). Neither is sent anywhere unless you use it.
+        </p>
+        <p>
           Vercel Web Analytics does not use cookies. When you pay, Stripe&apos;s checkout page sets
           its own cookies on stripe.com to process the payment and prevent fraud.
         </p>
@@ -316,10 +423,12 @@ export default function PrivacyPage() {
 
         <h2 className={h2}>8. Automated suggestions</h2>
         <p>
-          Your career matches are produced automatically by software, including an AI model. They
-          are suggestions for you to consider, not decisions about you, and they have no legal or
-          similarly significant effect. Check anything important, such as pay or entry
-          requirements, before relying on it.
+          Your career matches and job match scores are produced automatically by software, including
+          an AI model for reading your CV. They are suggestions for you to consider, not decisions
+          about you. When you apply for a job posted here, the employer sees your match score with an
+          explanation of how it is worked out; it is a rough, automatic indicator, and the employer
+          makes its own decisions. Check anything important, such as pay or entry requirements,
+          before relying on it.
         </p>
 
         <h2 className={h2}>9. Your rights</h2>

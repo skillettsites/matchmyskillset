@@ -49,8 +49,19 @@ export interface SkillsDoc {
   seniority: Seniority;
   yearsExperience: number | null;
   preferences: Preferences;
-  /** UK region the person chose, used for live vacancy counts. */
+  /** UK region the person chose, or the region of the place they typed. */
   region: string | null;
+  /**
+   * The town, postcode or region they typed, as the job boards are asked for
+   * it (v3, September 2026). Absent on older results.
+   */
+  location?: {
+    label: string;
+    query: string;
+    town: string | null;
+    region: string | null;
+    kind?: "postcode" | "outcode" | "place" | "region";
+  } | null;
 }
 
 export interface MatchSkillRef {

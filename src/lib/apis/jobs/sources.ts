@@ -9,9 +9,10 @@
 import { unstable_cache } from "next/cache";
 import { env } from "@/lib/env";
 import { checkRateLimit } from "@/lib/rate-limit";
-import { ADZUNA_REGION, UK_NATIONS } from "@/lib/apis/regions";
+import { ADZUNA_REGION, UK_NATIONS, regionByName } from "@/lib/apis/regions";
 import type { JobListing, JobQuery, SourceId, SourceResult } from "./types";
 import { regionsForLocations } from "./place-region";
+import { MMS_SOURCE_LABEL, searchMmsJobs } from "./mms";
 import {
   SourceHttpError,
   fetchJson,
@@ -37,6 +38,21 @@ export interface JobSource {
   appliesTo(q: JobQuery): boolean;
   search(q: JobQuery): Promise<SourceResult>;
 }
+
+// ---------------------------------------------------------------------------
+// MatchMySkillset: jobs employers post on this site (mms_jobs, live and
+// unexpired only). Always asked first, so they lead every list.
+// ---------------------------------------------------------------------------
+
+const mms: JobSource = {
+  id: "mms",
+  label: MMS_SOURCE_LABEL,
+  homepage: "/jobs",
+  timeoutMs: 5000,
+  enabled: () => true,
+  appliesTo: () => true,
+  search: (q) => searchMmsJobs(q),
+};
 
 // ---------------------------------------------------------------------------
 // Reed (UK). Basic auth with the key as the user name.
@@ -135,11 +151,49 @@ interface AdzunaJob {
   contract_type?: string;
 }
 
+// Adzuna's default API allowance is 25 calls a minute, 250 a day, 1,000 a week
+// and 2,500 a month (developer.adzuna.com terms, checked 28 September 2026).
+// Every Adzuna call from this site (searches, job matching, alerts, title
+// counts) spends one unit of a shared daily budget; when it is spent, Adzuna is
+// skipped until the next UTC day and the other boards carry on.
+const ADZUNA_DAILY_BUDGET_DEFAULT = 200;
+
+function adzunaDailyBudget(): number {
+  const n = Number.parseInt(env("ADZUNA_DAILY_BUDGET"), 10);
+  return Number.isFinite(n) && n > 0 ? n : ADZUNA_DAILY_BUDGET_DEFAULT;
+}
+
+export class BudgetSpentError extends Error {
+  constructor(board: string) {
+    super(`${board} daily budget spent`);
+    this.name = "BudgetSpentError";
+  }
+}
+
+/** Spends one unit of Adzuna's daily budget, or throws BudgetSpentError. */
+async function spendAdzuna(): Promise<void> {
+  const { allowed } = await checkRateLimit("adzuna:daily-budget", adzunaDailyBudget(), 86_400);
+  if (!allowed) throw new BudgetSpentError("Adzuna");
+}
+
 function adzunaCreds(): { id: string; key: string } | null {
   const id = env("ADZUNA_APP_ID");
   const key = env("ADZUNA_APP_KEY");
   return id && key ? { id, key } : null;
 }
+
+/**
+ * One Adzuna search, cached for 30 minutes per URL. Only a real call (not a
+ * cache hit) spends the daily budget.
+ */
+const adzunaSearch = unstable_cache(
+  async (url: string, timeoutMs: number): Promise<{ results?: AdzunaJob[]; count?: number }> => {
+    await spendAdzuna();
+    return fetchJson<{ results?: AdzunaJob[]; count?: number }>(url, { headers: { Accept: "application/json" }, cache: "no-store" }, timeoutMs);
+  },
+  ["mms-adzuna-search-v1"],
+  { revalidate: 1800 }
+);
 
 const adzuna: JobSource = {
   id: "adzuna",
@@ -168,11 +222,7 @@ const adzuna: JobSource = {
       params.set("distance", "25");
     }
     if (q.salaryMin) params.set("salary_min", String(q.salaryMin));
-    const data = await fetchJson<{ results?: AdzunaJob[]; count?: number }>(
-      `https://api.adzuna.com/v1/api/jobs/gb/search/${q.page}?${params}`,
-      { headers: { Accept: "application/json" }, next: { revalidate: 1800 } },
-      this.timeoutMs
-    );
+    const data = await adzunaSearch(`https://api.adzuna.com/v1/api/jobs/gb/search/${q.page}?${params}`, this.timeoutMs);
     const results = (data.results ?? []).filter((r) => !adzunaRegion || r.location?.area?.[1] === adzunaRegion);
     const jobs = results.map((r): JobListing => {
       // Adzuna estimates salaries it was not given; show only the advertised ones.
@@ -193,6 +243,7 @@ const adzuna: JobSource = {
         url: r.redirect_url,
         postedAt: isoOrUndefined(r.created),
         contractType: [r.contract_time, r.contract_type].filter(Boolean).join(", ").replace(/_/g, " ") || undefined,
+        region: regionByName(r.location?.area?.[1]) ?? undefined,
       };
     });
     return { jobs, total: data.count ?? null };
@@ -210,6 +261,7 @@ export const adzunaTitleCount = unstable_cache(
     if (!creds) return null;
     const params = new URLSearchParams({ app_id: creds.id, app_key: creds.key, results_per_page: "1", title_only: title });
     try {
+      await spendAdzuna();
       const data = await fetchJson<{ count?: number }>(
         `https://api.adzuna.com/v1/api/jobs/gb/search/1?${params}`,
         { headers: { Accept: "application/json" }, cache: "no-store" },
@@ -338,6 +390,7 @@ const teachingVacancies: JobSource = {
         url: j.url,
         postedAt: j.posted,
         contractType: j.type || undefined,
+        region: regionByName(j.region) ?? undefined,
       })
     );
     // The total is only for the newest listings we hold, so it is not reported as a board total.
@@ -649,9 +702,14 @@ function joobleLocation(place: string | undefined): string {
 }
 
 /** Every board, in the order results are interleaved. Add new boards here. */
-export const JOB_SOURCES: JobSource[] = [reed, adzuna, careerjet, jooble, teachingVacancies, himalayas, remotive];
+export const JOB_SOURCES: JobSource[] = [mms, reed, adzuna, careerjet, jooble, teachingVacancies, himalayas, remotive];
+
+export function getJobSource(id: string): JobSource | undefined {
+  return JOB_SOURCES.find((s) => s.id === id);
+}
 
 export function describeSourceError(err: unknown): string {
+  if (err instanceof BudgetSpentError) return "daily limit reached";
   if (err instanceof SourceHttpError) return `HTTP ${err.status}`;
   if (err instanceof Error && (err.name === "TimeoutError" || err.name === "AbortError")) return "timed out";
   return err instanceof Error ? err.message : "failed";
