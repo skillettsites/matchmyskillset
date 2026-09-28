@@ -1,55 +1,65 @@
+// Helpers over the skills taxonomy in src/data/skills-taxonomy.ts.
+// The taxonomy is small (about 230 skills), so this module is safe to use on
+// the server and, if needed, in client components.
+
 import { SKILLS, type Skill, type SkillCategory } from "@/data/skills-taxonomy";
 
-// Group skills by category
-export function getSkillsByCategory(): Record<SkillCategory, Skill[]> {
-  const grouped = {} as Record<SkillCategory, Skill[]>;
-  for (const skill of SKILLS) {
-    if (!grouped[skill.category]) {
-      grouped[skill.category] = [];
-    }
-    grouped[skill.category].push(skill);
-  }
-  return grouped;
+const BY_ID = new Map<string, Skill>(SKILLS.map((s) => [s.id, s]));
+
+/** Every skill id, in taxonomy order. Used to constrain the model's output. */
+export const SKILL_IDS: string[] = SKILLS.map((s) => s.id);
+
+export function getSkill(id: string): Skill | undefined {
+  return BY_ID.get(id);
 }
 
-// Get category display name
-export function getCategoryLabel(category: SkillCategory): string {
-  const labels: Record<SkillCategory, string> = {
-    communication: "Communication",
-    analytical: "Analytical",
-    technical: "Technical & IT",
-    management: "Management & Leadership",
-    interpersonal: "Interpersonal",
-    creative: "Creative",
-    physical: "Physical & Trades",
-    financial: "Financial",
-    digital: "Digital",
-    scientific: "Scientific",
-    legal: "Legal",
-    education: "Education & Training",
-    healthcare: "Healthcare",
-    life: "Life Experience",
-  };
-  return labels[category] || category;
+export function isSkillId(id: unknown): id is string {
+  return typeof id === "string" && BY_ID.has(id);
 }
 
-// Get category colour for UI
-export function getCategoryColour(category: SkillCategory): string {
-  const colours: Record<SkillCategory, string> = {
-    communication: "bg-blue-100 text-blue-700",
-    analytical: "bg-purple-100 text-purple-700",
-    technical: "bg-cyan-100 text-cyan-700",
-    management: "bg-orange-100 text-orange-700",
-    interpersonal: "bg-green-100 text-green-700",
-    creative: "bg-pink-100 text-pink-700",
-    physical: "bg-amber-100 text-amber-700",
-    financial: "bg-emerald-100 text-emerald-700",
-    digital: "bg-indigo-100 text-indigo-700",
-    scientific: "bg-teal-100 text-teal-700",
-    legal: "bg-slate-100 text-slate-700",
-    education: "bg-yellow-100 text-yellow-700",
-    healthcare: "bg-red-100 text-red-700",
-    life: "bg-amber-100 text-amber-800",
-  };
-  return colours[category] || "bg-gray-100 text-gray-700";
+/** Display name for a skill id, or the id itself if it is unknown. */
+export function skillName(id: string): string {
+  return BY_ID.get(id)?.name ?? id;
+}
+
+/** True when either skill lists the other as related (the taxonomy is not always symmetric). */
+export function areRelated(a: string, b: string): boolean {
+  if (a === b) return false;
+  const sa = BY_ID.get(a);
+  const sb = BY_ID.get(b);
+  if (!sa || !sb) return false;
+  return sa.relatedSkillIds.includes(b) || sb.relatedSkillIds.includes(a);
+}
+
+const CATEGORY_LABELS: Record<SkillCategory, string> = {
+  communication: "Communication",
+  analytical: "Analytical",
+  technical: "Technical and IT",
+  management: "Management and leadership",
+  interpersonal: "Working with people",
+  creative: "Creative",
+  physical: "Practical and trades",
+  financial: "Finance",
+  digital: "Digital",
+  scientific: "Scientific",
+  legal: "Legal and regulatory",
+  education: "Teaching and training",
+  healthcare: "Health and care",
+  life: "Life experience",
+};
+
+export function categoryLabel(category: SkillCategory): string {
+  return CATEGORY_LABELS[category] ?? category;
+}
+
+/**
+ * The taxonomy as plain text for the extraction prompt: one skill per line,
+ * "s001 Written Communication (writing, report writing, ...)". Built once and
+ * never changes between requests, so it sits in the cached system prompt.
+ */
+export function taxonomyForPrompt(): string {
+  return SKILLS.map((s) => {
+    const aliases = s.aliases.slice(0, 6).join(", ");
+    return aliases ? `${s.id} ${s.name} (${aliases})` : `${s.id} ${s.name}`;
+  }).join("\n");
 }
