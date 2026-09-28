@@ -45,8 +45,9 @@ export default function PrivacyPage() {
               analysis has finished.
             </li>
             <li>
-              We keep your results (skills, career matches and the job title you gave) for 12
-              months so your results link keeps working, then delete them.
+              We keep your results (skills, career matches, the job title you gave, and for a CV a few
+              paraphrased achievements and what you said matters to you) for 12 months so your results
+              link keeps working, then delete them.
             </li>
             <li>Payments are handled by Stripe. We keep purchase records for 6 years for tax.</li>
             <li>Google Analytics cookies are only used if you click Accept.</li>
@@ -86,8 +87,11 @@ export default function PrivacyPage() {
         <h3 className={h3}>Your results</h3>
         <p>
           We store the output of the analysis: the skills we found, your career matches, the job
-          title you gave (if any) and a random code that makes up your private results link. Anyone
-          who has the link can open the results, so only share it with people you trust.
+          title you gave (if any), the region you picked (if any) and a random code that makes up
+          your private results link. For a CV we also store 4 to 8 short achievement points and a
+          short summary of anything you said matters to you, both paraphrased by the AI model
+          without names or contact details, so the paid report can use them. Anyone who has the
+          link can open the results, so only share it with people you trust.
         </p>
         <p>
           <strong>Lawful basis:</strong> contract, so the link you are given keeps working.
@@ -116,8 +120,12 @@ export default function PrivacyPage() {
 
         <h3 className={h3}>Job searches</h3>
         <p>
-          When you search for jobs, the words and location you type are sent to Reed, Adzuna and
-          Himalayas to fetch live listings. They do not receive your name, email or CV. When you
+          When you search for jobs, the words and location you type are sent to the job boards we
+          use (Reed, Adzuna and Himalayas, and Careerjet and Jooble when we use them) to fetch live
+          listings. GOV.UK Teaching Vacancies and Remotive listings are fetched in bulk and filtered
+          on our side, so they receive nothing about your search. Careerjet also requires the IP
+          address and browser details of the person searching, so those are passed to it with your
+          search. No board receives your name, email or CV. When you
           click a listing, we record the listing (its source, reference, title and link) but not who
           you are, so we can see which listings are useful. The listing opens on the job
           board&apos;s own site, where its privacy policy applies.
@@ -194,8 +202,10 @@ export default function PrivacyPage() {
             <strong>Google</strong>: Google Analytics, only if you accept analytics cookies.
           </li>
           <li>
-            <strong>Reed, Adzuna and Himalayas</strong>: receive the search words and location you
-            type when you search for jobs, and nothing else about you.
+            <strong>Reed, Adzuna, Himalayas, and Careerjet and Jooble when we use them</strong>:
+            receive the search words and location you type when you search for jobs. Careerjet also
+            receives your IP address and browser details, which it requires. None of them receives
+            your name, email or CV.
           </li>
           {RECRUITER_SHARING_ENABLED && (
             <li>

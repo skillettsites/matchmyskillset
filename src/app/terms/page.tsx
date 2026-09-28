@@ -41,7 +41,7 @@ export default function TermsPage() {
           </li>
           <li>
             <strong>Job search:</strong> live listings from third-party job boards (currently Reed,
-            Adzuna and Himalayas).
+            Adzuna, GOV.UK Teaching Vacancies, Himalayas and Remotive).
           </li>
           <li>
             <strong>Career Change Report (paid):</strong> a one-off report about one career you

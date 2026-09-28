@@ -1,366 +1,232 @@
 import { NextRequest, NextResponse, after } from "next/server";
-import { extractSkillsAndMatch } from "@/lib/apis/claude";
-import { matchSkillsToOccupations } from "@/lib/skills/matcher";
-import { createAdminClient } from "@/lib/supabase/admin";
-import { isAllowedOrigin, rateLimit } from "@/lib/api-guard";
-import { sendResultsEmail as deliverResultsEmail } from "@/lib/email/results-email";
-import crypto from "crypto";
+import { isAllowedOrigin } from "@/lib/api-guard";
+import { checkRateLimit, clientIp } from "@/lib/rate-limit";
+import { cleanText } from "@/lib/input";
+import { RECRUITER_SHARING_ENABLED } from "@/lib/site";
+import { createAdminClient, isSupabaseConfigured } from "@/lib/supabase/admin";
+import { ClaudeCallError, ClaudeUnavailableError, extractProfile } from "@/lib/apis/claude";
+import { DatabaseUnavailableError, insertReport, newToken } from "@/lib/apis/reports-db";
+import { findJobByTitle, getCurrentJob, type CurrentJob } from "@/lib/skills/job-lookup";
+import { SCORING_METHOD, scoreProfile } from "@/lib/skills/scoring";
+import { NO_PREFERENCES, type MatchesDoc, type Preferences, type ProfileSkill, type SkillsDoc } from "@/lib/skills/profile";
+import { skillName } from "@/lib/skills/taxonomy";
+import { isValidEmail } from "@/lib/email/results-email";
+import { recruiterConsentText } from "@/app/discover/consent";
+import { UK_REGIONS } from "@/lib/apis/regions";
+import { getCareerOccupation } from "@/data/careers";
 
-// Per-IP ceiling, checked before anything else. The per-email limit below is keyed
-// on a value the caller supplies, so randomising the address defeats it completely.
-// This route is the most expensive model call in the portfolio (Sonnet, 4096 max
-// tokens, full taxonomy in the system prompt), so it gets the tightest ceiling.
-const IP_RATE_LIMIT = 10;
-const IP_RATE_WINDOW_MS = 60 * 60 * 1000; // per hour per IP
+// Two ways in:
+//   { mode: "job", jobKey }            instant, no model call
+//   { mode: "cv", text, whatMatters }  one Claude extraction call, then the
+//                                      same deterministic scoring
+// Results are saved to mms_reports behind a random token and the response is
+// just that token. Raw CV text is never stored, except for people who tick
+// the optional recruiter box while that feature is switched on.
 
-// Simple in-memory rate limiting (per IP, 5 per hour)
-const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
+export const runtime = "nodejs";
+export const maxDuration = 60;
 
-function checkRateLimit(ip: string): boolean {
-  const now = Date.now();
-  const entry = rateLimitMap.get(ip);
+const MAX_BODY_BYTES = 80_000;
+const MIN_CV_CHARS = 80;
+const MAX_CV_CHARS = 12_000;
+const MAX_WHAT_MATTERS = 400;
 
-  if (!entry || now > entry.resetAt) {
-    rateLimitMap.set(ip, { count: 1, resetAt: now + 3600000 }); // 1 hour
-    return true;
-  }
+// Per IP: CV checks cost money, job checks do not.
+const CV_PER_IP = { limit: 6, windowSeconds: 3600 };
+const JOB_PER_IP = { limit: 40, windowSeconds: 3600 };
+// Across the whole site, a ceiling on model calls per UTC day.
+const CV_GLOBAL_PER_DAY = 400;
 
-  if (entry.count >= 5) {
-    return false;
-  }
-
-  entry.count++;
-  return true;
+function json(status: number, body: Record<string, unknown>, headers?: Record<string, string>) {
+  return NextResponse.json(body, { status, headers });
 }
 
-// Simple in-memory cache for assessments
-const assessmentCache = new Map<
-  string,
-  { id: string; skills: unknown; matches: unknown }
->();
+function bool(value: unknown): boolean {
+  return value === true;
+}
+
+function readPreferences(value: unknown): Pick<Preferences, "noDegree" | "earnMore"> {
+  const v = value && typeof value === "object" ? (value as Record<string, unknown>) : {};
+  return { noDegree: bool(v.noDegree), earnMore: bool(v.earnMore) };
+}
+
+function readRegion(value: unknown): string | null {
+  return typeof value === "string" && (UK_REGIONS as readonly string[]).includes(value) ? value : null;
+}
 
 export async function POST(request: NextRequest) {
+  const started = Date.now();
+  if (!isAllowedOrigin(request)) return json(403, { error: "Forbidden" });
+
+  const declared = Number(request.headers.get("content-length") || 0);
+  if (declared > MAX_BODY_BYTES) return json(413, { error: "That is too long. Please keep your CV under 12,000 characters." });
+
+  let body: Record<string, unknown>;
   try {
-    if (!isAllowedOrigin(request)) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-    }
+    const raw = await request.text();
+    if (raw.length > MAX_BODY_BYTES) return json(413, { error: "That is too long. Please keep your CV under 12,000 characters." });
+    const parsed: unknown = JSON.parse(raw);
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) throw new Error("not an object");
+    body = parsed as Record<string, unknown>;
+  } catch {
+    return json(400, { error: "Invalid request." });
+  }
 
-    const { allowed, retryAfter } = rateLimit(
-      request,
-      "assess",
-      IP_RATE_LIMIT,
-      IP_RATE_WINDOW_MS
+  const mode = body.mode === "cv" ? "cv" : body.mode === "job" ? "job" : null;
+  if (!mode) return json(400, { error: "Invalid request." });
+
+  const ip = clientIp(request);
+  const perIp = mode === "cv" ? CV_PER_IP : JOB_PER_IP;
+  const ipCheck = await checkRateLimit(`assess-${mode}:${ip}`, perIp.limit, perIp.windowSeconds);
+  if (!ipCheck.allowed) {
+    return json(
+      429,
+      { error: "You have run a lot of checks in the last hour. Please try again a little later." },
+      { "Retry-After": String(ipCheck.retryAfter) }
     );
-    if (!allowed) {
-      return NextResponse.json(
-        { error: "Too many requests. Please try again shortly." },
-        { status: 429, headers: { "Retry-After": String(retryAfter) } }
-      );
-    }
+  }
 
-    const { text, email } = await request.json();
+  const region = readRegion(body.region);
+  const ticked = readPreferences(body.preferences);
+  const source = process.env.MMS_QA_TAG === "1" ? "qa-test" : mode;
 
-    // Validate email
-    if (!email || typeof email !== "string" || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      return NextResponse.json(
-        { error: "Please provide a valid email address." },
-        { status: 400 }
-      );
-    }
+  let doc: SkillsDoc;
+  let current: CurrentJob | undefined;
+  let cvText = "";
+  let timing = "";
 
-    // Validate input
-    if (!text || typeof text !== "string") {
-      return NextResponse.json(
-        { error: "Please provide your experience description." },
-        { status: 400 }
-      );
-    }
-
-    const trimmedText = text.trim();
-    if (trimmedText.length < 50) {
-      return NextResponse.json(
-        {
-          error:
-            "Please provide more detail about your experience (at least 50 characters).",
-        },
-        { status: 400 }
-      );
-    }
-
-    if (trimmedText.length > 10000) {
-      return NextResponse.json(
-        { error: "Please keep your description under 10,000 characters." },
-        { status: 400 }
-      );
-    }
-
-    // Rate limit check (by email to prevent spam)
-    const rateLimitKey = email.trim().toLowerCase();
-
-    if (!checkRateLimit(rateLimitKey)) {
-      return NextResponse.json(
-        {
-          error:
-            "You have reached the assessment limit. Please try again in an hour.",
-        },
-        { status: 429 }
-      );
-    }
-
-    // Check cache
-    const inputHash = crypto
-      .createHash("sha256")
-      .update(trimmedText.toLowerCase())
-      .digest("hex");
-
-    const cached = assessmentCache.get(inputHash);
-    if (cached) {
-      return NextResponse.json(cached);
-    }
-
-    // Check if Anthropic API key is configured - use demo mode if not
-    if (!process.env.ANTHROPIC_API_KEY) {
-      const demoId = crypto.randomUUID();
-      const demoResult = getDemoResult(demoId, inputHash);
-      assessmentCache.set(inputHash, demoResult);
-      sendResultsEmail(email, demoResult.skills, demoResult.matches);
-      saveToSupabase(email, inputHash, trimmedText, demoResult.skills, demoResult.matches);
-      return NextResponse.json(demoResult);
-    }
-
-    // Call Claude API for skills extraction
-    const claudeResult = await extractSkillsAndMatch(trimmedText);
-
-    // Run our own matcher as well (to cross-validate and add scores)
-    const matcherResults = matchSkillsToOccupations(
-      claudeResult.extractedSkills,
-      10
-    );
-
-    // Merge: use Claude's matches but cross-reference with our matcher scores
-    // If our matcher found matches Claude missed, add them
-    const claudeMatchIds = new Set(
-      claudeResult.careerMatches.map((m) => m.occupationId)
-    );
-
-    const mergedMatches = [...claudeResult.careerMatches];
-    for (const matcherResult of matcherResults) {
-      if (!claudeMatchIds.has(matcherResult.occupationId)) {
-        mergedMatches.push(matcherResult);
-      }
-    }
-
-    // Sort by match percentage
-    mergedMatches.sort((a, b) => b.matchPercentage - a.matchPercentage);
-
-    // Take top 10
-    const topMatches = mergedMatches.slice(0, 10);
-
-    const assessmentId = crypto.randomUUID();
-
-    const result = {
-      id: assessmentId,
-      inputHash,
-      skills: claudeResult.extractedSkills,
-      matches: topMatches,
+  if (mode === "job") {
+    const jobKey = typeof body.jobKey === "string" ? body.jobKey.slice(0, 120) : "";
+    current = getCurrentJob(jobKey);
+    if (!current) return json(400, { error: "Please pick your job from the list." });
+    const skills: ProfileSkill[] = current.skills.map((s) => ({ id: s.id, strength: s.importance >= 3 ? "strong" : "some" }));
+    doc = {
+      v: 2,
+      source: "job",
+      skills,
+      achievements: [],
+      currentRole: current.title,
+      currentJobKey: current.key,
+      seniority: "unknown",
+      yearsExperience: null,
+      preferences: { ...NO_PREFERENCES, ...ticked },
+      region,
     };
+  } else {
+    // Keep line breaks: the model reads the CV's structure.
+    cvText = typeof body.text === "string" ? body.text.replace(/\r\n/g, "\n").replace(/[ \t]+/g, " ").replace(/\n{3,}/g, "\n\n").trim() : "";
+    if (cvText.length < MIN_CV_CHARS) {
+      return json(400, { error: "Please paste a little more about your experience (at least a few lines)." });
+    }
+    if (cvText.length > MAX_CV_CHARS) {
+      return json(400, { error: "Please keep your CV under 12,000 characters. The first two pages are plenty." });
+    }
+    const whatMatters = cleanText(body.whatMatters, MAX_WHAT_MATTERS);
 
-    // Cache the result
-    assessmentCache.set(inputHash, result);
-
-    sendResultsEmail(email, result.skills, result.matches);
-    saveToSupabase(email, inputHash, trimmedText, result.skills, result.matches);
-
-    return NextResponse.json(result);
-  } catch (error) {
-    console.error("[assess] Error:", error);
-    return NextResponse.json(
-      {
-        error:
-          "Something went wrong analysing your skills. Please try again.",
-      },
-      { status: 500 }
-    );
-  }
-}
-
-// Save assessment + email lead to Supabase (fire-and-forget)
-function saveToSupabase(email: string, inputHash: string, inputText: string, skills: unknown, matches: unknown) {
-  try {
-    const supabase = createAdminClient();
-
-    // Save full assessment including CV text (no truncation)
-    supabase
-      .from("mms_skill_assessments")
-      .insert({
-        email,
-        input_hash: inputHash,
-        input_text: inputText,
-        extracted_skills: skills,
-        career_matches: matches,
-      })
-      .then(({ error }) => {
-        if (error) console.error("[assess] Supabase assessment save error:", error.message);
+    const global = await checkRateLimit("assess-global:day", CV_GLOBAL_PER_DAY, 86_400);
+    if (!global.allowed) {
+      return json(503, {
+        error: "We have reached today's limit for CV checks. You can still start from your job title, or try the CV check again tomorrow.",
       });
+    }
 
-    // Save/update email lead with CV, skills summary, and matches for Fred
-    const matchArr = matches as Array<{ title?: string; matchPercentage?: number }>;
-    const skillArr = skills as Array<{ name?: string; category?: string; confidence?: number }>;
-
-    // Build skills summary string for quick scanning
-    const skillsSummary = skillArr
-      ?.sort((a, b) => (b.confidence || 0) - (a.confidence || 0))
-      .slice(0, 15)
-      .map((s) => s.name)
-      .join(", ") || "";
-
-    // Top 5 matches for quick view
-    const top5 = matchArr?.slice(0, 5).map((m) => ({
-      title: m.title,
-      match: m.matchPercentage,
-    })) || [];
-
-    supabase
-      .from("mms_email_leads")
-      .upsert(
-        {
-          email,
-          cv_text: inputText,
-          skills_summary: skillsSummary,
-          top_match: matchArr?.[0]?.title || null,
-          match_percentage: matchArr?.[0]?.matchPercentage || null,
-          skills_count: skillArr?.length || 0,
-          top_5_matches: top5,
-          source: "discover",
+    try {
+      const result = await extractProfile(cvText, whatMatters);
+      const p = result.profile;
+      timing = `claude ${result.ms}ms (${result.attempts} call${result.attempts > 1 ? "s" : ""}), ${result.usage.inputTokens} in + ${result.usage.cacheReadTokens} cached + ${result.usage.cacheWriteTokens} cache-write, ${result.usage.outputTokens} out, about $${result.usage.costUsd}`;
+      if (!p.looksLikeExperience || p.skills.length < 3) {
+        return json(422, {
+          error: "We could not find enough work or life experience in that text. Please paste your CV or describe what you have done.",
+        });
+      }
+      current = findJobByTitle(p.currentRole);
+      doc = {
+        v: 2,
+        source: "cv",
+        skills: p.skills,
+        achievements: p.achievements,
+        currentRole: p.currentRole,
+        currentJobKey: current?.key ?? null,
+        seniority: p.seniority,
+        yearsExperience: p.yearsExperience,
+        preferences: {
+          ...p.preferences,
+          noDegree: p.preferences.noDegree || ticked.noDegree,
+          earnMore: p.preferences.earnMore || ticked.earnMore,
         },
-        { onConflict: "email" }
-      )
-      .then(({ error }) => {
-        if (error) console.error("[assess] Supabase lead save error:", error.message);
-      });
-
-    // Log search
-    supabase
-      .from("mms_search_logs")
-      .insert({
-        search_type: "assessment",
-        query_text: inputText.slice(0, 200),
-        results_count: Array.isArray(matches) ? (matches as unknown[]).length : 0,
-        email,
-      })
-      .then(({ error }) => {
-        if (error) console.error("[assess] Supabase log error:", error.message);
-      });
-  } catch (err) {
-    console.error("[assess] Supabase save failed:", err);
+        region,
+      };
+    } catch (err) {
+      if (err instanceof ClaudeUnavailableError) {
+        console.error("[assess] ANTHROPIC_API_KEY is missing");
+        return json(503, { error: "The CV check is not available right now. You can still start from your job title." });
+      }
+      if (err instanceof ClaudeCallError) {
+        return json(502, { error: "We could not analyse your CV just now. Please try again in a minute, or start from your job title." });
+      }
+      console.error("[assess] extraction error:", err instanceof Error ? err.message : err);
+      return json(500, { error: "Something went wrong. Please try again." });
+    }
   }
-}
 
-// Email the results once the response has gone out
-function sendResultsEmail(email: string, skills: unknown, matches: unknown) {
-  after(() => deliverResultsEmail(email, skills, matches));
-}
+  const items = scoreProfile({
+    skills: doc.skills,
+    preferences: doc.preferences,
+    current: { occupationId: current?.occupationId, soc: current?.soc, title: doc.currentRole },
+  });
+  const matches: MatchesDoc = { v: 2, method: SCORING_METHOD, items };
 
-// Demo result when API key not configured (for testing)
-function getDemoResult(id: string, inputHash: string) {
-  return {
-    id,
-    inputHash,
-    skills: [
-      { skillId: "s002", name: "Verbal Communication", confidence: 0.95, category: "soft", source: "teaching English and Drama" },
-      { skillId: "s041", name: "Team Leadership", confidence: 0.9, category: "soft", source: "managed a department of 5" },
-      { skillId: "s161", name: "Training Delivery", confidence: 0.9, category: "hard", source: "led staff training sessions" },
-      { skillId: "s055", name: "Mentoring", confidence: 0.85, category: "soft", source: "mentored NQTs" },
-      { skillId: "s156", name: "Event Planning", confidence: 0.85, category: "hard", source: "ran the school play, organised parent evenings" },
-      { skillId: "s048", name: "Stakeholder Management", confidence: 0.8, category: "soft", source: "organised parent evenings" },
-      { skillId: "s157", name: "Curriculum Design", confidence: 0.8, category: "hard", source: "teaching English and Drama" },
-      { skillId: "s001", name: "Written Communication", confidence: 0.8, category: "soft", source: "teaching English" },
-      { skillId: "s007", name: "Conflict Resolution", confidence: 0.75, category: "soft", source: "behaviour management" },
-      { skillId: "s160", name: "Teaching", confidence: 0.95, category: "hard", source: "secondary school teacher for 8 years" },
-      { skillId: "s040", name: "Project Management", confidence: 0.7, category: "hard", source: "managed department, school play" },
-      { skillId: "s050", name: "Empathy", confidence: 0.85, category: "life", source: "teaching and mentoring" },
-      { skillId: "s053", name: "Time Management", confidence: 0.8, category: "soft", source: "managing teaching workload" },
-      { skillId: "s052", name: "Adaptability", confidence: 0.75, category: "soft", source: "8 years across subjects" },
-    ],
-    matches: [
-      {
-        occupationId: "uk-3563", title: "Learning and Development Manager", description: "Your teaching, training delivery, and curriculum design skills transfer directly to corporate L&D. This is one of the most natural transitions for experienced teachers.",
-        matchPercentage: 87, matchedSkills: [
-          { skillId: "s161", name: "Training Delivery", importance: 5 },
-          { skillId: "s157", name: "Curriculum Design", importance: 5 },
-          { skillId: "s055", name: "Mentoring", importance: 4 },
-          { skillId: "s002", name: "Verbal Communication", importance: 4 },
-        ],
-        gapSkills: [
-          { skillId: "s020", name: "Data Analysis", importance: 3 },
-        ],
-        salaryRange: { min: 35000, max: 60000, median: 45000 }, demandLevel: "medium", transitionDifficulty: "easy",
-      },
-      {
-        occupationId: "uk-2472", title: "UX Researcher", description: "Your empathy, interviewing skills, and ability to understand diverse audiences make you a strong candidate for UX Research. Teachers are excellent at understanding user needs.",
-        matchPercentage: 74, matchedSkills: [
-          { skillId: "s050", name: "Empathy", importance: 5 },
-          { skillId: "s002", name: "Verbal Communication", importance: 3 },
-          { skillId: "s001", name: "Written Communication", importance: 4 },
-        ],
-        gapSkills: [
-          { skillId: "s113", name: "UX Design", importance: 5 },
-          { skillId: "s020", name: "Data Analysis", importance: 4 },
-        ],
-        salaryRange: { min: 30000, max: 60000, median: 42000 }, demandLevel: "high", transitionDifficulty: "moderate",
-      },
-      {
-        occupationId: "uk-3545", title: "Customer Success Manager", description: "Your stakeholder management, communication skills, and ability to build relationships with diverse groups translates perfectly to customer success.",
-        matchPercentage: 72, matchedSkills: [
-          { skillId: "s050", name: "Empathy", importance: 5 },
-          { skillId: "s002", name: "Verbal Communication", importance: 4 },
-          { skillId: "s048", name: "Stakeholder Management", importance: 3 },
-        ],
-        gapSkills: [
-          { skillId: "s006", name: "Client Relationship Management", importance: 5 },
-          { skillId: "s020", name: "Data Analysis", importance: 3 },
-        ],
-        salaryRange: { min: 30000, max: 60000, median: 40000 }, demandLevel: "high", transitionDifficulty: "moderate",
-      },
-      {
-        occupationId: "uk-2312", title: "Instructional Designer", description: "Your curriculum design and teaching experience are the core skills for instructional design. You already think about how people learn.",
-        matchPercentage: 82, matchedSkills: [
-          { skillId: "s157", name: "Curriculum Design", importance: 5 },
-          { skillId: "s001", name: "Written Communication", importance: 4 },
-          { skillId: "s160", name: "Teaching", importance: 3 },
-        ],
-        gapSkills: [
-          { skillId: "s113", name: "UX Design", importance: 3 },
-          { skillId: "s152", name: "Video Production", importance: 3 },
-        ],
-        salaryRange: { min: 28000, max: 50000, median: 38000 }, demandLevel: "medium", transitionDifficulty: "easy",
-      },
-      {
-        occupationId: "uk-2423", title: "Product Manager", description: "Your project management, stakeholder communication, and ability to synthesise complex information for diverse audiences are key product management skills.",
-        matchPercentage: 62, matchedSkills: [
-          { skillId: "s048", name: "Stakeholder Management", importance: 5 },
-          { skillId: "s002", name: "Verbal Communication", importance: 4 },
-          { skillId: "s040", name: "Project Management", importance: 3 },
-        ],
-        gapSkills: [
-          { skillId: "s020", name: "Data Analysis", importance: 4 },
-          { skillId: "s042", name: "Strategic Planning", importance: 5 },
-        ],
-        salaryRange: { min: 40000, max: 85000, median: 60000 }, demandLevel: "high", transitionDifficulty: "hard",
-      },
-      {
-        occupationId: "uk-2471", title: "Content Strategist", description: "Your writing skills, storytelling ability from Drama, and understanding of how to engage an audience make you well-suited for content strategy.",
-        matchPercentage: 68, matchedSkills: [
-          { skillId: "s001", name: "Written Communication", importance: 5 },
-          { skillId: "s157", name: "Curriculum Design (related)", importance: 4 },
-          { skillId: "s002", name: "Verbal Communication", importance: 3 },
-        ],
-        gapSkills: [
-          { skillId: "s111", name: "Digital Marketing", importance: 3 },
-          { skillId: "s112", name: "Social Media Management", importance: 3 },
-        ],
-        salaryRange: { min: 28000, max: 55000, median: 38000 }, demandLevel: "medium", transitionDifficulty: "moderate",
-      },
-    ],
-  };
+  let token: string;
+  try {
+    const saved = await insertReport({ token: newToken(), skills: doc, matches, currentRole: doc.currentRole, source });
+    token = saved.token;
+  } catch (err) {
+    if (err instanceof DatabaseUnavailableError) {
+      console.error("[assess] Supabase is not configured");
+    } else {
+      console.error("[assess] save failed:", err instanceof Error ? err.message : err);
+    }
+    return json(503, { error: "We could not save your results just now. Please try again." });
+  }
+
+  // Opt-in recruiter sharing: only when the feature is on, the box was ticked
+  // and an email was given. This is the only place raw CV text is kept.
+  const wantsRecruiter = RECRUITER_SHARING_ENABLED && mode === "cv" && body.recruiterConsent === true && isValidEmail(body.email);
+  if (wantsRecruiter && isSupabaseConfigured()) {
+    const email = String(body.email).trim().toLowerCase();
+    const firstName = cleanText(body.firstName, 60) || null;
+    const consentText = recruiterConsentText();
+    const titleOf = (id: string) => getCareerOccupation(id)?.title ?? id;
+    const topNames = items.slice(0, 5).map((m) => ({ title: titleOf(m.occupationId), match: m.score }));
+    after(async () => {
+      const { error } = await createAdminClient()
+        .from("mms_email_leads")
+        .upsert(
+          {
+            email,
+            cv_text: cvText,
+            skills_summary: doc.skills.slice(0, 15).map((s) => skillName(s.id)).join(", "),
+            skills_count: doc.skills.length,
+            top_match: items[0] ? titleOf(items[0].occupationId) : null,
+            match_percentage: items[0]?.score ?? null,
+            top_5_matches: topNames,
+            source: source === "qa-test" ? "qa-test" : "discover",
+            recruiter_consent: true,
+            consent_at: new Date().toISOString(),
+            consent_text: consentText,
+            consent_withdrawn_at: null,
+            first_name: firstName,
+            current_role: doc.currentRole,
+          },
+          { onConflict: "email" }
+        );
+      if (error) console.error("[assess] recruiter lead save failed:", error.message);
+    });
+  }
+
+  after(() => {
+    console.log(`[assess] ${mode}: ${items.length} matches, total ${Date.now() - started}ms${timing ? `; ${timing}` : ""}`);
+  });
+
+  return json(200, { token, matches: items.length });
 }

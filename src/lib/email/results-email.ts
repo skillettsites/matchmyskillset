@@ -1,32 +1,30 @@
 import { Resend } from "resend";
+import { env } from "@/lib/env";
+import { SITE_URL } from "@/components/site";
 
-// Server-only. Sends the results email straight from /api/assess.
-// This used to be a public POST route (/api/send-results) that emailed whatever
-// HTML and address the caller supplied, from a verified domain on the shared
-// Resend account, so it has to stay unreachable from the browser.
+// Server-only. Two one-off emails, each sent only because the person asked:
+//   sendResultsLink()  the free results link, from /results/<token>
+//   sendReportLink()   the paid report link, from the Stripe webhook
+// Every interpolated value is HTML-escaped (titles come from model output and
+// user input). There is no mailing list and nothing else is ever sent.
 
-const resend = process.env.RESEND_API_KEY
-  ? new Resend(process.env.RESEND_API_KEY.replace(/\\n$/, "").trim())
-  : null;
+const FROM = "MatchMySkillset <results@matchmyskillset.com>";
 
-interface CareerMatchEmail {
-  title: string;
-  matchPercentage: number;
-  salaryRange?: { min: number; max: number; median: number };
-  matchedSkills: { name: string }[];
-  gapSkills: { name: string }[];
-  transitionDifficulty: string;
+let resend: Resend | null | undefined;
+
+function getResend(): Resend | null {
+  if (resend === undefined) {
+    const key = env("RESEND_API_KEY");
+    resend = key ? new Resend(key) : null;
+  }
+  return resend;
 }
 
-interface SkillEmail {
-  name: string;
-  category: string;
-  confidence: number;
+export function isEmailConfigured(): boolean {
+  return Boolean(env("RESEND_API_KEY"));
 }
 
-// Skill names and titles come from model output built on the user's CV text,
-// so every interpolated string is escaped.
-function esc(value: unknown): string {
+export function esc(value: unknown): string {
   return String(value ?? "")
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
@@ -35,145 +33,119 @@ function esc(value: unknown): string {
     .replace(/'/g, "&#39;");
 }
 
-function pct(value: unknown): number {
-  const n = Math.round(Number(value));
-  return Number.isFinite(n) ? Math.min(100, Math.max(0, n)) : 0;
+/** Subject lines are plain text: no control characters, bounded length. */
+function subjectSafe(value: string): string {
+  return value.replace(/[\r\n\t]+/g, " ").replace(/\s+/g, " ").trim().slice(0, 120);
 }
 
-function buildEmailHtml(skills: SkillEmail[], matches: CareerMatchEmail[]): string {
-  const skillTags = [...skills]
-    .sort((a, b) => b.confidence - a.confidence)
-    .slice(0, 20)
-    .map(
-      (s) =>
-        `<span style="display:inline-block;padding:4px 12px;margin:2px;border-radius:20px;font-size:13px;background:${
-          s.category === "hard" || s.category === "knowledge"
-            ? "#e0e7ff;color:#4338ca"
-            : s.category === "life"
-              ? "#fef3c7;color:#92400e"
-              : "#d1fae5;color:#065f46"
-        }">${esc(s.name)}</span>`
-    )
-    .join("");
+const EMAIL_RE = /^[^\s@<>"',;]+@[^\s@<>"',;]+\.[^\s@<>"',;]{2,}$/;
 
-  const matchCards = matches
-    .slice(0, 5)
-    .map((m) => {
-      const p = pct(m.matchPercentage);
-      const colour = p >= 70 ? "#22c55e" : p >= 50 ? "#f59e0b" : "#ef4444";
-      const median = Number(m.salaryRange?.median);
-      const matched = Array.isArray(m.matchedSkills) ? m.matchedSkills : [];
-      const gaps = Array.isArray(m.gapSkills) ? m.gapSkills : [];
-      return `
-      <div style="border:1px solid #e5e7eb;border-radius:12px;padding:20px;margin-bottom:16px;">
-        <div style="display:flex;align-items:center;gap:16px;margin-bottom:12px;">
-          <div style="width:56px;height:56px;border-radius:50%;border:4px solid ${colour};display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:${colour}">
-            ${p}%
-          </div>
-          <div>
-            <div style="font-size:18px;font-weight:600;color:#111827;">${esc(m.title)}</div>
-            <div style="font-size:13px;color:#6b7280;">
-              ${Number.isFinite(median) && median > 0 ? `£${Math.round(median / 1000)}k median salary` : ""}
-              ${m.transitionDifficulty === "easy" ? " · Easy transition" : m.transitionDifficulty === "moderate" ? " · Some upskilling needed" : " · Significant development needed"}
-            </div>
-          </div>
-        </div>
-        ${
-          matched.length > 0
-            ? `<div style="margin-bottom:8px;"><span style="font-size:12px;font-weight:600;color:#059669;">Skills you have:</span> <span style="font-size:12px;color:#6b7280;">${matched.map((s) => esc(s.name)).join(", ")}</span></div>`
-            : ""
-        }
-        ${
-          gaps.length > 0
-            ? `<div><span style="font-size:12px;font-weight:600;color:#d97706;">Skills to develop:</span> <span style="font-size:12px;color:#6b7280;">${gaps.map((s) => esc(s.name)).join(", ")}</span></div>`
-            : ""
-        }
-      </div>
-    `;
-    })
-    .join("");
-
-  return `
-    <!DOCTYPE html>
-    <html>
-    <head><meta charset="utf-8"><meta name="viewport" content="width=device-width"></head>
-    <body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;margin:0;padding:0;background:#f9fafb;">
-      <div style="max-width:600px;margin:0 auto;padding:32px 20px;">
-
-        <!-- Header -->
-        <div style="text-align:center;margin-bottom:32px;">
-          <div style="font-size:24px;font-weight:700;color:#111827;">
-            Match<span style="color:#4f46e5;">My</span>Skills
-          </div>
-          <div style="font-size:14px;color:#9ca3af;margin-top:4px;">AI-Assisted. Human-Led.</div>
-        </div>
-
-        <!-- Intro -->
-        <div style="background:white;border-radius:12px;padding:24px;margin-bottom:24px;border:1px solid #e5e7eb;">
-          <h1 style="font-size:22px;color:#111827;margin:0 0 8px 0;">Your Career Match Results</h1>
-          <p style="font-size:14px;color:#6b7280;margin:0;">
-            We found <strong style="color:#4f46e5;">${skills.length} skills</strong> and
-            <strong style="color:#4f46e5;">${matches.length} career matches</strong> based on your experience.
-          </p>
-        </div>
-
-        <!-- Skills -->
-        <div style="background:white;border-radius:12px;padding:24px;margin-bottom:24px;border:1px solid #e5e7eb;">
-          <h2 style="font-size:16px;color:#111827;margin:0 0 12px 0;">Your Skills Profile</h2>
-          <div>${skillTags}</div>
-        </div>
-
-        <!-- Career Matches -->
-        <div style="margin-bottom:24px;">
-          <h2 style="font-size:16px;color:#111827;margin:0 0 16px 0;">Your Top Career Matches</h2>
-          ${matchCards}
-        </div>
-
-        <!-- CTA -->
-        <div style="text-align:center;margin-bottom:32px;">
-          <a href="https://matchmyskillset.com/discover" style="display:inline-block;background:#4f46e5;color:white;font-weight:600;padding:14px 32px;border-radius:10px;text-decoration:none;font-size:16px;">
-            View Full Results &amp; Find Jobs
-          </a>
-          <p style="font-size:12px;color:#9ca3af;margin-top:12px;">
-            Browse thousands of matching UK jobs on our platform.
-          </p>
-        </div>
-
-        <!-- Footer -->
-        <div style="text-align:center;border-top:1px solid #e5e7eb;padding-top:20px;">
-          <p style="font-size:12px;color:#9ca3af;margin:0;">
-            MatchMySkillset · AI-Assisted Career Matching<br>
-            <a href="https://matchmyskillset.com/privacy" style="color:#9ca3af;">Privacy Policy</a> ·
-            <a href="https://matchmyskillset.com/terms" style="color:#9ca3af;">Terms</a>
-          </p>
-        </div>
-      </div>
-    </body>
-    </html>
-  `;
+export function isValidEmail(value: unknown): value is string {
+  return typeof value === "string" && value.length <= 254 && EMAIL_RE.test(value.trim());
 }
 
-export async function sendResultsEmail(email: string, skills: unknown, matches: unknown): Promise<void> {
-  if (!resend) {
-    console.log("[results-email] Resend not configured, skipping");
-    return;
+function layout(title: string, bodyHtml: string, footerNote: string): string {
+  return `<!DOCTYPE html>
+<html lang="en-GB">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>${esc(title)}</title></head>
+<body style="margin:0;padding:0;background:#f7f3ea;font-family:Arial,Helvetica,sans-serif;color:#18201d;">
+  <div style="max-width:560px;margin:0 auto;padding:28px 20px;">
+    <p style="font-size:18px;font-weight:bold;margin:0 0 20px 0;color:#18201d;">MatchMySkillset</p>
+    <div style="background:#ffffff;border:1px solid #dcd3c3;border-radius:10px;padding:24px;">
+      ${bodyHtml}
+    </div>
+    <p style="font-size:12px;line-height:1.5;color:#58625d;margin:18px 0 0 0;">
+      ${esc(footerNote)}<br>
+      <a href="${esc(`${SITE_URL}/privacy`)}" style="color:#58625d;">Privacy</a> &middot;
+      <a href="${esc(`${SITE_URL}/terms`)}" style="color:#58625d;">Terms</a>
+    </p>
+  </div>
+</body>
+</html>`;
+}
+
+function button(href: string, label: string): string {
+  return `<p style="margin:22px 0;"><a href="${esc(href)}" style="display:inline-block;background:#1b5e4b;color:#ffffff;font-weight:bold;text-decoration:none;padding:12px 22px;border-radius:8px;">${esc(label)}</a></p>`;
+}
+
+export interface SendResult {
+  ok: boolean;
+  id: string | null;
+  error?: string;
+}
+
+async function send(to: string, subject: string, html: string, text: string): Promise<SendResult> {
+  const client = getResend();
+  if (!client) {
+    console.warn("[email] RESEND_API_KEY is not set; email not sent");
+    return { ok: false, id: null, error: "not_configured" };
   }
-  if (!Array.isArray(skills) || !Array.isArray(matches) || matches.length === 0) return;
-
-  const skillList = skills as SkillEmail[];
-  const matchList = matches as CareerMatchEmail[];
-  // Plain-text subject: strip control characters so a title can't inject headers.
-  const topMatch = String(matchList[0]?.title || "your career matches").replace(/[\r\n\t]+/g, " ").slice(0, 80);
-
   try {
-    const { error } = await resend.emails.send({
-      from: "MatchMySkills <results@matchmyskillset.com>",
-      to: email,
-      subject: `Your career matches: ${topMatch} (${pct(matchList[0]?.matchPercentage)}% match) and ${matchList.length - 1} more`,
-      html: buildEmailHtml(skillList, matchList),
-    });
-    if (error) console.error("[results-email] Resend error:", error);
+    const { data, error } = await client.emails.send({ from: FROM, to: to.trim(), subject: subjectSafe(subject), html, text });
+    if (error) {
+      console.error("[email] Resend error:", error.name, error.message);
+      return { ok: false, id: null, error: error.message };
+    }
+    return { ok: true, id: data?.id ?? null };
   } catch (err) {
-    console.error("[results-email] Error:", err);
+    console.error("[email] send failed:", err instanceof Error ? err.message : err);
+    return { ok: false, id: null, error: "send_failed" };
   }
+}
+
+export async function sendResultsLink(
+  to: string,
+  opts: { token: string; currentRole: string | null; topTitles: string[] }
+): Promise<SendResult> {
+  const url = `${SITE_URL}/results/${encodeURIComponent(opts.token)}`;
+  const top = opts.topTitles.slice(0, 3);
+  const intro = opts.currentRole
+    ? `Here is the link to your MatchMySkillset results, starting from ${esc(opts.currentRole.toLowerCase())}.`
+    : "Here is the link to your MatchMySkillset results.";
+  const list = top.length
+    ? `<p style="margin:14px 0 6px 0;">Your closest matches were:</p><ul style="margin:0;padding-left:20px;">${top.map((t) => `<li>${esc(t)}</li>`).join("")}</ul>`
+    : "";
+  const note = "You are getting this one-off email because you asked us to send your results link. We will not email you again unless you ask. The link works for 12 months.";
+  const html = layout(
+    "Your MatchMySkillset results",
+    `<h1 style="font-size:20px;margin:0 0 12px 0;">Your results link</h1>
+     <p style="margin:0;line-height:1.5;">${intro}</p>
+     ${list}
+     ${button(url, "Open my results")}
+     <p style="margin:0;font-size:13px;color:#58625d;line-height:1.5;">Anyone with this link can see your results, so only share it with people you trust.</p>`,
+    note
+  );
+  const text = [
+    intro.replace(/&[a-z#0-9]+;/g, ""),
+    top.length ? `\nYour closest matches were:\n${top.map((t) => `- ${t}`).join("\n")}` : "",
+    `\nOpen your results: ${url}`,
+    "\nAnyone with this link can see your results, so only share it with people you trust.",
+    `\n${note}`,
+  ].join("\n");
+  const subject = top.length ? `Your career matches, starting with ${top[0]}` : "Your MatchMySkillset results";
+  return send(to, subject, html, text);
+}
+
+export async function sendReportLink(
+  to: string,
+  opts: { token: string; sessionId: string; destination: string }
+): Promise<SendResult> {
+  const url = `${SITE_URL}/report/${encodeURIComponent(opts.token)}?session_id=${encodeURIComponent(opts.sessionId)}`;
+  const note =
+    "You are getting this email because you bought a Career Change Report. It is a receipt for your purchase, not marketing. Stripe sends the payment receipt separately.";
+  const html = layout(
+    `Your Career Change Report: ${opts.destination}`,
+    `<h1 style="font-size:20px;margin:0 0 12px 0;">Your Career Change Report is ready</h1>
+     <p style="margin:0;line-height:1.5;">Thank you for your order. Your report on becoming a ${esc(opts.destination.toLowerCase())} is ready to read, print or save as a PDF.</p>
+     ${button(url, "Open my report")}
+     <p style="margin:0;font-size:13px;color:#58625d;line-height:1.5;">Keep this email: the link is how you get back to your report. It works for 12 months. Anyone with the link can open the report.</p>`,
+    note
+  );
+  const text = [
+    "Your Career Change Report is ready.",
+    `\nYour report on becoming a ${opts.destination.toLowerCase()} is here: ${url}`,
+    "\nKeep this email: the link is how you get back to your report. It works for 12 months. Anyone with the link can open the report.",
+    `\n${note}`,
+  ].join("\n");
+  return send(to, `Your Career Change Report: ${opts.destination}`, html, text);
 }
