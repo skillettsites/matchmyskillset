@@ -3,12 +3,12 @@ import { createAdminClient, isSupabaseConfigured } from "@/lib/supabase/admin";
 import { isAllowedOrigin } from "@/lib/api-guard";
 import { checkRateLimit, clientIp } from "@/lib/rate-limit";
 import { cleanText, cleanHttpUrl } from "@/lib/input";
-import type { UnifiedJob } from "@/lib/types";
+import { SOURCE_IDS, type SourceId } from "@/lib/apis/jobs/types";
 
 // Records which job listings people click through to. Nothing personal is
 // stored: source, the board's job id, title and link only.
 
-const SOURCES: ReadonlySet<UnifiedJob["source"]> = new Set(["adzuna", "reed", "jooble", "himalayas"]);
+const SOURCES: ReadonlySet<string> = new Set(SOURCE_IDS);
 const MAX_BODY_BYTES = 4096;
 const RATE_LIMIT = 60;
 const RATE_WINDOW_SECONDS = 10 * 60;
@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
   }
 
-  const source = typeof body.source === "string" ? (body.source as UnifiedJob["source"]) : null;
+  const source = typeof body.source === "string" ? (body.source as SourceId) : null;
   const jobUrl = cleanHttpUrl(body.jobUrl, 1000);
   if (!source || !SOURCES.has(source) || !jobUrl) {
     return NextResponse.json({ error: "Invalid click" }, { status: 400 });

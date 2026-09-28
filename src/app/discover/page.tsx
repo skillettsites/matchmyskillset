@@ -1,300 +1,71 @@
-"use client";
+import type { Metadata } from "next";
+import Link from "next/link";
+import { CAREER_OCCUPATIONS } from "@/data/careers";
+import { getJobIndex, suggestJobs } from "@/lib/skills/job-lookup";
+import { UK_REGIONS } from "@/lib/apis/regions";
+import { RECRUITER_SHARING_ENABLED, RECRUITMENT_PARTNER_NAME } from "@/lib/site";
+import { recruiterConsentText } from "./consent";
+import { DiscoverClient } from "./DiscoverClient";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+export const metadata: Metadata = {
+  title: "Free career change check: start from your job or your CV",
+  description:
+    "Type the job you do now or paste your CV to see UK careers that use your skills, with ONS pay figures, the ways in and live vacancies. Free, and no account or email needed.",
+  alternates: { canonical: "/discover" },
+};
 
-const EXAMPLE_PROMPTS = [
-  "I was a secondary school teacher for 8 years, teaching English and Drama. I managed a department of 5, ran the school play, organised parent evenings, mentored NQTs, and led staff training sessions on behaviour management.",
-  "I worked as a construction project manager for 15 years. I managed budgets up to 2M, coordinated teams of 30+, handled health and safety compliance, negotiated with subcontractors, and delivered projects on time.",
-  "I have been a stay-at-home parent for 5 years. Before that I worked in marketing. During my break I organised school fundraisers, managed the PTA budget, coordinated volunteer teams, ran a local Facebook community group, and did freelance social media work.",
-];
-
-export default function DiscoverPage() {
-  const router = useRouter();
-  const [text, setText] = useState("");
-  const [email, setEmail] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [uploading, setUploading] = useState(false);
-  const [fileName, setFileName] = useState("");
-  const [error, setError] = useState("");
-  const [loadingStep, setLoadingStep] = useState(0);
-
-  const loadingSteps = [
-    "Analysing your experience...",
-    "Extracting your skills...",
-    "Matching to careers...",
-    "Finding your best matches...",
-  ];
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setError("Please enter a valid email address.");
-      return;
-    }
-    if (text.trim().length < 50) {
-      setError("Please provide more detail about your experience (at least 50 characters).");
-      return;
-    }
-
-    setLoading(true);
-    setError("");
-    setLoadingStep(0);
-
-    // Animate loading steps
-    const stepInterval = setInterval(() => {
-      setLoadingStep((prev) =>
-        prev < loadingSteps.length - 1 ? prev + 1 : prev
-      );
-    }, 2000);
-
-    try {
-      const res = await fetch("/api/assess", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text: text.trim(), email: email.trim() }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.error || "Something went wrong. Please try again.");
-        return;
-      }
-
-      // Store results in sessionStorage for the results page
-      sessionStorage.setItem(
-        "assessment",
-        JSON.stringify({
-          id: data.id,
-          skills: data.skills,
-          matches: data.matches,
-          inputText: text.trim(),
-        })
-      );
-
-      router.push(`/discover/results?id=${data.id}`);
-    } catch {
-      setError(
-        "Could not connect to the server. Please check your connection and try again."
-      );
-    } finally {
-      clearInterval(stepInterval);
-      setLoading(false);
-    }
-  }
-
-  async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    setUploading(true);
-    setError("");
-    setFileName(file.name);
-
-    try {
-      const formData = new FormData();
-      formData.append("file", file);
-
-      const res = await fetch("/api/parse-cv", {
-        method: "POST",
-        body: formData,
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.error || "Could not read the file.");
-        setFileName("");
-        return;
-      }
-
-      setText(data.text);
-    } catch {
-      setError("Could not upload the file. Please try again or paste your CV text.");
-      setFileName("");
-    } finally {
-      setUploading(false);
-      // Reset file input so the same file can be uploaded again
-      e.target.value = "";
-    }
-  }
+export default async function DiscoverPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  const sp = await searchParams;
+  const raw = typeof sp.current === "string" ? sp.current : "";
+  const current = raw.replace(/\s+/g, " ").trim().slice(0, 80);
+  const suggestions = current
+    ? suggestJobs(current, 6).map((r) => ({ key: r.entry.key, title: r.entry.title, matchedOn: r.matchedOn }))
+    : [];
 
   return (
-    <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12 sm:py-20">
-      <div className="text-center mb-10">
-        <h1 className="text-3xl sm:text-4xl font-bold text-gray-900">
-          Discover Your Career Matches
-        </h1>
-        <p className="mt-4 text-lg text-gray-500 max-w-2xl mx-auto">
-          Tell us about your experience and our AI will find careers you never
-          knew existed. We value ALL experience: work, volunteering, parenting,
-          caring, hobbies, and side projects.
+    <div className="mx-auto max-w-page px-4 py-10 sm:px-6 sm:py-14">
+      <div className="max-w-reading">
+        <p className="kicker text-accent">Free, no account or email needed</p>
+        <h1 className="mt-2 font-serif text-h1 font-semibold text-ink">See where your experience could take you</h1>
+        <p className="mt-3 text-lede text-ink-2">
+          Start from the job you do now for an instant answer, or paste your CV for results built on your own experience.
+          Either way you get UK careers that use your skills, what they pay according to the Office for National
+          Statistics, and how people get in.
         </p>
       </div>
 
-      <form onSubmit={handleSubmit}>
-        <div className="relative">
-          <textarea
-            value={text}
-            onChange={(e) => {
-              setText(e.target.value);
-              if (error) setError("");
-            }}
-            placeholder="Describe your experience... What have you done in your career, volunteer work, education, or life? Include job titles, responsibilities, achievements, skills you have used, and anything you are proud of."
-            className="w-full h-64 p-6 text-base border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none placeholder:text-gray-400"
-            disabled={loading}
-          />
-          <div className="absolute bottom-3 right-4 text-xs text-gray-400">
-            {text.length.toLocaleString()} / 10,000
-          </div>
-        </div>
+      <DiscoverClient
+        index={getJobIndex()}
+        initialCurrent={current}
+        initialSuggestions={suggestions}
+        regions={[...UK_REGIONS]}
+        recruiter={RECRUITER_SHARING_ENABLED ? { partner: RECRUITMENT_PARTNER_NAME, text: recruiterConsentText() } : null}
+      />
 
-        {/* File upload */}
-        <div className="mt-3 flex items-center gap-3">
-          <label className="inline-flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50 cursor-pointer transition-colors">
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-            </svg>
-            {uploading ? "Reading file..." : "Upload CV"}
-            <input
-              type="file"
-              accept=".pdf,.docx,.doc,.txt"
-              onChange={handleFileUpload}
-              disabled={loading || uploading}
-              className="hidden"
-            />
-          </label>
-          {fileName && !uploading && (
-            <span className="text-sm text-green-600 flex items-center gap-1">
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-              {fileName}
-            </span>
-          )}
-          {uploading && (
-            <div className="flex items-center gap-2 text-sm text-gray-500">
-              <div className="w-4 h-4 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
-              Extracting text from {fileName}...
-            </div>
-          )}
-          <span className="text-xs text-gray-400">PDF, DOCX, or TXT (max 5MB)</span>
-        </div>
-
-        {error && (
-          <div className="mt-3 p-3 bg-red-50 text-red-700 text-sm rounded-lg">
-            {error}
-          </div>
-        )}
-
-        {/* Loading state */}
-        {loading && (
-          <div className="mt-6 p-6 bg-indigo-50 rounded-xl">
-            <div className="flex items-center gap-3">
-              <div className="w-5 h-5 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
-              <span className="text-indigo-700 font-medium">
-                {loadingSteps[loadingStep]}
-              </span>
-            </div>
-            <div className="mt-4 flex gap-1">
-              {loadingSteps.map((_, i) => (
-                <div
-                  key={i}
-                  className={`h-1 flex-1 rounded-full transition-colors ${
-                    i <= loadingStep ? "bg-indigo-600" : "bg-indigo-200"
-                  }`}
-                />
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Email input */}
-        <div className="mt-6">
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-            Your email address
-          </label>
-          <input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => {
-              setEmail(e.target.value);
-              if (error) setError("");
-            }}
-            placeholder="you@example.com"
-            required
-            autoComplete="email"
-            disabled={loading}
-            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-          />
-          <p className="mt-1 text-xs text-gray-400">
-            We will send your results to this email. We never spam or share your address.
-          </p>
-        </div>
-
-        <button
-          type="submit"
-          disabled={loading || text.trim().length < 50 || !email}
-          className="mt-4 w-full bg-indigo-600 text-white font-semibold text-lg py-4 rounded-xl hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {loading ? "Analysing..." : "Discover My Careers"}
-        </button>
-
-        <p className="mt-3 text-center text-sm text-gray-400">
-          Free. Takes about 10 seconds.
-        </p>
-      </form>
-
-      {/* Example prompts */}
-      <div className="mt-12">
-        <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">
-          Not sure what to write? Try an example:
+      <section aria-labelledby="how-title" className="mt-14 max-w-reading">
+        <h2 id="how-title" className="font-serif text-h3 font-semibold text-ink">
+          How the check works
         </h2>
-        <div className="space-y-3">
-          {EXAMPLE_PROMPTS.map((prompt, i) => (
-            <button
-              key={i}
-              onClick={() => setText(prompt)}
-              disabled={loading}
-              className="w-full text-left p-4 bg-gray-50 rounded-lg text-sm text-gray-600 hover:bg-indigo-50 hover:text-indigo-700 transition-colors disabled:opacity-50"
-            >
-              <span className="font-medium text-gray-800">
-                {i === 0
-                  ? "Teacher"
-                  : i === 1
-                    ? "Construction PM"
-                    : "Career Returner"}
-                :
-              </span>{" "}
-              {prompt.slice(0, 120)}...
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Trust signals */}
-      <div className="mt-12 grid grid-cols-3 gap-4 text-center">
-        <div className="p-4">
-          <div className="text-2xl mb-1">🔒</div>
-          <div className="text-xs text-gray-500">
-            Your data is never shared with employers without your consent
-          </div>
-        </div>
-        <div className="p-4">
-          <div className="text-2xl mb-1">⚡</div>
-          <div className="text-xs text-gray-500">
-            AI-powered analysis in under 15 seconds
-          </div>
-        </div>
-        <div className="p-4">
-          <div className="text-2xl mb-1">🎯</div>
-          <div className="text-xs text-gray-500">
-            Skills-based matching, not keyword matching
-          </div>
-        </div>
-      </div>
+        <ol className="mt-3 list-decimal space-y-2 pl-5 text-ink-2">
+          <li>
+            We turn your job or CV into a list of skills from our skills list. For a CV, an AI model (Claude, by Anthropic)
+            reads the text and picks the skills; it does not choose your careers.
+          </li>
+          <li>
+            We compare those skills with {CAREER_OCCUPATIONS.length} UK careers that people commonly move into. The score is the share of each
+            career&apos;s key skills we found, weighted by how essential each skill is. The same profile always gets the
+            same score.
+          </li>
+          <li>
+            Pay comes from the ONS Annual Survey of Hours and Earnings. Ways in come from the National Careers Service and
+            Skills England.
+          </li>
+        </ol>
+        <p className="mt-4 text-sm text-muted">
+          Your CV text is used for the analysis and not kept afterwards. Your results are saved behind a private link for
+          12 months. See our <Link href="/privacy" className="link">privacy policy</Link>.
+        </p>
+      </section>
     </div>
   );
 }
