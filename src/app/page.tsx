@@ -5,7 +5,7 @@ import { ToolCallout } from "@/components/content/ToolCallout";
 import { FIT_LINKS, GUIDE_LINKS, JOB_HUBS, TOOL_LINKS, type NavItem } from "@/components/site";
 
 export const metadata: Metadata = {
-  title: { absolute: "Leaving your job? See where people like you go | MatchMySkillset" },
+  title: { absolute: "Leaving your job? Real routes and UK pay | MatchMySkillset" },
   description:
     "See where people like you actually go after leaving a job, what it pays in the UK, and how to get there. Start from your current job or paste your CV for a free analysis. No account needed.",
   alternates: { canonical: "/" },
