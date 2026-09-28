@@ -37,8 +37,8 @@ history.
 |---|---|---|
 | `001_initial_schema.sql` | Original schema. Does not match live. | History only. Never re-run. |
 | `002_add_cv_to_leads.sql` | Added CV text to leads. | History only. Never re-run. |
-| `003_revamp_cleanup.sql` | Removes the MMS trigger on `auth.users` and its function; drops the anon policies on `mms_employers`, `mms_featured_jobs`, `mms_email_leads`, `mms_job_clicks`, `mms_search_logs`; revokes anon/authenticated privileges on every `mms_` table; keeps RLS on. | Written, **not applied**. Owner has approved; the coordinator reviews and runs it. |
-| `004_revamp_tables.sql` | Creates `mms_reports`, `mms_purchases`, `mms_stripe_events`, `mms_rate_limits` and `mms_rate_limit_hit()` (RLS on, no policies, service role only), and adds the opt-in recruiter consent columns to `mms_email_leads` (existing rows get `recruiter_consent = false`). | Written, **not applied**. Owner has approved; the coordinator reviews and runs it. |
+| `003_revamp_cleanup.sql` | Removes the MMS trigger on `auth.users` and its function; drops the anon policies on `mms_employers`, `mms_featured_jobs`, `mms_email_leads`, `mms_job_clicks`, `mms_search_logs`; revokes anon/authenticated privileges on every `mms_` table; keeps RLS on. | **Applied 28 Sep 2026** (owner approved), verified: MMS trigger and function gone, other auth triggers intact, only service_role policies remain on mms_ tables. |
+| `004_revamp_tables.sql` | Creates `mms_reports`, `mms_purchases`, `mms_stripe_events`, `mms_rate_limits` and `mms_rate_limit_hit()` (RLS on, no policies, service role only), and adds the opt-in recruiter consent columns to `mms_email_leads` (existing rows get `recruiter_consent = false`). | **Applied 28 Sep 2026** (owner approved), verified: 4 tables, RLS on, no anon grants, consent columns present. |
 | `rollback/2026-09-28-before.sql` | Live definitions captured before 003/004 (trigger, function, 12 policies, grants). Restores the old state if 003 has to be undone. | Reference. |
 
 Apply 003 then 004, each as one transaction (both files contain `BEGIN`/`COMMIT`), with

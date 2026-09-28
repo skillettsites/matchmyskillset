@@ -9,6 +9,7 @@ import {
   type NavItem,
 } from "@/components/site";
 import { Logo } from "@/components/ui/Logo";
+import { CookieSettingsButton } from "@/components/GoogleAnalytics";
 
 function FooterColumn({ title, links }: { title: string; links: NavItem[] }) {
   return (
@@ -69,6 +70,9 @@ export function Footer() {
                 </Link>
               </li>
             ))}
+            <li>
+              <CookieSettingsButton className="inline-flex min-h-11 items-center text-night-text underline-offset-4 hover:underline focus-visible:outline-highlight" />
+            </li>
           </ul>
         </div>
       </div>

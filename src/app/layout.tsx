@@ -3,7 +3,7 @@ import { Fraunces, Source_Sans_3 } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/ui/Header";
 import { Footer } from "@/components/ui/Footer";
-import { GoogleAnalytics } from "@/components/GoogleAnalytics";
+import { GoogleAnalytics, VercelAnalytics } from "@/components/GoogleAnalytics";
 import { JsonLd } from "@/components/JsonLd";
 import { SITE_NAME, SITE_TAGLINE, SITE_URL, absoluteUrl } from "@/components/site";
 
@@ -114,6 +114,7 @@ export default function RootLayout({
           {children}
         </main>
         <Footer />
+        <VercelAnalytics />
       </body>
     </html>
   );
