@@ -1,8 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse, after } from "next/server";
 import { extractSkillsAndMatch } from "@/lib/apis/claude";
 import { matchSkillsToOccupations } from "@/lib/skills/matcher";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isAllowedOrigin, rateLimit } from "@/lib/api-guard";
+import { sendResultsEmail as deliverResultsEmail } from "@/lib/email/results-email";
 import crypto from "crypto";
 
 // Per-IP ceiling, checked before anything else. The per-email limit below is keyed
@@ -255,16 +256,9 @@ function saveToSupabase(email: string, inputHash: string, inputText: string, ski
   }
 }
 
-// Fire-and-forget email with results
+// Email the results once the response has gone out
 function sendResultsEmail(email: string, skills: unknown, matches: unknown) {
-  const baseUrl = (process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3003").trim();
-  fetch(`${baseUrl}/api/send-results`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, skills, matches }),
-  }).catch((err) => {
-    console.error("[assess] Email send failed:", err);
-  });
+  after(() => deliverResultsEmail(email, skills, matches));
 }
 
 // Demo result when API key not configured (for testing)

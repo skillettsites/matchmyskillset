@@ -1,8 +1,12 @@
-import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 
+// Server-only. Sends the results email straight from /api/assess.
+// This used to be a public POST route (/api/send-results) that emailed whatever
+// HTML and address the caller supplied, from a verified domain on the shared
+// Resend account, so it has to stay unreachable from the browser.
+
 const resend = process.env.RESEND_API_KEY
-  ? new Resend(process.env.RESEND_API_KEY)
+  ? new Resend(process.env.RESEND_API_KEY.replace(/\\n$/, "").trim())
   : null;
 
 interface CareerMatchEmail {
@@ -20,11 +24,24 @@ interface SkillEmail {
   confidence: number;
 }
 
-function buildEmailHtml(
-  skills: SkillEmail[],
-  matches: CareerMatchEmail[]
-): string {
-  const skillTags = skills
+// Skill names and titles come from model output built on the user's CV text,
+// so every interpolated string is escaped.
+function esc(value: unknown): string {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function pct(value: unknown): number {
+  const n = Math.round(Number(value));
+  return Number.isFinite(n) ? Math.min(100, Math.max(0, n)) : 0;
+}
+
+function buildEmailHtml(skills: SkillEmail[], matches: CareerMatchEmail[]): string {
+  const skillTags = [...skills]
     .sort((a, b) => b.confidence - a.confidence)
     .slice(0, 20)
     .map(
@@ -35,52 +52,45 @@ function buildEmailHtml(
             : s.category === "life"
               ? "#fef3c7;color:#92400e"
               : "#d1fae5;color:#065f46"
-        }">${s.name}</span>`
+        }">${esc(s.name)}</span>`
     )
     .join("");
 
   const matchCards = matches
     .slice(0, 5)
-    .map(
-      (m) => `
+    .map((m) => {
+      const p = pct(m.matchPercentage);
+      const colour = p >= 70 ? "#22c55e" : p >= 50 ? "#f59e0b" : "#ef4444";
+      const median = Number(m.salaryRange?.median);
+      const matched = Array.isArray(m.matchedSkills) ? m.matchedSkills : [];
+      const gaps = Array.isArray(m.gapSkills) ? m.gapSkills : [];
+      return `
       <div style="border:1px solid #e5e7eb;border-radius:12px;padding:20px;margin-bottom:16px;">
         <div style="display:flex;align-items:center;gap:16px;margin-bottom:12px;">
-          <div style="width:56px;height:56px;border-radius:50%;border:4px solid ${
-            m.matchPercentage >= 70
-              ? "#22c55e"
-              : m.matchPercentage >= 50
-                ? "#f59e0b"
-                : "#ef4444"
-          };display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:${
-            m.matchPercentage >= 70
-              ? "#22c55e"
-              : m.matchPercentage >= 50
-                ? "#f59e0b"
-                : "#ef4444"
-          }">
-            ${m.matchPercentage}%
+          <div style="width:56px;height:56px;border-radius:50%;border:4px solid ${colour};display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:${colour}">
+            ${p}%
           </div>
           <div>
-            <div style="font-size:18px;font-weight:600;color:#111827;">${m.title}</div>
+            <div style="font-size:18px;font-weight:600;color:#111827;">${esc(m.title)}</div>
             <div style="font-size:13px;color:#6b7280;">
-              ${m.salaryRange ? `£${Math.round(m.salaryRange.median / 1000)}k median salary` : ""}
+              ${Number.isFinite(median) && median > 0 ? `£${Math.round(median / 1000)}k median salary` : ""}
               ${m.transitionDifficulty === "easy" ? " · Easy transition" : m.transitionDifficulty === "moderate" ? " · Some upskilling needed" : " · Significant development needed"}
             </div>
           </div>
         </div>
         ${
-          m.matchedSkills.length > 0
-            ? `<div style="margin-bottom:8px;"><span style="font-size:12px;font-weight:600;color:#059669;">Skills you have:</span> <span style="font-size:12px;color:#6b7280;">${m.matchedSkills.map((s) => s.name).join(", ")}</span></div>`
+          matched.length > 0
+            ? `<div style="margin-bottom:8px;"><span style="font-size:12px;font-weight:600;color:#059669;">Skills you have:</span> <span style="font-size:12px;color:#6b7280;">${matched.map((s) => esc(s.name)).join(", ")}</span></div>`
             : ""
         }
         ${
-          m.gapSkills.length > 0
-            ? `<div><span style="font-size:12px;font-weight:600;color:#d97706;">Skills to develop:</span> <span style="font-size:12px;color:#6b7280;">${m.gapSkills.map((s) => s.name).join(", ")}</span></div>`
+          gaps.length > 0
+            ? `<div><span style="font-size:12px;font-weight:600;color:#d97706;">Skills to develop:</span> <span style="font-size:12px;color:#6b7280;">${gaps.map((s) => esc(s.name)).join(", ")}</span></div>`
             : ""
         }
       </div>
-    `
-    )
+    `;
+    })
     .join("");
 
   return `
@@ -143,40 +153,27 @@ function buildEmailHtml(
   `;
 }
 
-export async function POST(request: NextRequest) {
+export async function sendResultsEmail(email: string, skills: unknown, matches: unknown): Promise<void> {
+  if (!resend) {
+    console.log("[results-email] Resend not configured, skipping");
+    return;
+  }
+  if (!Array.isArray(skills) || !Array.isArray(matches) || matches.length === 0) return;
+
+  const skillList = skills as SkillEmail[];
+  const matchList = matches as CareerMatchEmail[];
+  // Plain-text subject: strip control characters so a title can't inject headers.
+  const topMatch = String(matchList[0]?.title || "your career matches").replace(/[\r\n\t]+/g, " ").slice(0, 80);
+
   try {
-    const { email, skills, matches } = await request.json();
-
-    if (!email || !skills || !matches) {
-      return NextResponse.json(
-        { error: "Missing required data" },
-        { status: 400 }
-      );
-    }
-
-    if (!resend) {
-      console.log("[send-results] Resend not configured, skipping email to:", email);
-      return NextResponse.json({ sent: false, reason: "email_not_configured" });
-    }
-
-    const topMatch = matches[0]?.title || "your career matches";
-    const html = buildEmailHtml(skills, matches);
-
     const { error } = await resend.emails.send({
       from: "MatchMySkills <results@matchmyskillset.com>",
       to: email,
-      subject: `Your career matches: ${topMatch} (${matches[0]?.matchPercentage || 0}% match) and ${matches.length - 1} more`,
-      html,
+      subject: `Your career matches: ${topMatch} (${pct(matchList[0]?.matchPercentage)}% match) and ${matchList.length - 1} more`,
+      html: buildEmailHtml(skillList, matchList),
     });
-
-    if (error) {
-      console.error("[send-results] Resend error:", error);
-      return NextResponse.json({ sent: false, reason: "send_failed" });
-    }
-
-    return NextResponse.json({ sent: true });
-  } catch (error) {
-    console.error("[send-results] Error:", error);
-    return NextResponse.json({ sent: false, reason: "error" });
+    if (error) console.error("[results-email] Resend error:", error);
+  } catch (err) {
+    console.error("[results-email] Error:", err);
   }
 }
