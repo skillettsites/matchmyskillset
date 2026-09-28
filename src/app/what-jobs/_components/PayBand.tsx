@@ -132,7 +132,7 @@ function nameCell(row: SocRow) {
   return (
     <span className="block">
       <span className="block">{row.name}</span>
-      <span className="block text-xs font-normal text-muted">
+      <span className="block text-xs font-normal text-mute">
         ONS group {row.soc}: {row.socTitle}
       </span>
     </span>
@@ -197,24 +197,24 @@ export function PayBandPage(props: PayBandProps) {
       </PageHeader>
 
       <dl className="grid gap-4 sm:grid-cols-3">
-        <div className="rounded-lg border border-rule bg-surface p-5">
-          <dt className="text-sm text-muted">Occupation groups with a median of {range}</dt>
-          <dd className="mt-1 font-serif text-3xl font-semibold text-ink">
-            {facts.inBand.length} <span className="text-base font-normal text-muted">of {facts.published}</span>
+        <div className="tile p-6">
+          <dt className="text-sm text-mute">Occupation groups with a median of {range}</dt>
+          <dd className="mt-1 text-[34px] font-bold tracking-[-0.035em] text-ink">
+            {facts.inBand.length} <span className="text-base font-normal text-mute">of {facts.published}</span>
           </dd>
         </div>
-        <div className="rounded-lg border border-rule bg-surface p-5">
-          <dt className="text-sm text-muted">UK median, full-time employees</dt>
-          <dd className="mt-1 font-serif text-3xl font-semibold text-ink">{formatGBP(UK_FT_MEDIAN)}</dd>
+        <div className="tile p-6">
+          <dt className="text-sm text-mute">UK median, full-time employees</dt>
+          <dd className="mt-1 text-[34px] font-bold tracking-[-0.035em] text-ink">{formatGBP(UK_FT_MEDIAN)}</dd>
         </div>
-        <div className="rounded-lg border border-rule bg-surface p-5">
-          <dt className="text-sm text-muted">{formatGBP(lo)} after income tax and National Insurance</dt>
-          <dd className="mt-1 font-serif text-3xl font-semibold text-ink">
-            {formatGBP(facts.takeHome.monthly)} <span className="text-base font-normal text-muted">a month</span>
+        <div className="tile p-6">
+          <dt className="text-sm text-mute">{formatGBP(lo)} after income tax and National Insurance</dt>
+          <dd className="mt-1 text-[34px] font-bold tracking-[-0.035em] text-ink">
+            {formatGBP(facts.takeHome.monthly)} <span className="text-base font-normal text-mute">a month</span>
           </dd>
         </div>
       </dl>
-      <p className="mt-3 max-w-reading text-xs text-muted">
+      <p className="mt-3 max-w-reading text-xs text-mute">
         Take-home pay is our calculation for 2026/27 using the{" "}
         <a href="https://www.gov.uk/income-tax-rates" className="link" rel="noopener">
           GOV.UK income tax rates
@@ -259,7 +259,7 @@ export function PayBandPage(props: PayBandProps) {
               key: "p25",
               header: "Lower quarter",
               numeric: true,
-              render: (r) => (r.p25 === null ? <span className="text-muted">not published</span> : formatGBP(r.p25)),
+              render: (r) => (r.p25 === null ? <span className="text-mute">not published</span> : formatGBP(r.p25)),
             },
             { key: "route", header: "Way in", render: routeCell },
           ]}
@@ -314,11 +314,11 @@ export function PayBandPage(props: PayBandProps) {
           </p>
         }
       >
-        <details className="mt-6 rounded-lg border border-rule bg-surface">
-          <summary className="flex min-h-12 cursor-pointer items-center px-5 font-semibold text-ink">
+        <details className="mt-6 rounded-[22px] bg-cloud">
+          <summary className="flex min-h-14 cursor-pointer items-center px-6 font-semibold text-ink">
             Show all {facts.inBand.length} occupation groups
           </summary>
-          <div className="border-t border-rule px-5 pb-5">
+          <div className="border-t border-black/[0.06] px-4 pb-5 sm:px-6">
             <DataTable<UnitGroupPay>
               caption={`All occupation groups with a median of ${range}`}
               description="Median and indicative number of full-time employee jobs, UK, 2025."
@@ -330,7 +330,7 @@ export function PayBandPage(props: PayBandProps) {
                   rowHeader: true,
                   render: (r) => (
                     <>
-                      {r.title} <span className="text-xs font-normal text-muted">({r.soc})</span>
+                      {r.title} <span className="text-xs font-normal text-mute">({r.soc})</span>
                     </>
                   ),
                 },
@@ -339,7 +339,7 @@ export function PayBandPage(props: PayBandProps) {
                   key: "jobs",
                   header: "Jobs (thousands)",
                   numeric: true,
-                  render: (r) => (r.jobsThousands === null ? <span className="text-muted">n/a</span> : String(r.jobsThousands)),
+                  render: (r) => (r.jobsThousands === null ? <span className="text-mute">n/a</span> : String(r.jobsThousands)),
                 },
               ]}
               rows={facts.inBand}
@@ -402,7 +402,7 @@ export function PayBandPage(props: PayBandProps) {
           { href: "/transferable-skills", label: "Find your transferable skills" },
         ].filter((l) => l.href !== path)}
       />
-      <p className="mt-10 max-w-reading text-sm text-muted">
+      <p className="mt-10 max-w-reading text-sm text-mute">
         Leaving a particular job? See where people go after{" "}
         <Link href="/career-change-from-teaching" className="link">
           teaching

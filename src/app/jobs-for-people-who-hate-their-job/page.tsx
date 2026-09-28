@@ -211,8 +211,8 @@ export default function Page() {
 
       <GuideSection id="quit" title="Should you quit? An honest checklist">
         <div className="mt-6 grid max-w-reading gap-4 sm:grid-cols-2">
-          <div className="rounded-lg border border-rule bg-surface p-5">
-            <h3 className="font-serif text-h3 font-semibold text-ink">Leaving makes sense if</h3>
+          <div className="rounded-[22px] bg-cloud p-6">
+            <h3 className="text-h3 font-bold text-ink">Leaving makes sense if</h3>
             <ul className="mt-3 list-disc space-y-2 pl-5 text-ink-2">
               <li>your health is getting worse</li>
               <li>you have tried to fix the specific problem and nothing changed</li>
@@ -220,8 +220,8 @@ export default function Page() {
               <li>you have savings to live on or another offer</li>
             </ul>
           </div>
-          <div className="rounded-lg border border-rule bg-surface p-5">
-            <h3 className="font-serif text-h3 font-semibold text-ink">Wait a little if</h3>
+          <div className="rounded-[22px] bg-cloud p-6">
+            <h3 className="text-h3 font-bold text-ink">Wait a little if</h3>
             <ul className="mt-3 list-disc space-y-2 pl-5 text-ink-2">
               <li>you have not yet tried to fix the problem</li>
               <li>it started recently</li>

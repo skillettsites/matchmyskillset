@@ -209,42 +209,52 @@ export function QuizClient({ archetypes, paySource }: Props) {
     return (
       <>
         <div className="mb-10 text-center">
-          <h1 className="mb-3 text-3xl font-bold text-gray-900 sm:text-4xl">What career suits me?</h1>
-          <p className="text-lg text-gray-500">
+          <p className="eyebrow text-link">Career quiz</p>
+          <h1 className="headline mt-2">What career suits me?</h1>
+          <p className="lede mx-auto mt-5 max-w-[600px]">
             Answer 10 quick questions to see which broad style of work suits you, then five UK careers that fit it, each with
             its ONS median pay.
           </p>
-          <p className="mt-2 text-sm text-gray-400">Free. No sign-up required. Takes about 2 minutes.</p>
+          <p className="mt-4 text-[14px] text-mute">Free. No sign-up required. Takes about 2 minutes.</p>
         </div>
 
         {/* Progress Bar */}
         <div className="mb-8">
-          <div className="mb-2 flex justify-between text-sm text-gray-400">
+          <div className="mb-2 flex justify-between text-[14px] font-medium text-mute">
             <span>
               Question {currentQ + 1} of {QUESTIONS.length}
             </span>
             <span>{Math.round(progress)}% complete</span>
           </div>
-          <div className="h-2 w-full rounded-full bg-gray-100">
-            <div className="h-2 rounded-full bg-indigo-600 transition-all duration-500 ease-out" style={{ width: `${progress}%` }} />
+          <div className="h-2 w-full overflow-hidden rounded-full bg-cloud">
+            <div
+              className="h-2 rounded-full bg-gradient-to-r from-[#12b5a4] via-[#0a7cff] to-[#7d4cdb] transition-all duration-500 ease-out"
+              style={{ width: `${progress}%` }}
+            />
           </div>
         </div>
 
         {/* Question */}
-        <div className="mb-8">
-          <h2 className="mb-6 text-xl font-semibold text-gray-900">{QUESTIONS[currentQ].question}</h2>
+        <div className="card-white mb-8 p-5 sm:p-8">
+          <h2 className="mb-6 text-[24px] font-bold leading-tight tracking-[-0.03em] text-ink sm:text-[28px]">{QUESTIONS[currentQ].question}</h2>
           <div className="space-y-3">
             {QUESTIONS[currentQ].options.map((opt, i) => (
               <button
                 key={i}
                 type="button"
                 onClick={() => handleSelect(i)}
-                className={`w-full rounded-xl border-2 p-4 text-left transition-all duration-200 ${
-                  selectedOption === i ? "border-indigo-600 bg-indigo-50" : "border-gray-100 hover:border-indigo-300 hover:bg-gray-50"
+                className={`flex min-h-14 w-full items-center gap-4 rounded-2xl p-4 text-left transition-all duration-200 ${
+                  selectedOption === i ? "bg-sky ring-2 ring-blue" : "bg-cloud hover:bg-hair"
                 }`}
               >
-                <span className="mr-3 text-sm font-medium text-gray-400">{String.fromCharCode(65 + i)}</span>
-                <span className="text-gray-800">{opt.label}</span>
+                <span
+                  className={`grid h-8 w-8 shrink-0 place-items-center rounded-full text-[14px] font-semibold ${
+                    selectedOption === i ? "bg-blue text-white" : "bg-white text-ink"
+                  }`}
+                >
+                  {String.fromCharCode(65 + i)}
+                </span>
+                <span className="text-[17px] text-ink">{opt.label}</span>
               </button>
             ))}
           </div>
@@ -256,33 +266,38 @@ export function QuizClient({ archetypes, paySource }: Props) {
   return (
     <div>
       <div className="mb-10 text-center">
-        <div className="mb-4 inline-flex items-center rounded-full bg-green-50 px-4 py-1.5 text-sm font-medium text-green-700">Quiz complete</div>
-        <h1 className="mb-3 text-3xl font-bold text-gray-900 sm:text-4xl">You are: {result.archetype}</h1>
-        <p className="mx-auto max-w-xl text-lg text-gray-600">{result.description}</p>
+        <div className="pill mb-5 bg-green-soft text-green">
+          <span className="live-dot" aria-hidden="true" />
+          Quiz complete
+        </div>
+        <h1 className="headline">
+          You are: <span className="gradient-text">{result.archetype}</span>
+        </h1>
+        <p className="lede mx-auto mt-5 max-w-[600px]">{result.description}</p>
       </div>
 
       {/* Career matches */}
       <section className="mb-10" aria-labelledby="quiz-careers-title">
-        <h2 id="quiz-careers-title" className="mb-4 text-xl font-semibold text-gray-900">
+        <h2 id="quiz-careers-title" className="mb-5 text-[28px] font-bold tracking-[-0.03em] text-ink">
           Careers that fit this style
         </h2>
         <div className="space-y-4">
           {result.careers.map((career, i) => {
             const pay = payText(career);
             return (
-              <div key={career.id} className="rounded-xl border border-gray-100 bg-white p-5">
+              <div key={career.id} className="card-white p-5 sm:p-6">
                 <div className="mb-2 flex items-start justify-between gap-4">
-                  <div>
-                    <span className="mr-2 text-xs text-gray-400">#{i + 1}</span>
-                    <span className="font-semibold text-gray-900">{career.title}</span>
+                  <div className="flex items-center gap-3">
+                    <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-ink text-[13px] font-semibold text-white">{i + 1}</span>
+                    <span className="text-[19px] font-semibold tracking-[-0.02em] text-ink">{career.title}</span>
                   </div>
                   <div className="shrink-0 text-right">
-                    <span className="block text-sm font-bold tabular-nums text-green-600">{pay.figure}</span>
-                    <span className="block text-xs text-gray-500">{pay.label}</span>
+                    <span className="block text-[17px] font-bold tabular-nums text-ink">{pay.figure}</span>
+                    <span className="block text-xs text-mute">{pay.label}</span>
                   </div>
                 </div>
-                <p className="mb-2 text-sm text-gray-600">{career.why}</p>
-                <p className="mb-2 text-xs text-gray-500">
+                <p className="mb-2 text-[15px] text-ink-2">{career.why}</p>
+                <p className="mb-2 text-xs text-mute">
                   Pay covers the ONS SOC 2020 unit group {career.soc} &ldquo;{career.socTitle}&rdquo;.
                 </p>
                 <Link href={`/jobs?q=${encodeURIComponent(career.title)}`} className="link inline-block text-sm font-medium">
@@ -302,18 +317,21 @@ export function QuizClient({ archetypes, paySource }: Props) {
       </section>
 
       {/* Next step: the personal check */}
-      <div className="mb-10 rounded-xl border border-accent/25 bg-accent-wash p-6 text-center sm:p-8">
-        <h2 className="mb-3 text-xl font-semibold text-ink">Turn this into real options</h2>
-        <p className="mx-auto mb-6 max-w-lg text-ink-2">
-          The quiz shows your broad style of work. For careers matched to your own skills, with ONS pay figures and the ways in,
-          start from the job you do now or paste your CV. It is free and needs no account or email.
+      <div className="tile mb-10 p-6 text-center sm:p-10">
+        <h2 className="title">Turn this into real options</h2>
+        <p className="mx-auto mb-7 mt-3 max-w-lg text-[17px] text-ink-2">
+          The quiz shows your broad style of work. For live jobs and careers matched to your own skills, with ONS pay figures and
+          the ways in, upload your CV. It is free and needs no account.
         </p>
-        <div className="flex flex-col justify-center gap-3 sm:flex-row">
+        <div className="flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-6">
           <Link href="/discover" className="btn btn-primary btn-lg">
-            Start from my job
+            Upload your CV
           </Link>
-          <Link href="/discover#cv" className="btn btn-secondary btn-lg">
-            Paste my CV
+          <Link href="/jobs" className="link-more">
+            Browse live jobs
+            <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+              <path d="m9 6 6 6-6 6" />
+            </svg>
           </Link>
         </div>
       </div>
@@ -323,13 +341,13 @@ export function QuizClient({ archetypes, paySource }: Props) {
         <button
           type="button"
           onClick={restart}
-          className="inline-flex items-center justify-center rounded-xl border border-gray-200 px-6 py-3 font-medium text-gray-700 transition-colors hover:bg-gray-50"
+          className="btn btn-quiet"
         >
           Retake the quiz
         </button>
         <Link
           href="/careers-for"
-          className="inline-flex items-center justify-center rounded-xl border border-gray-200 px-6 py-3 font-medium text-gray-700 transition-colors hover:bg-gray-50"
+          className="btn btn-quiet"
         >
           Browse by profession
         </Link>

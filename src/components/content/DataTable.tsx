@@ -50,7 +50,7 @@ export interface DataTableProps<Row> {
 function cellValue<Row>(row: Row, col: DataTableColumn<Row>, index: number): ReactNode {
   if (col.render) return col.render(row, index);
   const raw = (row as Record<string, unknown>)[col.key];
-  if (raw === null || raw === undefined || raw === "") return <span className="text-muted">n/a</span>;
+  if (raw === null || raw === undefined || raw === "") return <span className="text-mute">n/a</span>;
   if (isNumber(raw)) {
     if (col.format === "gbp") return formatGBP(raw);
     return formatNumber(raw);
@@ -75,12 +75,12 @@ export function DataTable<Row>({
   className = "",
 }: DataTableProps<Row>) {
   return (
-    <figure className={`my-8 ${className}`}>
+    <figure className={`my-10 ${className}`}>
       <div className="sm:overflow-x-auto">
         <table className="mms-table" role="table">
           <caption>
-            <span className="block font-serif text-xl font-semibold leading-snug text-ink">{caption}</span>
-            {description && <span className="mt-1 block text-sm text-muted">{description}</span>}
+            <span className="block text-[21px] font-bold leading-snug tracking-[-0.025em] text-ink">{caption}</span>
+            {description && <span className="mt-1 block text-[15px] text-mute">{description}</span>}
           </caption>
           <thead role="rowgroup">
             <tr role="row">
@@ -125,7 +125,7 @@ export function DataTable<Row>({
       {(source || notes) && (
         <div className="mt-3 space-y-1.5">
           {source}
-          {notes && <div className="text-xs leading-relaxed text-muted">{notes}</div>}
+          {notes && <div className="text-xs leading-relaxed text-mute">{notes}</div>}
         </div>
       )}
     </figure>

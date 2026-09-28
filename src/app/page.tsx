@@ -1,380 +1,389 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { RouteCard } from "@/components/content/RouteCard";
-import { ToolCallout } from "@/components/content/ToolCallout";
-import { FIT_LINKS, GUIDE_LINKS, JOB_HUBS, TOOL_LINKS, type NavItem } from "@/components/site";
+import { CvUploadCard } from "@/components/cv/CvUploadCard";
+import { JsonLd } from "@/components/JsonLd";
+import { formatGBP } from "@/components/content";
+import { AsheSourceNote, occupationPayById } from "@/components/guides/pay";
+import {
+  CtaBand,
+  EmployerMockup,
+  Faq,
+  HeroGlow,
+  MoreLink,
+  ResultsMockup,
+  SectionHeading,
+  StepList,
+  StepTile,
+  faqJsonLd,
+  type FaqItem,
+} from "@/components/marketing";
+import { Check, ChevronRight } from "@/components/marketing/Icons";
+import { JOB_HUBS } from "@/components/site";
+import { REPORT_PRICE_LABEL } from "@/lib/apis/report-product";
 
 export const metadata: Metadata = {
-  title: { absolute: "Leaving your job? Real routes and UK pay | MatchMySkillset" },
+  title: { absolute: "MatchMySkillset: match your CV to live UK jobs" },
   description:
-    "See where people like you go after leaving a job, what it pays in the UK and how to get there. Start from your job or paste your CV: free, no account needed.",
+    "Upload your CV and see live UK jobs from Reed, Adzuna, GOV.UK Teaching Vacancies and more, each scored against your skills. Plus careers that fit, with ONS pay. Free.",
   alternates: { canonical: "/" },
 };
 
-/*
- * Example routes. Deliberately no pay or time figures: those only appear once
- * they can be cited from ONS data. Every "way in" below was checked against
- * the body that runs it (CIPD, NIHR, SIA on GOV.UK, the Career Transition
- * Partnership on GOV.UK) on 28 September 2026.
- */
-const ROUTES = [
+const HERO_STEPS = [
+  { title: "Add your CV", text: "Upload a PDF or Word file, or paste the text, and say where you want to work." },
   {
-    from: "Teacher",
-    to: "Learning and development",
-    href: "/career-change-from-teaching",
-    summary: "Planning lessons, delivering them and checking what people learned is the core of workplace training.",
-    entryRoute: "CIPD Level 5 Associate Diploma in Organisational Learning and Development",
-    linkLabel: "Leaving teaching",
+    title: "We read your skills",
+    text: "We pick out what you can do and search live adverts from Reed, Adzuna, GOV.UK Teaching Vacancies and more.",
   },
-  {
-    from: "Nurse",
-    to: "Clinical research",
-    href: "/non-clinical-jobs-for-nurses",
-    summary: "Clinical trials need people who understand patients, consent and careful record keeping.",
-    entryRoute: "Good Clinical Practice (GCP) training, free from the NIHR for NHS staff",
-    linkLabel: "Non-clinical jobs for nurses",
-  },
-  {
-    from: "Police officer",
-    to: "Security and investigations",
-    href: "/jobs-for-ex-police-officers",
-    summary: "Investigation, risk assessment and staying calm under pressure carry straight over.",
-    entryRoute: "A front-line SIA licence for roles such as close protection",
-    linkLabel: "Jobs for ex-police officers",
-  },
-  {
-    from: "Armed forces",
-    to: "Project and operations management",
-    href: "/jobs-for-ex-military",
-    summary: "Planning, logistics and leading teams map onto civilian project and operations roles.",
-    entryRoute: "Resettlement support from the Career Transition Partnership, the official service for service leavers",
-    linkLabel: "Jobs for ex-military",
-  },
-  {
-    from: "Retail manager",
-    to: "Human resources",
-    href: "/career-change-from-retail",
-    summary: "Recruiting, training and managing a shop team is people work every day.",
-    entryRoute: "CIPD Level 3 Foundation Certificate in People Practice",
-    linkLabel: "Leaving retail",
-  },
-] as const;
+  { title: "Apply to your best matches", text: "See the skills you share with each job and the ones to work on, then apply." },
+];
 
-const REASSURANCE = ["Free to use", "No account needed", "Written for the UK"];
+const SOURCES = ["Reed", "Adzuna", "GOV.UK Teaching Vacancies", "Himalayas", "Remotive"];
 
-const STEPS = [
+const FAQS: FaqItem[] = [
   {
-    title: "Start from your job or your CV",
-    body: "Pick the job you do now to read its guide, or paste your CV for a personal analysis. Both are free, and you do not need an account.",
+    q: "Is MatchMySkillset free?",
+    a: `Yes. Matching your CV to live jobs, and seeing the careers that fit you, is free and needs no account. The only paid extra is the optional Career Change Report: ${REPORT_PRICE_LABEL}, paid once, for a full plan for one career.`,
   },
   {
-    title: "See realistic destinations",
-    body: "The jobs people with your background move into, the skills that carry over, the gaps to close, and UK pay where the Office for National Statistics publishes it.",
+    q: "Where do the jobs come from?",
+    a: "Live adverts from UK job boards, including Reed, Adzuna and GOV.UK Teaching Vacancies, remote roles open to UK applicants from Himalayas and Remotive, and jobs that employers post on MatchMySkillset. For adverts from other boards, you apply on the original site.",
   },
   {
-    title: "Choose your next step",
-    body: "Read the route in full, look at live vacancies, or get everything for one chosen job in a single Career Change Report, paid once.",
-    tag: "Report coming soon",
+    q: "How is my match worked out?",
+    a: "We pick out the skills in your CV, then find the skills each advert asks for. Your match reflects how many of those you already show. Every job lists the skills you share and the ones you do not show yet, so you can check it for yourself.",
+  },
+  {
+    q: "What happens to my CV?",
+    a: "Your CV text is sent to Anthropic's Claude model to pick out your skills. We keep your results for 12 months so your private link keeps working. An employer only sees your CV if you apply to one of their jobs on MatchMySkillset, or you accept their request to contact you. The privacy policy has the full detail.",
+  },
+  {
+    q: "Can employers find me?",
+    a: "Only if you choose to. If you switch on \"Let employers find me\", employers see an anonymous profile: your headline, current role, region, years of experience and skills, with no name or contact details. If one asks to contact you, you decide by email whether to share your details.",
+  },
+  {
+    q: "I am hiring. How do I post a job?",
+    a: "Employer plans start at £199 a month. You post your roles, we match them against candidates' skills, and applicants arrive in one inbox. The employer page has the plans and how it works.",
   },
 ];
 
-const TRUST = [
-  {
-    title: "Official pay data, cited",
-    body: (
-      <>
-        Pay comes from the{" "}
-        <a
-          className="link"
-          href="https://www.ons.gov.uk/employmentandlabourmarket/peopleinwork/earningsandworkinghours/bulletins/annualsurveyofhoursandearnings/2025"
-          rel="noopener"
-        >
-          ONS Annual Survey of Hours and Earnings
-        </a>
-        . Each figure shows its source and publication date.
-      </>
-    ),
-  },
-  {
-    title: "Real ways in",
-    body: "Qualifications and schemes link to GOV.UK or the body that runs them, such as the CIPD, the NIHR or the Career Transition Partnership.",
-  },
-  {
-    title: "Nothing made up",
-    body: "No invented statistics, no success stories we cannot show you, no star ratings and no match percentages we cannot explain.",
-  },
-  {
-    title: "Clear about what is changing",
-    body: "We are bringing older guides up to this standard. Every rebuilt guide shows the date it was last checked.",
-  },
-];
+// Real ONS figures, read from the careers dataset at build time.
+const PAY_IDS = ["data-analyst", "project-manager", "clinical-research-associate", "hr-officer", "learning-and-development-adviser"];
 
-function Arrow({ className = "" }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 20 20" aria-hidden="true" className={`h-4 w-4 shrink-0 ${className}`} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M4 10h11M11 5l5 5-5 5" />
-    </svg>
-  );
-}
-
-function LinkList({ title, links }: { title: string; links: NavItem[] }) {
-  return (
-    <div>
-      <h3 className="kicker">{title}</h3>
-      <ul className="mt-3 border-t border-ink">
-        {links.map((link) => (
-          <li key={link.href} className="border-b border-rule">
-            <Link
-              href={link.href}
-              className="group flex min-h-12 items-center justify-between gap-3 py-2 text-lg text-ink hover:text-accent"
-            >
-              <span className="group-hover:underline group-hover:underline-offset-4">{link.label}</span>
-              <Arrow className="text-muted transition-transform group-hover:translate-x-0.5 group-hover:text-accent" />
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
+function payRows() {
+  return PAY_IDS.map((id) => occupationPayById(id))
+    .filter((p): p is typeof p & { median: number } => typeof p.median === "number")
+    .sort((a, b) => b.median - a.median);
 }
 
 export default function Home() {
+  const pay = payRows();
+  const top = pay[0]?.median ?? 1;
+  const hubs = JOB_HUBS.filter((h) => h.href !== "/careers-for");
+
   return (
     <>
-      {/* Hero: the promise and both ways in */}
-      <section className="border-b border-rule">
-        <div className="mx-auto grid max-w-page gap-10 px-4 pb-14 pt-10 sm:px-6 sm:pt-14 lg:grid-cols-[1.15fr_1fr] lg:gap-16 lg:pb-20 lg:pt-20">
-          <div className="lg:pt-6">
-            <p className="kicker text-accent">The UK guide for people leaving a job</p>
-            <h1 className="mt-4 text-display font-semibold text-ink">
-              Leaving your job? See where people like you{" "}
-              <span className="relative whitespace-nowrap">
-                actually go
-                <svg
-                  aria-hidden="true"
-                  viewBox="0 0 220 12"
-                  preserveAspectRatio="none"
-                  className="absolute -bottom-1.5 left-0 h-2.5 w-full text-highlight"
-                >
-                  <path d="M2 8c50-6 120-7 216-2" fill="none" stroke="currentColor" strokeWidth="5" strokeLinecap="round" />
-                </svg>
-              </span>
-              .
-            </h1>
-            <p className="mt-6 max-w-[34rem] text-lede text-ink-2">
-              What it pays in the UK, and how to get there. Start from the job
-              you do now, or paste your CV for a free personal analysis. No
-              account needed.
+      <JsonLd data={faqJsonLd(FAQS)} />
+
+      {/* Hero: the promise on the left, the CV card on the right */}
+      <div className="relative overflow-hidden">
+        <HeroGlow top="-8%" opacity={0.18} />
+        <section className="relative px-4 sm:px-6 pb-16 pt-12 md:pb-20 md:pt-20" aria-labelledby="hero-title">
+          <div className="mx-auto grid max-w-[1080px] gap-10 lg:grid-cols-[1fr_500px] lg:gap-x-14 lg:gap-y-10">
+            <div className="lg:pt-8">
+              <p className="eyebrow rise text-link">Free CV matching for UK jobs</p>
+              <h1 id="hero-title" className="display mt-2">
+                Your CV.
+                <br />
+                <span className="gradient-text">
+                  Matched to
+                  <br />
+                  real jobs.
+                </span>
+              </h1>
+              <p className="lede mt-6 max-w-[520px]">
+                Upload your CV and see the live UK jobs you could apply for today, each scored against the skills you already have.
+              </p>
+            </div>
+            <div className="rise rise-2 lg:col-start-2 lg:row-span-2 lg:row-start-1">
+              <CvUploadCard variant="hero" />
+            </div>
+            <div className="rise rise-3 lg:col-start-1">
+              <StepList steps={HERO_STEPS} />
+              <p className="mt-8 text-[15px] text-mute">
+                Hiring?{" "}
+                <Link href="/employers" className="text-link hover:underline">
+                  Post a job and get matched candidates
+                </Link>
+                .
+              </p>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      {/* Where the jobs come from: real sources, named in plain text */}
+      <section aria-labelledby="sources-title" className="px-4 sm:px-6 pb-16 md:pb-20">
+        <div className="mx-auto flex max-w-[1080px] flex-col items-center gap-4 border-t hairline pt-8 text-center lg:flex-row lg:justify-between lg:text-left">
+          <h2 id="sources-title" className="flex items-center gap-2.5 text-[14px] font-medium tracking-normal text-mute">
+            <span className="live-dot" aria-hidden="true" />
+            Live UK adverts from
+          </h2>
+          <ul className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5 text-[15px] font-semibold tracking-[-0.02em] text-ink/70 sm:gap-x-7 sm:text-[17px]">
+            {SOURCES.map((s) => (
+              <li key={s}>{s}</li>
+            ))}
+            <li className="basis-full text-ink sm:basis-auto">and employers who post here</li>
+          </ul>
+        </div>
+      </section>
+
+      {/* How matching works */}
+      <section className="bg-cloud px-4 sm:px-6 py-20 md:py-28" aria-labelledby="how-title">
+        <div className="mx-auto max-w-[1080px]">
+          <SectionHeading
+            id="how-title"
+            align="center"
+            title={
+              <>
+                Your skills in.
+                <br />
+                Live jobs out.
+              </>
+            }
+            lede="You add your CV. We do the searching and the scoring."
+          />
+          <div className="mt-14 grid gap-5 md:grid-cols-3">
+            <StepTile n={1} title="Add your CV." text="Upload a file or paste the text. We pick out the skills you have shown, from budgeting to safeguarding.">
+              <div className="rounded-2xl bg-white p-4 shadow-[0_1px_2px_rgba(0,0,0,0.05)]">
+                <div className="flex items-center gap-2">
+                  <span className="grid h-7 w-7 place-items-center rounded-lg bg-cloud text-[10px] font-bold text-mute">CV</span>
+                  <div className="text-[13px] font-semibold text-ink">your-cv.pdf</div>
+                </div>
+                <div className="mt-3 h-2 w-4/5 rounded-full bg-cloud" />
+                <div className="mt-1.5 h-2 w-3/5 rounded-full bg-cloud" />
+                <div className="mt-4 text-[11px] font-semibold uppercase tracking-[0.06em] text-mute">Skills found</div>
+                <div className="mt-2 flex flex-wrap gap-1.5">
+                  {["Budgeting", "Team leadership", "Scheduling", "Safeguarding"].map((s) => (
+                    <span key={s} className="rounded-full bg-sky px-2 py-0.5 text-[11px] font-medium text-link">
+                      {s}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </StepTile>
+            <StepTile n={2} title="We search live jobs." text="We look for adverts open now on UK job boards, near where you want to work or remote.">
+              <div className="space-y-2">
+                {["Reed", "Adzuna", "GOV.UK Teaching Vacancies"].map((s) => (
+                  <div key={s} className="flex items-center gap-3 rounded-2xl bg-white p-3 shadow-[0_1px_2px_rgba(0,0,0,0.05)]">
+                    <span className="live-dot" />
+                    <div className="min-w-0 flex-1 truncate text-[13px] font-semibold text-ink">{s}</div>
+                    <span className="text-[11px] font-medium text-mute">Searching</span>
+                  </div>
+                ))}
+              </div>
+            </StepTile>
+            <StepTile n={3} title="Every job gets a score." text="We check each advert's skills against yours, so you can see what matches and what is missing.">
+              <div className="rounded-2xl bg-white p-4 shadow-[0_1px_2px_rgba(0,0,0,0.05)]">
+                <div className="flex items-center justify-between">
+                  <div className="text-[13px] font-semibold text-ink">Operations Manager</div>
+                  <span className="rounded-full bg-green-soft px-2 py-0.5 text-[11px] font-semibold text-green">4 of 5 skills</span>
+                </div>
+                <div className="mt-1 text-[11px] text-mute">Example listing</div>
+                <div className="mt-3 h-2 overflow-hidden rounded-full bg-cloud">
+                  <div className="h-full w-4/5 rounded-full bg-gradient-to-r from-[#12b5a4] to-[#0a7cff]" />
+                </div>
+                <div className="mt-3 flex flex-wrap gap-1.5">
+                  {["Scheduling", "Budgeting"].map((s) => (
+                    <span key={s} className="inline-flex items-center gap-1 rounded-full bg-green-soft px-2 py-0.5 text-[11px] font-medium text-green">
+                      <Check className="h-3 w-3" />
+                      {s}
+                    </span>
+                  ))}
+                  <span className="rounded-full px-2 py-0.5 text-[11px] font-medium text-mute ring-1 ring-inset ring-black/[0.12]">To learn: Lean</span>
+                </div>
+              </div>
+            </StepTile>
+          </div>
+        </div>
+      </section>
+
+      {/* The results page */}
+      <section className="px-4 sm:px-6 py-20 md:py-28" aria-labelledby="results-title">
+        <div className="mx-auto grid max-w-[1080px] items-center gap-12 lg:grid-cols-[1fr_1.12fr] lg:gap-16">
+          <div>
+            <p className="eyebrow text-blue">Your results</p>
+            <h2 id="results-title" className="headline mt-2">
+              Jobs first. Ranked by how well you fit.
+            </h2>
+            <p className="mt-5 max-w-[520px] text-[19px] leading-snug text-mute">
+              Your results lead with adverts you can apply for now. Each one shows the skills you share and the ones the advert asks for
+              that your CV does not show yet.
             </p>
-            <ul className="mt-9 hidden gap-x-8 gap-y-3 border-t border-rule pt-6 text-[0.9375rem] font-semibold text-ink-2 lg:flex lg:flex-wrap">
-              {REASSURANCE.map((item) => (
-                <li key={item} className="flex items-center gap-2">
-                  <svg viewBox="0 0 20 20" aria-hidden="true" className="h-5 w-5 shrink-0 text-accent" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M4.5 10.5l3.5 3.5 7.5-8" />
-                  </svg>
-                  {item}
+            <ul className="mt-8 space-y-3.5 text-[17px] text-ink">
+              {[
+                "Filter by location, salary, remote working and job type",
+                "Stay in your field, or try something new",
+                "Get an email when new jobs match your CV",
+              ].map((t) => (
+                <li key={t} className="flex gap-3">
+                  <Check className="mt-0.5 h-5 w-5 shrink-0 text-green" />
+                  {t}
+                </li>
+              ))}
+            </ul>
+            <div className="mt-9 flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-6">
+              <Link href="/discover" className="btn btn-primary btn-lg">
+                Upload your CV
+              </Link>
+              <MoreLink href="/jobs">Browse all live jobs</MoreLink>
+            </div>
+          </div>
+          <div className="relative">
+            <HeroGlow top="10%" opacity={0.14} />
+            <ResultsMockup className="relative" />
+            <p className="relative mt-4 text-center text-[13px] text-mute">Illustration. Your results show real, live adverts.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Careers that fit, with real ONS pay */}
+      <section className="bg-cloud px-4 sm:px-6 py-20 md:py-28" aria-labelledby="careers-title">
+        <div className="mx-auto max-w-[1080px]">
+          <SectionHeading
+            id="careers-title"
+            eyebrow="Careers that fit"
+            eyebrowClassName="text-link"
+            title="Thinking about a bigger change?"
+            lede="Your CV also shows the careers your skills point to, with official ONS pay and the real ways in: apprenticeships, licences and funded training."
+          />
+          <div className="mt-12 grid gap-5 lg:grid-cols-[1.05fr_1fr]">
+            <figure className="card-white flex flex-col p-6 sm:p-8">
+              <figcaption>
+                <p className="text-[12px] font-semibold uppercase tracking-[0.06em] text-mute">UK median pay, full time</p>
+                <p className="mt-1 text-[21px] font-bold tracking-[-0.025em] text-ink">Five careers people move into</p>
+              </figcaption>
+              <ul className="mt-6 flex-1 space-y-4">
+                {pay.map((p) => (
+                  <li key={p.id}>
+                    <div className="flex items-baseline justify-between gap-4">
+                      <span className="text-[15px] font-medium text-ink">{p.title}</span>
+                      <span className="text-[15px] font-semibold tabular-nums text-ink">{formatGBP(p.median)}</span>
+                    </div>
+                    <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-cloud" aria-hidden="true">
+                      <div
+                        className="h-full rounded-full bg-gradient-to-r from-[#12b5a4] via-[#0a7cff] to-[#7d4cdb]"
+                        style={{ width: `${Math.round((p.median / top) * 100)}%` }}
+                      />
+                    </div>
+                  </li>
+                ))}
+              </ul>
+              <AsheSourceNote className="mt-6" note="Median gross annual pay for full-time employee jobs in the UK. Each figure covers the whole ONS occupation group." />
+            </figure>
+
+            <div className="flex flex-col">
+              <ul className="grid grid-cols-2 gap-3 lg:grid-cols-1 xl:grid-cols-2">
+                {hubs.map((h) => (
+                  <li key={h.href}>
+                    <Link
+                      href={h.href}
+                      className="group flex h-full min-h-[76px] items-center justify-between gap-2 rounded-[20px] bg-white px-4 py-4 transition-transform duration-300 hover:scale-[1.01] sm:px-5"
+                    >
+                      <span>
+                        <span className="block text-[12px] font-semibold uppercase tracking-[0.06em] text-mute">Leaving</span>
+                        <span className="block text-[17px] font-semibold tracking-[-0.02em] text-ink">{h.short}</span>
+                      </span>
+                      <ChevronRight className="h-4 w-4 shrink-0 text-mute transition-transform group-hover:translate-x-0.5" />
+                    </Link>
+                  </li>
+                ))}
+                <li>
+                  <Link
+                    href="/careers-for"
+                    className="group flex h-full min-h-[76px] items-center justify-between gap-2 rounded-[20px] bg-ink px-4 py-4 text-white transition-transform duration-300 hover:scale-[1.01] sm:px-5"
+                  >
+                    <span>
+                      <span className="block text-[12px] font-semibold uppercase tracking-[0.06em] text-white/70">Any other job</span>
+                      <span className="block text-[17px] font-semibold tracking-[-0.02em]">All professions</span>
+                    </span>
+                    <ChevronRight className="h-4 w-4 shrink-0 text-white/70 transition-transform group-hover:translate-x-0.5" />
+                  </Link>
+                </li>
+              </ul>
+              <p className="mt-6 text-[15px] leading-relaxed text-mute">
+                Each guide covers the jobs people with that background move into, what they pay and how to get in, with every figure
+                linked to its source.
+              </p>
+              <div className="mt-2">
+                <MoreLink href="/careers-for">Browse careers by profession</MoreLink>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Employers */}
+      <section className="on-dark overflow-hidden bg-black px-4 sm:px-6 py-20 text-white md:py-28" aria-labelledby="employers-title">
+        <div className="mx-auto grid max-w-[1080px] items-center gap-14 lg:grid-cols-[1fr_460px]">
+          <div>
+            <p className="eyebrow bg-gradient-to-r from-[#2997ff] via-[#a78bfa] to-[#5ee0c8] bg-clip-text text-transparent">For employers</p>
+            <h2 id="employers-title" className="display mt-3">
+              Hiring? Meet people who fit the job.
+            </h2>
+            <p className="mt-6 max-w-[520px] text-[19px] leading-snug text-[#a1a1a6]">
+              Post a job and we match it against the skills of people looking for work. Applicants arrive in one inbox, and you can ask
+              matched candidates to get in touch.
+            </p>
+            <div className="mt-9 flex flex-col gap-5 sm:flex-row sm:items-center sm:gap-7">
+              <Link href="/employers" className="btn btn-primary btn-lg">
+                Post a job
+              </Link>
+              <MoreLink href="/employers/pricing" light>
+                See employer pricing
+              </MoreLink>
+            </div>
+            <ul className="mt-12 grid gap-4 text-[15px] text-[#d2d2d7] sm:grid-cols-3">
+              {["Plans from £199 a month", "A skills match on every applicant", "Candidates say yes before you see their details"].map((t) => (
+                <li key={t} className="flex items-start gap-2.5">
+                  <Check className="mt-0.5 h-5 w-5 shrink-0 text-[#30d158]" />
+                  {t}
                 </li>
               ))}
             </ul>
           </div>
-
-          {/* Job picker, drawn as stops on a route */}
-          <div className="rounded-xl border border-rule bg-surface p-5 shadow-card sm:p-7">
-            <h2 className="font-sans text-xl font-bold tracking-normal text-ink">Start from the job you do now</h2>
-            <p className="mt-1 text-[0.9375rem] text-muted">Choose one to see where people go from it.</p>
-            <ol className="relative mt-4">
-              <span
-                aria-hidden="true"
-                className="absolute bottom-6 left-[0.6875rem] top-6 border-l-2 border-dotted border-rule-strong"
-              />
-              {JOB_HUBS.map((hub) => (
-                <li key={hub.href}>
-                  <Link
-                    href={hub.href}
-                    className="group relative flex min-h-12 items-center gap-4 rounded-md py-1.5 pr-2 text-lg text-ink hover:bg-accent-wash"
-                  >
-                    <span
-                      aria-hidden="true"
-                      className="relative ml-1 h-4 w-4 shrink-0 rounded-full border-2 border-ink-2 bg-surface transition-colors group-hover:border-accent group-hover:bg-accent"
-                    />
-                    <span className="flex-1 font-medium">{hub.short}</span>
-                    <Arrow className="text-muted transition-transform group-hover:translate-x-0.5 group-hover:text-accent" />
-                  </Link>
-                </li>
-              ))}
-            </ol>
-
-            <div className="mt-5 flex items-center gap-3 text-sm text-muted" aria-hidden="true">
-              <span className="h-px flex-1 bg-rule" />
-              or
-              <span className="h-px flex-1 bg-rule" />
-            </div>
-
-            <div className="mt-4 rounded-lg bg-accent-wash p-4">
-              <p className="font-semibold text-ink">Paste your CV instead</p>
-              <p className="mt-1 text-[0.9375rem] text-ink-2">
-                A free personal analysis of the skills you have and the jobs
-                they lead to.
-              </p>
-              <Link href="/discover#cv" className="btn btn-primary mt-3 w-full">
-                Analyse my CV
-                <Arrow />
-              </Link>
-            </div>
-          </div>
+          <EmployerMockup dark className="mx-auto w-full max-w-[460px]" />
         </div>
       </section>
 
-      {/* Where people actually go */}
-      <section className="py-16 sm:py-24" aria-labelledby="routes-title">
-        <div className="mx-auto max-w-page px-4 sm:px-6">
-          <div className="max-w-2xl">
-            <p className="kicker">Example routes</p>
-            <h2 id="routes-title" className="mt-3 text-h2 text-ink">
-              Where people actually go
-            </h2>
-            <p className="mt-4 text-lede text-ink-2">
-              Five common starting points and one route out of each. Every
-              guide sets out more options and the first steps. We add pay only
-              where we can cite the Office for National Statistics.
-            </p>
-          </div>
-
-          <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {ROUTES.map((route) => (
-              <RouteCard key={route.href} {...route} />
-            ))}
-
-            <div className="flex flex-col justify-between rounded-lg bg-night p-6 text-night-text">
-              <div>
-                <p className="kicker text-night-muted">Your job is not listed?</p>
-                <p className="mt-3 font-serif text-[1.625rem] font-semibold leading-tight">
-                  Start from your own experience
-                </p>
-                <p className="mt-3 text-night-muted">
-                  Paste your CV and we will map the skills you already have to
-                  jobs across the UK market.
-                </p>
-              </div>
-              <svg viewBox="0 0 240 84" aria-hidden="true" className="my-6 h-auto w-full max-w-xs">
-                <path
-                  d="M28 62C80 62 120 22 200 22"
-                  fill="none"
-                  stroke="#7fb89f"
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                  strokeDasharray="0.01 9"
-                />
-                <circle cx="16" cy="62" r="9" fill="none" stroke="#e9e3d6" strokeWidth="3" />
-                <circle cx="220" cy="22" r="13" fill="#7fb89f" />
-                <circle cx="220" cy="22" r="5" fill="#e0a030" />
-              </svg>
-              <div className="mt-6 flex flex-col gap-2">
-                <Link href="/discover#cv" className="btn bg-night-text text-night hover:bg-white focus-visible:outline-highlight">
-                  Analyse my CV
-                  <Arrow />
-                </Link>
-                <Link
-                  href="/careers-for"
-                  className="inline-flex min-h-11 items-center justify-center font-semibold text-night-text underline-offset-4 hover:underline focus-visible:outline-highlight"
-                >
-                  Browse jobs by profession
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* How it works */}
-      <section className="border-y border-rule bg-paper-2/60 py-16 sm:py-24" aria-labelledby="how-title">
-        <div className="mx-auto max-w-page px-4 sm:px-6">
-          <h2 id="how-title" className="text-h2 text-ink">
-            How it works
+      {/* FAQ */}
+      <section className="bg-cloud px-4 sm:px-6 py-20 md:py-28" aria-labelledby="faq-title">
+        <div className="mx-auto max-w-[880px]">
+          <h2 id="faq-title" className="headline">
+            Questions? Answers.
           </h2>
-          <ol className="mt-10 grid gap-8 md:grid-cols-3 md:gap-6">
-            {STEPS.map((step, i) => (
-              <li key={step.title} className="relative">
-                <div className="flex items-center gap-3" aria-hidden="true">
-                  <span
-                    className={`inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full font-serif text-lg font-semibold ${
-                      i === STEPS.length - 1 ? "bg-accent text-white" : "border-2 border-ink-2 bg-paper text-ink"
-                    }`}
-                  >
-                    {i + 1}
-                  </span>
-                  {i < STEPS.length - 1 && (
-                    <span className="hidden flex-1 border-t-2 border-dotted border-rule-strong md:block" />
-                  )}
-                </div>
-                <h3 className="mt-4 text-xl font-bold text-ink">
-                  <span className="sr-only">Step {i + 1}: </span>
-                  {step.title}
-                </h3>
-                <p className="mt-2 text-ink-2">{step.body}</p>
-                {step.tag && (
-                  <p className="mt-3 inline-block rounded bg-highlight-soft px-2 py-0.5 text-sm font-semibold text-highlight-ink">
-                    {step.tag}
-                  </p>
-                )}
-              </li>
-            ))}
-          </ol>
+          <div className="mt-10">
+            <Faq items={FAQS} />
+          </div>
+          <p className="mt-8 text-[15px] text-mute">
+            More detail in our{" "}
+            <Link href="/privacy" className="text-link hover:underline">
+              privacy policy
+            </Link>{" "}
+            and{" "}
+            <Link href="/about" className="text-link hover:underline">
+              about page
+            </Link>
+            .
+          </p>
         </div>
       </section>
 
-      {/* Guides and tools */}
-      <section className="py-16 sm:py-24" aria-labelledby="guides-title">
-        <div className="mx-auto max-w-page px-4 sm:px-6">
-          <div className="max-w-2xl">
-            <h2 id="guides-title" className="text-h2 text-ink">
-              Guides for where you are now
-            </h2>
-            <p className="mt-4 text-lede text-ink-2">
-              Not tied to one profession? Start with your situation.
-            </p>
-          </div>
-          <div className="mt-10 grid gap-10 md:grid-cols-3 md:gap-8">
-            <LinkList title="Your situation" links={GUIDE_LINKS} />
-            <LinkList title="Finding the right fit" links={FIT_LINKS} />
-            <LinkList title="Tools" links={TOOL_LINKS} />
-          </div>
-        </div>
-      </section>
-
-      {/* Why trust us */}
-      <section className="bg-night py-16 text-night-text sm:py-24" aria-labelledby="trust-title">
-        <div className="mx-auto grid max-w-page gap-10 px-4 sm:px-6 lg:grid-cols-[1fr_1.6fr] lg:gap-16">
-          <div>
-            <p className="kicker text-night-muted">How we work</p>
-            <h2 id="trust-title" className="mt-3 text-h2">
-              Why you can trust what you read here
-            </h2>
-            <p className="mt-4 text-night-muted">
-              Changing career is a big decision. You should be able to check
-              every number we show you.
-            </p>
-          </div>
-          <dl className="grid gap-x-10 gap-y-8 sm:grid-cols-2">
-            {TRUST.map((item) => (
-              <div key={item.title} className="border-t border-white/20 pt-4">
-                <dt className="flex items-center gap-2 text-lg font-bold">
-                  <span aria-hidden="true" className="h-2.5 w-2.5 shrink-0 rounded-full bg-highlight" />
-                  {item.title}
-                </dt>
-                <dd className="mt-2 text-night-muted [&_.link]:text-night-text">{item.body}</dd>
-              </div>
-            ))}
-          </dl>
-        </div>
-      </section>
-
-      {/* Final call to action */}
-      <section className="py-16 sm:py-24">
-        <div className="mx-auto max-w-page px-4 sm:px-6">
-          <ToolCallout heading="Not sure where to start? Begin with what you already do." />
-        </div>
-      </section>
+      <CtaBand
+        title="Your next job could be advertised today."
+        text="Upload your CV and see which live jobs match your skills. Free, with no account."
+        primary={{ href: "/discover", label: "Upload your CV" }}
+        secondary={{ href: "/jobs", label: "Browse live jobs" }}
+      />
     </>
   );
 }

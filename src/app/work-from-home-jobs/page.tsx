@@ -185,14 +185,14 @@ export default function WorkFromHomeJobsPage() {
         <div className="mt-6 grid max-w-reading gap-3 sm:grid-cols-2">
           <Link
             href="/jobs-you-can-do-from-home-with-no-experience"
-            className="block min-h-11 rounded-lg border border-rule bg-surface p-4 text-ink hover:border-accent"
+            className="block min-h-11 rounded-[20px] bg-cloud p-5 text-ink hover:border-accent"
           >
             <span className="block font-semibold">Starting with no experience</span>
             <span className="mt-1 block text-sm text-ink-2">Customer service, admin, data entry and typing, and how to avoid job scams.</span>
           </Link>
           <Link
             href="/highest-paying-remote-jobs-uk"
-            className="block min-h-11 rounded-lg border border-rule bg-surface p-4 text-ink hover:border-accent"
+            className="block min-h-11 rounded-[20px] bg-cloud p-5 text-ink hover:border-accent"
           >
             <span className="block font-semibold">Already a professional or manager</span>
             <span className="mt-1 block text-sm text-ink-2">The best-paid jobs that are commonly done from home, with ONS pay.</span>

@@ -348,19 +348,22 @@ export default function CareersForPage() {
               <li key={h.href}>
                 <Link
                   href={h.href}
-                  className="group flex h-full flex-col rounded-lg border border-rule bg-surface p-5 shadow-card transition-shadow hover:border-accent/40 hover:shadow-lift"
+                  className="group flex h-full flex-col rounded-[28px] bg-white p-6 shadow-card ring-1 ring-black/[0.05] transition-[box-shadow,transform] duration-300 hover:-translate-y-0.5 hover:shadow-lift sm:p-7"
                 >
-                  <span className="kicker text-accent">{h.short}</span>
-                  <span className="mt-1 font-serif text-2xl font-semibold leading-tight text-ink group-hover:underline group-hover:underline-offset-4">
+                  <span className="kicker !text-link">{h.short}</span>
+                  <span className="mt-1.5 text-[24px] font-bold leading-[1.15] tracking-[-0.03em] text-ink group-hover:underline group-hover:underline-offset-4">
                     {h.label}
                   </span>
                   {f && (
-                    <span className="mt-3 flex-1 text-[0.9375rem] text-ink-2">
-                      {f.stat} <span className="text-muted">({f.source})</span>
+                    <span className="mt-3 flex-1 text-[15px] leading-relaxed text-ink-2">
+                      {f.stat} <span className="text-mute">({f.source})</span>
                     </span>
                   )}
-                  <span className="mt-4 font-semibold text-accent">
-                    Read the guide <span aria-hidden="true">&rarr;</span>
+                  <span className="mt-5 inline-flex items-center gap-0.5 text-[15px] text-link">
+                    Read the guide
+                    <svg viewBox="0 0 24 24" aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="m9 6 6 6-6 6" />
+                    </svg>
                   </span>
                 </Link>
               </li>
@@ -369,7 +372,7 @@ export default function CareersForPage() {
         </ul>
       </HubSection>
 
-      <ToolCallout className="mt-12" heading="Any other job? Start from yours" />
+      <ToolCallout className="mt-16" heading="Any other job? Start from yours" />
 
       <HubSection
         id="professions"
@@ -387,7 +390,7 @@ export default function CareersForPage() {
               <li key={p.id}>
                 <a
                   href={`#${p.id}`}
-                  className="inline-flex min-h-11 items-center rounded-full border border-rule bg-surface px-4 text-[0.9375rem] text-ink-2 hover:border-accent hover:text-accent"
+                  className="inline-flex min-h-11 items-center rounded-full bg-cloud px-4 text-[15px] font-medium text-ink transition-colors hover:bg-hair"
                 >
                   {p.title}
                 </a>
@@ -400,11 +403,11 @@ export default function CareersForPage() {
           const routes = resolveRoutes(p.routes);
           const base = p.soc ? ftMedian(p.soc) : null;
           return (
-            <section key={p.id} id={p.id} aria-labelledby={`${p.id}-title`} className="mt-12 scroll-mt-24 border-t border-rule pt-8">
-              <h3 id={`${p.id}-title`} className="font-serif text-[1.75rem] font-semibold leading-tight text-ink">
+            <section key={p.id} id={p.id} aria-labelledby={`${p.id}-title`} className="mt-14 scroll-mt-24 border-t border-hair pt-10">
+              <h3 id={`${p.id}-title`} className="text-[28px] font-bold leading-tight tracking-[-0.03em] text-ink">
                 {p.title}
               </h3>
-              <p className="mt-3 max-w-reading text-ink-2">{p.intro(gbpFt)}</p>
+              <p className="mt-3 max-w-reading text-[17px] leading-relaxed text-ink-2">{p.intro(gbpFt)}</p>
               <HubPayTable
                 caption={`${p.title}: routes and pay`}
                 routes={routes}

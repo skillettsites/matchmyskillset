@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, Source_Sans_3 } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/ui/Header";
 import { Footer } from "@/components/ui/Footer";
@@ -7,18 +7,10 @@ import { GoogleAnalytics, VercelAnalytics } from "@/components/GoogleAnalytics";
 import { JsonLd } from "@/components/JsonLd";
 import { SITE_NAME, SITE_TAGLINE, SITE_URL, absoluteUrl } from "@/components/site";
 
-// Headings: a warm, characterful serif. The optical-size axis gives the
-// display cut at large sizes and the text cut at small ones.
-const fraunces = Fraunces({
-  variable: "--font-fraunces",
-  subsets: ["latin"],
-  axes: ["opsz"],
-  display: "swap",
-});
-
-// UI and body: a humanist sans with tabular figures for salary columns.
-const sourceSans = Source_Sans_3({
-  variable: "--font-source-sans",
+// Inter backs up the Apple system font stack (see --font-sans in globals.css),
+// so Windows and Android get the same tight, bold look as Apple devices.
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
   display: "swap",
 });
@@ -26,10 +18,10 @@ const sourceSans = Source_Sans_3({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: `${SITE_NAME}: the UK guide for people leaving a job`,
+    default: `${SITE_NAME}: match your CV to live UK jobs`,
     template: "%s | MatchMySkillset",
   },
-  description: `${SITE_TAGLINE} Start from your job or your CV, free and with no account.`,
+  description: SITE_TAGLINE,
   applicationName: SITE_NAME,
   openGraph: {
     type: "website",
@@ -57,6 +49,7 @@ export const metadata: Metadata = {
     icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
     apple: [{ url: "/apple-touch-icon.png", sizes: "180x180" }],
   },
+  formatDetection: { telephone: false },
   verification: {
     google: process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION,
     other: {
@@ -66,8 +59,10 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#f7f3ea",
+  themeColor: "#ffffff",
   colorScheme: "light",
+  width: "device-width",
+  initialScale: 1,
 };
 
 const organizationJsonLd = {
@@ -101,8 +96,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en-GB" className={`${fraunces.variable} ${sourceSans.variable} h-full antialiased`}>
-      <body className="flex min-h-full flex-col bg-paper font-sans text-ink">
+    <html lang="en-GB" className={`${inter.variable} h-full`}>
+      <body className="flex min-h-full flex-col">
         <GoogleAnalytics />
         <JsonLd data={organizationJsonLd} />
         <JsonLd data={websiteJsonLd} />
@@ -110,7 +105,7 @@ export default function RootLayout({
           Skip to main content
         </a>
         <Header />
-        <main id="main" className="flex-1">
+        <main id="main" className="flex-1 overflow-x-clip">
           {children}
         </main>
         <Footer />

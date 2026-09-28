@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { CONTACT_EMAIL, SITE_NAME } from "@/lib/site";
+import { REPORT_PRICE_LABEL } from "@/lib/apis/report-product";
+import { HeroGlow, MoreLink, StepList } from "@/components/marketing";
 
 export const metadata: Metadata = {
   title: "About",
@@ -8,98 +10,99 @@ export const metadata: Metadata = {
     "What MatchMySkillset does, how the CV check works, what it cannot do, and how your data is handled.",
 };
 
-const h2 = "text-2xl font-semibold text-gray-900 mt-10 mb-4";
+const h2 = "mt-16 text-[28px] font-bold leading-tight tracking-[-0.03em] text-ink sm:text-[32px]";
+
+const STEPS = [
+  {
+    title: "Tell us what you do",
+    text: "Upload or paste your CV. No account is needed.",
+  },
+  {
+    title: "Software picks out your skills",
+    text: "An AI model (Anthropic's Claude) reads the text and identifies your skills.",
+  },
+  {
+    title: "See jobs you could apply for",
+    text: "Live adverts from Reed, Adzuna, GOV.UK Teaching Vacancies, Himalayas and Remotive, and jobs posted by employers here, each scored against your skills.",
+  },
+  {
+    title: "See the careers that fit",
+    text: `Suggested careers with ONS pay, the skills you already have for each and the gaps to fill. If you want more on one career, there is an optional Career Change Report for ${REPORT_PRICE_LABEL}, paid once.`,
+  },
+];
 
 export default function AboutPage() {
   return (
-    <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12 sm:py-20">
-      <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-8">About {SITE_NAME}</h1>
+    <>
+      <section className="relative overflow-hidden px-4 pb-12 pt-14 sm:px-6 md:pt-20">
+        <HeroGlow top="-40%" opacity={0.16} />
+        <div className="relative mx-auto max-w-[760px]">
+          <p className="eyebrow text-link">About</p>
+          <h1 className="display mt-2">About {SITE_NAME}</h1>
+          <p className="lede mt-6">
+            An independent UK website that matches your CV to live jobs, and shows the careers your skills could take you to.
+          </p>
+        </div>
+      </section>
 
-      <div className="space-y-4 text-gray-600 leading-relaxed">
-        <p className="text-lg">
-          {SITE_NAME} is an independent UK website for people thinking about changing career. It
-          looks at the skills you already have and suggests other careers they could carry over to.
-        </p>
-
-        <h2 className={h2}>Why it exists</h2>
-        <p>
-          Most job searches start with a job title. That works if you want the same job somewhere
-          else, but not if you want a change. A teacher already plans, explains, manages groups and
-          handles difficult conversations, yet searching for &quot;teacher&quot; will never show
-          roles such as learning and development or customer success, where those skills are
-          valued. The aim is to make those options easier to spot.
-        </p>
+      <div className="mx-auto max-w-[760px] px-4 pb-24 sm:px-6">
+        <div className="prose-mms max-w-none">
+          <h2 className={h2}>Why it exists</h2>
+          <p>
+            Most job searches start with a job title. That works if you want the same job somewhere else, but not if you want a
+            change. A teacher already plans, explains, manages groups and handles difficult conversations, yet searching for
+            &quot;teacher&quot; will never show roles such as learning and development or customer success, where those skills
+            are valued. Starting from your skills instead makes those jobs easier to spot, and makes it clearer which adverts you
+            could apply for today.
+          </p>
+        </div>
 
         <h2 className={h2} id="how-it-works">
           How it works
         </h2>
-        <ol className="list-decimal pl-5 space-y-3">
-          <li>
-            <strong>Tell us what you do.</strong> Paste or upload your CV, or type your current job
-            title. No account is needed.
-          </li>
-          <li>
-            <strong>Software picks out your skills.</strong>{" "}An AI model (Anthropic&apos;s Claude)
-            reads the text and identifies your skills, which are then compared with a list of UK
-            occupations.
-          </li>
-          <li>
-            <strong>You see where they could take you.</strong> Suggested careers, the skills you
-            already have for each, and the gaps you would need to fill. You can also search live
-            listings from Reed, Adzuna and Himalayas.
-          </li>
-          <li>
-            <strong>Optional paid report.</strong> If you want more detail on one career, you can
-            buy a one-off Career Change Report. There is no subscription.
-          </li>
-        </ol>
+        <StepList steps={STEPS} className="mt-8" />
 
-        <h2 className={h2}>What it is not</h2>
-        <ul className="list-disc pl-5 space-y-2">
-          <li>
-            The suggestions are generated automatically. Nobody reviews them by hand, so treat them
-            as a starting point for your own research, not professional careers advice.
-          </li>
-          <li>
-            Salary and demand figures are estimates and can differ from what a particular employer
-            pays.
-          </li>
-          <li>
-            We are not a recruitment agency and cannot promise interviews or jobs. We do not pass
-            your CV to employers or recruiters unless you choose to.
-          </li>
-        </ul>
+        <div className="prose-mms max-w-none">
+          <h2 className={h2}>For employers</h2>
+          <p>
+            Employers can post jobs on a paid plan and see candidates matched to each role by their skills. Candidates who choose
+            to be found appear without their name or contact details, and an employer only gets those if the candidate agrees.{" "}
+            <Link href="/employers">How it works for employers</Link>.
+          </p>
 
-        <h2 className={h2}>Your data</h2>
-        <p>
-          Your CV text is used to run the analysis and is not kept by us afterwards, unless you
-          choose to let a recruiter contact you. Your results
-          are kept for 12 months so your results link works. Analytics cookies are only used if you
-          accept them. The{" "}
-          <Link href="/privacy" className="text-indigo-700 underline">
-            Privacy Policy
-          </Link>{" "}
-          has the details.
-        </p>
+          <h2 className={h2}>What it is not</h2>
+          <ul>
+            <li>
+              Matches and suggestions are generated automatically. Nobody reviews them by hand, so treat them as a starting point
+              for your own research, not professional careers advice.
+            </li>
+            <li>
+              Pay figures are medians for whole occupation groups from the Office for National Statistics, so a particular employer
+              may pay more or less.
+            </li>
+            <li>We cannot promise interviews or jobs.</li>
+          </ul>
 
-        <h2 className={h2}>Contact</h2>
-        <p>
-          Questions, corrections or feedback:{" "}
-          <a href={`mailto:${CONTACT_EMAIL}`} className="text-indigo-700 underline">
-            {CONTACT_EMAIL}
-          </a>
-          .
-        </p>
+          <h2 className={h2}>Your data</h2>
+          <p>
+            Your results are kept for 12 months so your results link works. Your CV only goes to an employer if you apply to one of
+            their jobs on {SITE_NAME}, or accept their request to contact you. Analytics cookies are only used if you accept them.
+            The <Link href="/privacy">Privacy Policy</Link> has the details.
+          </p>
+
+          <h2 className={h2}>Contact</h2>
+          <p>
+            Questions, corrections or feedback: <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
+          </p>
+        </div>
+
+        <div className="mt-12 flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-6">
+          <Link href="/discover" className="btn btn-primary btn-lg">
+            Upload your CV
+          </Link>
+          <MoreLink href="/jobs">Browse live jobs</MoreLink>
+        </div>
       </div>
-
-      <div className="mt-12">
-        <Link
-          href="/discover"
-          className="inline-flex items-center justify-center bg-indigo-600 text-white font-semibold px-8 py-4 rounded-xl hover:bg-indigo-700 transition-colors"
-        >
-          Check your CV free
-        </Link>
-      </div>
-    </div>
+    </>
   );
 }

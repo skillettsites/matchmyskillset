@@ -13,7 +13,7 @@ function CopyButton({ text, label }: { text: string; label: string }) {
   return (
     <button
       type="button"
-      className="btn btn-quiet min-h-11 shrink-0 px-3 text-sm"
+      className="btn btn-quiet shrink-0 px-4 py-2 text-[14px]"
       aria-label={label}
       onClick={async () => {
         try {
@@ -49,8 +49,8 @@ export function TransferableSkillsTool({ jobs, initialKey }: { jobs: ToolJob[]; 
   const allLines = job.skills.map((s) => `- ${s.cv}`).join("\n");
 
   return (
-    <div className="rounded-xl border border-rule bg-surface p-5 shadow-card sm:p-7">
-      <label htmlFor={selectId} className="block font-serif text-2xl font-semibold text-ink">
+    <div className="card-white p-5 ring-1 ring-black/[0.05] sm:p-8">
+      <label htmlFor={selectId} className="block text-[24px] font-bold tracking-[-0.03em] text-ink">
         What job do you do now?
       </label>
       <select
@@ -60,7 +60,7 @@ export function TransferableSkillsTool({ jobs, initialKey }: { jobs: ToolJob[]; 
           setKey(e.target.value);
           track("tool_used", { tool: "transferable_skills", job: e.target.value });
         }}
-        className="mt-3 min-h-12 w-full rounded-md border border-rule-strong bg-white px-3 text-base text-ink focus:border-accent sm:max-w-md"
+        className="field mt-3 w-full sm:max-w-md"
       >
         {groups.map(([group, list]) => (
           <optgroup key={group} label={group}>
@@ -72,7 +72,7 @@ export function TransferableSkillsTool({ jobs, initialKey }: { jobs: ToolJob[]; 
           </optgroup>
         ))}
       </select>
-      <p className="mt-2 text-sm text-muted">
+      <p className="mt-2 text-sm text-mute">
         Not listed?{" "}
         <Link href="/discover" className="link">
           Paste your CV instead
@@ -83,15 +83,15 @@ export function TransferableSkillsTool({ jobs, initialKey }: { jobs: ToolJob[]; 
       <div aria-live="polite" className="mt-8 grid gap-8 lg:grid-cols-[1.15fr_1fr] lg:gap-10">
         <section aria-labelledby={`${selectId}-skills`}>
           <div className="flex flex-wrap items-baseline justify-between gap-2">
-            <h2 id={`${selectId}-skills`} className="font-serif text-xl font-semibold text-ink">
+            <h2 id={`${selectId}-skills`} className="text-[21px] font-bold tracking-[-0.025em] text-ink">
               Skills you can take with you
             </h2>
             <CopyButton text={allLines} label={`Copy all CV lines for ${job.title}`} />
           </div>
-          <p className="mt-1 text-sm text-muted">
+          <p className="mt-1 text-sm text-mute">
             CV-ready lines for a {titleInSentence(job.title)}. Replace the words in square brackets with your own details.
           </p>
-          <ul className="mt-4 divide-y divide-rule border-y border-rule">
+          <ul className="mt-4 divide-y divide-black/[0.08] border-y border-black/[0.08]">
             {job.skills.map((s) => (
               <li key={s.name} className="flex items-start justify-between gap-3 py-3">
                 <div>
@@ -102,7 +102,7 @@ export function TransferableSkillsTool({ jobs, initialKey }: { jobs: ToolJob[]; 
               </li>
             ))}
           </ul>
-          <p className="mt-3 text-sm text-muted">
+          <p className="mt-3 text-sm text-mute">
             {job.median === null
               ? "ONS does not publish a reliable median pay figure for this job."
               : `ONS median full-time pay for this job group: ${GBP.format(job.median)} a year (2025).`}
@@ -110,30 +110,30 @@ export function TransferableSkillsTool({ jobs, initialKey }: { jobs: ToolJob[]; 
         </section>
 
         <section aria-labelledby={`${selectId}-dest`}>
-          <h2 id={`${selectId}-dest`} className="font-serif text-xl font-semibold text-ink">
+          <h2 id={`${selectId}-dest`} className="text-[21px] font-bold tracking-[-0.025em] text-ink">
             Jobs that use the same skills
           </h2>
-          <p className="mt-1 text-sm text-muted">
+          <p className="mt-1 text-sm text-mute">
             From our list of career-change destinations, ranked by the skills they share with this job, with more weight
             for skills that are central to both and less for skills almost every job needs.
           </p>
           <ol className="mt-4 space-y-3">
             {job.destinations.map((d) => (
-              <li key={d.id} className="rounded-lg border border-rule bg-paper p-4">
+              <li key={d.id} className="rounded-[20px] bg-cloud p-5">
                 <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
                   <p className="text-lg font-semibold text-ink">{d.title}</p>
                   <p className="tabular-nums text-ink">
                     {d.median === null ? (
-                      <span className="text-sm text-muted">Pay not published</span>
+                      <span className="text-sm text-mute">Pay not published</span>
                     ) : (
                       <>
                         <span className="font-semibold">{GBP.format(d.median)}</span>{" "}
-                        <span className="text-sm text-muted">median</span>
+                        <span className="text-sm text-mute">median</span>
                       </>
                     )}
                   </p>
                 </div>
-                {d.median !== null && <p className="text-xs text-muted">Median for the ONS group &ldquo;{d.socTitle}&rdquo;</p>}
+                {d.median !== null && <p className="text-xs text-mute">Median for the ONS group &ldquo;{d.socTitle}&rdquo;</p>}
                 <p className="mt-1 text-sm text-ink-2">
                   <span className="font-semibold">Shared skills:</span> {d.shared.join(", ")}
                 </p>
@@ -149,8 +149,7 @@ export function TransferableSkillsTool({ jobs, initialKey }: { jobs: ToolJob[]; 
             className="btn btn-primary mt-5 w-full sm:w-auto"
             onClick={() => track("tool_used", { tool: "transferable_skills", action: "to_discover", job: job.key })}
           >
-            Get a personal analysis from my CV
-            <span aria-hidden="true">&rarr;</span>
+            Upload your CV for jobs that match
           </Link>
         </section>
       </div>

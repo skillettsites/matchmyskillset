@@ -116,7 +116,7 @@ export default function HighestPayingCareersPage() {
         <AsheSourceNote />
       </PageHeader>
 
-      <aside className="max-w-reading rounded-lg border border-highlight/60 bg-highlight-soft/60 p-5 text-ink">
+      <aside className="max-w-reading rounded-[22px] bg-sky p-6 text-ink">
         <p className="font-semibold">New figures on 22 October 2026</p>
         <p className="mt-1 text-ink-2">
           These are the 2025 figures, the latest available. ONS publishes the 2026 edition on{" "}
@@ -223,7 +223,7 @@ export default function HighestPayingCareersPage() {
       >
         <ol className="mt-6 max-w-reading space-y-4">
           {top.slice(0, 10).map((r) => (
-            <li key={r.soc} className="rounded-lg border border-rule bg-surface p-4">
+            <li key={r.soc} className="rounded-[20px] bg-cloud p-5">
               <p className="font-semibold text-ink">
                 {r.rank}. {r.title}{" "}
                 <span className="font-normal text-muted">

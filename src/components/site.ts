@@ -18,7 +18,7 @@ export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://matchmyski
 
 /** One-line positioning used in metadata and the footer. */
 export const SITE_TAGLINE =
-  "Leaving your job? See where people like you actually go, what it pays in the UK, and how to get there.";
+  "Upload your CV and see live UK jobs scored against your skills, plus the careers that fit you and what they pay.";
 
 export interface NavItem {
   /** Visible link text. */
@@ -27,12 +27,32 @@ export interface NavItem {
   href: string;
 }
 
-/** Primary navigation, in the order agreed for the relaunch. */
+/** Where every "Upload your CV" button goes. */
+export const CV_HREF = "/discover";
+
+/** Primary navigation (v3). The header adds an "Upload your CV" button after these. */
 export const PRIMARY_NAV: NavItem[] = [
-  { label: "Leaving your job", href: "/careers-for" },
-  { label: "Analyse my CV", href: "/discover#cv" },
   { label: "Find jobs", href: "/jobs" },
+  { label: "Match my CV", href: "/discover" },
+  { label: "Careers", href: "/careers-for" },
+  { label: "For employers", href: "/employers" },
+];
+
+/** Footer: the job seeker side. */
+export const JOBSEEKER_LINKS: NavItem[] = [
+  { label: "Upload your CV", href: "/discover" },
+  { label: "Find jobs", href: "/jobs" },
+  { label: "Careers by profession", href: "/careers-for" },
   { label: "Career quiz", href: "/quiz" },
+  { label: "Transferable skills", href: "/transferable-skills" },
+  { label: "Career Change Report", href: "/pricing" },
+];
+
+/** Footer: the employer side. */
+export const EMPLOYER_LINKS: NavItem[] = [
+  { label: "For employers", href: "/employers" },
+  { label: "Employer pricing", href: "/employers/pricing" },
+  { label: "Employer sign in", href: "/employers/sign-in" },
 ];
 
 /** Profession-exit hubs: "start from the job you do now". */
@@ -63,7 +83,7 @@ export const FIT_LINKS: NavItem[] = [
 
 /** Interactive tools. */
 export const TOOL_LINKS: NavItem[] = [
-  { label: "Analyse my CV", href: "/discover#cv" },
+  { label: "Upload your CV", href: "/discover" },
   { label: "Career quiz", href: "/quiz" },
   { label: "Find jobs", href: "/jobs" },
 ];

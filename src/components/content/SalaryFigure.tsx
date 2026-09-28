@@ -12,7 +12,7 @@ export interface SalaryFigureProps {
   approximate?: boolean;
   /** Visual size. `sm` inline in text, `xl` for a headline number. Defaults to `md`. */
   size?: "sm" | "md" | "lg" | "xl";
-  /** Colour of the number. Defaults to `ink`. `highlight` puts it on an amber tint. */
+  /** Colour of the number. Defaults to `ink`. `highlight` puts it on a soft green pill. */
   tone?: "ink" | "accent" | "highlight";
   /** Extra classes for the wrapper. */
   className?: string;
@@ -20,15 +20,15 @@ export interface SalaryFigureProps {
 
 const SIZE: Record<NonNullable<SalaryFigureProps["size"]>, string> = {
   sm: "text-[1em]",
-  md: "text-xl",
-  lg: "text-3xl",
-  xl: "text-5xl",
+  md: "text-[21px] tracking-[-0.02em]",
+  lg: "text-[30px] tracking-[-0.03em]",
+  xl: "text-[48px] tracking-[-0.04em]",
 };
 
 const TONE: Record<NonNullable<SalaryFigureProps["tone"]>, string> = {
   ink: "text-ink",
-  accent: "text-accent",
-  highlight: "text-ink bg-highlight-soft px-1.5 rounded",
+  accent: "text-link",
+  highlight: "text-green bg-green-soft px-2 rounded-full",
 };
 
 /**
@@ -49,15 +49,15 @@ export function SalaryFigure({
   const weight = size === "sm" ? "font-semibold" : "font-bold";
   return (
     <span className={`inline-flex flex-wrap items-baseline gap-x-1.5 ${className}`}>
-      {approximate && <span className="text-muted">about</span>}
+      {approximate && <span className="text-mute">about</span>}
       <data
         value={value}
-        className={`whitespace-nowrap tabular-nums lining-nums tracking-tight ${weight} ${SIZE[size]} ${TONE[tone]}`}
+        className={`whitespace-nowrap tabular-nums lining-nums ${weight} ${SIZE[size]} ${TONE[tone]}`}
       >
         {formatGBP(value, period)}
       </data>
       {showPeriod && (
-        <span className={size === "sm" ? "" : "text-sm text-muted"}>{periodText(period)}</span>
+        <span className={size === "sm" ? "" : "text-sm text-mute"}>{periodText(period)}</span>
       )}
     </span>
   );

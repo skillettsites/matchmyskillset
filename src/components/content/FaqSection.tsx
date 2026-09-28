@@ -71,26 +71,26 @@ export function FaqSection({
   };
 
   return (
-    <section id={id} aria-labelledby={`${id}-title`} className={`my-12 ${className}`}>
-      <H id={`${id}-title`} className="font-serif text-h2 font-semibold text-ink">
+    <section id={id} aria-labelledby={`${id}-title`} className={`my-16 scroll-mt-24 ${className}`}>
+      <H id={`${id}-title`} className="text-h2 font-bold text-ink">
         {heading}
       </H>
-      {intro && <p className="mt-3 max-w-reading text-ink-2">{intro}</p>}
-      <div className="mt-6 border-t border-ink">
+      {intro && <p className="mt-4 max-w-reading text-[17px] text-mute">{intro}</p>}
+      <div className="mt-8 divide-y divide-black/[0.08] border-y border-black/[0.08]">
         {items.map((item, i) => (
-          <details key={`${i}-${item.question}`} className="group border-b border-rule" open={openFirst && i === 0}>
-            <summary className="flex min-h-14 cursor-pointer list-none items-start justify-between gap-4 py-4 [&::-webkit-details-marker]:hidden">
-              <Q className="text-lg font-semibold leading-snug text-ink">{item.question}</Q>
+          <details key={`${i}-${item.question}`} className="faq group" open={openFirst && i === 0}>
+            <summary className="flex min-h-11 items-center justify-between gap-6 py-5 text-left sm:py-6">
+              <Q className="text-[18px] font-semibold leading-snug tracking-[-0.02em] text-ink sm:text-[20px]">{item.question}</Q>
               <span
                 aria-hidden="true"
-                className="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-rule-strong text-accent transition-transform group-open:rotate-45"
+                className="faq-icon grid h-8 w-8 shrink-0 place-items-center rounded-full bg-black/[0.05] text-ink"
               >
-                <svg viewBox="0 0 12 12" className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
-                  <path d="M6 1.5v9M1.5 6h9" />
+                <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+                  <path d="M12 5v14M5 12h14" />
                 </svg>
               </span>
             </summary>
-            <div className="prose-mms pb-5 text-base">{renderAnswer(item.answer)}</div>
+            <div className="prose-mms pb-7 pr-2 text-[17px] sm:pr-12">{renderAnswer(item.answer)}</div>
           </details>
         ))}
       </div>

@@ -179,31 +179,32 @@ const FAQ: FaqItem[] = [
 
 export default function QuizPage() {
   return (
-    <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 sm:py-20">
+    <div className="relative isolate mx-auto max-w-3xl px-4 py-12 sm:px-6 sm:py-20">
+      <div className="hero-glow -top-[200px] -z-10 !opacity-[0.16]" aria-hidden="true" />
       <QuizClient archetypes={QUIZ_ARCHETYPES} paySource={PAY_SOURCE} />
       <FaqSection items={FAQ} heading="Questions about the quiz" />
-      <nav aria-labelledby="related-title" className="mt-10 border-t border-rule pt-8">
-        <h2 id="related-title" className="mb-3 text-sm font-semibold text-muted">
+      <nav aria-labelledby="related-title" className="mt-10 border-t border-hair pt-8">
+        <h2 id="related-title" className="kicker mb-3">
           Related pages
         </h2>
-        <ul className="flex flex-wrap gap-x-4 gap-y-2 text-sm">
+        <ul className="flex flex-wrap gap-x-5 text-[15px]">
           <li>
-            <Link href="/careers-for" className="link">
+            <Link href="/careers-for" className="link inline-flex min-h-11 items-center">
               Career change by profession
             </Link>
           </li>
           <li>
-            <Link href="/what-jobs" className="link">
+            <Link href="/what-jobs" className="link inline-flex min-h-11 items-center">
               What jobs can I get?
             </Link>
           </li>
           <li>
-            <Link href="/jobs-for-introverts" className="link">
+            <Link href="/jobs-for-introverts" className="link inline-flex min-h-11 items-center">
               Jobs for introverts
             </Link>
           </li>
           <li>
-            <Link href="/career-change-at-30" className="link">
+            <Link href="/career-change-at-30" className="link inline-flex min-h-11 items-center">
               Career change at 30
             </Link>
           </li>

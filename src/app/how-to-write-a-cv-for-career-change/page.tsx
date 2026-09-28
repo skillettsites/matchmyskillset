@@ -28,7 +28,7 @@ function Ext({ href, children }: { href: string; children: ReactNode }) {
 
 function Example({ children }: { children: ReactNode }) {
   return (
-    <div className="mt-3 rounded-lg border border-rule bg-surface p-4">
+    <div className="mt-3 rounded-[20px] bg-cloud p-5">
       <p className="kicker text-muted">Example</p>
       <div className="mt-1 text-ink-2">{children}</div>
     </div>

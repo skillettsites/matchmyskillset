@@ -63,11 +63,11 @@ export function HubPayTable({ caption, description, routes, comparator, notes, j
           numeric: true,
           render: ({ r }) =>
             r.median === null ? (
-              <span className="text-muted">Not published</span>
+              <span className="text-mute">Not published</span>
             ) : (
               <>
                 {formatGBP(r.median)}
-                {r.basis === "all" ? <sup className="text-muted">*</sup> : null}
+                {r.basis === "all" ? <sup className="text-mute">*</sup> : null}
               </>
             ),
         },
@@ -84,7 +84,7 @@ export function HubPayTable({ caption, description, routes, comparator, notes, j
                       {formatGBPChange(r.median - comparator.value)}
                     </span>
                   ) : (
-                    <span className="text-muted">n/a</span>
+                    <span className="text-mute">n/a</span>
                   ),
               },
             ]
@@ -101,7 +101,7 @@ export function HubPayTable({ caption, description, routes, comparator, notes, j
           mobileLabel: "Apprenticeship",
           render: ({ r }) => {
             const s = quickestStandard(r);
-            return s ? `Level ${s.level}, ${s.typicalDurationMonths} months` : <span className="text-muted">None listed</span>;
+            return s ? `Level ${s.level}, ${s.typicalDurationMonths} months` : <span className="text-mute">None listed</span>;
           },
         },
       ]}

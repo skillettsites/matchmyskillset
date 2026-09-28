@@ -139,22 +139,21 @@ export function GoogleAnalytics() {
     writeConsent(choice);
   }
 
-  const buttonClass =
-    "min-h-11 rounded-lg bg-gray-900 px-5 text-sm font-semibold text-white hover:bg-gray-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600";
+  const buttonClass = "btn btn-dark min-h-11 flex-1 px-5 py-2.5 text-[15px] sm:flex-none";
 
   return (
     <section
       aria-label="Cookie choice"
       className="pointer-events-none fixed inset-x-0 bottom-0 z-50 p-3 sm:p-4"
     >
-      <div className="pointer-events-auto mx-auto max-w-3xl rounded-xl border border-gray-200 bg-white p-4 shadow-lg sm:flex sm:items-center sm:gap-6">
-        <p className="flex-1 text-sm leading-relaxed text-gray-700">
+      <div className="glass pointer-events-auto mx-auto max-w-3xl rounded-[22px] p-4 shadow-[0_12px_40px_-12px_rgba(0,0,0,0.25)] ring-1 ring-black/[0.08] sm:flex sm:items-center sm:gap-6 sm:p-5">
+        <p className="flex-1 text-[14px] leading-relaxed text-ink-2">
           We would like to use Google Analytics cookies to understand how the site is used. They
           stay off unless you accept.
           {consent !== "unset" && (
             <> Analytics cookies are currently {consent === "granted" ? "on" : "off"}.</>
           )}{" "}
-          <Link href="/privacy#cookies" className="font-medium text-indigo-700 underline">
+          <Link href="/privacy#cookies" className="font-medium text-link underline">
             Cookie details
           </Link>
         </p>
@@ -177,7 +176,7 @@ export function CookieSettingsButton({ className }: { className?: string }) {
     <button
       type="button"
       onClick={() => window.dispatchEvent(new Event(OPEN_SETTINGS_EVENT))}
-      className={className ?? "font-medium text-indigo-700 underline"}
+      className={className ?? "font-medium text-link underline"}
     >
       Cookie settings
     </button>

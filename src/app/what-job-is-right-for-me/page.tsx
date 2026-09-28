@@ -207,8 +207,8 @@ export default function Page() {
 
       <GuideSection id="tools" title="Two free ways to start">
         <div className="mt-6 grid max-w-reading gap-4 sm:grid-cols-2">
-          <div className="rounded-lg border border-rule bg-surface p-5">
-            <h3 className="font-serif text-h3 font-semibold text-ink">Take the career quiz</h3>
+          <div className="rounded-[22px] bg-cloud p-6">
+            <h3 className="text-h3 font-bold text-ink">Take the career quiz</h3>
             <p className="mt-2 text-ink-2">
               A short multiple-choice quiz about what you enjoy and how you like to work. Good if you have no idea where
               to start.
@@ -217,8 +217,8 @@ export default function Page() {
               Start the quiz
             </Link>
           </div>
-          <div className="rounded-lg border border-rule bg-surface p-5">
-            <h3 className="font-serif text-h3 font-semibold text-ink">Analyse your CV</h3>
+          <div className="rounded-[22px] bg-cloud p-6">
+            <h3 className="text-h3 font-bold text-ink">Analyse your CV</h3>
             <p className="mt-2 text-ink-2">
               Paste your CV and see the skills you already have and the jobs they lead to. Good if you have been working
               for a while.

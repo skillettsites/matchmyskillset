@@ -98,7 +98,7 @@ const WORK_STYLE: GuideLink[] = [
 
 function LinkList({ links }: { links: GuideLink[] }) {
   return (
-    <ul className="mt-5 max-w-reading border-t border-ink">
+    <ul className="mt-5 max-w-reading border-t border-black/[0.08]">
       {links.map((link) => {
         const inner = (
           <>
@@ -109,9 +109,9 @@ function LinkList({ links }: { links: GuideLink[] }) {
             {link.note && <span className="text-sm text-muted">{link.note}</span>}
           </>
         );
-        const className = "group flex min-h-12 flex-col justify-center py-2 text-lg text-ink hover:text-accent";
+        const className = "group flex min-h-12 flex-col justify-center py-2 text-lg text-ink hover:text-link";
         return (
-          <li key={link.href} className="border-b border-rule">
+          <li key={link.href} className="border-b border-hair">
             {link.external ? (
               <a href={link.href} className={className} rel="noopener">
                 {inner}

@@ -1,58 +1,33 @@
 import { SITE_NAME } from "@/components/site";
 
-/** Props for {@link RouteMark} and {@link Logo}. */
-export interface LogoProps {
-  /** `light` for paper backgrounds (default), `dark` for the night footer. */
-  tone?: "light" | "dark";
-  /** Extra classes for the wrapper. */
-  className?: string;
-}
-
 /**
- * The brand mark: a route from an open ring (the job you do now) to a solid
- * dot (where you could go), with an amber core for the pay figure.
+ * The brand mark: two overlapping rings on a teal-to-violet rounded square.
+ * One ring is your skills, the other is the job; the overlap is the match.
  * Decorative, so it is hidden from assistive technology.
  */
-export function RouteMark({ tone = "light", className = "" }: LogoProps) {
-  const ring = tone === "dark" ? "#e9e3d6" : "#18201d";
-  const path = tone === "dark" ? "#7fb89f" : "#1b5e4b";
-  const fill = tone === "dark" ? "#14231e" : "#f7f3ea";
+export function LogoMark({ size = 28, className = "" }: { size?: number; className?: string }) {
   return (
-    <svg
-      viewBox="0 0 32 32"
-      aria-hidden="true"
-      focusable="false"
-      className={`h-8 w-8 shrink-0 ${className}`}
-    >
-      <path
-        d="M8 16.4C8 11.6 11.6 8 16.4 8"
-        fill="none"
-        stroke={path}
-        strokeWidth="2.5"
-        strokeLinecap="round"
-        strokeDasharray="0.01 4.15"
-      />
-      <circle cx="8" cy="24" r="4.25" fill={fill} stroke={ring} strokeWidth="2.5" />
-      <circle cx="24" cy="8" r="5.5" fill={path} />
-      <circle cx="24" cy="8" r="2" fill="#e0a030" />
+    <svg width={size} height={size} viewBox="0 0 40 40" aria-hidden="true" focusable="false" className={`shrink-0 ${className}`}>
+      <defs>
+        <linearGradient id="mms-mark" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="#12b5a4" />
+          <stop offset="0.5" stopColor="#0a7cff" />
+          <stop offset="1" stopColor="#7d4cdb" />
+        </linearGradient>
+      </defs>
+      <rect width="40" height="40" rx="11" fill="url(#mms-mark)" />
+      <circle cx="15.5" cy="20" r="7.4" fill="none" stroke="#fff" strokeOpacity=".72" strokeWidth="3.4" />
+      <circle cx="24.5" cy="20" r="7.4" fill="none" stroke="#fff" strokeWidth="3.4" />
     </svg>
   );
 }
 
-/**
- * Mark plus wordmark. The wordmark is real text in the serif, so the brand
- * name is readable by search engines and screen readers.
- */
-export function Logo({ tone = "light", className = "" }: LogoProps) {
-  const text = tone === "dark" ? "text-night-text" : "text-ink";
+/** Mark plus wordmark. The name is real text, so it reads for search engines and screen readers. */
+export function Logo({ className = "", tone = "light" }: { className?: string; tone?: "light" | "dark" }) {
   return (
     <span className={`inline-flex items-center gap-2.5 ${className}`}>
-      <RouteMark tone={tone} />
-      <span
-        className={`font-serif text-[1.3125rem] font-semibold leading-none tracking-[-0.02em] ${text}`}
-      >
-        {SITE_NAME}
-      </span>
+      <LogoMark size={26} />
+      <span className={`text-[17px] font-semibold tracking-[-0.022em] ${tone === "dark" ? "text-white" : "text-ink"}`}>{SITE_NAME}</span>
     </span>
   );
 }

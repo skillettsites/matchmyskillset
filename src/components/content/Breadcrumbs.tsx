@@ -43,18 +43,18 @@ export function Breadcrumbs({ items, includeHome = true, schema = true, classNam
 
   return (
     <nav aria-label="Breadcrumb" className={className}>
-      <ol className="flex flex-wrap items-center gap-x-1.5 text-sm text-muted">
+      <ol className="flex flex-wrap items-center gap-x-1.5 text-[14px] text-mute">
         {trail.map((item, i) => {
           const last = i === trail.length - 1;
           return (
             <li key={`${item.name}-${i}`} className="inline-flex items-center gap-x-1.5">
               {i > 0 && (
-                <svg viewBox="0 0 16 16" aria-hidden="true" className="h-3 w-3 text-rule-strong" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <svg viewBox="0 0 16 16" aria-hidden="true" className="h-3 w-3 text-mute-2" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                   <path d="M6 3l5 5-5 5" />
                 </svg>
               )}
               {item.href && !last ? (
-                <Link href={item.href} className="inline-flex min-h-11 items-center underline-offset-4 hover:text-accent hover:underline">
+                <Link href={item.href} className="inline-flex min-h-11 items-center underline-offset-4 transition-colors hover:text-ink hover:underline">
                   {item.name}
                 </Link>
               ) : (

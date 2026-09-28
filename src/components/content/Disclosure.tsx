@@ -19,8 +19,8 @@ export interface DisclosureProps {
  */
 export function Disclosure({ children, href, linkLabel = "How we make money", className = "" }: DisclosureProps) {
   return (
-    <p className={`flex gap-2 rounded-md border border-rule bg-paper-2/60 px-3 py-2.5 text-sm text-ink-2 ${className}`}>
-      <svg viewBox="0 0 20 20" aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-muted" fill="none" stroke="currentColor" strokeWidth="1.8">
+    <p className={`flex gap-2.5 rounded-2xl bg-cloud px-4 py-3 text-[14px] leading-relaxed text-ink-2 ${className}`}>
+      <svg viewBox="0 0 20 20" aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-mute" fill="none" stroke="currentColor" strokeWidth="1.8">
         <circle cx="10" cy="10" r="7.5" />
         <path d="M10 9v5M10 6.2v.1" strokeLinecap="round" />
       </svg>

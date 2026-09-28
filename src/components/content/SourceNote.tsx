@@ -37,7 +37,7 @@ export function SourceNote({
 }: SourceNoteProps) {
   const dt = published ? isoDate(published) : undefined;
   return (
-    <p className={`text-xs leading-relaxed text-muted ${className}`}>
+    <p className={`text-xs leading-relaxed text-mute ${className}`}>
       <span className="font-semibold text-ink-2">{label}:</span>{" "}
       {href ? (
         <a href={href} className="link" rel="noopener">

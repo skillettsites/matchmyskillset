@@ -19,12 +19,12 @@ export interface HubSectionProps {
 /** A titled page section with an anchor, used for every block on a hub. */
 export function HubSection({ id, title, kicker, intro, children, className = "" }: HubSectionProps) {
   return (
-    <section id={id} aria-labelledby={`${id}-title`} className={`mt-14 scroll-mt-24 sm:mt-16 ${className}`}>
-      {kicker && <p className="kicker text-accent">{kicker}</p>}
-      <h2 id={`${id}-title`} className="mt-1 max-w-[30ch] font-serif text-h2 font-semibold text-ink">
+    <section id={id} aria-labelledby={`${id}-title`} className={`mt-20 scroll-mt-24 sm:mt-24 [&>h2+.prose-mms]:mt-5 ${className}`}>
+      {kicker && <p className="eyebrow text-link">{kicker}</p>}
+      <h2 id={`${id}-title`} className="mt-1 max-w-[26ch] text-h2 font-bold text-ink">
         {title}
       </h2>
-      {intro && <div className="prose-mms mt-4">{intro}</div>}
+      {intro && <div className="prose-mms mt-5">{intro}</div>}
       {children}
     </section>
   );
@@ -48,11 +48,11 @@ export interface Fact {
 /** A grid of sourced headline figures. Every figure carries its own citation. */
 export function FactList({ facts }: { facts: Fact[] }) {
   return (
-    <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {facts.map((f) => (
-        <li key={f.figure + f.source} className="flex flex-col rounded-lg border border-rule bg-surface p-5 shadow-card">
-          <p className="font-serif text-[2rem] font-semibold leading-none tabular-nums lining-nums text-ink">{f.figure}</p>
-          <p className="mt-3 flex-1 text-[0.9375rem] leading-relaxed text-ink-2">{f.text}</p>
+        <li key={f.figure + f.source} className="tile flex flex-col p-6 sm:p-7">
+          <p className="gradient-text self-start text-[40px] font-bold leading-none tracking-[-0.04em] tabular-nums lining-nums">{f.figure}</p>
+          <p className="mt-4 flex-1 text-[15px] leading-relaxed text-ink-2">{f.text}</p>
           <SourceNote className="mt-3" source={f.source} href={f.href} published={f.published} />
         </li>
       ))}
@@ -82,9 +82,9 @@ export interface FundedTrainingProps {
 
 function FundBlock({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <div className="rounded-lg border border-rule bg-surface p-5 shadow-card sm:p-6">
-      <h3 className="font-sans text-xl font-bold text-ink">{title}</h3>
-      <div className="prose-mms mt-2 max-w-none text-base">{children}</div>
+    <div className="rounded-[28px] bg-white p-6 shadow-card ring-1 ring-black/[0.05] sm:p-7">
+      <h3 className="text-[21px] font-bold leading-tight tracking-[-0.025em] text-ink">{title}</h3>
+      <div className="prose-mms mt-3 max-w-none text-base">{children}</div>
     </div>
   );
 }
@@ -182,11 +182,11 @@ export function FundedTraining({ lead, bootcampFit, children, showLoans = true, 
 /** "How we worked this out": what the ONS figures are, and their limits. */
 export function MethodNote({ baseline, extra }: { baseline: ReactNode; extra?: ReactNode }) {
   return (
-    <section id="method" aria-labelledby="method-title" className="mt-14 scroll-mt-24 rounded-xl border border-rule bg-paper-2 p-5 sm:p-7">
-      <h2 id="method-title" className="font-serif text-2xl font-semibold text-ink">
+    <section id="method" aria-labelledby="method-title" className="mt-20 scroll-mt-24 rounded-[28px] bg-cloud p-6 sm:p-10">
+      <h2 id="method-title" className="text-[28px] font-bold leading-tight tracking-[-0.03em] text-ink">
         How we worked this out
       </h2>
-      <div className="prose-mms mt-3 max-w-none text-base">
+      <div className="prose-mms mt-4 max-w-none text-base">
         <p>
           Pay is the median gross annual pay for full-time employees in the UK from the{" "}
           <a href={ASHE.href} rel="noopener">
@@ -238,11 +238,11 @@ export interface SourceItem {
 
 export function SourcesList({ items }: { items: SourceItem[] }) {
   return (
-    <section id="sources" aria-labelledby="sources-title" className="mt-12 scroll-mt-24">
-      <h2 id="sources-title" className="font-serif text-2xl font-semibold text-ink">
+    <section id="sources" aria-labelledby="sources-title" className="mt-16 scroll-mt-24">
+      <h2 id="sources-title" className="text-[28px] font-bold leading-tight tracking-[-0.03em] text-ink">
         Sources
       </h2>
-      <ol className="mt-4 list-decimal space-y-2 pl-5 text-[0.9375rem] leading-relaxed text-ink-2 marker:text-muted">
+      <ol className="mt-5 list-decimal space-y-2 pl-5 text-[15px] leading-relaxed text-ink-2 marker:text-mute">
         {items.map((s) => (
           <li key={s.href + s.name}>
             <a href={s.href} className="link" rel="noopener">
@@ -265,29 +265,35 @@ export interface RelatedLink {
 
 export function RelatedLinks({ title = "Keep going", links }: { title?: string; links: RelatedLink[] }) {
   return (
-    <section aria-labelledby="related-title" className="mt-12">
-      <h2 id="related-title" className="font-serif text-2xl font-semibold text-ink">
+    <section aria-labelledby="related-title" className="mt-16">
+      <h2 id="related-title" className="text-[28px] font-bold leading-tight tracking-[-0.03em] text-ink">
         {title}
       </h2>
-      <ul className="mt-4 grid gap-x-8 border-t border-ink sm:grid-cols-2">
+      <ul className="mt-6 grid gap-3 sm:grid-cols-2">
         {links.map((l) => {
           const external = /^https?:\/\//.test(l.href);
           const inner = (
             <>
-              <span className="block font-semibold text-ink group-hover:text-accent group-hover:underline group-hover:underline-offset-4">
-                {l.label}
+              <span className="min-w-0">
+                <span className="block text-[17px] font-semibold tracking-[-0.02em] text-ink group-hover:underline group-hover:underline-offset-4">
+                  {l.label}
+                </span>
+                {l.note && <span className="mt-0.5 block text-[14px] text-mute">{l.note}</span>}
               </span>
-              {l.note && <span className="mt-0.5 block text-sm text-muted">{l.note}</span>}
+              <svg viewBox="0 0 24 24" aria-hidden="true" className="h-4 w-4 shrink-0 text-mute transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                <path d="m9 6 6 6-6 6" />
+              </svg>
             </>
           );
+          const cls = "group flex h-full min-h-14 items-center justify-between gap-4 rounded-[20px] bg-cloud px-5 py-4 transition-colors hover:bg-hair";
           return (
-            <li key={l.href} className="border-b border-rule">
+            <li key={l.href}>
               {external ? (
-                <a href={l.href} rel="noopener" className="group block min-h-12 py-3">
+                <a href={l.href} rel="noopener" className={cls}>
                   {inner}
                 </a>
               ) : (
-                <Link href={l.href} className="group block min-h-12 py-3">
+                <Link href={l.href} className={cls}>
                   {inner}
                 </Link>
               )}
@@ -301,18 +307,18 @@ export function RelatedLinks({ title = "Keep going", links }: { title?: string; 
 
 /** Container used by every hub page. */
 export function HubPage({ children }: { children: ReactNode }) {
-  return <article className="mx-auto max-w-page px-4 pb-20 sm:px-6">{children}</article>;
+  return <article className="mx-auto max-w-page px-4 pb-24 sm:px-6">{children}</article>;
 }
 
 /** An in-page table of contents. */
 export function OnThisPage({ items }: { items: { href: string; label: string }[] }) {
   return (
-    <nav aria-label="On this page" className="mt-8 rounded-lg border border-rule bg-surface p-4 sm:p-5">
+    <nav aria-label="On this page" className="mt-10 rounded-[22px] bg-cloud p-5 sm:p-6">
       <p className="kicker">On this page</p>
-      <ol className="mt-2 grid gap-x-6 sm:grid-cols-2">
+      <ol className="mt-2 grid gap-x-8 sm:grid-cols-2">
         {items.map((i) => (
           <li key={i.href}>
-            <a href={i.href} className="flex min-h-11 items-center text-[0.9375rem] text-ink-2 underline-offset-4 hover:text-accent hover:underline">
+            <a href={i.href} className="flex min-h-11 items-center text-[15px] text-ink-2 underline-offset-4 hover:text-link hover:underline">
               {i.label}
             </a>
           </li>

@@ -139,17 +139,17 @@ export default function LowStressJobsPage() {
       </PageHeader>
 
       <dl className="grid gap-4 sm:grid-cols-3">
-        <div className="rounded-lg border border-rule bg-surface p-5">
+        <div className="tile p-6">
           <dt className="text-sm text-muted">Workers with work-related stress, depression or anxiety, 2024/25</dt>
-          <dd className="mt-1 font-serif text-3xl font-semibold text-ink">964,000</dd>
+          <dd className="mt-1 text-[34px] font-bold tracking-[-0.035em] text-ink">964,000</dd>
         </div>
-        <div className="rounded-lg border border-rule bg-surface p-5">
+        <div className="tile p-6">
           <dt className="text-sm text-muted">Working days lost to it, 2024/25</dt>
-          <dd className="mt-1 font-serif text-3xl font-semibold text-ink">22.1 million</dd>
+          <dd className="mt-1 text-[34px] font-bold tracking-[-0.035em] text-ink">22.1 million</dd>
         </div>
-        <div className="rounded-lg border border-rule bg-surface p-5">
+        <div className="tile p-6">
           <dt className="text-sm text-muted">Share of all work-related ill health</dt>
-          <dd className="mt-1 font-serif text-3xl font-semibold text-ink">52%</dd>
+          <dd className="mt-1 text-[34px] font-bold tracking-[-0.035em] text-ink">52%</dd>
         </div>
       </dl>
       <SourceNote
