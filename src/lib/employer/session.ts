@@ -8,7 +8,7 @@
 //   (Secure in production), stored hashed in mms_employer_sessions.
 
 import { cache } from "react";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { after } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -48,9 +48,25 @@ export function isSetUp(account: EmployerAccount): boolean {
  */
 export async function requireEmployer(opts: { allowIncomplete?: boolean } = {}): Promise<EmployerAccount> {
   const account = await getEmployer();
-  if (!account) redirect("/employers/sign-in");
-  if (!opts.allowIncomplete && !isSetUp(account)) redirect("/employers/dashboard/setup");
+  // The dashboard page asked for (set by src/proxy.ts), so signing in or finishing setup comes back to it.
+  const asked = await dashboardPath();
+  if (!account) redirect(asked ? `/employers/sign-in?next=${encodeURIComponent(asked)}` : "/employers/sign-in");
+  if (!opts.allowIncomplete && !isSetUp(account)) {
+    redirect(asked && !asked.startsWith("/employers/dashboard/setup") ? `/employers/dashboard/setup?next=${encodeURIComponent(asked)}` : "/employers/dashboard/setup");
+  }
   return account;
+}
+
+/** Only paths inside the dashboard (other than its home) count as a destination worth keeping. */
+const DASHBOARD_PATH = /^\/employers\/dashboard\/[A-Za-z0-9/_?=&.-]*$/;
+
+async function dashboardPath(): Promise<string | null> {
+  try {
+    const value = (await headers()).get("x-mms-path");
+    return value && DASHBOARD_PATH.test(value) ? value : null;
+  } catch {
+    return null;
+  }
 }
 
 export async function createSession(accountId: string): Promise<void> {
