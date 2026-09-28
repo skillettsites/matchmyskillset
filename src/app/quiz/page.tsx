@@ -1,468 +1,214 @@
-"use client";
-
-import { useState } from "react";
 import Link from "next/link";
+import { FaqSection, type FaqItem } from "@/components/content";
+import { SOURCE, getCareerProfile, sourceLine } from "@/data/careers";
+import { QuizClient, type QuizArchetype, type QuizCareer } from "./QuizClient";
 
-/* ─── Quiz Data ─── */
-interface Question {
-  id: number;
-  question: string;
-  options: { label: string; traits: string[] }[];
-}
+/*
+ * The quiz sorts answers into one of six broad work styles (editorial). Each
+ * style lists five curated careers from @/data/careers, and every pay figure
+ * shown is the ONS ASHE median for that career's SOC 2020 unit group. Only the
+ * few fields the result screen needs are sent to the browser.
+ */
 
-const QUESTIONS: Question[] = [
-  {
-    id: 1,
-    question: "When you are working on something, which gives you the most energy?",
-    options: [
-      { label: "Solving a tricky problem nobody else can crack", traits: ["analytical", "technical"] },
-      { label: "Helping someone achieve a breakthrough", traits: ["people", "coaching"] },
-      { label: "Creating something new from scratch", traits: ["creative", "entrepreneurial"] },
-      { label: "Organising chaos into a smooth system", traits: ["organised", "operational"] },
-    ],
-  },
-  {
-    id: 2,
-    question: "How do you prefer to spend your working day?",
-    options: [
-      { label: "Deep focused work with minimal interruptions", traits: ["independent", "analytical"] },
-      { label: "Collaborating with a team, bouncing ideas around", traits: ["people", "collaborative"] },
-      { label: "A mix of meetings, calls, and solo tasks", traits: ["versatile", "operational"] },
-      { label: "Out and about, meeting clients or visiting sites", traits: ["active", "sales"] },
-    ],
-  },
-  {
-    id: 3,
-    question: "Which of these feels most natural to you?",
-    options: [
-      { label: "Analysing data and spotting patterns", traits: ["analytical", "technical"] },
-      { label: "Persuading and negotiating with people", traits: ["sales", "leadership"] },
-      { label: "Writing, designing, or storytelling", traits: ["creative", "communication"] },
-      { label: "Planning, scheduling, and managing timelines", traits: ["organised", "operational"] },
-    ],
-  },
-  {
-    id: 4,
-    question: "What matters most to you in a career?",
-    options: [
-      { label: "High salary and financial security", traits: ["ambitious", "sales"] },
-      { label: "Making a genuine difference in people's lives", traits: ["people", "coaching"] },
-      { label: "Creative freedom and variety", traits: ["creative", "entrepreneurial"] },
-      { label: "Work-life balance and flexibility", traits: ["independent", "versatile"] },
-    ],
-  },
-  {
-    id: 5,
-    question: "You are thrown into a crisis at work. What is your instinct?",
-    options: [
-      { label: "Gather data, analyse the root cause, then fix it", traits: ["analytical", "technical"] },
-      { label: "Rally the team and delegate tasks fast", traits: ["leadership", "operational"] },
-      { label: "Talk to everyone affected, calm things down", traits: ["people", "coaching"] },
-      { label: "Find a creative workaround nobody else sees", traits: ["creative", "entrepreneurial"] },
-    ],
-  },
-  {
-    id: 6,
-    question: "Which work environment appeals to you most?",
-    options: [
-      { label: "A quiet office or home setup with good tech", traits: ["independent", "technical"] },
-      { label: "A buzzy open-plan office with lots of energy", traits: ["collaborative", "sales"] },
-      { label: "A studio, workshop, or creative space", traits: ["creative", "active"] },
-      { label: "Wherever the work takes me, I like variety", traits: ["versatile", "entrepreneurial"] },
-    ],
-  },
-  {
-    id: 7,
-    question: "How do you feel about public speaking?",
-    options: [
-      { label: "Love it. Give me the stage.", traits: ["leadership", "sales", "communication"] },
-      { label: "Fine in small groups, not my favourite for large crowds", traits: ["coaching", "collaborative"] },
-      { label: "I would rather put my ideas in writing", traits: ["creative", "analytical"] },
-      { label: "I prefer one-to-one conversations", traits: ["people", "independent"] },
-    ],
-  },
-  {
-    id: 8,
-    question: "Which of these skills do other people compliment you on?",
-    options: [
-      { label: "Being detail-oriented and thorough", traits: ["analytical", "organised"] },
-      { label: "Being a natural leader who inspires others", traits: ["leadership", "coaching"] },
-      { label: "Coming up with ideas nobody else thinks of", traits: ["creative", "entrepreneurial"] },
-      { label: "Being calm under pressure and reliable", traits: ["operational", "versatile"] },
-    ],
-  },
-  {
-    id: 9,
-    question: "What would you happily spend a weekend learning?",
-    options: [
-      { label: "A new programming language, spreadsheet technique, or tool", traits: ["technical", "analytical"] },
-      { label: "Psychology, coaching, or communication skills", traits: ["people", "coaching"] },
-      { label: "Photography, design, writing, or music", traits: ["creative", "communication"] },
-      { label: "Business strategy, investing, or entrepreneurship", traits: ["entrepreneurial", "sales"] },
-    ],
-  },
-  {
-    id: 10,
-    question: "If money were no object, what would your ideal day involve?",
-    options: [
-      { label: "Building something: an app, a system, a solution", traits: ["technical", "entrepreneurial"] },
-      { label: "Teaching, mentoring, or coaching others", traits: ["coaching", "people"] },
-      { label: "Creating art, content, or experiences", traits: ["creative", "communication"] },
-      { label: "Running a business or leading a team towards a goal", traits: ["leadership", "sales", "operational"] },
-    ],
-  },
-];
-
-/* ─── Career Archetypes ─── */
-interface CareerResult {
+interface ArchetypeSpec {
   archetype: string;
   description: string;
-  careers: { title: string; salary: string; why: string }[];
   traits: string[];
+  careers: { id: string; why: string }[];
 }
 
-const ARCHETYPES: CareerResult[] = [
+const ARCHETYPES: ArchetypeSpec[] = [
   {
     archetype: "The Analyst",
-    description: "You thrive on data, logic, and solving complex problems. You are the person teams turn to when they need clarity from chaos.",
-    careers: [
-      { title: "Data Analyst", salary: "£25k-£55k", why: "Your pattern-spotting and analytical thinking are the core of this role." },
-      { title: "Business Analyst", salary: "£30k-£60k", why: "Bridging business needs with solutions, using structured thinking." },
-      { title: "Financial Analyst", salary: "£28k-£65k", why: "Numbers, models, and commercial insight are your natural territory." },
-      { title: "UX Researcher", salary: "£30k-£60k", why: "Methodical research and insight generation match your thinking style." },
-      { title: "Compliance Officer", salary: "£30k-£65k", why: "Detail orientation and regulatory analysis suit your approach." },
-    ],
+    description: "You enjoy data, logic and hard problems. You are the person a team turns to when it needs a clear answer.",
     traits: ["analytical", "technical"],
+    careers: [
+      { id: "data-analyst", why: "Spotting patterns in data and explaining what they mean is most of the job." },
+      { id: "business-analyst", why: "Working out what an organisation needs and how a change would work, step by step." },
+      { id: "user-researcher", why: "Careful research into how people use a product, turned into clear findings." },
+      { id: "compliance-officer", why: "Close reading of rules and checking that they are followed." },
+      { id: "accountant", why: "Numbers, models and commercial judgement every day." },
+    ],
   },
   {
     archetype: "The Connector",
-    description: "You are drawn to people. You build trust quickly, understand what others need, and create genuine relationships that drive results.",
-    careers: [
-      { title: "Customer Success Manager", salary: "£30k-£60k", why: "Your ability to build trust and understand client needs is the core skill." },
-      { title: "HR Business Partner", salary: "£35k-£65k", why: "People strategy, empathy, and conflict resolution are your strengths." },
-      { title: "Recruitment Consultant", salary: "£22k-£60k+", why: "Reading people and matching needs to opportunities is what you do naturally." },
-      { title: "Counsellor", salary: "£25k-£50k", why: "Deep listening and genuine care for people's wellbeing." },
-      { title: "Community Manager", salary: "£25k-£45k", why: "Building and nurturing communities of people around shared interests." },
-    ],
+    description: "You are drawn to people. You build trust quickly, understand what others need and form relationships that get results.",
     traits: ["people", "coaching"],
+    careers: [
+      { id: "hr-officer", why: "Helping staff and managers with recruitment, problems at work and policy." },
+      { id: "counsellor", why: "Listening closely and helping people work through difficult times." },
+      { id: "careers-adviser", why: "Helping people understand their options and plan their next step." },
+      { id: "customer-service-manager", why: "Building trust with customers and leading the team that serves them." },
+      { id: "youth-worker", why: "Building relationships with young people and helping them grow." },
+    ],
   },
   {
     archetype: "The Creator",
-    description: "You see possibilities where others see blank pages. You need variety, creative freedom, and the chance to make something original.",
-    careers: [
-      { title: "Content Strategist", salary: "£28k-£55k", why: "Planning and creating content that engages audiences." },
-      { title: "UX Designer", salary: "£30k-£65k", why: "Designing experiences that are both beautiful and functional." },
-      { title: "Marketing Manager", salary: "£30k-£60k", why: "Creative campaigns combined with strategic thinking." },
-      { title: "Copywriter", salary: "£25k-£50k", why: "Turning ideas into compelling words that persuade and engage." },
-      { title: "Brand Strategist", salary: "£35k-£65k", why: "Shaping how companies present themselves to the world." },
-    ],
+    description: "You see possibilities where others see a blank page. You want variety, creative freedom and the chance to make something original.",
     traits: ["creative", "communication"],
+    careers: [
+      { id: "copywriter", why: "Turning ideas into words that persuade and engage." },
+      { id: "ux-designer", why: "Designing products that are easy and pleasant to use." },
+      { id: "marketing-manager", why: "Creative campaigns backed by a clear plan." },
+      { id: "social-media-manager", why: "Planning and creating content for an audience, then learning from the results." },
+      { id: "web-developer", why: "Building websites and the pages people see and use." },
+    ],
   },
   {
     archetype: "The Builder",
-    description: "You are entrepreneurial and technical. You want to create systems, products, or businesses. You think in terms of what could exist, not just what does.",
-    careers: [
-      { title: "Product Manager", salary: "£40k-£85k", why: "Defining what gets built and why, combining vision with execution." },
-      { title: "Software Developer", salary: "£30k-£75k", why: "Building tools and systems that solve real problems." },
-      { title: "Startup Founder", salary: "Variable", why: "Your drive to build something from nothing is rare and valuable." },
-      { title: "Solutions Architect", salary: "£50k-£90k", why: "Designing systems that solve complex business challenges." },
-      { title: "Technical Project Manager", salary: "£40k-£75k", why: "Where technical understanding meets organisational execution." },
-    ],
+    description: "You are practical and technical. You want to create systems and products, and you think about what could exist as well as what does.",
     traits: ["technical", "entrepreneurial"],
+    careers: [
+      { id: "software-developer", why: "Building tools and systems that solve real problems." },
+      { id: "it-project-manager", why: "Where technical understanding meets getting things delivered." },
+      { id: "data-scientist", why: "Building models that predict outcomes from data." },
+      { id: "cyber-security-analyst", why: "Protecting systems by thinking about how they could be attacked." },
+      { id: "network-engineer", why: "Designing and running the networks that other systems depend on." },
+    ],
   },
   {
     archetype: "The Leader",
-    description: "You are a natural at rallying people, driving results, and taking charge. You see the big picture and know how to motivate teams to get there.",
-    careers: [
-      { title: "Management Consultant", salary: "£35k-£100k", why: "Strategic thinking and persuasion are your core tools." },
-      { title: "Business Development Manager", salary: "£28k-£80k+", why: "Winning new business through relationships and commercial acumen." },
-      { title: "Operations Manager", salary: "£35k-£70k", why: "Running teams and processes efficiently towards clear goals." },
-      { title: "Sales Director", salary: "£50k-£120k+", why: "Leading revenue-generating teams with vision and energy." },
-      { title: "Programme Manager", salary: "£50k-£90k", why: "Overseeing multiple projects and driving organisational change." },
-    ],
+    description: "You rally people, take charge and drive results. You see the bigger picture and know how to get a team there.",
     traits: ["leadership", "sales"],
+    careers: [
+      { id: "management-consultant", why: "Strategic thinking and persuasion are the main tools." },
+      { id: "business-development-manager", why: "Winning new business through relationships and commercial sense." },
+      { id: "project-manager", why: "Leading a team towards a clear goal, on time and on budget." },
+      { id: "sales-representative", why: "Persuading and negotiating to win and grow accounts." },
+      { id: "hr-manager", why: "Leading how an organisation hires, develops and looks after its people." },
+    ],
   },
   {
     archetype: "The Organiser",
-    description: "You are the calm in the storm. You bring structure, reliability, and efficiency to everything you touch. Teams run better with you in them.",
-    careers: [
-      { title: "Project Manager", salary: "£32k-£70k", why: "Planning, timelines, and stakeholder coordination are your element." },
-      { title: "Operations Manager", salary: "£35k-£70k", why: "Keeping complex operations running smoothly." },
-      { title: "Executive Assistant", salary: "£28k-£50k", why: "Strategic coordination and keeping senior leaders on track." },
-      { title: "Facilities Manager", salary: "£30k-£55k", why: "Managing buildings, contractors, and operational logistics." },
-      { title: "Supply Chain Manager", salary: "£30k-£60k", why: "Coordinating the flow of goods and logistics with precision." },
-    ],
+    description: "You are the calm in the storm. You bring structure, reliability and order, and teams run better with you in them.",
     traits: ["organised", "operational"],
+    careers: [
+      { id: "project-support-officer", why: "Keeping plans, records and timelines in order for a project team." },
+      { id: "office-manager", why: "Keeping an office and the people in it running smoothly." },
+      { id: "events-manager", why: "Planning every detail so an event runs to time." },
+      { id: "facilities-manager", why: "Managing buildings, contractors and the day-to-day running of a site." },
+      { id: "logistics-manager", why: "Coordinating the flow of goods with precision." },
+    ],
   },
 ];
 
-function getResult(traitCounts: Record<string, number>): CareerResult {
-  let bestScore = -1;
-  let bestArchetype = ARCHETYPES[0];
-
-  for (const arch of ARCHETYPES) {
-    const score = arch.traits.reduce((sum, t) => sum + (traitCounts[t] || 0), 0);
-    if (score > bestScore) {
-      bestScore = score;
-      bestArchetype = arch;
-    }
-  }
-  return bestArchetype;
+function toCareer(id: string, why: string): QuizCareer {
+  const p = getCareerProfile(id);
+  if (!p) throw new Error(`[quiz] unknown career id ${id}`);
+  const ft = p.pay.ft.median;
+  const all = p.pay.all.median;
+  return {
+    id,
+    title: p.occupation.title,
+    why,
+    median: ft ?? all,
+    basis: ft !== null ? "ft" : all !== null ? "all" : null,
+    soc: p.unitGroup.code,
+    socTitle: p.unitGroup.title,
+  };
 }
 
-/* ─── Component ─── */
+const QUIZ_ARCHETYPES: QuizArchetype[] = ARCHETYPES.map((a) => ({
+  archetype: a.archetype,
+  description: a.description,
+  traits: a.traits,
+  careers: a.careers.map((c) => toCareer(c.id, c.why)),
+}));
+
+const PAY_SOURCE = {
+  name: `ONS, Annual Survey of Hours and Earnings ${SOURCE.year} (${SOURCE.edition}), Table ${SOURCE.table}`,
+  href: SOURCE.datasetUrl,
+  published: SOURCE.releaseDate,
+};
+
+const BECOME_APPRENTICE = "https://www.gov.uk/become-apprentice";
+
+const FAQ: FaqItem[] = [
+  {
+    question: "How accurate is this career quiz?",
+    answer:
+      "It sorts your answers into one of six broad work styles. It is a starting point, not a test: it does not look at your skills, qualifications or experience. For careers matched to your own skills, start from the job you do now or paste your CV.",
+  },
+  {
+    question: "Where do the salary figures come from?",
+    answer: `Each figure is the median gross annual pay for full-time employees in the job's SOC 2020 unit group, UK, from the Office for National Statistics. ${sourceLine()}. A median covers everyone in the group, including people with years of experience, so starting pay is usually lower.`,
+  },
+  {
+    question: "Do I need to create an account?",
+    answer: "No. The quiz is free with no sign-up. The CV check needs no account or email either: your results get their own private link, kept for 12 months.",
+  },
+  {
+    question: "What career suits me if I am an introvert?",
+    answer: (
+      <p>
+        Jobs with more focused, solo work include data analysis, software development, user research, technical writing and
+        compliance. See our guide to{" "}
+        <Link href="/jobs-for-introverts" className="link">
+          jobs for introverts
+        </Link>
+        .
+      </p>
+    ),
+    answerText:
+      "Jobs with more focused, solo work include data analysis, software development, user research, technical writing and compliance. See our guide to jobs for introverts.",
+  },
+  {
+    question: "Can I change careers at 30, 40 or 50?",
+    answer: (
+      <p>
+        Yes. In England you can start an apprenticeship at 16 or over if you are not in full-time education, with no upper
+        age limit given, according to{" "}
+        <a href={BECOME_APPRENTICE} className="link" rel="noopener">
+          GOV.UK
+        </a>
+        . Our guides to changing career{" "}
+        <Link href="/career-change-at-30" className="link">
+          at 30
+        </Link>{" "}
+        and{" "}
+        <Link href="/career-change-at-50" className="link">
+          at 50
+        </Link>{" "}
+        set out the routes, what they cost and how long they take.
+      </p>
+    ),
+    answerText:
+      "Yes. In England you can start an apprenticeship at 16 or over if you are not in full-time education, with no upper age limit given, according to GOV.UK. Our guides to changing career at 30 and at 50 set out the routes, what they cost and how long they take.",
+  },
+];
+
 export default function QuizPage() {
-  const [currentQ, setCurrentQ] = useState(0);
-  const [answers, setAnswers] = useState<number[]>([]);
-  const [showResult, setShowResult] = useState(false);
-  const [selectedOption, setSelectedOption] = useState<number | null>(null);
-
-  const progress = ((currentQ) / QUESTIONS.length) * 100;
-
-  function handleSelect(optionIndex: number) {
-    setSelectedOption(optionIndex);
-
-    setTimeout(() => {
-      const newAnswers = [...answers, optionIndex];
-      setAnswers(newAnswers);
-      setSelectedOption(null);
-
-      if (currentQ + 1 >= QUESTIONS.length) {
-        setShowResult(true);
-      } else {
-        setCurrentQ(currentQ + 1);
-      }
-    }, 300);
-  }
-
-  function restart() {
-    setCurrentQ(0);
-    setAnswers([]);
-    setShowResult(false);
-    setSelectedOption(null);
-  }
-
-  // Calculate result
-  const traitCounts: Record<string, number> = {};
-  answers.forEach((optIdx, qIdx) => {
-    const traits = QUESTIONS[qIdx]?.options[optIdx]?.traits || [];
-    traits.forEach((t) => {
-      traitCounts[t] = (traitCounts[t] || 0) + 1;
-    });
-  });
-
-  const result = showResult ? getResult(traitCounts) : null;
-
   return (
-    <>
-      {/* JSON-LD */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "FAQPage",
-            mainEntity: [
-              {
-                "@type": "Question",
-                name: "What career suits me?",
-                acceptedAnswer: {
-                  "@type": "Answer",
-                  text: "The best career for you depends on your natural preferences, skills, and work style. Take our free career quiz to discover which career archetype matches your personality, then explore specific job matches based on your results.",
-                },
-              },
-              {
-                "@type": "Question",
-                name: "How accurate are career quizzes?",
-                acceptedAnswer: {
-                  "@type": "Answer",
-                  text: "Career quizzes provide useful starting points by identifying broad patterns in your preferences and strengths. For the most accurate career matching, combine quiz results with AI-powered CV analysis that maps your specific experience to real job opportunities.",
-                },
-              },
-              {
-                "@type": "Question",
-                name: "Is it too late to change careers?",
-                acceptedAnswer: {
-                  "@type": "Answer",
-                  text: "It is never too late. Research shows that the average person changes careers 5-7 times in their lifetime. People in their 30s, 40s, and 50s successfully switch careers every day by leveraging their transferable skills.",
-                },
-              },
-            ],
-          }),
-        }}
-      />
-
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12 sm:py-20">
-        {/* Header */}
-        {!showResult && (
-          <>
-            <div className="text-center mb-10">
-              <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3">
-                What Career Suits Me?
-              </h1>
-              <p className="text-lg text-gray-500">
-                Answer 10 quick questions and discover which career path matches your personality, skills, and work style.
-              </p>
-              <p className="text-sm text-gray-400 mt-2">Free. No sign-up required. Takes 2 minutes.</p>
-            </div>
-
-            {/* Progress Bar */}
-            <div className="mb-8">
-              <div className="flex justify-between text-sm text-gray-400 mb-2">
-                <span>Question {currentQ + 1} of {QUESTIONS.length}</span>
-                <span>{Math.round(progress)}% complete</span>
-              </div>
-              <div className="w-full bg-gray-100 rounded-full h-2">
-                <div
-                  className="bg-indigo-600 h-2 rounded-full transition-all duration-500 ease-out"
-                  style={{ width: `${progress}%` }}
-                />
-              </div>
-            </div>
-
-            {/* Question */}
-            <div className="mb-8">
-              <h2 className="text-xl font-semibold text-gray-900 mb-6">
-                {QUESTIONS[currentQ].question}
-              </h2>
-              <div className="space-y-3">
-                {QUESTIONS[currentQ].options.map((opt, i) => (
-                  <button
-                    key={i}
-                    onClick={() => handleSelect(i)}
-                    className={`w-full text-left p-4 rounded-xl border-2 transition-all duration-200 ${
-                      selectedOption === i
-                        ? "border-indigo-600 bg-indigo-50"
-                        : "border-gray-100 hover:border-indigo-300 hover:bg-gray-50"
-                    }`}
-                  >
-                    <span className="text-sm font-medium text-gray-400 mr-3">
-                      {String.fromCharCode(65 + i)}
-                    </span>
-                    <span className="text-gray-800">{opt.label}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          </>
-        )}
-
-        {/* Results */}
-        {showResult && result && (
-          <div>
-            <div className="text-center mb-10">
-              <div className="inline-flex items-center px-4 py-1.5 bg-green-50 text-green-700 rounded-full text-sm font-medium mb-4">
-                Quiz Complete
-              </div>
-              <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3">
-                You are: {result.archetype}
-              </h1>
-              <p className="text-lg text-gray-600 max-w-xl mx-auto">
-                {result.description}
-              </p>
-            </div>
-
-            {/* Career Matches */}
-            <section className="mb-10">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                Your Top Career Matches
-              </h2>
-              <div className="space-y-4">
-                {result.careers.map((career, i) => (
-                  <div key={career.title} className="bg-white rounded-xl border border-gray-100 p-5">
-                    <div className="flex items-start justify-between mb-2">
-                      <div>
-                        <span className="text-xs text-gray-400 mr-2">#{i + 1}</span>
-                        <span className="font-semibold text-gray-900">{career.title}</span>
-                      </div>
-                      <span className="text-sm font-bold text-green-600 flex-shrink-0 ml-4">{career.salary}</span>
-                    </div>
-                    <p className="text-sm text-gray-600 mb-2">{career.why}</p>
-                    <Link
-                      href={`/jobs?q=${encodeURIComponent(career.title)}`}
-                      className="inline-block text-xs text-indigo-600 font-medium hover:text-indigo-700"
-                    >
-                      Search {career.title} jobs
-                    </Link>
-                  </div>
-                ))}
-              </div>
-            </section>
-
-            {/* Next step: the personal check */}
-            <div className="mb-10 rounded-xl border border-accent/25 bg-accent-wash p-6 text-center sm:p-8">
-              <h2 className="mb-3 text-xl font-semibold text-ink">
-                Turn this into real options
-              </h2>
-              <p className="mx-auto mb-6 max-w-lg text-ink-2">
-                The quiz shows your broad style of work. For careers matched to your own skills, with ONS pay figures and the
-                ways in, start from the job you do now or paste your CV. It is free and needs no account or email.
-              </p>
-              <div className="flex flex-col justify-center gap-3 sm:flex-row">
-                <Link href="/discover" className="btn btn-primary btn-lg">
-                  Start from my job
-                </Link>
-                <Link href="/discover#cv" className="btn btn-secondary btn-lg">
-                  Paste my CV
-                </Link>
-              </div>
-            </div>
-
-            {/* Actions */}
-            <div className="flex flex-col sm:flex-row gap-3 justify-center mb-10">
-              <button
-                onClick={restart}
-                className="inline-flex items-center justify-center border border-gray-200 text-gray-700 font-medium px-6 py-3 rounded-xl hover:bg-gray-50 transition-colors"
-              >
-                Retake the Quiz
-              </button>
-              <Link
-                href="/careers-for"
-                className="inline-flex items-center justify-center border border-gray-200 text-gray-700 font-medium px-6 py-3 rounded-xl hover:bg-gray-50 transition-colors"
-              >
-                Browse by Profession
-              </Link>
-            </div>
-
-            {/* FAQ */}
-            <section className="border-t border-gray-100 pt-10">
-              <h2 className="text-xl font-semibold text-gray-900 mb-6">Frequently Asked Questions</h2>
-              <div className="space-y-6">
-                <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">How accurate is this career quiz?</h3>
-                  <p className="text-sm text-gray-600">This quiz identifies your broad career archetype based on preferences and work style. It is a great starting point, but for the most accurate results, our AI-powered CV analysis maps your specific experience to real opportunities. Think of this quiz as the compass, and the CV analysis as the GPS.</p>
-                </div>
-                <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Do I need to create an account?</h3>
-                  <p className="text-sm text-gray-600">No. The quiz is free with no sign-up. The CV check needs no account or email either: your results get their own private link, kept for 12 months.</p>
-                </div>
-                <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">What career suits me if I am an introvert?</h3>
-                  <p className="text-sm text-gray-600">Many high-paying careers suit introverts, including data analysis, software development, UX research, technical writing, and compliance roles. See our full guide to <Link href="/jobs-for-introverts" className="text-indigo-600 hover:text-indigo-700">jobs for introverts</Link>.</p>
-                </div>
-                <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Can I change careers at 30, 40, or 50?</h3>
-                  <p className="text-sm text-gray-600">Absolutely. The average person changes careers 5-7 times in their lifetime. Your accumulated transferable skills actually make you more competitive, not less. Read our guide on <Link href="/career-change-at-30" className="text-indigo-600 hover:text-indigo-700">changing careers at 30</Link>.</p>
-                </div>
-              </div>
-            </section>
-
-            {/* Related */}
-            <div className="mt-10 pt-8 border-t border-gray-100">
-              <h3 className="text-sm font-semibold text-gray-500 mb-3">Related Pages</h3>
-              <div className="flex flex-wrap gap-2">
-                <Link href="/careers-for" className="text-sm text-indigo-600 hover:text-indigo-700">Career Change by Profession</Link>
-                <span className="text-gray-300">|</span>
-                <Link href="/what-jobs" className="text-sm text-indigo-600 hover:text-indigo-700">What Jobs Can I Get</Link>
-                <span className="text-gray-300">|</span>
-                <Link href="/jobs-for-introverts" className="text-sm text-indigo-600 hover:text-indigo-700">Jobs for Introverts</Link>
-                <span className="text-gray-300">|</span>
-                <Link href="/career-change-at-30" className="text-sm text-indigo-600 hover:text-indigo-700">Career Change at 30</Link>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-    </>
+    <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 sm:py-20">
+      <QuizClient archetypes={QUIZ_ARCHETYPES} paySource={PAY_SOURCE} />
+      <FaqSection items={FAQ} heading="Questions about the quiz" />
+      <nav aria-labelledby="related-title" className="mt-10 border-t border-rule pt-8">
+        <h2 id="related-title" className="mb-3 text-sm font-semibold text-muted">
+          Related pages
+        </h2>
+        <ul className="flex flex-wrap gap-x-4 gap-y-2 text-sm">
+          <li>
+            <Link href="/careers-for" className="link">
+              Career change by profession
+            </Link>
+          </li>
+          <li>
+            <Link href="/what-jobs" className="link">
+              What jobs can I get?
+            </Link>
+          </li>
+          <li>
+            <Link href="/jobs-for-introverts" className="link">
+              Jobs for introverts
+            </Link>
+          </li>
+          <li>
+            <Link href="/career-change-at-30" className="link">
+              Career change at 30
+            </Link>
+          </li>
+        </ul>
+      </nav>
+    </div>
   );
 }

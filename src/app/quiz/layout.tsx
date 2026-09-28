@@ -5,7 +5,7 @@ export const metadata: Metadata = guideMetadata({
   path: "/quiz",
   title: "Free career quiz: what job suits me? | MatchMySkillset",
   description:
-    "Ten quick questions about how you like to work, then UK careers that fit, with ONS pay. Free, no sign-up, about two minutes.",
+    "Ten quick questions about how you like to work, then five UK careers that fit your style, each with its ONS median pay. Free, no sign-up, about two minutes.",
   ogType: "website",
 });
 
