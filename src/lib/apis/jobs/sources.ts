@@ -8,6 +8,7 @@
 
 import { unstable_cache } from "next/cache";
 import { env } from "@/lib/env";
+import { checkRateLimit } from "@/lib/rate-limit";
 import type { JobListing, JobQuery, SourceId, SourceResult } from "./types";
 import {
   SourceHttpError,
@@ -546,6 +547,25 @@ interface JoobleJob {
   id?: string | number;
 }
 
+// Jooble's free key allows 500 requests in total until they raise it, so each
+// distinct search is cached for 12 hours and live calls are capped per day.
+// When the daily budget is spent the board is simply skipped.
+const JOOBLE_DAILY_BUDGET = 15;
+
+const joobleCached = unstable_cache(
+  async (bodyJson: string): Promise<{ totalCount?: number; jobs?: JoobleJob[] }> => {
+    const { allowed } = await checkRateLimit("jooble:daily-budget", JOOBLE_DAILY_BUDGET, 86_400);
+    if (!allowed) return { totalCount: undefined, jobs: [] };
+    return fetchJson<{ totalCount?: number; jobs?: JoobleJob[] }>(
+      `https://jooble.org/api/${encodeURIComponent(env("JOOBLE_API_KEY"))}`,
+      { method: "POST", headers: { "Content-Type": "application/json" }, body: bodyJson, cache: "no-store" },
+      8000
+    );
+  },
+  ["jooble-search"],
+  { revalidate: 43_200 }
+);
+
 const jooble: JobSource = {
   id: "jooble",
   label: "Jooble",
@@ -561,11 +581,7 @@ const jooble: JobSource = {
     };
     if (q.location && !q.remote) body.location = q.location;
     if (q.salaryMin) body.salary = String(q.salaryMin);
-    const data = await fetchJson<{ totalCount?: number; jobs?: JoobleJob[] }>(
-      `https://jooble.org/api/${encodeURIComponent(env("JOOBLE_API_KEY"))}`,
-      { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body), cache: "no-store" },
-      this.timeoutMs
-    );
+    const data = await joobleCached(JSON.stringify(body));
     const jobs = (data.jobs ?? []).map(
       (j, i): JobListing => ({
         id: `jooble_${j.id ?? `${q.page}_${i}`}`,
