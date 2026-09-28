@@ -55,16 +55,16 @@ export function EmailLinkForm({ token }: { token: string }) {
 
   if (state === "sent") {
     return (
-      <p role="status" className="rounded-md bg-accent-wash px-3 py-2 text-sm text-ink">
+      <p role="status" className="rounded-xl bg-green-soft px-3 py-2 text-[14px] text-ink">
         Sent. Check your inbox (and your spam folder) for an email from MatchMySkillset.
       </p>
     );
   }
 
   return (
-    <form onSubmit={submit} className="flex flex-col gap-2 sm:flex-row sm:items-end">
+    <form onSubmit={submit} className="flex flex-col gap-3">
       <div className="flex-1">
-        <label htmlFor="results-email" className="block text-sm font-semibold text-ink">
+        <label htmlFor="results-email" className="field-label">
           Email me this link (optional)
         </label>
         <input
@@ -75,15 +75,15 @@ export function EmailLinkForm({ token }: { token: string }) {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="you@example.com"
-          className="mt-1 min-h-12 w-full rounded-md border border-rule-strong bg-white px-3 text-base"
+          className="field"
         />
       </div>
-      <button type="submit" className="btn btn-secondary min-h-12" disabled={state === "sending"}>
+      <button type="submit" className="btn btn-secondary" disabled={state === "sending"}>
         {state === "sending" ? "Sending…" : "Send link"}
       </button>
-      <p className="text-xs text-muted sm:hidden">One email with your link. No mailing list.</p>
+      <p className="text-[12px] text-mute">One email with your link. No mailing list.</p>
       {state === "error" && (
-        <p role="alert" className="text-sm text-negative sm:basis-full">
+        <p role="alert" className="text-[14px] text-[#b3261e]">
           {message}
         </p>
       )}
@@ -129,7 +129,7 @@ export function ReportCheckout({ token, occupationId, title, position }: { token
     return (
       <button
         type="button"
-        className="btn btn-primary w-full sm:w-auto"
+        className="btn btn-primary btn-sm"
         onClick={() => {
           setOpen(true);
           track("report_cta_click", { occupation_id: occupationId, position });
@@ -141,41 +141,41 @@ export function ReportCheckout({ token, occupationId, title, position }: { token
   }
 
   return (
-    <div className="rounded-md border border-accent/30 bg-accent-wash p-4">
-      <p className="font-semibold text-ink">Career Change Report: {title}</p>
-      <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-ink-2">
+    <div className="rounded-2xl bg-cloud p-5">
+      <p className="text-[17px] font-semibold tracking-[-0.02em] text-ink">Career Change Report: {title}</p>
+      <ul className="mt-2 list-disc space-y-1 pl-5 text-[14px] text-ink-2">
         <li>ONS pay in detail, and how it compares with your current job</li>
         <li>The ways in, with apprenticeship levels, typical length and funding bands</li>
         <li>A plan for each skill gap, with course links and government-funded options where they exist</li>
         <li>A 90-day plan, a skills-first CV summary and CV bullet points for this job</li>
         <li>Interview talking points and live vacancies</li>
       </ul>
-      <p className="mt-2 text-sm text-ink-2">
+      <p className="mt-2 text-[14px] text-ink-2">
         One payment of {REPORT_PRICE_LABEL}. No subscription, no account. Shown on screen and emailed to you.{" "}
-        <Link href="/pricing" className="link">
+        <Link href="/pricing" className="text-link hover:underline">
           More about the report
         </Link>
       </p>
       {unavailable ? (
-        <p role="alert" className="mt-3 rounded-md bg-paper-2 px-3 py-2 text-sm text-ink">
+        <p role="alert" className="mt-3 rounded-xl bg-white px-3 py-2 text-[14px] text-ink">
           {error}
         </p>
       ) : (
         <>
-          <label className="mt-3 flex min-h-11 cursor-pointer items-start gap-3 text-sm text-ink">
+          <label className="mt-3 flex min-h-11 cursor-pointer items-start gap-3 text-[14px] text-ink">
             <input
               type="checkbox"
               checked={consent}
               onChange={(e) => setConsent(e.target.checked)}
-              className="mt-0.5 h-5 w-5 shrink-0 accent-[var(--color-accent)]"
+              className="mt-0.5 h-5 w-5 shrink-0 accent-[#0071e3]"
             />
             <span>{DIGITAL_CONSENT_TEXT}</span>
           </label>
-          <button type="button" className="btn btn-primary mt-3 w-full sm:w-auto" disabled={!consent || busy} onClick={pay}>
+          <button type="button" className="btn btn-primary btn-sm mt-3" disabled={!consent || busy} onClick={pay}>
             {busy ? "Opening secure checkout…" : `Pay ${REPORT_PRICE_LABEL} with Stripe`}
           </button>
           {error && (
-            <p role="alert" className="mt-2 text-sm text-negative">
+            <p role="alert" className="mt-2 text-[14px] text-[#b3261e]">
               {error}
             </p>
           )}

@@ -13,12 +13,16 @@ import { skillName } from "@/lib/skills/taxonomy";
 import { isValidEmail } from "@/lib/email/results-email";
 import { recruiterConsentText } from "@/app/discover/consent";
 import { UK_REGIONS } from "@/lib/apis/regions";
+import { resolveLocation } from "@/lib/apis/jobs/location";
 import { getCareerOccupation } from "@/data/careers";
 
 // Two ways in:
 //   { mode: "job", jobKey }            instant, no model call
 //   { mode: "cv", text, whatMatters }  one Claude extraction call, then the
 //                                      same deterministic scoring
+// Either can carry { location, locationRegion }: a town, postcode or region
+// typed by the person (and the region of the suggestion they picked), which
+// is resolved with postcodes.io and used to search for live jobs near them.
 // Results are saved to mms_reports behind a random token and the response is
 // just that token. Raw CV text is never stored, except for people who tick
 // the optional recruiter box while that feature is switched on.
@@ -86,7 +90,8 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const region = readRegion(body.region);
+  // Resolved alongside the model call, so it adds no time to a CV check.
+  const locationPromise = resolveLocation(body.location, body.locationRegion).catch(() => null);
   const ticked = readPreferences(body.preferences);
   const source = process.env.MMS_QA_TAG === "1" ? "qa-test" : mode;
 
@@ -110,7 +115,7 @@ export async function POST(request: NextRequest) {
       seniority: "unknown",
       yearsExperience: null,
       preferences: { ...NO_PREFERENCES, ...ticked },
-      region,
+      region: null,
     };
   } else {
     // Keep line breaks: the model reads the CV's structure.
@@ -154,7 +159,7 @@ export async function POST(request: NextRequest) {
           noDegree: p.preferences.noDegree || ticked.noDegree,
           earnMore: p.preferences.earnMore || ticked.earnMore,
         },
-        region,
+        region: null,
       };
     } catch (err) {
       if (err instanceof ClaudeUnavailableError) {
@@ -168,6 +173,10 @@ export async function POST(request: NextRequest) {
       return json(500, { error: "Something went wrong. Please try again." });
     }
   }
+
+  const place = await locationPromise;
+  doc.location = place;
+  doc.region = place?.region ?? readRegion(body.region);
 
   const items = scoreProfile({
     skills: doc.skills,
@@ -228,5 +237,11 @@ export async function POST(request: NextRequest) {
     console.log(`[assess] ${mode}: ${items.length} matches, total ${Date.now() - started}ms${timing ? `; ${timing}` : ""}`);
   });
 
-  return json(200, { token, matches: items.length });
+  return json(200, {
+    token,
+    matches: items.length,
+    skills: doc.skills.length,
+    role: doc.currentRole,
+    place: place?.label ?? doc.region ?? null,
+  });
 }

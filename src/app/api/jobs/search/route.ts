@@ -4,11 +4,18 @@ import { isSameSiteRequest } from "@/lib/api-guard";
 import { regionFromLocation } from "@/lib/apis/regions";
 import { checkRateLimit, clientIp } from "@/lib/rate-limit";
 import { cleanText } from "@/lib/input";
+import { TOKEN_PATTERN, getReportByToken } from "@/lib/apis/reports-db";
+import { isMatchesDoc, isSkillsDoc } from "@/lib/skills/profile";
+import { skillName } from "@/lib/skills/taxonomy";
+import { buildAnchors } from "@/lib/apis/jobs/match";
+import { scoreJobFit } from "@/lib/apis/jobs/fit";
+import type { JobListing } from "@/lib/apis/jobs";
 
 // Live listings from every enabled board. Each search spends free-tier quota
 // (Jooble's key allows 500 calls in total), so only our own pages may call
 // this, input is capped and each IP is limited; a person browsing will not
-// hit the limit.
+// hit the limit. With ?token=<results link> each advert is also scored
+// against that person's skills (no extra board calls, no model call).
 
 export const runtime = "nodejs";
 export const maxDuration = 30;
@@ -62,7 +69,34 @@ export async function GET(request: NextRequest) {
       userIp: ip !== "unknown" ? ip : undefined,
       userAgent: request.headers.get("user-agent")?.slice(0, 300) || undefined,
     });
-    return NextResponse.json(result, { headers: { "Cache-Control": "private, max-age=300" } });
+    const token = searchParams.get("token") ?? "";
+    let scored = false;
+    if (TOKEN_PATTERN.test(token)) {
+      const report = await getReportByToken(token).catch(() => null);
+      const doc = report && isSkillsDoc(report.skills) ? report.skills : null;
+      if (report && doc) {
+        const anchors = buildAnchors(doc, isMatchesDoc(report.matches) ? report.matches.items : []);
+        result.jobs = result.jobs.map((job: JobListing) => {
+          const fit = scoreJobFit({ title: job.title, text: `${job.title}. ${job.mms?.description ?? job.snippet}`, tagged: job.mms?.skillIds }, doc.skills, anchors);
+          return fit
+            ? {
+                ...job,
+                fit: {
+                  match: fit.match,
+                  reason: fit.reason,
+                  explain: fit.explain,
+                  matched: fit.matched.map(skillName),
+                  missing: fit.missing.map(skillName),
+                },
+              }
+            : job;
+        });
+        scored = true;
+      }
+    }
+    // Full advert text of posted jobs is for scoring only.
+    const jobs = result.jobs.map((j) => (j.mms ? { ...j, mms: { ...j.mms, description: "" } } : j));
+    return NextResponse.json({ ...result, jobs, scored }, { headers: { "Cache-Control": "private, max-age=300" } });
   } catch (error) {
     console.error("[jobs/search] error:", error instanceof Error ? error.message : error);
     return NextResponse.json({ error: "We could not search the job boards just now. Please try again." }, { status: 500 });

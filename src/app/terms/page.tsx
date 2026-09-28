@@ -41,8 +41,21 @@ export default function TermsPage() {
             skills you already have and the ones you may need. No account is needed.
           </li>
           <li>
-            <strong>Job search:</strong> live listings from third-party job boards (currently Reed,
-            Adzuna, GOV.UK Teaching Vacancies, Himalayas and Remotive).
+            <strong>Job matches and job search:</strong> live listings from third-party job boards
+            (currently Reed, Adzuna, GOV.UK Teaching Vacancies, Himalayas and Remotive) and jobs that
+            employers post on MatchMySkillset, with a match score worked out from your skills.
+          </li>
+          <li>
+            <strong>Job alerts (free, optional):</strong> emails with new matching jobs, weekly or
+            daily. You can stop them with one click.
+          </li>
+          <li>
+            <strong>Applying with MatchMySkillset (free):</strong> for jobs posted on the site, we
+            send your application to the employer when you ask us to.
+          </li>
+          <li>
+            <strong>Profiles employers can find (free, optional):</strong> an anonymous profile that
+            employers can ask to contact. Nothing about who you are is shared unless you accept.
           </li>
           <li>
             <strong>Career Change Report (paid):</strong> a one-off report about one career you
@@ -59,13 +72,18 @@ export default function TermsPage() {
           promise that you will get any job, interview or pay level.
         </p>
         <p>
-          {SITE_NAME} is not an employer or an employment agency and does not apply for jobs on your
-          behalf. We do not pass your details to employers or recruiters unless you choose to.
+          {SITE_NAME} is not an employer and does not decide who is hired. We never charge job
+          seekers for finding work. When you apply for a job posted here, we pass your application to
+          the employer because you asked us to; the employer decides what happens next. We do not
+          pass your details to employers or recruiters unless you choose to. A match score is an
+          automatic indicator of how your skills compare with an advert, not an assessment of you.
         </p>
 
         <h2 className={h2}>4. What you submit</h2>
         <p>
-          You must only submit a CV or other text that you are entitled to use, normally your own.
+          You must only submit a CV or other text that you are entitled to use, normally your own,
+          and only apply, set up alerts or create a profile with your own email address. What you put
+          in a profile or application must be true to the best of your knowledge.
           Please leave out sensitive details you do not want processed (see the Privacy Policy) and
           other people&apos;s personal details, such as referees&apos; contact information. You keep
           ownership of what you submit. You allow us to use it only to provide the service you asked
@@ -97,9 +115,12 @@ export default function TermsPage() {
 
         <h2 className={h2}>6. Job listings</h2>
         <p>
-          Listings come from third-party job boards. We do not write, check or control them and
-          cannot guarantee that they are accurate or still open. Clicking a listing takes you to the
-          job board&apos;s site, where its own terms apply.
+          Most listings come from third-party job boards. We do not write, check or control them and
+          cannot guarantee that they are accurate or still open. Clicking one takes you to the job
+          board&apos;s own site, where its own terms apply. Jobs marked &ldquo;Posted on
+          MatchMySkillset&rdquo; are written by the employers who post them. We check each one before
+          it goes live, but the employer is responsible for the job, the advert and how it handles
+          your application.
         </p>
 
         <h2 className={h2}>7. Fair use</h2>
