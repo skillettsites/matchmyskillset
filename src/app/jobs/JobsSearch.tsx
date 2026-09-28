@@ -15,6 +15,9 @@ interface Fit {
   explain: string;
   matched: string[];
   missing: string[];
+  typical?: string[];
+  evidence?: "advert" | "typical" | "title";
+  level?: "up" | "similar" | "down";
 }
 type ScoredListing = JobListing & { fit?: Fit };
 type Response = Omit<JobSearchResponse, "jobs"> & { jobs: ScoredListing[]; scored?: boolean };
@@ -76,7 +79,16 @@ function toCard(j: ScoredListing): CardJob {
     workplace: j.mms ? j.mms.workplace : j.remote === "yes" ? "remote" : null,
     snippet: j.snippet,
     ...(j.fit
-      ? { match: j.fit.match, reason: j.fit.reason, explain: j.fit.explain, matchedNames: j.fit.matched, missingNames: j.fit.missing }
+      ? {
+          match: j.fit.match,
+          reason: j.fit.reason,
+          explain: j.fit.explain,
+          matchedNames: j.fit.matched,
+          missingNames: j.fit.missing,
+          typicalNames: j.fit.typical ?? [],
+          ...(j.fit.evidence ? { evidence: j.fit.evidence } : {}),
+          ...(j.fit.level ? { level: j.fit.level } : {}),
+        }
       : {}),
   };
 }

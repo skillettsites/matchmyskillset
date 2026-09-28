@@ -14,6 +14,8 @@ export interface TextSkillHit {
 
 interface Pattern {
   id: string;
+  /** The phrase in lower case: a quick substring check before the regex. */
+  phrase: string;
   re: RegExp;
 }
 
@@ -34,7 +36,7 @@ function patterns(): Pattern[] {
       .map((p) => p.trim().toLowerCase())
       .filter((p) => p.length >= MIN_PHRASE_LENGTH);
     for (const phrase of new Set(phrases)) {
-      out.push({ id: skill.id, re: new RegExp(`(^|[^a-z0-9])${escapeRegExp(phrase)}(?=$|[^a-z0-9])`, "i") });
+      out.push({ id: skill.id, phrase, re: new RegExp(`(^|[^a-z0-9])${escapeRegExp(phrase)}(?=$|[^a-z0-9])`, "i") });
     }
   }
   cache = out;
@@ -46,9 +48,10 @@ export function skillsInText(text: string, title = ""): TextSkillHit[] {
   const body = ` ${text.toLowerCase()} `;
   const head = ` ${title.toLowerCase()} `;
   const found = new Map<string, TextSkillHit>();
-  for (const { id, re } of patterns()) {
-    const inBody = re.test(body);
-    const inTitle = title ? re.test(head) : false;
+  for (const { id, phrase, re } of patterns()) {
+    // Most phrases are not in the text at all; the substring check skips the regex for them.
+    const inBody = body.includes(phrase) && re.test(body);
+    const inTitle = title ? head.includes(phrase) && re.test(head) : false;
     if (!inBody && !inTitle) continue;
     const hit = found.get(id) ?? { id, hits: 0, inTitle: false };
     hit.hits += 1;

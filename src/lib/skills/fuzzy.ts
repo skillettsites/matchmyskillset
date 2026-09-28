@@ -45,6 +45,19 @@ function tokenMatch(a: string, b: string): number {
  * "Primary school teacher" over "Secondary school teacher".
  */
 export function titleScore(query: string, candidate: string): number {
+  // A qualifier in brackets narrows the title: "Operations manager (catering)"
+  // is a catering job, so plain "Operations manager" must not score as if it
+  // were the same title. Without any qualifier word in the query, the match is
+  // scored on the rest of the title and held below the level we treat as the
+  // same job (0.75).
+  const qualifier = /\(([^)]+)\)/.exec(candidate);
+  if (qualifier) {
+    const words = titleTokens(qualifier[1]);
+    const q = new Set(titleTokens(query));
+    if (words.length > 0 && !words.some((w) => q.has(w))) {
+      return Math.min(0.7, titleScore(query, candidate.replace(/\([^)]*\)/g, " ")));
+    }
+  }
   const nq = normaliseTitle(query);
   const nc = normaliseTitle(candidate);
   if (!nq || !nc) return 0;

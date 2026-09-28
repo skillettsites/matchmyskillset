@@ -4,7 +4,7 @@
 
 import { createAdminClient, isSupabaseConfigured } from "@/lib/supabase/admin";
 import { DatabaseUnavailableError } from "@/lib/apis/reports-db";
-import type { FitAnchor } from "@/lib/apis/jobs/fit";
+import type { FitAnchor, PersonFit } from "@/lib/apis/jobs/fit";
 import type { SnapshotPlace } from "@/lib/apis/jobs/match";
 
 export { newToken } from "@/lib/apis/reports-db";
@@ -30,6 +30,8 @@ export interface AlertQuery {
   place: SnapshotPlace | null;
   remote: boolean;
   salaryMin: number | null;
+  /** The person's level and pay, for comparing with each advert's (alerts set up from September 2026 v3 on). */
+  person?: PersonFit;
 }
 
 export interface AlertRow {

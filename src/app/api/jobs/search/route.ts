@@ -7,7 +7,7 @@ import { cleanText } from "@/lib/input";
 import { TOKEN_PATTERN, getReportByToken } from "@/lib/apis/reports-db";
 import { isMatchesDoc, isSkillsDoc } from "@/lib/skills/profile";
 import { skillName } from "@/lib/skills/taxonomy";
-import { buildAnchors } from "@/lib/apis/jobs/match";
+import { fitContextFromDoc, fitInputFor } from "@/lib/apis/jobs/match";
 import { scoreJobFit } from "@/lib/apis/jobs/fit";
 import type { JobListing } from "@/lib/apis/jobs";
 
@@ -75,27 +75,33 @@ export async function GET(request: NextRequest) {
       const report = await getReportByToken(token).catch(() => null);
       const doc = report && isSkillsDoc(report.skills) ? report.skills : null;
       if (report && doc) {
-        const anchors = buildAnchors(doc, isMatchesDoc(report.matches) ? report.matches.items : []);
+        const ctx = fitContextFromDoc(doc, isMatchesDoc(report.matches) ? report.matches.items : []);
         result.jobs = result.jobs.map((job: JobListing) => {
-          const fit = scoreJobFit({ title: job.title, text: `${job.title}. ${job.mms?.description ?? job.snippet}`, tagged: job.mms?.skillIds }, doc.skills, anchors);
-          return fit
-            ? {
-                ...job,
-                fit: {
-                  match: fit.match,
-                  reason: fit.reason,
-                  explain: fit.explain,
-                  matched: fit.matched.map(skillName),
-                  missing: fit.missing.map(skillName),
-                },
-              }
-            : job;
+          const fit = scoreJobFit(fitInputFor(job, remote ? "remote" : undefined), ctx);
+          return {
+            ...job,
+            fit: {
+              match: fit.match,
+              reason: fit.reason,
+              explain: fit.explain,
+              matched: fit.matched.map(skillName),
+              missing: fit.missing.map(skillName),
+              typical: fit.typical.map(skillName),
+              evidence: fit.evidence,
+              ...(fit.level ? { level: fit.level } : {}),
+            },
+          };
         });
         scored = true;
       }
     }
-    // Full advert text of posted jobs is for scoring only.
-    const jobs = result.jobs.map((j) => (j.mms ? { ...j, mms: { ...j.mms, description: "" } } : j));
+    // Advert text is for scoring only: never sent to the browser in bulk.
+    const jobs = result.jobs.map((j) => {
+      const { text: _text, skillHits: _hits, ...rest } = j;
+      void _text;
+      void _hits;
+      return rest.mms ? { ...rest, mms: { ...rest.mms, description: "" } } : rest;
+    });
     return NextResponse.json({ ...result, jobs, scored }, { headers: { "Cache-Control": "private, max-age=300" } });
   } catch (error) {
     console.error("[jobs/search] error:", error instanceof Error ? error.message : error);

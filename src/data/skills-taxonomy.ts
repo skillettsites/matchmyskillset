@@ -54,12 +54,12 @@ export const SKILLS: Skill[] = [
 
   // === MANAGEMENT ===
   { id: "s040", name: "Project Management", category: "management", aliases: ["programme management", "project planning", "project delivery", "agile", "scrum", "waterfall", "prince2", "PMP"], relatedSkillIds: ["s041", "s042", "s043"] },
-  { id: "s041", name: "Team Leadership", category: "management", aliases: ["people management", "team management", "line management", "staff management", "leading teams"], relatedSkillIds: ["s040", "s042", "s044"] },
+  { id: "s041", name: "Team Leadership", category: "management", aliases: ["people management", "team management", "line management", "staff management", "leading teams", "leading a team", "managing a team", "manage a team", "lead a team"], relatedSkillIds: ["s040", "s042", "s044"] },
   { id: "s042", name: "Strategic Planning", category: "management", aliases: ["strategy", "strategic thinking", "business strategy", "long-term planning", "vision setting"], relatedSkillIds: ["s040", "s041", "s025"] },
   { id: "s043", name: "Budget Management", category: "management", aliases: ["budgeting", "financial management", "cost management", "expense management", "resource allocation"], relatedSkillIds: ["s040", "s027", "s080"] },
-  { id: "s044", name: "Performance Management", category: "management", aliases: ["appraisals", "KPIs", "target setting", "employee development", "coaching staff"], relatedSkillIds: ["s041", "s045", "s046"] },
+  { id: "s044", name: "Performance Management", category: "management", aliases: ["appraisals", "KPIs", "target setting", "employee development", "coaching staff", "KPI"], relatedSkillIds: ["s041", "s045", "s046"] },
   { id: "s045", name: "Change Management", category: "management", aliases: ["transformation", "organisational change", "restructuring"], relatedSkillIds: ["s042", "s044", "s041"] },
-  { id: "s046", name: "Recruitment", category: "management", aliases: ["hiring", "talent acquisition", "interviewing candidates", "headhunting"], relatedSkillIds: ["s041", "s044", "s050"] },
+  { id: "s046", name: "Recruitment", category: "management", aliases: ["talent acquisition", "interviewing candidates", "headhunting"], relatedSkillIds: ["s041", "s044", "s050"] },
   { id: "s047", name: "Risk Management", category: "management", aliases: ["risk assessment", "risk mitigation", "risk analysis", "health and safety"], relatedSkillIds: ["s025", "s040", "s042"] },
   { id: "s048", name: "Stakeholder Management", category: "management", aliases: ["stakeholder engagement", "managing expectations", "senior stakeholders"], relatedSkillIds: ["s006", "s004", "s042"] },
   { id: "s049", name: "Operations Management", category: "management", aliases: ["operations", "operational management", "supply chain management", "logistics management"], relatedSkillIds: ["s040", "s026", "s043"] },
@@ -68,7 +68,7 @@ export const SKILLS: Skill[] = [
   { id: "s050", name: "Empathy", category: "interpersonal", aliases: ["emotional intelligence", "EQ", "understanding others", "compassion"], relatedSkillIds: ["s003", "s007", "s051"] },
   { id: "s051", name: "Teamwork", category: "interpersonal", aliases: ["collaboration", "working in teams", "team player", "cooperative working"], relatedSkillIds: ["s050", "s002", "s052"] },
   { id: "s052", name: "Adaptability", category: "interpersonal", aliases: ["flexibility", "resilience", "coping with change", "versatility"], relatedSkillIds: ["s051", "s053", "s024"] },
-  { id: "s053", name: "Time Management", category: "interpersonal", aliases: ["prioritisation", "meeting deadlines", "workload management", "self-organisation"], relatedSkillIds: ["s040", "s052", "s054"] },
+  { id: "s053", name: "Time Management", category: "interpersonal", aliases: ["prioritisation", "meeting deadlines", "workload management", "self-organisation", "rotas", "rota planning"], relatedSkillIds: ["s040", "s052", "s054"] },
   { id: "s054", name: "Attention to Detail", category: "interpersonal", aliases: ["accuracy", "meticulousness", "thoroughness", "precision"], relatedSkillIds: ["s029", "s053", "s001"] },
   { id: "s055", name: "Mentoring", category: "interpersonal", aliases: ["coaching", "training others", "developing others", "knowledge transfer"], relatedSkillIds: ["s041", "s044", "s050"] },
   { id: "s056", name: "Professional Networking", category: "interpersonal", aliases: ["professional networking", "relationship building", "building connections"], relatedSkillIds: ["s006", "s002", "s005"] },
@@ -77,8 +77,8 @@ export const SKILLS: Skill[] = [
   { id: "s059", name: "Cultural Awareness", category: "interpersonal", aliases: ["diversity and inclusion", "inclusivity", "equality"], relatedSkillIds: ["s008", "s050", "s051"] },
 
   // === TECHNICAL / IT ===
-  { id: "s100", name: "Microsoft Office", category: "technical", aliases: ["MS Office", "Word", "Excel", "PowerPoint", "Outlook", "Office 365", "Microsoft 365"], relatedSkillIds: ["s101", "s102", "s020"] },
-  { id: "s101", name: "Advanced Excel", category: "technical", aliases: ["spreadsheets", "pivot tables", "VLOOKUP", "macros", "VBA", "formulas"], relatedSkillIds: ["s100", "s020", "s023"] },
+  { id: "s100", name: "Microsoft Office", category: "technical", aliases: ["MS Office", "Excel", "PowerPoint", "Outlook", "Office 365", "Microsoft 365", "Microsoft Word", "MS Word"], relatedSkillIds: ["s101", "s102", "s020"] },
+  { id: "s101", name: "Advanced Excel", category: "technical", aliases: ["spreadsheets", "pivot tables", "VLOOKUP", "macros", "VBA", "formulas", "XLOOKUP", "Power Query", "SUMIFS"], relatedSkillIds: ["s100", "s020", "s023"] },
   { id: "s102", name: "Data Visualisation", category: "technical", aliases: ["Tableau", "Power BI", "dashboards", "charts", "infographics", "data presentation"], relatedSkillIds: ["s020", "s101", "s103"] },
   { id: "s103", name: "SQL", category: "technical", aliases: ["database queries", "MySQL", "PostgreSQL", "SQL Server", "database management"], relatedSkillIds: ["s020", "s104", "s102"] },
   { id: "s104", name: "Python", category: "technical", aliases: ["Python programming", "pandas", "numpy", "scripting"], relatedSkillIds: ["s103", "s105", "s020"] },
@@ -93,10 +93,10 @@ export const SKILLS: Skill[] = [
   { id: "s113", name: "UX Design", category: "technical", aliases: ["user experience", "UI design", "user interface", "interaction design", "wireframing", "prototyping", "Figma"], relatedSkillIds: ["s022", "s106", "s150"] },
   { id: "s114", name: "Data Science", category: "technical", aliases: ["machine learning", "AI", "artificial intelligence", "deep learning", "predictive modelling"], relatedSkillIds: ["s020", "s023", "s104"] },
   { id: "s115", name: "Project Management Software", category: "technical", aliases: ["Jira", "Asana", "Trello", "Monday.com", "MS Project", "Notion"], relatedSkillIds: ["s040", "s100", "s107"] },
-  { id: "s116", name: "IT Support", category: "technical", aliases: ["technical support", "helpdesk", "troubleshooting IT", "systems administration"], relatedSkillIds: ["s024", "s057", "s108"] },
+  { id: "s116", name: "IT Support", category: "technical", aliases: ["technical support", "helpdesk", "troubleshooting IT", "systems administration", "IT support", "desktop support", "1st line support", "2nd line support", "first line support", "second line support", "end user support", "Active Directory", "Intune", "Entra ID"], relatedSkillIds: ["s024", "s057", "s108"] },
   { id: "s117", name: "CAD", category: "technical", aliases: ["AutoCAD", "computer-aided design", "3D modelling", "SolidWorks", "Revit", "BIM"], relatedSkillIds: ["s106", "s054", "s130"] },
   { id: "s118", name: "ERP Systems", category: "technical", aliases: ["SAP", "Oracle", "enterprise resource planning", "business systems"], relatedSkillIds: ["s100", "s049", "s103"] },
-  { id: "s119", name: "Automation", category: "technical", aliases: ["process automation", "RPA", "workflow automation", "scripting"], relatedSkillIds: ["s026", "s104", "s107"] },
+  { id: "s119", name: "Automation", category: "technical", aliases: ["process automation", "RPA", "workflow automation", "scripting", "PowerShell"], relatedSkillIds: ["s026", "s104", "s107"] },
 
   // === CREATIVE ===
   { id: "s150", name: "Content Creation", category: "creative", aliases: ["content writing", "blogging", "copywriting", "content strategy"], relatedSkillIds: ["s001", "s111", "s112"] },
@@ -116,7 +116,7 @@ export const SKILLS: Skill[] = [
   { id: "s164", name: "Special Educational Needs", category: "education", aliases: ["SEN", "SEND", "learning disabilities", "differentiation", "inclusive education"], relatedSkillIds: ["s160", "s050", "s052"] },
 
   // === FINANCIAL ===
-  { id: "s080", name: "Accounting", category: "financial", aliases: ["bookkeeping", "accounts", "financial accounting", "management accounting", "ACCA", "CIMA", "ACA"], relatedSkillIds: ["s027", "s081", "s082"] },
+  { id: "s080", name: "Accounting", category: "financial", aliases: ["bookkeeping", "accounts", "financial accounting", "management accounting", "ACCA", "CIMA", "ACA", "purchase ledger", "sales ledger", "bank reconciliation", "bank reconciliations", "month end", "month-end", "Sage", "Xero", "QuickBooks"], relatedSkillIds: ["s027", "s081", "s082"] },
   { id: "s081", name: "Tax", category: "financial", aliases: ["taxation", "tax planning", "corporation tax", "VAT", "income tax", "tax compliance"], relatedSkillIds: ["s080", "s082", "s027"] },
   { id: "s082", name: "Auditing", category: "financial", aliases: ["internal audit", "external audit", "compliance audit", "financial audit"], relatedSkillIds: ["s080", "s029", "s054"] },
   { id: "s083", name: "Payroll", category: "financial", aliases: ["payroll management", "PAYE", "salary processing"], relatedSkillIds: ["s080", "s100", "s054"] },
@@ -124,9 +124,9 @@ export const SKILLS: Skill[] = [
   { id: "s085", name: "Procurement", category: "financial", aliases: ["purchasing", "supplier management", "vendor management", "sourcing", "tendering"], relatedSkillIds: ["s004", "s043", "s049"] },
 
   // === HEALTHCARE ===
-  { id: "s170", name: "Patient Care", category: "healthcare", aliases: ["clinical care", "nursing care", "patient assessment", "bedside manner"], relatedSkillIds: ["s050", "s171", "s172"] },
+  { id: "s170", name: "Patient Care", category: "healthcare", aliases: ["clinical care", "nursing care", "patient assessment", "bedside manner", "wound care", "holistic care"], relatedSkillIds: ["s050", "s171", "s172"] },
   { id: "s171", name: "Clinical Assessment", category: "healthcare", aliases: ["diagnosis", "triage", "patient assessment", "medical assessment"], relatedSkillIds: ["s170", "s021", "s024"] },
-  { id: "s172", name: "Medication Administration", category: "healthcare", aliases: ["dispensing", "prescribing", "pharmacology"], relatedSkillIds: ["s170", "s054", "s047"] },
+  { id: "s172", name: "Medication Administration", category: "healthcare", aliases: ["dispensing", "prescribing", "pharmacology", "medication", "medicines management"], relatedSkillIds: ["s170", "s054", "s047"] },
   { id: "s173", name: "Health and Safety", category: "healthcare", aliases: ["H&S", "COSHH", "risk assessments", "workplace safety", "manual handling"], relatedSkillIds: ["s047", "s029", "s163"] },
   { id: "s174", name: "Mental Health Support", category: "healthcare", aliases: ["counselling", "therapy", "psychological support", "CBT", "mental health first aid"], relatedSkillIds: ["s050", "s003", "s170"] },
 
@@ -142,7 +142,7 @@ export const SKILLS: Skill[] = [
   { id: "s192", name: "Environmental Science", category: "scientific", aliases: ["sustainability", "environmental management", "carbon footprint", "ESG"], relatedSkillIds: ["s022", "s190", "s047"] },
 
   // === PHYSICAL / TRADES ===
-  { id: "s130", name: "Construction", category: "physical", aliases: ["building", "site management", "construction management", "CSCS"], relatedSkillIds: ["s040", "s047", "s173"] },
+  { id: "s130", name: "Construction", category: "physical", aliases: ["site management", "construction management", "CSCS", "building work", "building sites"], relatedSkillIds: ["s040", "s047", "s173"] },
   { id: "s131", name: "Electrical Work", category: "physical", aliases: ["electrical installation", "wiring", "electrician", "18th edition"], relatedSkillIds: ["s130", "s024", "s047"] },
   { id: "s132", name: "Plumbing", category: "physical", aliases: ["plumber", "heating", "gas safe", "pipework"], relatedSkillIds: ["s130", "s024", "s047"] },
   { id: "s133", name: "Driving", category: "physical", aliases: ["HGV", "LGV", "forklift", "delivery driving", "fleet management", "clean driving licence"], relatedSkillIds: ["s049", "s053", "s047"] },
@@ -176,8 +176,8 @@ export const SKILLS: Skill[] = [
   { id: "s217", name: "Git", category: "technical", aliases: ["version control", "GitHub", "GitLab", "Bitbucket", "source control"], relatedSkillIds: ["s107", "s105", "s104"] },
   { id: "s218", name: "Agile Methodology", category: "technical", aliases: ["Scrum", "Kanban", "sprint planning", "agile frameworks", "SAFe"], relatedSkillIds: ["s040", "s115", "s051"] },
   { id: "s219", name: "CI/CD", category: "technical", aliases: ["continuous integration", "continuous deployment", "Jenkins", "GitHub Actions", "pipeline automation"], relatedSkillIds: ["s216", "s217", "s107"] },
-  { id: "s220", name: "Computer Networking", category: "technical", aliases: ["network administration", "TCP/IP", "DNS", "firewall management", "LAN/WAN"], relatedSkillIds: ["s116", "s109", "s108"] },
-  { id: "s221", name: "ITIL", category: "technical", aliases: ["IT service management", "ITSM", "service desk", "incident management", "change management IT"], relatedSkillIds: ["s116", "s026", "s040"] },
+  { id: "s220", name: "Computer Networking", category: "technical", aliases: ["network administration", "TCP/IP", "DNS", "firewall management", "LAN/WAN", "networking", "network support", "VPN", "Cisco", "LAN", "WAN"], relatedSkillIds: ["s116", "s109", "s108"] },
+  { id: "s221", name: "ITIL", category: "technical", aliases: ["IT service management", "ITSM", "service desk", "incident management", "change management IT", "ServiceNow", "ticketing system"], relatedSkillIds: ["s116", "s026", "s040"] },
   { id: "s222", name: "API Development", category: "technical", aliases: ["REST API", "GraphQL", "API design", "web services", "microservices"], relatedSkillIds: ["s107", "s105", "s103"] },
   { id: "s223", name: "Mobile Development", category: "technical", aliases: ["iOS development", "Android development", "React Native", "Flutter", "app development"], relatedSkillIds: ["s107", "s105", "s113"] },
   { id: "s224", name: "Testing and QA Software", category: "technical", aliases: ["software testing", "test automation", "Selenium", "Cypress", "unit testing", "integration testing"], relatedSkillIds: ["s029", "s107", "s024"] },
@@ -241,9 +241,9 @@ export const SKILLS: Skill[] = [
   { id: "s278", name: "Record Keeping", category: "life", aliases: ["filing", "document management", "data entry", "administrative records"], relatedSkillIds: ["s054", "s100", "s053"] },
 
   // === MORE FINANCIAL ===
-  { id: "s280", name: "Credit Control", category: "financial", aliases: ["debt collection", "credit management", "accounts receivable", "cash collection"], relatedSkillIds: ["s080", "s004", "s054"] },
+  { id: "s280", name: "Credit Control", category: "financial", aliases: ["debt collection", "credit management", "accounts receivable", "cash collection", "credit controller", "aged debt", "debtor days", "overdue invoices"], relatedSkillIds: ["s080", "s004", "s054"] },
   { id: "s281", name: "Invoicing", category: "financial", aliases: ["billing", "accounts receivable processing", "invoice processing", "purchase order matching"], relatedSkillIds: ["s080", "s054", "s100"] },
-  { id: "s282", name: "VAT Returns", category: "financial", aliases: ["VAT compliance", "VAT submissions", "MTD", "Making Tax Digital"], relatedSkillIds: ["s081", "s080", "s054"] },
+  { id: "s282", name: "VAT Returns", category: "financial", aliases: ["VAT compliance", "VAT submissions", "MTD", "Making Tax Digital", "VAT return", "VAT reconciliation", "VAT reconciliations"], relatedSkillIds: ["s081", "s080", "s054"] },
   { id: "s283", name: "Management Reporting", category: "financial", aliases: ["management accounts", "monthly reporting", "board reporting", "financial reporting"], relatedSkillIds: ["s027", "s080", "s102"] },
   { id: "s284", name: "Mortgage Advisory", category: "financial", aliases: ["mortgage advice", "mortgage broking", "CeMAP", "lending criteria"], relatedSkillIds: ["s084", "s004", "s006"] },
   { id: "s285", name: "Insurance Underwriting", category: "financial", aliases: ["risk underwriting", "insurance assessment", "actuarial", "loss adjustment"], relatedSkillIds: ["s047", "s020", "s025"] },
@@ -275,7 +275,7 @@ export const SKILLS: Skill[] = [
   { id: "s310", name: "Public Relations", category: "communication", aliases: ["PR", "media relations", "press releases", "press office", "reputation management"], relatedSkillIds: ["s001", "s009", "s154"] },
   { id: "s311", name: "Media Buying", category: "communication", aliases: ["media planning", "advertising buying", "ad placement", "programmatic"], relatedSkillIds: ["s111", "s043", "s020"] },
   { id: "s312", name: "Crisis Communications", category: "communication", aliases: ["crisis PR", "crisis response", "reputation crisis", "media handling"], relatedSkillIds: ["s310", "s201", "s001"] },
-  { id: "s313", name: "Journalism", category: "communication", aliases: ["news writing", "reporting", "investigative journalism", "editorial"], relatedSkillIds: ["s001", "s022", "s009"] },
+  { id: "s313", name: "Journalism", category: "communication", aliases: ["news writing", "investigative journalism", "editorial", "news reporting"], relatedSkillIds: ["s001", "s022", "s009"] },
   { id: "s314", name: "Internal Communications", category: "communication", aliases: ["employee communications", "corporate communications", "staff engagement", "intranet content"], relatedSkillIds: ["s001", "s002", "s045"] },
   { id: "s315", name: "Speech Writing", category: "communication", aliases: ["speechcraft", "keynote writing", "address writing"], relatedSkillIds: ["s001", "s009", "s002"] },
 

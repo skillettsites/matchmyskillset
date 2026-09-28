@@ -10,7 +10,7 @@
 import type { ReportRow } from "@/lib/apis/reports-db";
 import { isMatchesDoc, isSkillsDoc, type ProfileSkill } from "@/lib/skills/profile";
 import { isSkillId } from "@/lib/skills/taxonomy";
-import { buildAnchors, gatherForAnchors, placeFromDoc, snapshotFrom, type MatchedJob } from "@/lib/apis/jobs/match";
+import { buildAnchors, gatherForAnchors, personFromDoc, placeFromDoc, snapshotFrom, type MatchedJob } from "@/lib/apis/jobs/match";
 import type { FitAnchor } from "@/lib/apis/jobs/fit";
 import { claimAlert, dueAlerts, releaseAlert, updateAlert, type AlertQuery, type AlertRow } from "./db";
 import { sendAlertDigest, type AlertJob } from "./emails";
@@ -29,7 +29,7 @@ export function alertQueryFromReport(report: ReportRow): { query: AlertQuery; sk
   const anchors: FitAnchor[] = buildAnchors(doc, items).slice(0, ALERT_ANCHORS);
   const snapshot = snapshotFrom(report.matches);
   return {
-    query: { anchors, place: placeFromDoc(doc), remote: doc.preferences.wantRemote, salaryMin: null },
+    query: { anchors, place: placeFromDoc(doc), remote: doc.preferences.wantRemote, salaryMin: null, person: personFromDoc(doc) },
     // Skill ids and strengths only: the notes on where each skill shows in the CV stay with the results.
     skills: doc.skills.map((s) => ({ id: s.id, strength: s.strength })),
     seenKeys: (snapshot?.jobs ?? []).map((j) => j.key),
@@ -60,6 +60,7 @@ export async function newJobsForAlert(alert: AlertRow): Promise<MatchedJob[]> {
   const snapshot = await gatherForAnchors({
     anchors: q.anchors,
     skills: readSkills(alert.skills),
+    ...(q.person ? { person: q.person } : {}),
     wantRemote: Boolean(q.remote),
     place: q.place ?? null,
     forAlert: true,

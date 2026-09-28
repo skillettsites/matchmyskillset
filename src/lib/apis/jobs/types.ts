@@ -2,6 +2,7 @@
 // JobCard component. Type-only: safe to import from client components.
 
 import type { UkRegion } from "@/lib/apis/regions";
+import type { TextSkillHit } from "@/lib/skills/text-skills";
 
 export type SourceId = "mms" | "reed" | "adzuna" | "teaching-vacancies" | "careerjet" | "jooble" | "himalayas" | "remotive";
 
@@ -28,6 +29,18 @@ export interface JobListing {
   /** ISO 4217 code, e.g. "GBP", "USD". */
   salaryCurrency?: string;
   snippet: string;
+  /**
+   * Longer advert text for scoring against a CV (the board's full summary, or
+   * the whole advert when `fullText` is set). Server-side only: never sent to
+   * the browser.
+   */
+  text?: string;
+  /** True when `text` or `skillHits` come from the whole advert, not a summary. */
+  fullText?: boolean;
+  /** Skills already found in the whole advert, for boards whose full text is not kept. */
+  skillHits?: TextSkillHit[];
+  /** The advert asks for a US licence, US registration or the right to work in the US. */
+  usOnly?: boolean;
   /** The original listing. Apply links always go here. */
   url: string;
   /** ISO 8601 date the ad was posted, when the board gives one. */

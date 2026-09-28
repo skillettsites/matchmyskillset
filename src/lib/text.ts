@@ -20,3 +20,26 @@ export function titleInSentence(title: string): string {
     return word.charAt(0).toLowerCase() + word.slice(1);
   });
 }
+
+/**
+ * "a" or "an" for a phrase as it reads mid-sentence: "an accountant", "an HR
+ * officer" (said "aitch"), "a UX designer" (said "you"), "a user researcher".
+ */
+export function aOrAn(phrase: string): "a" | "an" {
+  const w = phrase.trim().split(/\s+/)[0] ?? "";
+  if (/^[A-Z]{2,}/.test(w)) return /^[AEFHILMNORSX]/.test(w) ? "an" : "a";
+  const l = w.toLowerCase();
+  if (/^(uni|use|usu|uti|ur[ai]|eu|one\b|once)/.test(l)) return "a";
+  if (/^(hour|honest|honour|heir)/.test(l)) return "an";
+  return /^[aeiou]/.test(l) ? "an" : "a";
+}
+
+/** The phrase with "a" or "an" in front: withArticle("HR officer") is "an HR officer". */
+export function withArticle(phrase: string): string {
+  return `${aOrAn(phrase)} ${phrase}`;
+}
+
+/** First letter in capitals, for the start of a sentence. */
+export function capitalise(text: string): string {
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}

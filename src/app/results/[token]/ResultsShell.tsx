@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } fro
 import type { JobsSnapshot, MatchedJob } from "@/lib/apis/jobs/match";
 import { MatchJobCard, type CardJob } from "@/components/jobs/MatchJobCard";
 import { rememberResults } from "@/components/cv/storage";
-import { titleInSentence } from "@/lib/text";
+import { aOrAn, titleInSentence } from "@/lib/text";
 
 type Tab = "jobs" | "careers" | "skills";
 type Where = "all" | "near" | "region" | "remote";
@@ -14,6 +14,8 @@ type Contract = "any" | "permanent" | "temp" | "parttime" | "apprenticeship";
 type Sort = "match" | "newest" | "salary";
 
 const PER_PAGE = 12;
+/** The list keeps this many jobs (MAX_JOBS in match.ts). */
+const MAX_LIST = 150;
 const SALARY_FLOORS = [0, 25000, 35000, 45000, 60000];
 
 export const SHOW_JOBS_EVENT = "mms:show-jobs";
@@ -30,7 +32,25 @@ interface Props {
   careers: ReactNode;
   skills: ReactNode;
   side: ReactNode;
-  sourcesNote: string;
+}
+
+const BOARD_ORDER = ["mms", "reed", "adzuna", "teaching-vacancies", "himalayas", "remotive", "careerjet", "jooble"];
+
+/** Where the adverts in the list come from: every board with at least one advert in it, across all searches so far. */
+function sourcesLine(s: JobsSnapshot | null): string {
+  const count = new Map<string, { label: string; n: number }>();
+  for (const j of s?.jobs ?? []) {
+    const c = count.get(j.source) ?? { label: j.sourceLabel, n: 0 };
+    c.n++;
+    count.set(j.source, c);
+  }
+  const names = [...count.entries()].sort((a, b) => BOARD_ORDER.indexOf(a[0]) - BOARD_ORDER.indexOf(b[0])).map(([, c]) => c.label);
+  const list = names.length
+    ? names.length === 1
+      ? names[0]
+      : `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}`
+    : "Reed, Adzuna, GOV.UK Teaching Vacancies, Himalayas and Remotive";
+  return `Adverts come from ${list}. We do not write or check them: each links to the board that listed it, where you apply. Adverts dated more than 60 days ago are left out. Teaching Vacancies listings contain public sector information licensed under the Open Government Licence v3.0.`;
 }
 
 function toCard(j: MatchedJob, names: Record<string, string>): CardJob {
@@ -52,6 +72,9 @@ function toCard(j: MatchedJob, names: Record<string, string>): CardJob {
     explain: j.explain,
     matchedNames: j.matched.map((id) => names[id] ?? id),
     missingNames: j.missing.map((id) => names[id] ?? id),
+    typicalNames: (j.typical ?? []).map((id) => names[id] ?? id),
+    ...(j.evidence ? { evidence: j.evidence } : {}),
+    ...(j.level ? { level: j.level } : {}),
   };
 }
 
@@ -103,7 +126,7 @@ function Select<T extends string | number>({
 }
 
 export function ResultsShell(props: Props) {
-  const { token, initial, fresh, source, fromTitle, topSkills, careersCount, skillsCount, careers, skills, side, sourcesNote } = props;
+  const { token, initial, fresh, source, fromTitle, topSkills, careersCount, skillsCount, careers, skills, side } = props;
   const [tab, setTab] = useState<Tab>("jobs");
   const [snap, setSnap] = useState<JobsSnapshot | null>(initial);
   const [loading, setLoading] = useState<"" | "load" | "more">("");
@@ -138,15 +161,17 @@ export function ResultsShell(props: Props) {
           return;
         }
         if (action === "more") {
-          const before = snap?.jobs.length ?? 0;
-          const added = data.snapshot.jobs.length - before;
+          // Jobs that were not in the list before (the list keeps the best 150, so a count difference is not enough).
+          const seen = new Set((snap?.jobs ?? []).map((j) => j.key));
+          const added = data.snapshot.jobs.filter((j) => !seen.has(j.key)).length;
+          const full = data.snapshot.jobs.length >= MAX_LIST;
           setNote(
             data.exhausted
               ? "That is every search we run for your results. Try the job search page for other titles."
               : data.limited
                 ? "You have searched a lot today. Please try again later."
                 : added > 0
-                  ? `Found ${added} more matching job${added === 1 ? "" : "s"}.`
+                  ? `Found ${added} more matching job${added === 1 ? "" : "s"}.${full ? ` Your list keeps the best ${MAX_LIST}, so weaker matches made way for them.` : ""}`
                   : "No new matches in the wider search."
           );
         }
@@ -241,7 +266,7 @@ export function ResultsShell(props: Props) {
   }
 
   const n = jobs.length;
-  const whose = source === "cv" ? "your CV" : fromTitle ? `your experience as ${/^[aeiou]/i.test(fromTitle) ? "an" : "a"} ${titleInSentence(fromTitle)}` : "your experience";
+  const whose = source === "cv" ? "your CV" : fromTitle ? `your experience as ${aOrAn(titleInSentence(fromTitle))} ${titleInSentence(fromTitle)}` : "your experience";
   const nearText = place ? (place.kind === "region" ? `in ${place.label}` : `near ${place.label}`) : "across the UK";
   const passesLeft = snap ? snap.passes < 3 : false;
 
@@ -495,7 +520,7 @@ export function ResultsShell(props: Props) {
                     Search any job title
                   </a>
                 </div>
-                <p className="mt-4 text-[12px] leading-relaxed text-mute">{sourcesNote}</p>
+                <p className="mt-4 text-[12px] leading-relaxed text-mute">{sourcesLine(snap)}</p>
               </div>
             )}
           </div>

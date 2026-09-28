@@ -25,7 +25,15 @@ export interface CardJob {
   explain?: string;
   matchedNames?: string[];
   missingNames?: string[];
+  /** Skills our careers data says this kind of job usually needs, that the person has (not from the advert). */
+  typicalNames?: string[];
+  /** What the match rests on: skills in the advert, only the usual skills for the job, or the title alone. */
+  evidence?: "advert" | "typical" | "title";
+  /** Seniority compared with the person's. */
+  level?: "up" | "similar" | "down";
 }
+
+const LEVEL_TEXT: Record<"up" | "similar" | "down", string> = { up: "Step up", similar: "Similar level", down: "Step down" };
 
 function matchTone(m: number): { ring: string; text: string } {
   if (m >= 75) return { ring: "#1d7f37", text: "text-green" };
@@ -77,6 +85,11 @@ export function MatchJobCard({ job, position }: { job: CardJob; position?: numbe
             )}
             {job.workplace === "remote" && <span className="pill !px-2.5 !py-0.5 bg-green-soft text-[12px] text-green">Remote</span>}
             {job.workplace === "hybrid" && <span className="pill !px-2.5 !py-0.5 bg-green-soft text-[12px] text-green">Hybrid</span>}
+            {hasMatch && job.level && (
+              <span className={`pill !px-2.5 !py-0.5 text-[12px] ${job.level === "up" ? "bg-sky text-link" : "bg-cloud text-ink-2"}`} title="Seniority compared with your current level">
+                {LEVEL_TEXT[job.level]}
+              </span>
+            )}
             {posted && <span className="text-mute">{posted}</span>}
           </div>
           <h3 className="mt-2 text-[19px] font-semibold leading-snug tracking-[-0.02em] text-ink">
@@ -103,7 +116,9 @@ export function MatchJobCard({ job, position }: { job: CardJob; position?: numbe
         {hasMatch && (
           <div className="flex flex-col items-center">
             <MatchDial value={job.match!} />
-            <span className="mt-1 text-[12px] font-medium text-mute">match</span>
+            <span className={`mt-1 text-center text-[12px] font-medium leading-tight text-mute ${job.evidence === "title" ? "max-w-[72px]" : ""}`}>
+              {job.evidence === "title" ? "Title match only" : "match"}
+            </span>
           </div>
         )}
       </div>
@@ -117,12 +132,12 @@ export function MatchJobCard({ job, position }: { job: CardJob; position?: numbe
         </p>
       )}
 
-      {hasMatch && ((job.matchedNames?.length ?? 0) > 0 || (job.missingNames?.length ?? 0) > 0) && (
+      {hasMatch && ((job.matchedNames?.length ?? 0) > 0 || (job.missingNames?.length ?? 0) > 0 || (job.typicalNames?.length ?? 0) > 0) && (
         <div className="mt-3 space-y-2">
           {(job.matchedNames?.length ?? 0) > 0 && (
             <div>
-              <p className="sr-only">Your skills this advert asks for:</p>
-              <ul className="flex flex-wrap gap-1.5">
+              <p className="mb-1 text-[13px] font-medium text-ink-2">Your matching skills</p>
+              <ul className="flex flex-wrap gap-1.5" aria-label="Your skills that this advert names">
                 {job.matchedNames!.slice(0, 5).map((n) => (
                   <li key={n} className="rounded-full bg-green-soft px-2.5 py-1 text-[13px] font-medium text-green">
                     {n}
@@ -130,6 +145,12 @@ export function MatchJobCard({ job, position }: { job: CardJob; position?: numbe
                 ))}
               </ul>
             </div>
+          )}
+          {(job.typicalNames?.length ?? 0) > 0 && (
+            <p className="text-[13px] text-mute">
+              <span className="font-medium text-ink-2">Typical for this role, you have:</span> {job.typicalNames!.slice(0, 4).join(", ")}{" "}
+              <span>(from our careers data, not the advert)</span>
+            </p>
           )}
           {(job.missingNames?.length ?? 0) > 0 && (
             <p className="text-[13px] text-mute">

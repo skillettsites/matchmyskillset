@@ -13,6 +13,8 @@ import { ADZUNA_REGION, UK_NATIONS, regionByName } from "@/lib/apis/regions";
 import type { JobListing, JobQuery, SourceId, SourceResult } from "./types";
 import { regionsForLocations } from "./place-region";
 import { MMS_SOURCE_LABEL, searchMmsJobs } from "./mms";
+import { skillsInText, type TextSkillHit } from "@/lib/skills/text-skills";
+import { usOnly } from "./role";
 import {
   SourceHttpError,
   fetchJson,
@@ -23,6 +25,7 @@ import {
   remoteLocationLabel,
   stripHtml,
   tidyLocation,
+  trimBoilerplate,
   tidySnippet,
   ukEligible,
 } from "./util";
@@ -37,6 +40,14 @@ export interface JobSource {
   /** Whether to ask this board at all for this query (remote-only boards, etc.). */
   appliesTo(q: JobQuery): boolean;
   search(q: JobQuery): Promise<SourceResult>;
+}
+
+function compactHits(hits: TextSkillHit[]): [string, boolean][] {
+  return hits.map((h) => [h.id, h.inTitle]);
+}
+
+function expandHits(skills: [string, boolean][]): TextSkillHit[] {
+  return skills.map(([id, inTitle]) => ({ id, hits: 1, inTitle }));
 }
 
 // ---------------------------------------------------------------------------
@@ -118,6 +129,8 @@ const reed: JobSource = {
         salaryMax: r.maximumSalary ?? undefined,
         salaryCurrency: r.currency || "GBP",
         snippet: stripHtml(r.jobDescription),
+        // Reed's search gives the first 450 or so characters of the advert.
+        text: stripHtml(r.jobDescription, 1200),
         url: r.jobUrl,
         postedAt: parseUkDate(r.date),
       })
@@ -130,6 +143,72 @@ const reed: JobSource = {
     return { jobs, total: data.totalResults ?? null };
   },
 };
+
+// Reed's job details endpoint gives the whole advert (checked 28 September
+// 2026: GET /api/1.0/jobs/{jobId}, same basic auth, answers in about 60 ms
+// with jobDescription as HTML, contractType, partTime, fullTime and
+// expirationDate). The search only gives the first 450 or so characters, so
+// the job matcher asks for the whole advert for its best Reed matches.
+
+interface ReedDetailRaw {
+  jobId?: number;
+  jobDescription?: string;
+  contractType?: string | null;
+  partTime?: boolean | null;
+  fullTime?: boolean | null;
+  expirationDate?: string | null;
+}
+
+export interface ReedDetail {
+  text: string;
+  contractType?: string;
+  expires?: string;
+}
+
+/** One advert in full, cached for a day per job. Null when Reed does not answer. */
+const reedDetailCached = unstable_cache(
+  async (jobId: string): Promise<ReedDetail | null> => {
+    const key = env("REED_API_KEY");
+    if (!key || !/^[0-9]+$/.test(jobId)) return null;
+    const auth = Buffer.from(`${key}:`).toString("base64");
+    const d = await fetchJson<ReedDetailRaw>(`https://www.reed.co.uk/api/1.0/jobs/${jobId}`, { headers: { Authorization: `Basic ${auth}` }, cache: "no-store" }, 3500);
+    const text = trimBoilerplate(stripHtml(d.jobDescription, 12_000));
+    if (!text) return null;
+    const hours = d.partTime ? "part time" : d.fullTime ? "full time" : "";
+    const contractType = [d.contractType, hours].filter(Boolean).join(", ") || undefined;
+    const expires = parseUkDate(d.expirationDate);
+    return { text, ...(contractType ? { contractType } : {}), ...(expires ? { expires } : {}) };
+  },
+  ["mms-reed-detail-v2"],
+  { revalidate: 86_400 }
+);
+
+/**
+ * Whole adverts for these Reed jobs ("reed_<id>" or bare ids), a few at a
+ * time, giving up on whatever has not arrived by the deadline. Never throws.
+ */
+export async function reedDetails(ids: string[], deadlineMs = 4000, concurrency = 8): Promise<Map<string, ReedDetail>> {
+  const out = new Map<string, ReedDetail>();
+  if (!env("REED_API_KEY") || ids.length === 0) return out;
+  const queue = [...ids];
+  const stopAt = Date.now() + deadlineMs;
+  const worker = async () => {
+    while (queue.length && Date.now() < stopAt) {
+      const id = queue.shift()!;
+      try {
+        const detail = await reedDetailCached(id.replace(/^reed_/, ""));
+        if (detail) out.set(id, detail);
+      } catch (err) {
+        console.warn(`[jobs] reed detail ${id} failed: ${describeSourceError(err)}`);
+      }
+    }
+  };
+  const run = Promise.all(Array.from({ length: Math.min(concurrency, ids.length) }, worker));
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  await Promise.race([run, new Promise((resolve) => (timer = setTimeout(resolve, deadlineMs + 200)))]);
+  if (timer) clearTimeout(timer);
+  return out;
+}
 
 // ---------------------------------------------------------------------------
 // Adzuna (UK). app_id and app_key as query parameters. The old adapter also
@@ -240,6 +319,8 @@ const adzuna: JobSource = {
         salaryMax: advertised ? r.salary_max : undefined,
         salaryCurrency: "GBP",
         snippet: stripHtml(r.description),
+        // Adzuna's API gives the first 500 characters of the advert.
+        text: stripHtml(r.description, 1200),
         url: r.redirect_url,
         postedAt: isoOrUndefined(r.created),
         contractType: [r.contract_time, r.contract_type].filter(Boolean).join(", ").replace(/_/g, " ") || undefined,
@@ -308,6 +389,8 @@ interface TvLite {
   url: string;
   snippet: string;
   type: string;
+  /** Skills found in the whole advert: [skill id, found in the title]. The text itself is not cached. */
+  skills: [string, boolean][];
 }
 
 const TV_PAGES = 8; // the 800 newest listings (100 per page)
@@ -338,13 +421,14 @@ const teachingVacanciesFeed = unstable_cache(
           url: j.url,
           snippet: stripHtml(j.description, 220),
           type: (j.employmentType ?? []).join(", ").replace(/_/g, " ").toLowerCase(),
+          skills: compactHits(skillsInText(trimBoilerplate(stripHtml(j.description, 20_000)), j.title)),
         });
       }
     }
     if (out.length === 0) throw new Error("Teaching Vacancies returned nothing");
     return out;
   },
-  ["mms-teaching-vacancies-v1"],
+  ["mms-teaching-vacancies-v3"],
   { revalidate: 3600 }
 );
 
@@ -387,6 +471,8 @@ const teachingVacancies: JobSource = {
         salary: j.salary || undefined,
         salaryCurrency: "GBP",
         snippet: j.snippet,
+        fullText: true,
+        skillHits: expandHits(j.skills ?? []),
         url: j.url,
         postedAt: j.posted,
         contractType: j.type || undefined,
@@ -414,6 +500,7 @@ interface HimalayasJob {
   pubDate?: number | string;
   applicationLink: string;
   guid?: string;
+  description?: string;
 }
 
 const himalayas: JobSource = {
@@ -450,6 +537,9 @@ const himalayas: JobSource = {
           salaryMax: currency === "GBP" ? j.maxSalary ?? undefined : undefined,
           salaryCurrency: currency,
           snippet: stripHtml(j.excerpt),
+          // The whole advert, for scoring and for spotting roles only open to people in the US.
+          text: trimBoilerplate(stripHtml(j.description || j.excerpt, 8000)),
+          fullText: Boolean(j.description),
           url: j.applicationLink,
           postedAt: isoOrUndefined(j.pubDate),
           contractType: j.employmentType?.replace(/_/g, " ").toLowerCase(),
@@ -486,23 +576,37 @@ interface RemotiveLite {
   posted?: string;
   where: string;
   salary: string;
+  /** Skills found in the whole advert (UK-eligible roles only): [skill id, found in the title]. */
+  skills?: [string, boolean][];
+  /** The advert asks for a US licence, registration or right to work. */
+  us?: boolean;
 }
 
 const remotiveFeed = unstable_cache(
   async (): Promise<RemotiveLite[]> => {
     const data = await fetchJson<{ jobs?: RemotiveJob[] }>("https://remotive.com/api/remote-jobs", { cache: "no-store" }, 15000);
-    return (data.jobs ?? []).map((j) => ({
-      id: j.id,
-      url: j.url,
-      title: j.title,
-      company: j.company_name ?? "",
-      type: (j.job_type ?? "").replace(/_/g, " "),
-      posted: isoOrUndefined(j.publication_date ? `${j.publication_date}Z` : undefined),
-      where: j.candidate_required_location ?? "",
-      salary: (j.salary ?? "").slice(0, 60),
-    }));
+    return (data.jobs ?? []).map((j) => {
+      const where = j.candidate_required_location ?? "";
+      const lite: RemotiveLite = {
+        id: j.id,
+        url: j.url,
+        title: j.title,
+        company: j.company_name ?? "",
+        type: (j.job_type ?? "").replace(/_/g, " "),
+        posted: isoOrUndefined(j.publication_date ? `${j.publication_date}Z` : undefined),
+        where,
+        salary: (j.salary ?? "").slice(0, 60),
+      };
+      // Only roles open to the UK are ever shown, so only theirs are read in full.
+      if (ukEligible(where.split(/[,;]/).map((x) => x.trim()).filter(Boolean))) {
+        const text = stripHtml(j.description, 20_000);
+        lite.skills = compactHits(skillsInText(trimBoilerplate(text), j.title));
+        lite.us = usOnly(j.title, text, true);
+      }
+      return lite;
+    });
   },
-  ["mms-remotive-v1"],
+  ["mms-remotive-v3"],
   { revalidate: 21_600 }
 );
 
@@ -532,6 +636,8 @@ const remotive: JobSource = {
         remote: "yes",
         salary: j.salary ? `${j.salary} (currency as advertised)` : undefined,
         snippet: "",
+        ...(j.skills ? { fullText: true, skillHits: expandHits(j.skills) } : {}),
+        ...(j.us ? { usOnly: true } : {}),
         url: j.url,
         postedAt: j.posted,
         contractType: j.type || undefined,

@@ -133,6 +133,22 @@ export function looksNonUk(location: string | undefined | null, salary?: string 
   return false;
 }
 
+// Sentences that are about the employer, the pay and perks or the hiring
+// process, not the job: "One day a year paid community work", "our commitment
+// to Diversity and Inclusion", "adjustments to the recruitment process". Left
+// in, they read as skills the job needs (community development, cultural
+// awareness, recruitment).
+const BOILERPLATE =
+  /\b(equal opportunit\w*|diversity|inclusi\w*|reasonable adjustments?|recruitment process|disability confident|privacy (notice|policy)|gdpr|by applying|we will be in touch|shortlisted|employment (agency|business)|recruitment agency|benefits|pension|holiday|annual leave|gym|cycle to work|discounts?|perks|wellbeing|volunteer\w*|voluntary|community work|charit\w*|award-winning|our values|our culture|our people|we are proud|we're proud|guaranteed interview|interview scheme|right to work|visa sponsorship|sponsorship|cookie)\b/i;
+
+/** The advert without sentences about the employer, perks or the hiring process, for finding the skills the job needs. */
+export function trimBoilerplate(text: string): string {
+  return text
+    .split(/(?<=[.!?•])\s+|\s+[•·]\s+/)
+    .filter((sentence) => !BOILERPLATE.test(sentence))
+    .join(" ");
+}
+
 /** Board snippets sometimes open with stray quotes or an ellipsis ("" " Licensed ..."). */
 export function tidySnippet(value: string): string {
   return value.replace(/^[\s"'“”‘’.…]+/, "").trim();

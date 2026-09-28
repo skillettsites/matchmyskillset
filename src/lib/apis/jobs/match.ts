@@ -1,26 +1,48 @@
 // Live jobs for one person's results: gathers adverts for their own job and
 // their top career matches, near where they said they are, from every active
 // board plus the jobs posted on MatchMySkillset, scores each against their
-// skills (fit.ts), and keeps the list with their results so a reload is
-// instant and costs no API calls. Server-side only.
+// skills (fit.ts), drops adverts that are not their kind of work, and keeps
+// the list with their results so a reload is instant and costs no API calls.
+// Server-side only.
 //
 // Board quotas are protected three ways: a fixed number of calls per pass per
 // board (below), Adzuna's shared daily budget (sources.ts), and the snapshot:
 // one pass is stored in mms_reports.matches.jobs and reused for 12 hours.
+// Reed's search only gives the start of each advert, so the best Reed matches
+// are read in full (at most READ_IN_FULL per results link, cached for a day
+// per advert) before the list is stored.
 
 import { getCareerOccupation } from "@/data/careers";
 import { createAdminClient, isSupabaseConfigured } from "@/lib/supabase/admin";
 import { regionByName, type UkRegion } from "@/lib/apis/regions";
-import { getCurrentJob, type CurrentJob } from "@/lib/skills/job-lookup";
+import { getCurrentJob, getJobIndex, type CurrentJob } from "@/lib/skills/job-lookup";
 import type { MatchEntry, ProfileSkill, SkillsDoc } from "@/lib/skills/profile";
+import { familyOfJobKey, familyOfOccupation } from "@/lib/skills/role-families";
+import { wantsEasierWork } from "@/lib/skills/scoring";
 import { skillName } from "@/lib/skills/taxonomy";
+import { titleScore } from "@/lib/skills/fuzzy";
 import { runSource, type SourceRun } from "./index";
-import { listLiveMmsJobs } from "./mms";
+import { isLiveRow, listLiveMmsJobs } from "./mms";
 import { regionsForLocations } from "./place-region";
-import { JOB_FIT_METHOD, coreTitle, profileFitForSkills, scoreJobFit, type FitAnchor, type Track } from "./fit";
+import { reedDetails } from "./sources";
+import {
+  JOB_FIT_METHOD,
+  assessJob,
+  buildFitContext,
+  coreTitle,
+  profileFitForSkills,
+  type Evidence,
+  type FitAnchor,
+  type FitContext,
+  type FitInput,
+  type JobFit,
+  type LevelFit,
+  type PersonFit,
+  type Track,
+} from "./fit";
+import { classifyTitle, currentMedianPay, personLevel } from "./role";
 import type { JobListing, JobQuery, SourceId, Workplace } from "./types";
 import { dedupeKey, titleIsRelevant } from "./util";
-import { titleScore } from "@/lib/skills/fuzzy";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -56,10 +78,21 @@ export interface MatchedJob {
   anchor: string;
   occupationId?: string;
   match: number;
-  /** Skill ids. */
+  /** Skill ids found in the advert that the person shows. */
   matched: string[];
+  /** Skill ids found in the advert that the person does not show. */
   missing: string[];
+  /** Skill ids usual for this kind of job (our data, not the advert) that the person shows. */
+  typical?: string[];
   advertSkills: number;
+  /** What the skills part rests on (job-fit-v2 on). */
+  evidence?: Evidence;
+  /** Seniority compared with the person's. */
+  level?: LevelFit;
+  /** The kind of job the title names, from our careers data. */
+  role?: string;
+  /** True when the whole advert was read, not just a summary. */
+  fullText?: boolean;
   reason: string;
   explain: string;
 }
@@ -78,7 +111,7 @@ export interface JobsSnapshot {
   method: string;
   fetchedAt: string;
   place: SnapshotPlace | null;
-  anchors: { title: string; track: Track; occupationId?: string; prior: number; names?: string[] }[];
+  anchors: { title: string; track: Track; occupationId?: string; prior: number; names?: string[]; key?: string; family?: string | null; asked?: boolean }[];
   /** Search passes run so far (1 to MAX_PASSES). */
   passes: number;
   searched: { term: string; where: string; sources: SourceId[] }[];
@@ -86,16 +119,28 @@ export interface JobsSnapshot {
   sources: { id: SourceId; label: string; found: number; error?: string }[];
   /** Skill names for every id used in `jobs`. */
   skillNames: Record<string, string>;
+  /** Reed adverts read in full for this results link so far. */
+  readInFull?: number;
+  /** Adverts left out, by reason, in the latest pass (for the logs and QA). */
+  dropped?: { offTarget: number; usOnly: number; lowMatch: number };
+  /** Only with MMS_JOBS_DEBUG=1. */
+  droppedTitles?: string[];
 }
 
 export const MAX_PASSES = 3;
 /** A snapshot this recent is reused as it is. */
 export const SNAPSHOT_FRESH_MS = 12 * 3600 * 1000;
-const MAX_JOBS = 150;
+export const MAX_JOBS = 150;
 /** Jobs below this match are not shown at all. */
 export const MIN_MATCH = 40;
 /** Jobs posted on MatchMySkillset are shown (first) from this match. */
 const MMS_MIN_MATCH = 35;
+/** Reed adverts read in full per results link, across all passes. */
+export const READ_IN_FULL = 25;
+/** How long a pass waits for those whole adverts before storing what it has. */
+const READ_IN_FULL_DEADLINE_MS = 4000;
+/** Set MMS_JOBS_DEBUG=1 to keep the titles of left-out adverts in the snapshot (local QA only). */
+const DEBUG = process.env.MMS_JOBS_DEBUG === "1";
 
 // Calls per pass, per board. Reed and Adzuna return up to 50 adverts a call.
 interface PassPlan {
@@ -115,7 +160,7 @@ const ALERT_PLAN: PassPlan = { reed: 2, adzuna: 1, himalayas: 1, nearTerms: 2, u
 const PER_CALL = 50;
 
 // ---------------------------------------------------------------------------
-// Anchors and search terms
+// Anchors, the person, and search terms
 // ---------------------------------------------------------------------------
 
 const SENIORITY = /^(senior|snr|junior|jnr|principal|lead|trainee|graduate|interim|acting|deputy|assistant to the)\s+/i;
@@ -124,7 +169,7 @@ const SENIORITY = /^(senior|snr|junior|jnr|principal|lead|trainee|graduate|inter
 export function searchableRole(role: string | null | undefined): string {
   if (!role) return "";
   let r = role.replace(/\([^)]*\)/g, " ");
-  r = r.split(/\s+[-\u2013\u2014|/]\s+|,|;|\s+at\s+/i)[0] ?? r;
+  r = r.split(/\s+[-–—|/]\s+|,|;|\s+at\s+/i)[0] ?? r;
   r = r.replace(/\s+/g, " ").trim();
   for (let i = 0; i < 2; i++) r = r.replace(SENIORITY, "");
   const words = r.split(" ").filter(Boolean);
@@ -134,7 +179,23 @@ export function searchableRole(role: string | null | undefined): string {
 function occupationAnchor(entry: MatchEntry): FitAnchor | null {
   const o = getCareerOccupation(entry.occupationId);
   if (!o) return null;
-  return { track: "new", title: o.title, names: [o.title, ...o.aliases.slice(0, 4)], prior: entry.score / 100, occupationId: o.id };
+  const names = [...new Set([o.title, ...o.aliases, ...o.socIndexTitles])];
+  return {
+    track: "new",
+    title: o.title,
+    names,
+    prior: entry.score / 100,
+    occupationId: o.id,
+    key: `occ:${o.id}`,
+    family: familyOfOccupation(o.id),
+    ...(entry.flags?.includes("asked") ? { asked: true } : {}),
+  };
+}
+
+/** Every name we hold for a job in the index: its title, aliases and ONS titles. */
+function jobNames(key: string): string[] {
+  const entry = getJobIndex().find((e) => e.key === key);
+  return entry ? [entry.title, ...entry.aliases] : [];
 }
 
 /** The person's own job, if we know it, then their career matches in rank order. */
@@ -143,23 +204,56 @@ export function buildAnchors(doc: SkillsDoc, items: MatchEntry[]): FitAnchor[] {
   const current: CurrentJob | undefined = doc.currentJobKey ? getCurrentJob(doc.currentJobKey) : undefined;
   const role = searchableRole(doc.currentRole) || current?.title || "";
   if (role) {
-    // The job we matched their title to only stands in for it when the titles
-    // themselves are close: "Operations Manager" is matched to Restaurant
-    // manager through the alias "Operations manager (catering)", which is not
-    // the same job.
-    const same = current ? titleScore(role, current.title) >= 0.6 : false;
-    const names = new Set<string>([role]);
-    if (current && same) names.add(current.title);
-    if (current?.occupationId && same) for (const a of getCareerOccupation(current.occupationId)?.aliases.slice(0, 3) ?? []) names.add(a);
+    // The job we matched their title to only stands in for it when their title
+    // is one of its names (or very close to one): "Accounts assistant" is a
+    // name of Bookkeeper, so it is the same job.
+    const names = current ? jobNames(current.key) : [];
+    const same = current ? names.some((n) => titleScore(role, n) >= 0.75) : false;
+    const all = new Set<string>([role]);
+    if (current && same) for (const n of names.slice(0, 12)) all.add(n);
     // How much of the usual skill set for their job the profile shows; 60% when we do not recognise the job.
     const prior = current && same ? profileFitForSkills(current.skills, doc.skills) : 0.6;
-    anchors.push({ track: "field", title: role, names: [...names], prior: Math.round(prior * 1000) / 1000, ...(same && current?.occupationId ? { occupationId: current.occupationId } : {}) });
+    const family = (same ? familyOfJobKey(current?.key) : null) ?? classifyTitle(role).family;
+    anchors.push({
+      track: "field",
+      title: role,
+      names: [...all],
+      prior: Math.round(prior * 1000) / 1000,
+      ...(same && current ? { key: current.key } : {}),
+      ...(same && current?.occupationId ? { occupationId: current.occupationId } : {}),
+      family,
+    });
   }
   for (const entry of items) {
     const a = occupationAnchor(entry);
-    if (a && !anchors.some((x) => x.title.toLowerCase() === a.title.toLowerCase())) anchors.push(a);
+    if (a && !anchors.some((x) => x.title.toLowerCase() === a.title.toLowerCase() || (x.key && x.key === a.key))) anchors.push(a);
   }
   return anchors;
+}
+
+/** Anchors stored before families were added (job alerts): fills in the family and key. */
+export function withFamilies(anchors: FitAnchor[]): FitAnchor[] {
+  return anchors.map((a) => {
+    if (a.family !== undefined) return a;
+    if (a.occupationId) return { ...a, key: a.key ?? `occ:${a.occupationId}`, family: familyOfOccupation(a.occupationId) };
+    return { ...a, family: classifyTitle(a.title).family };
+  });
+}
+
+const LESS_RESPONSIBILITY = /\b(less responsibility|fewer responsibilities|step down|step back|less senior|not (a )?manag\w*|no longer manag\w*|less pressure)\b/i;
+
+/** The person's level and pay, for comparing with each advert's. */
+export function personFromDoc(doc: SkillsDoc): PersonFit {
+  return {
+    level: personLevel(doc.seniority, doc.currentRole, doc.yearsExperience),
+    median: currentMedianPay(doc.currentJobKey),
+    easier: wantsEasierWork(doc.preferences) || LESS_RESPONSIBILITY.test(doc.preferences.note ?? ""),
+  };
+}
+
+/** Everything needed to score adverts for one results link. */
+export function fitContextFromDoc(doc: SkillsDoc, items: MatchEntry[]): FitContext {
+  return buildFitContext(buildAnchors(doc, items), doc.skills, personFromDoc(doc));
 }
 
 // ---------------------------------------------------------------------------
@@ -201,6 +295,24 @@ function annualGbp(job: JobListing): { min?: number; max?: number } {
   const min = job.salaryMin && job.salaryMin >= 1000 ? Math.round(job.salaryMin) : undefined;
   const max = job.salaryMax && job.salaryMax >= 1000 ? Math.round(job.salaryMax) : undefined;
   return { min, max };
+}
+
+/** What the scorer reads from a listing. */
+export function fitInputFor(job: JobListing, scope?: Scope): FitInput {
+  const pay = annualGbp(job);
+  const text = job.mms ? job.mms.description : (job.text ?? job.snippet);
+  return {
+    title: job.title,
+    text: `${job.title}. ${text}`,
+    fullText: Boolean(job.mms) || Boolean(job.fullText),
+    ...(job.skillHits ? { hits: job.skillHits } : {}),
+    ...(job.mms?.skillIds.length ? { tagged: job.mms.skillIds } : {}),
+    ...(pay.min ? { salaryMin: pay.min } : {}),
+    ...(pay.max ? { salaryMax: pay.max } : {}),
+    remote: job.remote === "yes" || scope === "remote" || (job.mms?.workplace ?? null) === "remote",
+    posted: job.source === "mms",
+    ...(job.usOnly ? { usFlag: true } : {}),
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -285,6 +397,7 @@ export async function gatherJobs({ doc, items, place, previous, more }: GatherIn
   return gatherForAnchors({
     anchors: buildAnchors(doc, items),
     skills: doc.skills,
+    person: personFromDoc(doc),
     wantRemote: doc.preferences.wantRemote,
     place,
     previous,
@@ -295,15 +408,109 @@ export async function gatherJobs({ doc, items, place, previous, more }: GatherIn
 export interface AnchorGatherInput {
   anchors: FitAnchor[];
   skills: ProfileSkill[];
+  person?: PersonFit;
   wantRemote: boolean;
   place: SnapshotPlace | null;
   previous?: JobsSnapshot | null;
   more?: boolean;
-  /** Use the lighter plan for job alerts. */
+  /** Use the lighter plan for job alerts (and read no adverts in full). */
   forAlert?: boolean;
 }
 
-export async function gatherForAnchors({ anchors, skills, wantRemote, place, previous, more, forAlert }: AnchorGatherInput): Promise<JobsSnapshot> {
+interface Scored {
+  job: JobListing;
+  scope: Scope;
+  fit: JobFit;
+  region?: UkRegion;
+}
+
+function toMatched(s: Scored, place: SnapshotPlace | null): MatchedJob {
+  const { job, fit } = s;
+  const pay = annualGbp(job);
+  const { contract, partTime } = contractOfListing(job);
+  const region = s.region;
+  return {
+    key: dedupeKey(job.title, job.company, job.location),
+    id: job.id,
+    source: job.source,
+    sourceLabel: job.sourceLabel,
+    title: job.title,
+    company: job.company,
+    location: job.location,
+    ...(region ? { region } : {}),
+    scope: job.source === "mms" ? (job.mms?.workplace === "remote" ? "remote" : place?.region && region === place.region ? "region" : "uk") : s.scope,
+    workplace: workplaceOfListing(job),
+    ...(job.salary ? { salary: job.salary } : {}),
+    ...(pay.min ? { salaryMin: pay.min } : {}),
+    ...(pay.max ? { salaryMax: pay.max } : {}),
+    ...(contract ? { contract } : {}),
+    ...(partTime !== undefined ? { partTime } : {}),
+    ...(job.contractType ? { contractText: job.contractType } : {}),
+    ...(job.postedAt ? { postedAt: job.postedAt } : {}),
+    url: job.url,
+    snippet: job.snippet.slice(0, 240),
+    track: fit.track,
+    anchor: fit.anchor,
+    ...(fit.occupationId ? { occupationId: fit.occupationId } : {}),
+    match: fit.match,
+    matched: fit.matched,
+    missing: fit.missing,
+    ...(fit.typical.length ? { typical: fit.typical } : {}),
+    advertSkills: fit.advertSkills,
+    evidence: fit.evidence,
+    ...(fit.level ? { level: fit.level } : {}),
+    ...(fit.role ? { role: fit.role } : {}),
+    ...(job.fullText || job.mms ? { fullText: true } : {}),
+    reason: fit.reason,
+    explain: fit.explain,
+  };
+}
+
+function byMatch(a: MatchedJob, b: MatchedJob): number {
+  return (
+    Number(b.source === "mms") - Number(a.source === "mms") ||
+    b.match - a.match ||
+    (b.postedAt ? Date.parse(b.postedAt) : 0) - (a.postedAt ? Date.parse(a.postedAt) : 0) ||
+    a.key.localeCompare(b.key)
+  );
+}
+
+/**
+ * One advert per title, employer and place. The same advert on two boards
+ * often gives its place differently ("Leeds, West Yorkshire" and "LS12 6HU"):
+ * one per title, employer and region across boards. Several branches on one
+ * board are left alone.
+ */
+function dedupe(list: MatchedJob[]): MatchedJob[] {
+  const byKey = new Map<string, MatchedJob>();
+  for (const m of list) {
+    const prev = byKey.get(m.key);
+    if (!prev || m.source === "mms" || SCOPE_ORDER[m.scope] < SCOPE_ORDER[prev.scope] || (m.scope === prev.scope && m.match > prev.match)) byKey.set(m.key, m);
+  }
+  const kept = new Map<string, MatchedJob>();
+  for (const j of byKey.values()) {
+    const k2 = `${dedupeKey(j.title, j.company, "")}|${j.region ?? j.location}`;
+    const prev = kept.get(k2);
+    if (!prev) {
+      kept.set(k2, j);
+      continue;
+    }
+    if (prev.source === j.source) {
+      kept.set(`${k2}|${j.key}`, j);
+      continue;
+    }
+    if (j.source === "mms" || (prev.source !== "mms" && (SCOPE_ORDER[j.scope] < SCOPE_ORDER[prev.scope] || (j.scope === prev.scope && j.match > prev.match)))) {
+      kept.set(k2, j);
+    }
+  }
+  return [...kept.values()];
+}
+
+export async function gatherForAnchors({ anchors: rawAnchors, skills, person, wantRemote, place, previous: prevIn, more, forAlert }: AnchorGatherInput): Promise<JobsSnapshot> {
+  const anchors = withFamilies(rawAnchors);
+  const ctx = buildFitContext(anchors, skills, person);
+  // A list scored the old way is started again rather than merged.
+  const previous = prevIn && prevIn.method === JOB_FIT_METHOD ? prevIn : null;
   const pass = more && previous ? Math.min(MAX_PASSES, previous.passes + 1) : 1;
   const calls = anchors.length ? planCalls(pass, anchors, place, wantRemote, forAlert ? ALERT_PLAN : undefined) : [];
 
@@ -321,101 +528,78 @@ export async function gatherForAnchors({ anchors, skills, wantRemote, place, pre
   }
   const found: Found[] = [];
   for (const [term, runs] of byTerm) found.push(...relevant(term, runs));
+  // Every live job posted on the site is considered; the relevant ones lead the list.
+  for (const job of mmsJobs) found.push({ job, term: "", scope: "uk" });
 
   // Regions for adverts that did not come with one (Reed gives a town only).
   const needRegion = [...new Set(found.filter((f) => !f.job.region).map((f) => f.job.location))];
   const regionOf = needRegion.length ? await regionsForLocations(needRegion).catch(() => new Map<string, UkRegion | null>()) : new Map<string, UkRegion | null>();
 
-  const out = new Map<string, MatchedJob>();
-  // Earlier passes are kept, except posted jobs that have since closed.
-  const liveMms = new Set(mmsJobs.map((j) => j.id));
-  for (const old of previous && more ? previous.jobs : []) if (old.source !== "mms" || liveMms.has(old.id)) out.set(old.key, old);
-
-  const add = (job: JobListing, scope: Scope) => {
-    const best = scoreJobFit({ title: job.title, text: `${job.title}. ${job.mms?.description ?? job.snippet}`, tagged: job.mms?.skillIds }, skills, anchors);
-    if (!best) return;
-    const min = job.source === "mms" ? MMS_MIN_MATCH : MIN_MATCH;
-    if (best.match < min) return;
-    const key = dedupeKey(job.title, job.company, job.location);
-    const region = job.region ?? regionOf.get(job.location) ?? undefined;
-    const pay = annualGbp(job);
-    const { contract, partTime } = contractOfListing(job);
-    const m: MatchedJob = {
-      key,
-      id: job.id,
-      source: job.source,
-      sourceLabel: job.sourceLabel,
-      title: job.title,
-      company: job.company,
-      location: job.location,
-      ...(region ? { region } : {}),
-      scope: job.source === "mms" ? (job.mms?.workplace === "remote" ? "remote" : place?.region && region === place.region ? "region" : "uk") : scope,
-      workplace: workplaceOfListing(job),
-      ...(job.salary ? { salary: job.salary } : {}),
-      ...(pay.min ? { salaryMin: pay.min } : {}),
-      ...(pay.max ? { salaryMax: pay.max } : {}),
-      ...(contract ? { contract } : {}),
-      ...(partTime !== undefined ? { partTime } : {}),
-      ...(job.contractType ? { contractText: job.contractType } : {}),
-      ...(job.postedAt ? { postedAt: job.postedAt } : {}),
-      url: job.url,
-      snippet: job.snippet.slice(0, 240),
-      track: best.track,
-      anchor: best.anchor,
-      ...(best.occupationId ? { occupationId: best.occupationId } : {}),
-      match: best.match,
-      matched: best.matched,
-      missing: best.missing,
-      advertSkills: best.advertSkills,
-      reason: best.reason,
-      explain: best.explain,
-    };
-    const prev = out.get(key);
-    if (!prev || m.source === "mms" || SCOPE_ORDER[m.scope] < SCOPE_ORDER[prev.scope] || (m.scope === prev.scope && m.match > prev.match)) out.set(key, m);
+  const dropped = { offTarget: 0, usOnly: 0, lowMatch: 0 };
+  const droppedTitles: string[] = [];
+  const scoredById = new Map<string, Scored>();
+  const assess = (job: JobListing, scope: Scope): Scored | null => {
+    const input = fitInputFor(job, scope);
+    const a = assessJob(input, ctx);
+    if (!a.ok) {
+      if (a.why === "us-only") dropped.usOnly++;
+      else dropped.offTarget++;
+      if (DEBUG) droppedTitles.push(`${a.why}: ${job.title} (${job.source})`);
+      return null;
+    }
+    if (a.fit.match < (job.source === "mms" ? MMS_MIN_MATCH : MIN_MATCH)) {
+      dropped.lowMatch++;
+      if (DEBUG) droppedTitles.push(`low ${a.fit.match}: ${job.title} (${job.source})`);
+      return null;
+    }
+    return { job, scope, fit: a.fit, region: job.region ?? regionOf.get(job.location) ?? undefined };
   };
 
-  for (const f of found) add(f.job, f.scope);
-  // Every live job posted on the site is scored; the relevant ones lead the list.
-  for (const job of mmsJobs) {
-    const relevantToSomeone = anchors.some((a) => a.names.some((n) => titleIsRelevant(n, coreTitle(job.title), "loose")));
-    const fit = scoreJobFit({ title: job.title, text: `${job.title}. ${job.mms?.description ?? ""}`, tagged: job.mms?.skillIds }, skills, anchors);
-    if (relevantToSomeone || (fit && fit.matched.length >= 3)) add(job, "uk");
+  for (const f of found) {
+    const s = assess(f.job, f.scope);
+    if (!s) continue;
+    // The best scope an advert was found in is the one kept.
+    const prev = scoredById.get(f.job.id);
+    if (!prev || SCOPE_ORDER[s.scope] < SCOPE_ORDER[prev.scope]) scoredById.set(f.job.id, s);
   }
 
-  // The same advert on two boards often gives its place differently ("Leeds,
-  // West Yorkshire" and "LS12 6HU"): one per title, employer and region across
-  // boards. Several branches on one board are left alone.
-  const kept = new Map<string, MatchedJob>();
-  for (const j of out.values()) {
-    const k2 = `${dedupeKey(j.title, j.company, "")}|${j.region ?? j.location}`;
-    const prev = kept.get(k2);
-    if (!prev) {
-      kept.set(k2, j);
-      continue;
-    }
-    if (prev.source === j.source) {
-      kept.set(`${k2}|${j.key}`, j);
-      continue;
-    }
-    if (j.source === "mms" || (prev.source !== "mms" && (SCOPE_ORDER[j.scope] < SCOPE_ORDER[prev.scope] || (j.scope === prev.scope && j.match > prev.match)))) {
-      kept.set(k2, j);
+  // Earlier passes are kept, except posted jobs that have since closed.
+  const liveMms = new Set(mmsJobs.map((j) => j.id));
+  const kept: MatchedJob[] = (more && previous ? previous.jobs : []).filter((old) => old.source !== "mms" || liveMms.has(old.id));
+  let list = dedupe([...kept, ...[...scoredById.values()].map((s) => toMatched(s, place))]).sort(byMatch);
+
+  // Read the best Reed matches in full and score them again.
+  let readInFull = more && previous ? (previous.readInFull ?? 0) : 0;
+  if (!forAlert && readInFull < READ_IN_FULL) {
+    const wanted = list
+      .slice(0, MAX_JOBS)
+      .filter((j) => j.source === "reed" && !j.fullText && scoredById.has(j.id))
+      .slice(0, READ_IN_FULL - readInFull)
+      .map((j) => j.id);
+    if (wanted.length) {
+      const details = await reedDetails(wanted, READ_IN_FULL_DEADLINE_MS);
+      readInFull += details.size;
+      const rescored = new Map<string, MatchedJob | null>();
+      for (const [id, d] of details) {
+        const s = scoredById.get(id)!;
+        const job: JobListing = { ...s.job, text: d.text, fullText: true, ...(d.contractType ? { contractType: d.contractType } : {}) };
+        const again = assess(job, s.scope);
+        rescored.set(id, again ? toMatched(again, place) : null);
+      }
+      list = list
+        .map((j) => (rescored.has(j.id) ? rescored.get(j.id)! : j))
+        .filter((j): j is MatchedJob => j !== null)
+        .sort(byMatch);
     }
   }
-
-  const jobs = [...kept.values()]
-    .sort(
-      (a, b) =>
-        Number(b.source === "mms") - Number(a.source === "mms") ||
-        b.match - a.match ||
-        (b.postedAt ? Date.parse(b.postedAt) : 0) - (a.postedAt ? Date.parse(a.postedAt) : 0) ||
-        a.key.localeCompare(b.key)
-    )
-    .slice(0, MAX_JOBS);
+  const jobs = list.slice(0, MAX_JOBS);
 
   const skillNames: Record<string, string> = {};
-  for (const j of jobs) for (const id of [...j.matched, ...j.missing]) skillNames[id] = skillName(id);
+  for (const j of jobs) for (const id of [...j.matched, ...j.missing, ...(j.typical ?? [])]) skillNames[id] = skillName(id);
 
+  // Adverts supplied per board, across every pass so far.
   const sourceStats = new Map<SourceId, { id: SourceId; label: string; found: number; error?: string }>();
+  for (const s of more && previous ? previous.sources : []) sourceStats.set(s.id, { ...s });
   for (const r of results) {
     if (!r.run) continue;
     const s = sourceStats.get(r.run.id) ?? { id: r.run.id, label: r.run.label, found: 0 };
@@ -424,8 +608,6 @@ export async function gatherForAnchors({ anchors, skills, wantRemote, place, pre
     sourceStats.set(r.run.id, s);
   }
   if (mmsJobs.length) sourceStats.set("mms", { id: "mms", label: "Posted on MatchMySkillset", found: jobs.filter((j) => j.source === "mms").length });
-  const prevSources = more && previous ? previous.sources : [];
-  const mergedSources = [...prevSources.filter((s) => !sourceStats.has(s.id)), ...sourceStats.values()];
 
   const searched = [
     ...(more && previous ? previous.searched : []),
@@ -444,12 +626,24 @@ export async function gatherForAnchors({ anchors, skills, wantRemote, place, pre
     method: JOB_FIT_METHOD,
     fetchedAt: new Date().toISOString(),
     place,
-    anchors: anchors.map((a) => ({ title: a.title, track: a.track, prior: a.prior, names: a.names, ...(a.occupationId ? { occupationId: a.occupationId } : {}) })),
+    anchors: anchors.map((a) => ({
+      title: a.title,
+      track: a.track,
+      prior: a.prior,
+      names: a.names,
+      ...(a.occupationId ? { occupationId: a.occupationId } : {}),
+      ...(a.key ? { key: a.key } : {}),
+      family: a.family ?? null,
+      ...(a.asked ? { asked: true } : {}),
+    })),
     passes: pass,
     searched,
     jobs,
-    sources: mergedSources,
+    sources: [...sourceStats.values()],
     skillNames,
+    readInFull,
+    dropped,
+    ...(DEBUG ? { droppedTitles } : {}),
   };
 }
 
@@ -466,8 +660,31 @@ export function snapshotFrom(matches: unknown): JobsSnapshot | null {
   return isJobsSnapshot(s) ? s : null;
 }
 
+/** Recent enough to reuse, and scored with the current method. */
 export function isFresh(s: JobsSnapshot, now = Date.now()): boolean {
-  return now - Date.parse(s.fetchedAt) < SNAPSHOT_FRESH_MS;
+  return s.method === JOB_FIT_METHOD && now - Date.parse(s.fetchedAt) < SNAPSHOT_FRESH_MS;
+}
+
+/**
+ * The snapshot without jobs posted on MatchMySkillset that have closed or
+ * expired since it was stored. Reads their status live (one small query), so
+ * a closed job never shows, nor its "Apply with MatchMySkillset" button.
+ */
+export async function withoutClosedMmsJobs(s: JobsSnapshot): Promise<JobsSnapshot> {
+  const ids = s.jobs.filter((j) => j.source === "mms").map((j) => j.id.replace(/^mms_/, ""));
+  if (ids.length === 0 || !isSupabaseConfigured()) return s;
+  try {
+    const { data, error } = await createAdminClient().from("mms_jobs").select("id, status, expires_at").in("id", ids);
+    if (error) throw new Error(error.message);
+    const live = new Set((data ?? []).filter((r) => isLiveRow(r as { status: string; expires_at: string | null })).map((r) => `mms_${(r as { id: string }).id}`));
+    const jobs = s.jobs.filter((j) => j.source !== "mms" || live.has(j.id));
+    if (jobs.length === s.jobs.length) return s;
+    return { ...s, jobs, sources: s.sources.map((x) => (x.id === "mms" ? { ...x, found: jobs.filter((j) => j.source === "mms").length } : x)) };
+  } catch (err) {
+    console.warn("[jobs] closed-job check failed:", err instanceof Error ? err.message : err);
+    // If we cannot check, leave posted jobs out rather than risk showing a closed one.
+    return { ...s, jobs: s.jobs.filter((j) => j.source !== "mms") };
+  }
 }
 
 /** Stores the snapshot inside mms_reports.matches, keeping every other key (items, paid reports). */
