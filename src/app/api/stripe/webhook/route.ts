@@ -12,11 +12,16 @@ import {
 } from "@/lib/apis/reports-db";
 import { ensureReport } from "@/lib/apis/report-builder";
 import { isValidEmail, sendReportLink } from "@/lib/email/results-email";
+import { handleEmployerEvent, isEmployerEvent } from "@/lib/employer/billing-webhook";
 
 // Stripe webhook for the Career Change Report. Register it in the Stripe
 // dashboard at https://matchmyskillset.com/api/stripe/webhook for
 // checkout.session.completed (and checkout.session.async_payment_succeeded
-// if delayed payment methods are ever switched on).
+// if delayed payment methods are ever switched on). Employer subscriptions
+// also arrive here: checkout.session.completed (mode subscription),
+// customer.subscription.created/updated/deleted and invoice.payment_failed.
+// They are handed to src/lib/employer/billing-webhook.ts before the report
+// flow runs, with the same mms_stripe_events idempotency.
 //
 // Order: verify the signature, record the event id first (a repeat delivery
 // hits the primary key, 23505, and is acknowledged without doing anything),
@@ -47,6 +52,8 @@ export async function POST(req: NextRequest) {
     console.error("[stripe-webhook] bad signature:", err instanceof Error ? err.message : err);
     return NextResponse.json({ error: "bad_signature" }, { status: 400 });
   }
+
+  if (isEmployerEvent(event)) return handleEmployerEvent(event);
 
   if (!HANDLED.has(event.type)) return NextResponse.json({ received: true, ignored: event.type });
   const session = event.data.object as Stripe.Checkout.Session;

@@ -25,6 +25,8 @@ const ROUTES: Route[] = [
   { path: "/jobs", lastModified: REVAMP, priority: 0.6 },
   { path: "/quiz", lastModified: REVAMP, priority: 0.7 },
   { path: "/pricing", lastModified: REVAMP, priority: 0.5 },
+  { path: "/employers", lastModified: REVAMP, priority: 0.6 },
+  { path: "/employers/pricing", lastModified: REVAMP, priority: 0.5 },
   { path: "/transferable-skills", lastModified: REVAMP, priority: 0.8 },
 
   // Pay pages (ONS ASHE 2025)
