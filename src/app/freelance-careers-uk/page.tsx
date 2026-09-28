@@ -188,7 +188,7 @@ export default function FreelanceCareersPage() {
               ).
             </li>
             <li>
-              <strong>Payments on account.</strong> Once your yearly Self Assessment bill is £1,000 or more, and you
+              <strong>Payments on account.</strong>{" "}Once your yearly Self Assessment bill is £1,000 or more, and you
               paid no more than 80% of your tax at source, HMRC asks for two advance payments towards next year&apos;s
               bill, due by 31 January and 31 July, each half of last year&apos;s tax. In the first year this applies,
               the January bill can include both the balance for last year and the first advance payment (

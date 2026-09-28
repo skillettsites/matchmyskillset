@@ -285,7 +285,7 @@ export default function WorkFromHomeNoExperiencePage() {
       <GuideSection id="tutoring-and-online" title="Tutoring, freelance and online tasks">
         <Prose>
           <p>
-            <strong>Tutoring.</strong> For the group that includes private tutors, ONS says entry is possible with a
+            <strong>Tutoring.</strong>{" "}For the group that includes private tutors, ONS says entry is possible with a
             range of academic or professional qualifications or relevant experience, and that a DBS check may be
             required. ONS&apos;s pay
             figure for the group that includes
@@ -361,7 +361,7 @@ export default function WorkFromHomeNoExperiencePage() {
               before you send your passport, driving licence or bank details.
             </li>
             <li>
-              <strong>The job involves your bank account.</strong> A &ldquo;job&rdquo; that asks you to receive money
+              <strong>The job involves your bank account.</strong>{" "}A &ldquo;job&rdquo; that asks you to receive money
               and pass it on, or to buy crypto for someone, is money muling. The{" "}
               <a href={NCA_MONEY_MULES} className="link" rel="noopener">
                 National Crime Agency

@@ -414,7 +414,7 @@ export default function PoliceHubPage() {
               aid qualification. Driving instruction needs the three ADI tests.
             </p>
             <p>
-              <strong>Leaving early is common.</strong> Of officers who resigned voluntarily in the year to March 2026,
+              <strong>Leaving early is common.</strong>{" "}Of officers who resigned voluntarily in the year to March 2026,
               60.6% had less than 5 years&apos; service (Home Office). If that is you, apprenticeships are open at any age
               and pay you while you train.
             </p>

@@ -351,7 +351,7 @@ export default function JobsForIntrovertsPage() {
               work (the situation, what you did, what happened) so you are not thinking on the spot.
             </li>
             <li>
-              <strong>Ask how the team works.</strong> &ldquo;How does the team communicate day to day?&rdquo; and
+              <strong>Ask how the team works.</strong>{" "}&ldquo;How does the team communicate day to day?&rdquo; and
               &ldquo;How much of the week is meetings?&rdquo; tell you more than the job title.
             </li>
             <li>

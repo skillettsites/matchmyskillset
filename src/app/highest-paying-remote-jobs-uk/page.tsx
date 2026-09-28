@@ -239,7 +239,7 @@ export default function HighestPayingRemoteJobsPage() {
         <Prose>
           <ul>
             <li>
-              <strong>There is no official &ldquo;remote pay&rdquo; figure.</strong> The ONS Annual Survey of Hours
+              <strong>There is no official &ldquo;remote pay&rdquo; figure.</strong>{" "}The ONS Annual Survey of Hours
               and Earnings does not record whether people work from home, so it cannot show whether the same job pays
               more or less when done remotely. Any site quoting a UK &ldquo;remote premium&rdquo; should name its
               source.

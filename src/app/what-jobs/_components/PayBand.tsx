@@ -309,7 +309,7 @@ export function PayBandPage(props: PayBandProps) {
         intro={
           <p>
             ONS publishes a full-time median for {facts.published} of the 412 occupation groups in the Standard
-            Occupational Classification. These {facts.inBand.length} fall in this band. Group names are the official
+            Occupational Classification. These {facts.inBand.length}{" "}fall in this band. Group names are the official
             ONS titles, so some are broad (&ldquo;n.e.c.&rdquo; means &ldquo;not elsewhere classified&rdquo;).
           </p>
         }
@@ -357,7 +357,7 @@ export function PayBandPage(props: PayBandProps) {
               median and half earn less. Someone new to the job usually starts nearer the lower quarter.
             </li>
             <li>
-              <strong>Whole occupation groups.</strong> ONS publishes pay for four-digit SOC 2020 groups. A group such
+              <strong>Whole occupation groups.</strong>{" "}ONS publishes pay for four-digit SOC 2020 groups. A group such
               as &ldquo;Programmers and software development professionals&rdquo; covers many job titles and levels.
             </li>
             <li>

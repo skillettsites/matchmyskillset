@@ -301,7 +301,7 @@ export default function Page() {
               on work, health and money. It is aimed at people aged 45 to 65.
             </li>
             <li>
-              <strong>Careers advice.</strong> From 1 October 2026 the National Careers Service website is renamed
+              <strong>Careers advice.</strong>{" "}From 1 October 2026 the National Careers Service website is renamed
               &quot;Get careers information and advice&quot; and keeps its address. Face-to-face careers advice for
               adults in England moves to the Department for Work and Pensions Careers Service.{" "}
               <Ext href="https://nationalcareers.service.gov.uk/service-is-changing">National Careers Service notice</Ext>

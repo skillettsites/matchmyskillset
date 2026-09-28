@@ -52,8 +52,9 @@ export default async function DiscoverPage({ searchParams }: { searchParams: Pro
             reads the text and picks the skills; it does not choose your careers.
           </li>
           <li>
-            We compare those skills with {CAREER_OCCUPATIONS.length} UK careers that people commonly move into. The score is the share of each
-            career&apos;s key skills we found, weighted by how essential each skill is. The same profile always gets the
+            We compare those skills with {CAREER_OCCUPATIONS.length}{" "}UK careers that people commonly move into. The score is the share of each
+            career&apos;s key skills we found, weighted by how essential each skill is and by how few careers need it, so
+            everyday skills such as communication count for less. The same profile always gets the
             same score.
           </li>
           <li>

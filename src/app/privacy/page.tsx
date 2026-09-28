@@ -299,7 +299,7 @@ export default function PrivacyPage() {
         </h2>
         <p>
           We only use analytics cookies if you click Accept on the cookie banner. If you do, Google
-          Analytics sets the <code>_ga</code> and <code>_ga_*</code> cookies, which last up to 2
+          Analytics sets the <code>_ga</code> and <code>_ga_*</code>{" "}cookies, which last up to 2
           years. If you click Reject, Google Analytics does not load at all. Your choice is saved in
           your browser&apos;s local storage so we do not ask again on every page; that is
           necessary for the banner to work and does not track you.

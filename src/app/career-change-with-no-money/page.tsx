@@ -342,7 +342,7 @@ export default function Page() {
               helps you spot them.
             </li>
             <li>
-              <strong>If you are being made redundant,</strong> with 2 years&apos; service you can take reasonable time
+              <strong>If you are being made redundant,</strong>{" "}with 2 years&apos; service you can take reasonable time
               off during your notice to look for work or arrange training, and statutory redundancy pay under £30,000 is
               not taxed. <Ext href="https://www.gov.uk/redundancy-your-rights">GOV.UK: redundancy rights</Ext>
             </li>

@@ -292,7 +292,7 @@ export default function Page() {
             The median covers everyone in the group, from new starters to people with decades of experience, so plan
             with the lower quarter figure as well. ONS figures are for the whole UK and for employees only; they do not
             show what employers near you pay or how many vacancies there are. For that, search{" "}
-            <Link href="/jobs">live vacancies</Link> and read the entry requirements on the job&apos;s National Careers
+            <Link href="/jobs">live vacancies</Link>{" "}and read the entry requirements on the job&apos;s National Careers
             Service profile.
           </p>
         </Prose>
@@ -392,7 +392,7 @@ export default function Page() {
       <GuideSection id="advice" title="Free careers advice">
         <Prose className="mt-4">
           <p>
-            In England, the <Ext href="https://nationalcareers.service.gov.uk/">National Careers Service</Ext> website
+            In England, the <Ext href="https://nationalcareers.service.gov.uk/">National Careers Service</Ext>{" "}website
             has a skills assessment, job profiles and a course finder. From 1 October 2026 it is renamed &ldquo;Get
             careers information and advice&rdquo; at the same address, and one-to-one advice for adults moves to the
             Department for Work and Pensions: anyone aged 18 or over can contact the DWP Careers Service for a careers

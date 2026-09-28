@@ -188,12 +188,12 @@ export default function SkillsEmployersWantPage() {
           <p>Two measures matter for this guide:</p>
           <ul>
             <li>
-              <strong>Skill-shortage vacancies</strong> are vacancies that are hard to fill because applicants lack the
+              <strong>Skill-shortage vacancies</strong>{" "}are vacancies that are hard to fill because applicants lack the
               skills, qualifications or experience needed. Employers reported 250,500 of them in 2024, 27% of all
               vacancies (down from 36% in 2022, when the number of vacancies was the highest in the survey&apos;s history).
             </li>
             <li>
-              <strong>Skills gaps</strong> are existing staff their employer judges not fully proficient. Employers put
+              <strong>Skills gaps</strong>{" "}are existing staff their employer judges not fully proficient. Employers put
               that at 1.26 million people, or 4.0% of the workforce, the lowest in the survey&apos;s history.
             </li>
           </ul>

@@ -164,7 +164,7 @@ export default function TransferableSkillsPage() {
               how often, what changed.
             </li>
             <li>
-              <strong>Translate the language.</strong> &ldquo;Differentiated lessons for mixed-ability classes&rdquo;
+              <strong>Translate the language.</strong>{" "}&ldquo;Differentiated lessons for mixed-ability classes&rdquo;
               becomes &ldquo;adapted training for learners with different levels of experience&rdquo;.
             </li>
             <li>

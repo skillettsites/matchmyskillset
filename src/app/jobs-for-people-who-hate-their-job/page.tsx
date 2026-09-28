@@ -237,7 +237,7 @@ export default function Page() {
             <Ext href={NOTICE_URL}>GOV.UK</Ext>).
           </p>
           <p>
-            <strong>If your employer has treated you very badly,</strong> you may be able to claim constructive dismissal:
+            <strong>If your employer has treated you very badly,</strong>{" "}you may be able to claim constructive dismissal:
             resigning because your employer seriously breached your contract. Acas says to get legal advice before you
             resign. You usually need 2 years&apos; service to claim, with exceptions for some reasons such as
             whistleblowing, and the time limit is 3 months minus 1 day (

@@ -410,7 +410,7 @@ export default function FutureCareersPage() {
               is projected.
             </li>
             <li>
-              <strong>They were revised in 2024.</strong> ONS found errors in how it had coded occupations in its 2021
+              <strong>They were revised in 2024.</strong>{" "}ONS found errors in how it had coded occupations in its 2021
               Labour Force Survey data. NFER&apos;s{" "}
               <a href={NFER_REVISIONS} className="link" rel="noopener">
                 note on the revisions

@@ -233,7 +233,7 @@ export default function Page() {
         <Prose className="mt-4">
           <ul>
             <li>
-              <strong>Use the advert&apos;s words</strong> wherever they truthfully describe your experience. If it says
+              <strong>Use the advert&apos;s words</strong>{" "}wherever they truthfully describe your experience. If it says
               &ldquo;stakeholder engagement&rdquo;, write that rather than &ldquo;parent liaison&rdquo;.
             </li>
             <li>
@@ -262,11 +262,11 @@ export default function Page() {
               of birth, whether you are married or your nationality (<Ext href={NCS_CV_URL}>How to write a CV</Ext>).
             </li>
             <li>
-              <strong>Jargon from your old sector.</strong> Replace terms such as &ldquo;EYFS framework&rdquo; with the
+              <strong>Jargon from your old sector.</strong>{" "}Replace terms such as &ldquo;EYFS framework&rdquo; with the
               skill underneath, such as working to a statutory framework.
             </li>
             <li>
-              <strong>Duties that only matter in your old job.</strong> &ldquo;Marked Year 9 homework&rdquo; becomes
+              <strong>Duties that only matter in your old job.</strong>{" "}&ldquo;Marked Year 9 homework&rdquo; becomes
               &ldquo;gave written feedback against set criteria&rdquo;, or goes.
             </li>
             <li>

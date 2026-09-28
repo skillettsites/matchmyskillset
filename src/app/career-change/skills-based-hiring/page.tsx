@@ -272,7 +272,7 @@ export default function Page() {
               its own line.
             </li>
             <li>
-              <strong>Find one example for each.</strong> Pick a real situation where you did the thing being asked for.
+              <strong>Find one example for each.</strong>{" "}Pick a real situation where you did the thing being asked for.
               GOV.UK&apos;s guide to competencies says to use evidence from work if you can, &ldquo;though your examples
               don&apos;t need to be work related&rdquo; (<Ext href={STAR_URL}>A brief guide to competencies</Ext>).
             </li>
@@ -281,7 +281,7 @@ export default function Page() {
               achieve), Action (what you did, how and why) and Result (what happened, and whether you met your goal).
             </li>
             <li>
-              <strong>Use the advert&apos;s words.</strong> If it says &ldquo;stakeholder engagement&rdquo;, use that
+              <strong>Use the advert&apos;s words.</strong>{" "}If it says &ldquo;stakeholder engagement&rdquo;, use that
               phrase rather than your old sector&apos;s term for the same thing.
             </li>
             <li>

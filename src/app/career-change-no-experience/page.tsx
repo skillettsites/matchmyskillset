@@ -266,7 +266,7 @@ export default function Page() {
               <strong>Talk to people who do the job.</strong> Ask how they got in and what they would do in your place.
             </li>
             <li>
-              <strong>Take one relevant course, not five.</strong> Check the advert or the job&apos;s apprenticeship
+              <strong>Take one relevant course, not five.</strong>{" "}Check the advert or the job&apos;s apprenticeship
               standard to see what employers ask for, then do that.
             </li>
           </ul>

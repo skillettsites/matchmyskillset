@@ -39,7 +39,7 @@ export default function AboutPage() {
             title. No account is needed.
           </li>
           <li>
-            <strong>Software picks out your skills.</strong> An AI model (Anthropic&apos;s Claude)
+            <strong>Software picks out your skills.</strong>{" "}An AI model (Anthropic&apos;s Claude)
             reads the text and identifies your skills, which are then compared with a list of UK
             occupations.
           </li>

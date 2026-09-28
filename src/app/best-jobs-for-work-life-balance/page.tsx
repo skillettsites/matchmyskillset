@@ -259,7 +259,7 @@ export default function WorkLifeBalancePage() {
               ).
             </li>
             <li>
-              <strong>Holiday.</strong> Almost all workers are entitled to 5.6 weeks&apos; paid holiday a year. For
+              <strong>Holiday.</strong>{" "}Almost all workers are entitled to 5.6 weeks&apos; paid holiday a year. For
               someone working 5 days a week that is 28 days, and employers can count bank holidays as part of it (
               <a href={GOV.holiday} className="link" rel="noopener">
                 GOV.UK

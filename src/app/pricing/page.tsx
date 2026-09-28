@@ -122,10 +122,10 @@ export default function PricingPage() {
           How we make money
         </h2>
         <p className="mt-3 text-ink-2">
-          From the {REPORT_PRICE_LABEL} report, and from some course links. Where a course provider runs an affiliate scheme, we
+          From the {REPORT_PRICE_LABEL}{" "}report, and from some course links. Where a course provider runs an affiliate scheme, we
           may earn a commission if you sign up through our link, at no extra cost to you. Those links are marked on the page.
-          Nobody pays to appear in your career matches: they are ranked only by how many of each career&apos;s key skills you
-          have.
+          Nobody pays to appear in your career matches: they are ranked only on your skills, your line of work and what
+          you tell us.
         </p>
       </section>
 
