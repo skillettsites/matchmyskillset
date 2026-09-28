@@ -1,10 +1,12 @@
 "use client";
 
 import { useActionState } from "react";
+import { useKeepValues } from "@/components/employer/useKeepValues";
 import { requestSignInLink, type SignInState } from "@/app/employers/actions";
 
 export function SignInForm({ next }: { next: string | null }) {
   const [state, action, pending] = useActionState<SignInState, FormData>(requestSignInLink, { status: "idle" });
+  const keep = useKeepValues(action);
 
   if (state.status === "sent") {
     return (
@@ -31,7 +33,7 @@ export function SignInForm({ next }: { next: string | null }) {
   }
 
   return (
-    <form action={action} noValidate>
+    <form onSubmit={keep} noValidate>
       {next && <input type="hidden" name="next" value={next} />}
       <label htmlFor="email" className="field-label">
         Work email

@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import { useKeepValues } from "@/components/employer/useKeepValues";
 import { saveAccountDetails, saveCompanyPage, type FormState } from "@/app/employers/dashboard/actions";
 
 function Result({ state }: { state: FormState }) {
@@ -14,9 +15,10 @@ function Result({ state }: { state: FormState }) {
 
 export function AccountDetailsForm({ company, contact, website, email }: { company: string; contact: string; website: string; email: string }) {
   const [state, action, pending] = useActionState<FormState, FormData>(saveAccountDetails, {});
+  const keep = useKeepValues(action);
   const err = state.errors ?? {};
   return (
-    <form action={action} className="card-white space-y-5 p-6 sm:p-8">
+    <form onSubmit={keep} className="card-white space-y-5 p-6 sm:p-8">
       <h2 className="text-[19px] font-bold tracking-[-0.02em] text-ink">Account details</h2>
       <p className="text-[14px] text-mute">
         Signed in as <strong className="text-ink">{email}</strong>. We send sign-in links and applicant emails here.
@@ -52,9 +54,10 @@ export function AccountDetailsForm({ company, contact, website, email }: { compa
 
 export function CompanyPageForm({ description, publicUrl }: { description: string; publicUrl: string | null }) {
   const [state, action, pending] = useActionState<FormState, FormData>(saveCompanyPage, {});
+  const keep = useKeepValues(action);
   const err = state.errors ?? {};
   return (
-    <form action={action} className="card-white space-y-5 p-6 sm:p-8">
+    <form onSubmit={keep} className="card-white space-y-5 p-6 sm:p-8">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-[19px] font-bold tracking-[-0.02em] text-ink">Company page</h2>
         {publicUrl && (

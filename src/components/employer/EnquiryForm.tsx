@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import { useKeepValues } from "@/components/employer/useKeepValues";
 import { sendEnquiryAction, type EnquiryState } from "@/app/employers/actions";
 
 // Enquiry form for Enterprise, pay per hire and anything else. Sends an email
@@ -8,6 +9,7 @@ import { sendEnquiryAction, type EnquiryState } from "@/app/employers/actions";
 
 export function EnquiryForm({ defaultInterest = "Enterprise" }: { defaultInterest?: string }) {
   const [state, action, pending] = useActionState<EnquiryState | null, FormData>(sendEnquiryAction, null);
+  const keep = useKeepValues(action);
 
   if (state?.ok) {
     return (
@@ -19,7 +21,7 @@ export function EnquiryForm({ defaultInterest = "Enterprise" }: { defaultInteres
   }
 
   return (
-    <form action={action} className="card-white grid gap-5 p-6 sm:grid-cols-2 sm:p-8">
+    <form onSubmit={keep} className="card-white grid gap-5 p-6 sm:grid-cols-2 sm:p-8">
       <div>
         <label htmlFor="enq-name" className="field-label">
           Your name

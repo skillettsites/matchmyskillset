@@ -2,13 +2,15 @@
 
 import Link from "next/link";
 import { useActionState } from "react";
+import { useKeepValues } from "@/components/employer/useKeepValues";
 import { completeSetup, type FormState } from "@/app/employers/dashboard/actions";
 
 export function SetupForm(props: { email: string; next: string | null; company: string; contact: string; website: string }) {
   const [state, action, pending] = useActionState<FormState, FormData>(completeSetup, {});
+  const keep = useKeepValues(action);
   const err = state.errors ?? {};
   return (
-    <form action={action} className="card-white space-y-5 p-7 sm:p-8">
+    <form onSubmit={keep} className="card-white space-y-5 p-7 sm:p-8">
       {props.next && <input type="hidden" name="next" value={props.next} />}
       <p className="text-[15px] text-mute">
         Signed in as <strong className="text-ink">{props.email}</strong>

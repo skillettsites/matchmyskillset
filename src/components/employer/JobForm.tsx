@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useMemo, useState } from "react";
+import { useKeepValues } from "@/components/employer/useKeepValues";
 import { saveJob, type JobFormState } from "@/app/employers/dashboard/actions";
 import { skillsInText } from "@/lib/skills/text-skills";
 import { skillName } from "@/lib/skills/taxonomy";
@@ -44,6 +45,7 @@ function Err({ msg }: { msg?: string }) {
 export function JobForm({ initial, canSubmit, blocker }: { initial: JobFormValues; canSubmit: boolean; blocker: string | null }) {
   const [v, setV] = useState<JobFormValues>(initial);
   const [state, action, pending] = useActionState<JobFormState, FormData>(saveJob, { errors: {} });
+  const keep = useKeepValues(action);
   const set = (k: keyof JobFormValues) => (e: { target: { value: string } }) => setV((prev) => ({ ...prev, [k]: e.target.value }));
   const err = state.errors;
   const isLive = initial.status === "live";
@@ -56,7 +58,7 @@ export function JobForm({ initial, canSubmit, blocker }: { initial: JobFormValue
   }, [v.description, v.title]);
 
   return (
-    <form action={action} className="grid gap-6 lg:grid-cols-[1fr_320px] lg:items-start">
+    <form onSubmit={keep} className="grid gap-6 lg:grid-cols-[1fr_320px] lg:items-start">
       <div className="space-y-6">
         {initial.id && <input type="hidden" name="id" value={initial.id} />}
 

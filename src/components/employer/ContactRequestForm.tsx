@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useState } from "react";
+import { useKeepValues } from "@/components/employer/useKeepValues";
 import { requestContact, type ContactState } from "@/app/employers/dashboard/actions";
 
 // "Request contact" on an anonymous candidate card. The candidate gets an
@@ -9,6 +10,7 @@ import { requestContact, type ContactState } from "@/app/employers/dashboard/act
 export function ContactRequestForm({ candidateId, jobs, defaultJobId }: { candidateId: string; jobs: { id: string; title: string }[]; defaultJobId?: string }) {
   const [open, setOpen] = useState(false);
   const [state, action, pending] = useActionState<ContactState | null, FormData>(requestContact, null);
+  const keep = useKeepValues(action);
 
   if (state?.ok) {
     return (
@@ -27,7 +29,7 @@ export function ContactRequestForm({ candidateId, jobs, defaultJobId }: { candid
   }
 
   return (
-    <form action={action} className="space-y-3 rounded-2xl bg-cloud p-4">
+    <form onSubmit={keep} className="space-y-3 rounded-2xl bg-cloud p-4">
       <input type="hidden" name="candidate_id" value={candidateId} />
       {jobs.length > 0 && (
         <div>
