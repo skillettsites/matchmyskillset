@@ -1,49 +1,37 @@
 import { NextRequest, NextResponse } from "next/server";
-import { searchAllJobs } from "@/lib/apis/jobs";
+import { searchJobs } from "@/lib/apis/jobs";
 import { checkRateLimit, clientIp } from "@/lib/rate-limit";
 import { cleanText } from "@/lib/input";
 
-// Every search spends free-tier quota on Reed, Adzuna and Himalayas, so input
-// is capped and each IP is limited. A person browsing will not hit the limit.
+// Live listings from every enabled board. Each search spends free-tier quota,
+// so input is capped and each IP is limited; a person browsing will not hit it.
+
+export const runtime = "nodejs";
+export const maxDuration = 30;
+
 const RATE_LIMIT = 30;
 const RATE_WINDOW_SECONDS = 5 * 60;
-
-const MAX_QUERY_LENGTH = 100;
-const MAX_LOCATION_LENGTH = 80;
+const PER_PAGE = 25;
 const MAX_PAGE = 10;
-const MAX_SALARY = 1_000_000;
-
-function parseSalary(value: string | null): number | undefined {
-  if (!value) return undefined;
-  const n = Number.parseInt(value, 10);
-  if (!Number.isFinite(n) || n <= 0) return undefined;
-  return Math.min(n, MAX_SALARY);
-}
 
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;
 
-  const query = cleanText(searchParams.get("q"), MAX_QUERY_LENGTH);
-  if (query.length < 2) {
-    return NextResponse.json({ error: "Search query is required" }, { status: 400 });
-  }
+  const query = cleanText(searchParams.get("q"), 100);
+  if (query.length < 2) return NextResponse.json({ error: "Please type a job title or skill." }, { status: 400 });
 
-  const location = cleanText(searchParams.get("location"), MAX_LOCATION_LENGTH) || undefined;
-
-  let salaryMin = parseSalary(searchParams.get("salaryMin"));
-  let salaryMax = parseSalary(searchParams.get("salaryMax"));
-  if (salaryMin !== undefined && salaryMax !== undefined && salaryMin > salaryMax) {
-    [salaryMin, salaryMax] = [salaryMax, salaryMin];
-  }
+  const remote = searchParams.get("remote") === "1";
+  let location = cleanText(searchParams.get("location"), 80) || undefined;
+  // "remote" typed as a place used to be sent to the boards as a town name.
+  if (location && /^(remote|anywhere|work from home|wfh|home)$/i.test(location)) location = undefined;
 
   const pageParam = Number.parseInt(searchParams.get("page") || "1", 10);
   const page = Number.isFinite(pageParam) ? Math.min(Math.max(pageParam, 1), MAX_PAGE) : 1;
+  const salaryParam = Number.parseInt(searchParams.get("salaryMin") || "", 10);
+  const salaryMin = Number.isFinite(salaryParam) && salaryParam > 0 ? Math.min(salaryParam, 500_000) : undefined;
 
-  const { allowed, retryAfter } = await checkRateLimit(
-    `jobs-search:${clientIp(request)}`,
-    RATE_LIMIT,
-    RATE_WINDOW_SECONDS
-  );
+  const ip = clientIp(request);
+  const { allowed, retryAfter } = await checkRateLimit(`jobs-search:${ip}`, RATE_LIMIT, RATE_WINDOW_SECONDS);
   if (!allowed) {
     return NextResponse.json(
       { error: "Too many searches. Please wait a few minutes and try again." },
@@ -52,22 +40,19 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    // Fetch more results from each source so client-side filtering has a bigger pool
-    const results = await searchAllJobs({
+    const result = await searchJobs({
       query,
       location,
-      salaryMin,
-      salaryMax,
+      remote,
       page,
-      limit: 50,
+      perPage: PER_PAGE,
+      salaryMin,
+      userIp: ip !== "unknown" ? ip : undefined,
+      userAgent: request.headers.get("user-agent")?.slice(0, 300) || undefined,
     });
-
-    return NextResponse.json(results);
+    return NextResponse.json(result, { headers: { "Cache-Control": "private, max-age=300" } });
   } catch (error) {
-    console.error("[jobs/search] Error:", error);
-    return NextResponse.json(
-      { error: "Failed to search jobs. Please try again." },
-      { status: 500 }
-    );
+    console.error("[jobs/search] error:", error instanceof Error ? error.message : error);
+    return NextResponse.json({ error: "We could not search the job boards just now. Please try again." }, { status: 500 });
   }
 }
