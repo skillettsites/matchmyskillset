@@ -54,7 +54,7 @@ const HUB_ROUTE_BOOST = 1.5;
 /** Our career data marks the destination as suiting the person's line of work. */
 const AUDIENCE_BOOST = 1.1;
 /** The job's title or other names match something the person said they want (CV route). */
-const ASKED_BOOST = 1.5;
+const ASKED_BOOST = 1.75;
 /** None of the job's most essential skills (importance 5, or its highest) is in the profile itself. */
 const CORE_GAP_PENALTY = 0.8;
 /**
@@ -102,9 +102,14 @@ const IGNORED_WORDS = new Set(
     "skills skill experience day days week weeks hours hour pay paid salary money earn earning earnings home online remote " +
     "people person team teams business support service services staff professional general " +
     "manager managers officer officers adviser advisers advisor advisors assistant assistants worker workers executive executives " +
-    "practitioner practitioners specialist specialists coordinator coordinators lead leads leader leaders senior junior head"
+    "practitioner practitioners specialist specialists coordinator coordinators lead leads leader leaders senior junior head " +
+    // Words about working patterns, or that only modify a role ("operational risk analyst" is a risk job).
+    "operational life balance stress shift shifts weekend weekends flexible flexibility part full time"
   ).split(" ")
 );
+
+/** Role acronyms a person may type in lower case ("hr roles"). "it" is left out: it is also a pronoun. */
+const LOWER_CASE_ACRONYMS = new Set(["hr", "ux", "ui", "hgv", "lgv", "gp", "qa", "cbt", "csi", "pr", "ot", "pcso"]);
 
 /** Words that turn the rest of their sentence into something the person does not want. */
 const NEGATIONS = /^(no|not|never|without|avoid|avoiding|away|less|fewer|stop|leave|leaving|quit|hate|dislike|dislikes|don't|dont|rather|except|instead)$/;
@@ -117,6 +122,7 @@ function words(text: string): string[] {
 function normWord(w: string): string {
   if (w.length <= 3 && w === w.toUpperCase()) return w;
   const lower = w.toLowerCase();
+  if (LOWER_CASE_ACRONYMS.has(lower)) return lower.length <= 3 ? lower.toUpperCase() : lower;
   return lower.length > 4 && lower.endsWith("s") && !lower.endsWith("ss") ? lower.slice(0, -1) : lower;
 }
 
@@ -139,8 +145,8 @@ export function askedTerms(note: string | undefined): string[] {
   for (const sentence of note.split(/[.;!?]|\bbut\b|\bhowever\b/i)) {
     for (const raw of words(sentence)) {
       if (NEGATIONS.test(raw.toLowerCase())) break;
-      // Two and three letter words count only as capitalised acronyms (HR, IT, UX), never "it" or "and".
-      if (raw.length <= 3 && raw !== raw.toUpperCase()) continue;
+      // Two and three letter words count only as acronyms (HR, IT, UX, or "hr"), never "it" or "and".
+      if (raw.length <= 3 && raw !== raw.toUpperCase() && !LOWER_CASE_ACRONYMS.has(raw.toLowerCase())) continue;
       const w = normWord(raw);
       if (w.length < 2 || (!isAcronym(w) && IGNORED_WORDS.has(w))) continue;
       out.add(w);
@@ -279,15 +285,19 @@ function isOwnJob(occupation: CareerOccupation, current: CurrentContext | undefi
 /**
  * Top matches for a profile. Excludes the person's own job and anything in the
  * same ONS unit group, and keeps one job per unit group (they share pay
- * figures). The order starts from the skill match and then moves jobs up or
- * down, never off the list: up for routes on the hub page for the person's
- * line of work (and, less, for destinations our data marks as suiting it) and
- * for jobs they named in what matters to them; down for jobs in the same ONS
- * minor group as the current job (a similar job rather than a career change),
- * for ONS pay more than a fifth below the current job's unless they want less
- * stress or fewer hours, and for preferences the data can check: "no degree"
- * against the degree flag, "earn more" against ONS pay. The displayed score
- * never changes, and each move is recorded in `flags` for the results page.
+ * figures) unless the person asked for the second one by name.
+ *
+ * The order starts from the skill match and then moves jobs up or down, never
+ * off the list: up for routes on the hub page for the person's line of work
+ * (and, less, for destinations our data marks as suiting it) and for jobs they
+ * named in what matters to them; down for jobs in the same ONS minor group as
+ * the current job (a similar job rather than a career change), for routes our
+ * data lists only for other professions, for jobs whose most essential skill
+ * the profile lacks, for ONS pay more than a fifth below the current job's
+ * unless they want less stress or fewer hours, and for preferences the data
+ * can check: "no degree" against the degree flag, "earn more" against ONS pay.
+ * The displayed score never changes, and each move is recorded in `flags` for
+ * the results page.
  */
 export function scoreProfile({ skills, preferences, current, limit = 8 }: ScoreOptions): MatchEntry[] {
   if (skills.length === 0) return [];
@@ -362,7 +372,8 @@ export function scoreProfile({ skills, preferences, current, limit = 8 }: ScoreO
   const out: MatchEntry[] = [];
   for (const s of scored) {
     const soc = CAREER_OCCUPATIONS.find((o) => o.id === s.occupationId)?.soc ?? s.occupationId;
-    if (seenSoc.has(soc)) continue;
+    // One job per unit group (they share a pay figure), except a job the person asked for by name.
+    if (seenSoc.has(soc) && !s.flags.includes("asked")) continue;
     seenSoc.add(soc);
     const { rank: _rank, pay: _pay, ...entry } = s;
     void _rank;

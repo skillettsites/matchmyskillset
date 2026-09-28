@@ -17,9 +17,14 @@ const CACHE_SECONDS = 30 * 86_400;
 
 const FULL_POSTCODE = /\b([A-Z]{1,2}\d[A-Z\d]?)\s*(\d[A-Z]{2})\b/i;
 
-/** postcodes.io gives the English region, or an empty region and the country for Wales, Scotland and Northern Ireland. */
+/**
+ * postcodes.io gives the English region, or an empty region and the country
+ * for Wales, Scotland and Northern Ireland. Its places search calls the East
+ * of England "Eastern" (checked 28 September 2026).
+ */
 function toRegion(region: string | null | undefined, country: string | null | undefined): UkRegion | null {
-  const name = (region ?? "").trim() || (country ?? "").trim();
+  const raw = (region ?? "").trim() || (country ?? "").trim();
+  const name = raw.toLowerCase() === "eastern" ? "East of England" : raw;
   if (!name) return null;
   return UK_REGIONS.find((r) => r.toLowerCase() === name.toLowerCase()) ?? null;
 }
@@ -65,16 +70,17 @@ const placeRegion = unstable_cache(
     if (!res.ok) throw new Error(`postcodes.io HTTP ${res.status}`);
     const data = (await res.json()) as { result?: PlaceResult[] | null };
     const want = name.toLowerCase();
-    const regions = new Set<UkRegion | null>();
-    for (const p of data.result ?? []) {
-      const names = [p.name_1, p.name_2].filter(Boolean).map((n) => n!.toLowerCase());
-      if (!names.includes(want) || !SETTLEMENT_TYPES.has(p.local_type ?? "")) continue;
-      regions.add(toRegion(p.region, p.country));
-    }
-    // One region only: a name shared by places in two regions (Newport, Richmond) stays unknown.
+    const matches = (data.result ?? []).filter(
+      (p) => [p.name_1, p.name_2].some((n) => n?.toLowerCase() === want) && SETTLEMENT_TYPES.has(p.local_type ?? "")
+    );
+    // An advert naming "Leeds" or "Portsmouth" means the city, not a village or
+    // hamlet of the same name elsewhere, so the largest kind of place wins.
+    const tier = ["City", "Town"].find((t) => matches.some((p) => p.local_type === t));
+    const regions = new Set((tier ? matches.filter((p) => p.local_type === tier) : matches).map((p) => toRegion(p.region, p.country)));
+    // One region only: two towns of the same name in different regions (Newport) stay unknown.
     return regions.size === 1 ? [...regions][0] : null;
   },
-  ["mms-place-region-v1"],
+  ["mms-place-region-v2"],
   { revalidate: CACHE_SECONDS }
 );
 
