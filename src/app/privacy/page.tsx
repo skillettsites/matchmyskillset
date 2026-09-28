@@ -46,7 +46,7 @@ export default function PrivacyPage() {
             </li>
             <li>
               We keep your results (skills, career matches, the job title you gave, and for a CV a few
-              paraphrased achievements and what you said matters to you) for 12 months so your results
+              paraphrased achievements, short notes on where each skill shows and what you said matters to you) for 12 months so your results
               link keeps working, then delete them.
             </li>
             <li>Payments are handled by Stripe. We keep purchase records for 6 years for tax.</li>
@@ -88,9 +88,11 @@ export default function PrivacyPage() {
         <p>
           We store the output of the analysis: the skills we found, your career matches, the job
           title you gave (if any), the region you picked (if any) and a random code that makes up
-          your private results link. For a CV we also store 4 to 8 short achievement points and a
-          short summary of anything you said matters to you, both paraphrased by the AI model
-          without names or contact details, so the paid report can use them. Anyone who has the
+          your private results link. For a CV we also store 4 to 8 short achievement points, a
+          short summary of anything you said matters to you, and for each skill a note of up to 10
+          words on where it shows in your CV (for example &ldquo;led a department of four
+          teachers&rdquo;), all paraphrased by the AI model without names or contact details, so the
+          results page and the paid report can use them. Anyone who has the
           link can open the results, so only share it with people you trust.
         </p>
         <p>

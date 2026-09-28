@@ -24,6 +24,7 @@ import {
   type UnitGroupPay,
 } from "@/components/guides/pay";
 import { ASHE_NATIONAL, SOC_SOURCE, getSocUnitGroup } from "@/data/careers";
+import { titleInSentence } from "@/lib/text";
 
 const PATH = "/highest-paying-careers-uk";
 const TITLE = "Highest paying jobs in the UK: ONS 2025 pay table";
@@ -74,11 +75,11 @@ export default function HighestPayingCareersPage() {
   const faq = [
     {
       question: "What is the highest-paid job in the UK?",
-      answer: `In the 2025 ONS figures the occupation group with the highest median full-time pay was ${first.title.toLowerCase()} (SOC ${first.soc}), at ${formatGBP(first.median ?? 0)} a year.${specialists ? ` Specialist medical practitioners and consultants were next among professional jobs at ${formatGBP(specialists.median ?? 0)}.` : ""} These are medians: individual pay in these groups varies widely.`,
+      answer: `In the 2025 ONS figures the occupation group with the highest median full-time pay was ${titleInSentence(first.title)} (SOC ${first.soc}), at ${formatGBP(first.median ?? 0)} a year.${specialists ? ` Specialist medical practitioners and consultants were next among professional jobs at ${formatGBP(specialists.median ?? 0)}.` : ""} These are medians: individual pay in these groups varies widely.`,
     },
     {
       question: "Which jobs pay over £100,000 a year?",
-      answer: `No occupation group had a median full-time salary of £100,000 or more in the 2025 ONS figures. In a few groups at least a quarter of full-time employees earned over £100,000: ${over100Upper.map((u) => `${u.title.toLowerCase()} (upper quarter ${formatGBP(u.p75 ?? 0)})`).join(", ")}. Across all full-time employee jobs, 90% paid less than ${formatGBP(ft.p90 ?? 0)}.`,
+      answer: `No occupation group had a median full-time salary of £100,000 or more in the 2025 ONS figures. In a few groups at least a quarter of full-time employees earned over £100,000: ${over100Upper.map((u) => `${titleInSentence(u.title)} (upper quarter ${formatGBP(u.p75 ?? 0)})`).join(", ")}. Across all full-time employee jobs, 90% paid less than ${formatGBP(ft.p90 ?? 0)}.`,
     },
     {
       question: "How many jobs pay over £60,000?",
@@ -104,7 +105,7 @@ export default function HighestPayingCareersPage() {
         title={H1}
         intro={
           <p>
-            The best-paid occupation group in the UK is {first.title.toLowerCase()}, with a median of{" "}
+            The best-paid occupation group in the UK is {titleInSentence(first.title)}, with a median of{" "}
             <SalaryFigure value={first.median} size="sm" /> for full-time employees in the latest ONS figures. Only{" "}
             {over60} of the {ranked.length} groups ONS publishes have a median of £60,000 or more, and none reaches
             £100,000. The UK median for full-time work is <SalaryFigure value={UK_FT_MEDIAN} size="sm" />.

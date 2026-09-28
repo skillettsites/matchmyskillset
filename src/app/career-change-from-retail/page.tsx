@@ -22,12 +22,13 @@ import {
   type RouteSpec,
 } from "@/components/hubs";
 import { assertHubRoutes } from "@/lib/skills/families";
+import { titleInSentence } from "@/lib/text";
 
 const PATH = "/career-change-from-retail";
 const UPDATED = "2026-09-28";
 const TITLE = "Career change from retail: better-paid jobs and how to get them";
 const DESCRIPTION =
-  "14 jobs that pay more than shop work, with ONS pay, the change against a retail assistant's pay, apprenticeships, and free courses you may qualify for. Checked September 2026.";
+  "14 jobs that pay more than shop work, with ONS pay, the change against a retail assistant's pay, apprenticeships and free courses. Checked September 2026.";
 
 export const metadata: Metadata = {
   title: { absolute: "Career Change From Retail UK: Better-Paid Jobs to Move Into" },
@@ -196,7 +197,7 @@ export default function RetailHubPage() {
     },
     {
       question: "What pays more than retail without a degree?",
-      answer: `None of the 14 jobs on this page usually needs a degree. The highest ONS full-time median among them is ${top.title.toLowerCase()} at ${formatGBP(top.median as number)}, then train conductor at ${gbpFt("6214")} (ONS ASHE 2025). Both have a level 2 or 3 apprenticeship.`,
+      answer: `None of the 14 jobs on this page usually needs a degree. The highest ONS full-time median among them is ${titleInSentence(top.title)} at ${formatGBP(top.median as number)}, then train conductor at ${gbpFt("6214")} (ONS ASHE 2025). Both have a level 2 or 3 apprenticeship.`,
     },
     {
       question: "Can I get a free qualification if I work in retail?",
@@ -258,7 +259,7 @@ export default function RetailHubPage() {
           <p>
             Full-time sales and retail assistants had a median of {formatGBP(assistant)} in 2025 (ONS ASHE). All 14 jobs
             below pay more at the median, none usually needs a degree, and most have a paid apprenticeship. The best paid
-            is {top.title.toLowerCase()} at {formatGBP(top.median as number)}.{" "}
+            is {titleInSentence(top.title)} at {formatGBP(top.median as number)}.{" "}
             {countWord(aboveManager.length)} beat the {formatGBP(manager)} retail manager median too.
           </p>
         }
@@ -378,7 +379,7 @@ export default function RetailHubPage() {
 
       <RelatedLinks
         links={[
-          { href: "/discover?current=retail%20assistant", label: "Analyse my CV", note: "Free, no account: see which routes your experience fits." },
+          { href: "/discover?current=retail%20assistant#cv", label: "Analyse my CV", note: "Free, no account: see which routes your experience fits." },
           { href: "/jobs?q=customer%20service", label: "Live customer service jobs", note: "Search current UK vacancies." },
           { href: "/jobs-without-a-degree", label: "Jobs without a degree", note: "More well-paid routes with no degree needed." },
           { href: "/transferable-skills", label: "Transferable skills", note: "How to describe shop-floor skills to other employers." },

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useId, useMemo, useState } from "react";
 import { track } from "@/lib/analytics";
 import type { ToolJob } from "./tool-data";
+import { titleInSentence } from "@/lib/text";
 
 const GBP = new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP", maximumFractionDigits: 0 });
 
@@ -82,13 +83,13 @@ export function TransferableSkillsTool({ jobs, initialKey }: { jobs: ToolJob[]; 
       <div aria-live="polite" className="mt-8 grid gap-8 lg:grid-cols-[1.15fr_1fr] lg:gap-10">
         <section aria-labelledby={`${selectId}-skills`}>
           <div className="flex flex-wrap items-baseline justify-between gap-2">
-            <h3 id={`${selectId}-skills`} className="font-serif text-xl font-semibold text-ink">
+            <h2 id={`${selectId}-skills`} className="font-serif text-xl font-semibold text-ink">
               Skills you can take with you
-            </h3>
+            </h2>
             <CopyButton text={allLines} label={`Copy all CV lines for ${job.title}`} />
           </div>
           <p className="mt-1 text-sm text-muted">
-            CV-ready lines for a {job.title.toLowerCase()}. Replace the words in square brackets with your own details.
+            CV-ready lines for a {titleInSentence(job.title)}. Replace the words in square brackets with your own details.
           </p>
           <ul className="mt-4 divide-y divide-rule border-y border-rule">
             {job.skills.map((s) => (
@@ -109,9 +110,9 @@ export function TransferableSkillsTool({ jobs, initialKey }: { jobs: ToolJob[]; 
         </section>
 
         <section aria-labelledby={`${selectId}-dest`}>
-          <h3 id={`${selectId}-dest`} className="font-serif text-xl font-semibold text-ink">
+          <h2 id={`${selectId}-dest`} className="font-serif text-xl font-semibold text-ink">
             Jobs that use the same skills
-          </h3>
+          </h2>
           <p className="mt-1 text-sm text-muted">
             From our list of career-change destinations, ranked by the skills they share with this job, with more weight
             for skills that are central to both and less for skills almost every job needs.

@@ -5,7 +5,8 @@ import { GUIDE_LINKS, JOB_HUBS } from "@/components/site";
 export const metadata: Metadata = {
   title: "Page not found",
   description: "This page does not exist or has moved.",
-  robots: { index: false, follow: true },
+  // Next.js adds its own robots "noindex" tag to 404 responses; a second tag here would duplicate it.
+  robots: null,
   // The layout's self canonical would resolve to /_not-found here.
   alternates: { canonical: null },
 };
@@ -29,7 +30,7 @@ export default function NotFound() {
             <Link href="/" className="btn btn-primary btn-lg">
               Go to the homepage
             </Link>
-            <Link href="/discover" className="btn btn-secondary btn-lg">
+            <Link href="/discover#cv" className="btn btn-secondary btn-lg">
               Analyse my CV
             </Link>
           </div>

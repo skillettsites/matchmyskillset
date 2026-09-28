@@ -20,6 +20,7 @@ import {
 } from "@/data/careers";
 import type { ReactNode } from "react";
 import { SourceNote } from "@/components/content";
+import { titleInSentence } from "@/lib/text";
 
 /** ONS ASHE 2025 bulletin ("Employee earnings in the UK: 2025"). */
 export const ASHE_BULLETIN_URL =
@@ -245,11 +246,9 @@ export function ApprenticeshipSourceNote({ className }: { className?: string }) 
   );
 }
 
-/** Lower-case the first letter of a job title unless it starts with an acronym ("UX designer"). */
+/** A job title as it reads mid-sentence, keeping acronyms ("UX designer") and proper nouns ("Ofsted inspector"). */
 export function lcFirst(title: string): string {
-  // Keep acronyms ("UX designer") and proper nouns ("Border Force officer") as written.
-  if (/^[A-Z]{2}/.test(title) || /\s[A-Z]/.test(title)) return title;
-  return title.charAt(0).toLowerCase() + title.slice(1);
+  return titleInSentence(title);
 }
 
 function lowestSubDegree(o: OccupationPay): ApprenticeshipStandard | undefined {

@@ -13,13 +13,14 @@ import { searchJobs } from "@/lib/apis/jobs";
 import { isSkillsDoc } from "@/lib/skills/profile";
 import { NCS_ATTRIBUTION, PAY_SOURCE, describeApprenticeship, payForSoc, presentMatch, resolveCurrentJob, type PresentedMatch } from "@/lib/skills/present";
 import { skillName } from "@/lib/skills/taxonomy";
-import { coursesForSkill, occupationCourseLinks, qualificationLinks, skillsBootcampLink, FIND_APPRENTICESHIP_URL, SKILLS_BOOTCAMP_INFO_URL } from "@/lib/affiliate/courses";
+import { coursesForSkill, occupationCourseLinks, qualificationLinks, skillHasCourses, skillsBootcampLink, FIND_APPRENTICESHIP_URL, SKILLS_BOOTCAMP_INFO_URL } from "@/lib/affiliate/courses";
 import { AffiliateLink } from "@/lib/affiliate/AffiliateLink";
 import { CONTACT_EMAIL } from "@/lib/site";
 import { PayBlock, SkillChips } from "@/app/results/_components/parts";
 import { ViewEvent } from "@/app/results/[token]/ResultsClient";
 import { VacancyCount, VacancyFallback } from "@/app/results/[token]/VacancyCount";
 import { PrintButton, ReportGenerating } from "./ReportClient";
+import { titleInSentence } from "@/lib/text";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -108,7 +109,7 @@ function ReportBody({ stored, match, fromTitle, currentSoc, region, token }: { s
         <PayBlock pay={match.pay} change={match.payChange} fromTitle={fromTitle} scope={match.payScope} note={match.payNote} detailed />
         {currentPay && currentPay.median !== null && fromTitle && (
           <p className="mt-3 text-[0.9375rem] text-ink-2">
-            For comparison, the ONS median for your current job group ({fromTitle.toLowerCase()}, {currentPay.basisLabel}) is{" "}
+            For comparison, the ONS median for your current job group ({titleInSentence(fromTitle)}, {currentPay.basisLabel}) is{" "}
             <SalaryFigure value={currentPay.median} size="sm" />.
           </p>
         )}
@@ -243,6 +244,7 @@ function ReportBody({ stored, match, fromTitle, currentSoc, region, token }: { s
                 <p className="font-semibold text-ink">{skillName(g.skillId)}</p>
                 <p className="text-ink-2">{g.whyItMatters}</p>
                 <p className="mt-1 text-ink-2">{g.howToBuild}</p>
+                {skillHasCourses(g.skillId) && (
                 <p className="mt-1 text-sm">
                   Courses:{" "}
                   {coursesForSkill(g.skillId).map((l, i) => (
@@ -254,6 +256,7 @@ function ReportBody({ stored, match, fromTitle, currentSoc, region, token }: { s
                     </span>
                   ))}
                 </p>
+                )}
               </li>
             ))}
           </ol>
@@ -339,7 +342,7 @@ function ReportBody({ stored, match, fromTitle, currentSoc, region, token }: { s
         </Suspense>
         <p className="mt-3 no-print">
           <Link href={jobsHref} className="link">
-            Search all live {match.title.toLowerCase()} jobs
+            Search all live {titleInSentence(match.title)} jobs
           </Link>
         </p>
       </Section>
@@ -430,7 +433,7 @@ export default async function ReportPage({ params, searchParams }: { params: Par
       <div>
         <p className="kicker text-accent">Career Change Report</p>
         <h1 className="mt-2 font-serif text-h1 font-semibold text-ink">
-          {fromTitle ? `From ${fromTitle.toLowerCase()} to ${match.title.toLowerCase()}` : match.title}
+          {fromTitle ? `From ${titleInSentence(fromTitle)} to ${titleInSentence(match.title)}` : match.title}
         </h1>
         <p className="mt-2 text-ink-2">
           ONS unit group {match.soc}: {match.socTitle}.

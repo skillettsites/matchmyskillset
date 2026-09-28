@@ -1,5 +1,6 @@
 import { SalaryFigure, SourceNote, formatGBP, formatGBPChange } from "@/components/content";
 import { PAY_SOURCE, describeApprenticeship, type NamedSkill, type PayPicture, type PresentedMatch } from "@/lib/skills/present";
+import { titleInSentence } from "@/lib/text";
 
 /** ONS pay for one destination, always with its basis and source. */
 export function PayBlock({
@@ -38,7 +39,7 @@ export function PayBlock({
             }`}
           >
             {formatGBPChange(change.change)}
-            <span className="font-normal">vs {fromTitle.toLowerCase()}</span>
+            <span className="font-normal">vs {titleInSentence(fromTitle)}</span>
           </span>
         )}
       </p>

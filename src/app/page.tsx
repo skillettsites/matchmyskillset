@@ -7,7 +7,7 @@ import { FIT_LINKS, GUIDE_LINKS, JOB_HUBS, TOOL_LINKS, type NavItem } from "@/co
 export const metadata: Metadata = {
   title: { absolute: "Leaving your job? Real routes and UK pay | MatchMySkillset" },
   description:
-    "See where people like you actually go after leaving a job, what it pays in the UK, and how to get there. Start from your current job or paste your CV for a free analysis. No account needed.",
+    "See where people like you go after leaving a job, what it pays in the UK and how to get there. Start from your job or paste your CV: free, no account needed.",
   alternates: { canonical: "/" },
 };
 
@@ -216,7 +216,7 @@ export default function Home() {
                 A free personal analysis of the skills you have and the jobs
                 they lead to.
               </p>
-              <Link href="/discover" className="btn btn-primary mt-3 w-full">
+              <Link href="/discover#cv" className="btn btn-primary mt-3 w-full">
                 Analyse my CV
                 <Arrow />
               </Link>
@@ -270,7 +270,7 @@ export default function Home() {
                 <circle cx="220" cy="22" r="5" fill="#e0a030" />
               </svg>
               <div className="mt-6 flex flex-col gap-2">
-                <Link href="/discover" className="btn bg-night-text text-night hover:bg-white focus-visible:outline-highlight">
+                <Link href="/discover#cv" className="btn bg-night-text text-night hover:bg-white focus-visible:outline-highlight">
                   Analyse my CV
                   <Arrow />
                 </Link>

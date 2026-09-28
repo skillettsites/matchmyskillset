@@ -1,6 +1,7 @@
 import { Resend } from "resend";
 import { env } from "@/lib/env";
 import { SITE_URL } from "@/components/site";
+import { CONTACT_EMAIL } from "@/lib/site";
 
 // Server-only. Two one-off emails, each sent only because the person asked:
 //   sendResultsLink()  the free results link, from /results/<token>
@@ -81,7 +82,15 @@ async function send(to: string, subject: string, html: string, text: string): Pr
     return { ok: false, id: null, error: "not_configured" };
   }
   try {
-    const { data, error } = await client.emails.send({ from: FROM, to: to.trim(), subject: subjectSafe(subject), html, text });
+    const { data, error } = await client.emails.send({
+      from: FROM,
+      to: to.trim(),
+      // Replies go to the monitored contact address, not the sending address.
+      replyTo: CONTACT_EMAIL,
+      subject: subjectSafe(subject),
+      html,
+      text,
+    });
     if (error) {
       console.error("[email] Resend error:", error.name, error.message);
       return { ok: false, id: null, error: error.message };

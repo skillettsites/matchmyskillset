@@ -8,9 +8,9 @@ import { recruiterConsentText } from "./consent";
 import { DiscoverClient } from "./DiscoverClient";
 
 export const metadata: Metadata = {
-  title: "Free career change check: start from your job or your CV",
+  title: "Free career change check: your job or CV",
   description:
-    "Type the job you do now or paste your CV to see UK careers that use your skills, with ONS pay figures, the ways in and live vacancies. Free, and no account or email needed.",
+    "Type your job or paste your CV to see UK careers that use your skills, with ONS pay, the ways in and live vacancies. Free, and no account or email needed.",
   alternates: { canonical: "/discover" },
 };
 

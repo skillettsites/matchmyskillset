@@ -18,6 +18,18 @@ export interface LearnLink {
 
 const enc = encodeURIComponent;
 
+/**
+ * Skills a course search does not help with: a driving licence is gained by
+ * passing tests, and traits such as patience or empathy are not taught by the
+ * course marketplaces we link to.
+ */
+const NO_COURSE_SKILLS = new Set(["s133", "s050", "s052", "s058", "s200", "s204", "s207"]);
+
+/** Whether a paid course search is worth showing for this missing skill. */
+export function skillHasCourses(skillId: string): boolean {
+  return !NO_COURSE_SKILLS.has(skillId);
+}
+
 /** Two or three places to learn one skill: UK course marketplace first. */
 export function coursesForSkill(skillId: string): LearnLink[] {
   const name = getSkill(skillId)?.name ?? skillId;

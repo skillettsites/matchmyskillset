@@ -3,7 +3,7 @@ import { PRIMARY_NAV, SITE_NAME } from "@/components/site";
 import { Logo } from "@/components/ui/Logo";
 import { MobileMenu } from "@/components/ui/MobileMenu";
 
-const CV_HREF = "/discover";
+const CV_HREF = "/discover#cv";
 
 /**
  * Site header. A server component: no auth, no Supabase, no client state.

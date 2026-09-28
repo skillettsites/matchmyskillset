@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { formatGBPChange, formatMonths, isNumber, type PayPeriod } from "./format";
+import { titleInSentence } from "@/lib/text";
 import { SalaryFigure } from "./SalaryFigure";
 
 /** Props for {@link RouteCard}. */
@@ -129,7 +130,7 @@ export function RouteCard({
               }`}
             >
               {formatGBPChange(change, payPeriod)}
-              <span className="font-normal">vs {from.toLowerCase()}</span>
+              <span className="font-normal">vs {titleInSentence(from)}</span>
             </span>
           )}
         </div>

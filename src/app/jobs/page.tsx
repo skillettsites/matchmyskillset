@@ -3,9 +3,9 @@ import { Suspense } from "react";
 import { JobsSearch } from "./JobsSearch";
 
 export const metadata: Metadata = {
-  title: "Search live UK jobs from Reed, Adzuna and more",
+  title: "Live UK job search: Reed, Adzuna and more",
   description:
-    "Search live UK job adverts from Reed, Adzuna and GOV.UK Teaching Vacancies in one place, plus remote roles open to UK applicants. Every result links to the original advert.",
+    "Live UK job adverts from Reed, Adzuna, GOV.UK Teaching Vacancies and more in one list, plus remote roles open to UK applicants. Each links to the original.",
 };
 
 export default function JobsPage() {

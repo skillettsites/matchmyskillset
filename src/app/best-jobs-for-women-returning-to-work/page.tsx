@@ -6,6 +6,7 @@ import { guideMetadata, REVAMP_DATE } from "@/components/guides/meta";
 import { ArticleJsonLd, GuideSection, GuideShell, RelatedLinks } from "@/components/guides/GuideShell";
 import { AsheSourceNote, entryApprenticeship, occupationPayById, type OccupationPay } from "@/components/guides/pay";
 import { getAsheUnitGroup } from "@/data/careers";
+import { titleInSentence } from "@/lib/text";
 
 const PATH = "/best-jobs-for-women-returning-to-work";
 const TITLE = "Best jobs for women returning to work in the UK";
@@ -210,8 +211,8 @@ export default function Page() {
         />
         <Prose className="mt-6">
           <p>
-            The two jobs here with the most part-time work, {top[0].p.title.toLowerCase()} and{" "}
-            {top[1].p.title.toLowerCase()}, have full-time medians of {money(top[0].median)} and {money(top[1].median)}.
+            The two jobs here with the most part-time work, {titleInSentence(top[0].p.title)} and{" "}
+            {titleInSentence(top[1].p.title)}, have full-time medians of {money(top[0].median)} and {money(top[1].median)}.
             If you need a higher income, look further down the table, where part-time roles are less common but you can
             still ask for flexible working once you are in.
           </p>
@@ -374,7 +375,7 @@ export default function Page() {
           },
           {
             question: "Which jobs have the most part-time work?",
-            answer: `Of the jobs on this page, ${top[0].p.title.toLowerCase()} and ${top[1].p.title.toLowerCase()} have the highest share of part-time jobs in ONS data (ASHE 2025), at about ${top[0].partTime}% and ${top[1].partTime}%. Their full-time medians are ${top[0].median === null ? "not published" : formatGBP(top[0].median)} and ${top[1].median === null ? "not published" : formatGBP(top[1].median)}, so compare pay before you decide.`,
+            answer: `Of the jobs on this page, ${titleInSentence(top[0].p.title)} and ${titleInSentence(top[1].p.title)} have the highest share of part-time jobs in ONS data (ASHE 2025), at about ${top[0].partTime}% and ${top[1].partTime}%. Their full-time medians are ${top[0].median === null ? "not published" : formatGBP(top[0].median)} and ${top[1].median === null ? "not published" : formatGBP(top[1].median)}, so compare pay before you decide.`,
           },
           {
             question: "Are there free courses for people returning to work?",

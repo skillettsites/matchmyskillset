@@ -23,12 +23,13 @@ import {
 } from "@/components/hubs";
 import { assertHubRoutes } from "@/lib/skills/families";
 import { formatGBP } from "@/components/content";
+import { titleInSentence } from "@/lib/text";
 
 const PATH = "/career-change-from-teaching";
 const UPDATED = "2026-09-28";
 const TITLE = "Jobs for ex-teachers in the UK: where teachers go and what it pays";
 const DESCRIPTION =
-  "15 realistic jobs for ex-teachers with ONS pay, the change against a teacher's salary, how to get in, and free or funded retraining in England. Checked September 2026.";
+  "15 realistic jobs for ex-teachers with ONS pay, the change against a teacher's salary, how to get in, and funded retraining in England. Checked September 2026.";
 
 export const metadata: Metadata = {
   title: { absolute: "Jobs for Ex-Teachers UK: Where Teachers Go and What It Pays" },
@@ -246,7 +247,7 @@ export default function TeachingHubPage() {
     },
     {
       question: "What is the best-paid job for an ex-teacher?",
-      answer: `Of the 15 routes here, ${top.title.toLowerCase()} has the highest ONS full-time median at ${formatGBP(top.median as number)}, against ${formatGBP(secondary)} for secondary teachers (ONS ASHE 2025). Policy work and L&D management are close behind, though their ONS figures cover broad groups that include other jobs. A median covers everyone in the job, including people with years of experience, so it is not a starting salary.`,
+      answer: `Of the 15 routes here, ${titleInSentence(top.title)} has the highest ONS full-time median at ${formatGBP(top.median as number)}, against ${formatGBP(secondary)} for secondary teachers (ONS ASHE 2025). Policy work and L&D management are close behind, though their ONS figures cover broad groups that include other jobs. A median covers everyone in the job, including people with years of experience, so it is not a starting salary.`,
     },
     {
       question: "Can a teacher become a civil servant without another degree?",
@@ -559,7 +560,7 @@ export default function TeachingHubPage() {
 
       <RelatedLinks
         links={[
-          { href: "/discover?current=teacher", label: "Analyse my CV", note: "Free, no account: see which routes your experience fits." },
+          { href: "/discover?current=teacher#cv", label: "Analyse my CV", note: "Free, no account: see which routes your experience fits." },
           { href: "/jobs?q=former%20teacher", label: "Live jobs for former teachers", note: "Search current UK vacancies." },
           { href: "/transferable-skills", label: "Transferable skills", note: "How to describe teaching skills to other employers." },
           { href: "/jobs-without-a-degree", label: "Jobs without a degree", note: "Useful if you are weighing up apprenticeships." },

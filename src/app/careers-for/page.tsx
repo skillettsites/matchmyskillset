@@ -24,7 +24,7 @@ const PATH = "/careers-for";
 const UPDATED = "2026-09-28";
 const TITLE = "Career change by profession: where people go and what it pays";
 const DESCRIPTION =
-  "Start from the job you do now. In-depth guides for teachers, nurses, police, the armed forces and retail, plus realistic routes with ONS pay for 18 more professions.";
+  "Start from the job you do now. Guides for teachers, nurses, police, the armed forces and retail, plus routes with ONS pay for 18 more professions.";
 
 export const metadata: Metadata = {
   title: { absolute: "Career Change by Profession UK: Where People Go and the Pay" },
@@ -448,7 +448,7 @@ export default function CareersForPage() {
 
       <RelatedLinks
         links={[
-          { href: "/discover", label: "Analyse my CV", note: "Free, no account, works for any job." },
+          { href: "/discover#cv", label: "Analyse my CV", note: "Free, no account, works for any job." },
           { href: "/jobs", label: "Find jobs", note: "Search live UK vacancies." },
           { href: "/jobs-without-a-degree", label: "Jobs without a degree" },
           { href: "/transferable-skills", label: "Transferable skills" },

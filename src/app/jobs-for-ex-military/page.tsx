@@ -29,12 +29,13 @@ import {
   type RouteSpec,
 } from "@/components/hubs";
 import { assertHubRoutes } from "@/lib/skills/families";
+import { titleInSentence } from "@/lib/text";
 
 const PATH = "/jobs-for-ex-military";
 const UPDATED = "2026-09-28";
 const TITLE = "Jobs for ex-military in the UK: civilian careers and what they pay";
 const DESCRIPTION =
-  "15 civilian jobs for armed forces veterans with ONS pay, plus your resettlement support: the Career Transition Partnership, Enhanced Learning Credits and veteran schemes.";
+  "15 civilian jobs for armed forces veterans with ONS pay, plus resettlement support: the Career Transition Partnership, Enhanced Learning Credits and more.";
 
 export const metadata: Metadata = {
   title: { absolute: "Jobs for Ex-Military UK: Civilian Careers and What They Pay" },
@@ -226,7 +227,7 @@ export default function MilitaryHubPage() {
     },
     {
       question: "What are the best-paid civilian jobs for veterans?",
-      answer: `Of the 15 routes here, ${top.title.toLowerCase()} has the highest ONS full-time median at ${formatGBP(top.median as number)}, followed by project management at ${gbpFt("2440")} (ONS ASHE 2025). A median covers everyone in the job, including people with years of experience, so it is not a starting salary.`,
+      answer: `Of the 15 routes here, ${titleInSentence(top.title)} has the highest ONS full-time median at ${formatGBP(top.median as number)}, followed by project management at ${gbpFt("2440")} (ONS ASHE 2025). A median covers everyone in the job, including people with years of experience, so it is not a starting salary.`,
     },
     {
       question: "What resettlement support do I get when I leave the armed forces?",
@@ -307,7 +308,7 @@ export default function MilitaryHubPage() {
           <p>
             13,050 people left the UK Regular Armed Forces in the year to 30 June 2026 (MOD, September 2026). Below are 15
             civilian routes with ONS pay for each: {higher.length} pay more than the {formatGBP(uk)} UK full-time median,
-            led by {top.title.toLowerCase()} at {formatGBP(top.median as number)} (ONS ASHE 2025). Your resettlement
+            led by {titleInSentence(top.title)} at {formatGBP(top.median as number)} (ONS ASHE 2025). Your resettlement
             support is set out below too.
           </p>
         }
@@ -510,7 +511,7 @@ export default function MilitaryHubPage() {
 
       <RelatedLinks
         links={[
-          { href: "/discover?current=armed%20forces", label: "Analyse my CV", note: "Free, no account: see which routes your experience fits." },
+          { href: "/discover?current=armed%20forces#cv", label: "Analyse my CV", note: "Free, no account: see which routes your experience fits." },
           { href: "/jobs?q=ex%20military", label: "Live jobs for ex-military", note: "Search current UK vacancies." },
           { href: "/transferable-skills", label: "Transferable skills", note: "How to put service experience in civilian language." },
           { href: "/jobs-without-a-degree", label: "Jobs without a degree" },

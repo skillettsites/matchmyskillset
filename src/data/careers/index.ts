@@ -7,6 +7,7 @@ import { getCareerOccupation, type CareerOccupation } from "./occupations";
 import { getAsheUnitGroup, SOURCE, sourceLine, type AsheFigures } from "./ashe";
 import { getSocUnitGroup, SOC_SOURCE } from "./soc2020";
 import { LICENCES, type Licence } from "./licences";
+import { titleInSentence } from "@/lib/text";
 
 export * from "./occupations";
 export * from "./ashe";
@@ -84,7 +85,7 @@ export function getCareerProfile(id: string): CareerProfile | undefined {
     occupation,
     unitGroup: { code: occupation.soc, title: soc.title, onsEntryRoutes: soc.entryRoutes },
     pay: { ft: ashe.ft, all: ashe.all },
-    payScope: `Pay is for the ONS SOC 2020 unit group ${occupation.soc} "${soc.title}", which covers every job ONS codes to it, not only ${occupation.title.toLowerCase()} roles.`,
+    payScope: `Pay is for the ONS SOC 2020 unit group ${occupation.soc} "${soc.title}", which covers every job ONS codes to it, not only ${titleInSentence(occupation.title)} roles.`,
     payNote: occupation.payNote,
     sourceLine: sourceLine(),
     apprenticeships: occupation.apprenticeships

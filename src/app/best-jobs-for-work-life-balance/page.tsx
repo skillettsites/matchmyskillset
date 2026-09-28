@@ -15,6 +15,7 @@ import { guideMetadata, REVAMP_DATE } from "@/components/guides/meta";
 import { ArticleJsonLd, GuideSection, GuideShell, OnThisPage, RelatedLinks } from "@/components/guides/GuideShell";
 import { AsheSourceNote, UK_FT_MEDIAN, unitGroupPay, type UnitGroupPay } from "@/components/guides/pay";
 import { GOV, HSE_STRESS_2025, ONS_HYBRID_2024, OPN_2026 } from "../work-from-home-jobs/_data/sources";
+import { titleInSentence } from "@/lib/text";
 
 const PATH = "/best-jobs-for-work-life-balance";
 const TITLE = "Best jobs for work-life balance in the UK, with pay data";
@@ -94,7 +95,7 @@ export default function WorkLifeBalancePage() {
       question: "Which jobs have the best work-life balance in the UK?",
       answer: `No official source ranks jobs by work-life balance. Our picks are desk-based jobs with regular hours and flexible working, outside the sectors where HSE records the most work-related stress. Examples with ONS 2025 median full-time pay include ${rows
         .slice(0, 3)
-        .map((r) => `${r.name.toLowerCase()} (${formatGBP(r.median ?? 0)})`)
+        .map((r) => `${titleInSentence(r.name)} (${formatGBP(r.median ?? 0)})`)
         .join("; ")}.`,
     },
     {

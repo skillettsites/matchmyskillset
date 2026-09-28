@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { rankTitles } from "@/lib/skills/fuzzy";
 import { track } from "@/lib/analytics";
+import { titleInSentence } from "@/lib/text";
 
 interface IndexEntry {
   key: string;
@@ -247,7 +248,7 @@ export function DiscoverClient({ index, initialCurrent, initialSuggestions, regi
                       >
                         <span>
                           <span className="font-semibold">{s.title}</span>
-                          {s.matchedOn !== s.title && <span className="block text-sm text-muted">Also called {s.matchedOn.toLowerCase()}</span>}
+                          {s.matchedOn !== s.title && <span className="block text-sm text-muted">Also called {titleInSentence(s.matchedOn)}</span>}
                         </span>
                         <span aria-hidden="true" className="text-accent">
                           &rarr;

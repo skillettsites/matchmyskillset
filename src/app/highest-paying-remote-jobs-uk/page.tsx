@@ -22,6 +22,7 @@ import {
 } from "@/components/guides/pay";
 import { SOC_SOURCE, getSocUnitGroup, type ApprenticeshipStandard } from "@/data/careers";
 import { GOV, ONS_HYBRID_2025, OPN_2026 } from "../work-from-home-jobs/_data/sources";
+import { titleInSentence } from "@/lib/text";
 
 const PATH = "/highest-paying-remote-jobs-uk";
 const TITLE = "Highest-paying remote jobs in the UK, with ONS pay data";
@@ -115,7 +116,7 @@ export default function HighestPayingRemoteJobsPage() {
     .filter((r, i) => r.apprenticeship && rows.findIndex((x) => x.apprenticeship?.referenceNumber === r.apprenticeship?.referenceNumber) === i)
     .slice(0, 2);
   const apprenticeshipExamples = withApprenticeship
-    .map((r) => `${r.apprenticeship!.title.toLowerCase()} (level ${r.apprenticeship!.level})`)
+    .map((r) => `${titleInSentence(r.apprenticeship!.title)} (level ${r.apprenticeship!.level})`)
     .join(" and ");
   const softwareRange =
     software.p25 !== null && software.p75 !== null

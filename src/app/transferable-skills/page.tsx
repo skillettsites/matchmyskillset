@@ -7,6 +7,7 @@ import { AsheSourceNote } from "@/components/guides/pay";
 import { CAREER_OCCUPATIONS } from "@/data/careers";
 import { TransferableSkillsTool } from "./TransferableSkillsTool";
 import { buildToolData } from "./tool-data";
+import { titleInSentence } from "@/lib/text";
 
 const PATH = "/transferable-skills";
 const TITLE = "Transferable skills: examples and CV wording for your job";
@@ -79,7 +80,7 @@ export default function TransferableSkillsPage() {
               .map((s) => s.name.toLowerCase())
               .join(", ")}. The jobs in our list that share the most of those skills include ${teacher.destinations
               .slice(0, 3)
-              .map((d) => d.title.toLowerCase())
+              .map((d) => titleInSentence(d.title))
               .join(", ")}.`,
           },
         ]

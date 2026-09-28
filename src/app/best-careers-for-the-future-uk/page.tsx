@@ -15,6 +15,7 @@ import {
 import { guideMetadata, REVAMP_DATE } from "@/components/guides/meta";
 import { ArticleJsonLd, GuideSection, GuideShell, OnThisPage, RelatedLinks } from "@/components/guides/GuideShell";
 import { AsheSourceNote, UK_FT_MEDIAN, groupPay, occupationPayById, unitGroupPay } from "@/components/guides/pay";
+import { titleInSentence } from "@/lib/text";
 
 const PATH = "/best-careers-for-the-future-uk";
 const TITLE = "Best careers for the future in the UK: 2035 projections";
@@ -234,13 +235,13 @@ export default function FutureCareersPage() {
     {
       question: "Which jobs will be most in demand in the UK by 2035?",
       answer: `The DfE-published projections expect the biggest growth between 2020 and 2035 in ${listWithAnd(
-        growing.slice(0, 4).map((r) => `${r.title.toLowerCase()} (about ${formatNumber(r.net * 1_000)} more jobs)`),
+        growing.slice(0, 4).map((r) => `${titleInSentence(r.title)} (about ${formatNumber(r.net * 1_000)} more jobs)`),
       )}. Health and teaching professionals also grow. These are broad groups; the projections do not rank individual job titles.`,
     },
     {
       question: "Which jobs are expected to decline?",
       answer: `The largest projected falls between 2020 and 2035 are in ${listWithAnd(
-        shrinking.slice(0, 3).map((r) => `${r.title.toLowerCase()} (down about ${formatNumber(Math.abs(r.net) * 1_000)})`),
+        shrinking.slice(0, 3).map((r) => `${titleInSentence(r.title)} (down about ${formatNumber(Math.abs(r.net) * 1_000)})`),
       )}. Even so, the same projections expect about ${people(admin?.replacement ?? 0)} people to be needed in administrative jobs over that period to replace those who retire or leave.`,
     },
     {

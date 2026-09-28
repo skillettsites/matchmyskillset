@@ -31,12 +31,13 @@ import {
   type RouteSpec,
 } from "@/components/hubs";
 import { assertHubRoutes } from "@/lib/skills/families";
+import { titleInSentence } from "@/lib/text";
 
 const PATH = "/non-clinical-jobs-for-nurses";
 const UPDATED = "2026-09-28";
 const TITLE = "Non-clinical jobs for nurses in the UK: 15 routes and what they pay";
 const DESCRIPTION =
-  "Non-clinical jobs for nurses and NHS staff with ONS pay, Agenda for Change bands for 2026/27, what leaving practice means for your NMC registration, and funded retraining.";
+  "Non-clinical jobs for nurses and NHS staff with ONS pay, Agenda for Change bands for 2026/27, what leaving practice means for NMC registration, and retraining.";
 
 export const metadata: Metadata = {
   title: { absolute: "Non-Clinical Jobs for Nurses UK: 15 Routes and What They Pay" },
@@ -268,7 +269,7 @@ export default function NursesHubPage() {
     },
     {
       question: "What is the best-paid non-clinical job for a nurse?",
-      answer: `Of the 15 routes here, ${top.title.toLowerCase()} has the highest ONS full-time median at ${formatGBP(top.median as number)}, against ${formatGBP(nurse)} for registered nurses (ONS ASHE 2025). Project management is close behind. A median covers everyone in the job, including people with years of experience, so it is not a starting salary.`,
+      answer: `Of the 15 routes here, ${titleInSentence(top.title)} has the highest ONS full-time median at ${formatGBP(top.median as number)}, against ${formatGBP(nurse)} for registered nurses (ONS ASHE 2025). Project management is close behind. A median covers everyone in the job, including people with years of experience, so it is not a starting salary.`,
     },
     {
       question: "Do I lose my NMC registration if I leave nursing?",
@@ -591,7 +592,7 @@ export default function NursesHubPage() {
 
       <RelatedLinks
         links={[
-          { href: "/discover?current=nurse", label: "Analyse my CV", note: "Free, no account: see which routes your experience fits." },
+          { href: "/discover?current=nurse#cv", label: "Analyse my CV", note: "Free, no account: see which routes your experience fits." },
           { href: "/jobs?q=non%20clinical%20nurse", label: "Live non-clinical nursing jobs", note: "Search current UK vacancies." },
           { href: "/jobs?q=remote%20nurse", label: "Remote and hybrid nursing jobs", note: "See what employers advertise now." },
           { href: "/transferable-skills", label: "Transferable skills", note: "How to describe clinical skills to other employers." },

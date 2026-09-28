@@ -35,6 +35,7 @@ import {
   UNIT_5YR,
   type HseRate,
 } from "./hse-data";
+import { titleInSentence } from "@/lib/text";
 
 const PATH = "/low-stress-jobs-uk";
 const TITLE = "Low-stress jobs in the UK that pay well (HSE and ONS data)";
@@ -101,7 +102,7 @@ export default function LowStressJobsPage() {
       question: "Which jobs report the most work-related stress?",
       answer: `Over the five years 2020/21 to 2024/25, the highest rates HSE could estimate for individual occupations were for ${highestUnits
         .slice(0, 4)
-        .map((r) => `${r.title.toLowerCase()} (${formatNumber(r.rate)} per 100,000)`)
+        .map((r) => `${titleInSentence(r.title)} (${formatNumber(r.rate)} per 100,000)`)
         .join(", ")}, against ${formatNumber(ALL_5YR.rate)} for all occupations. HSE notes that the groups with higher rates often involve a lot of contact with the public and many are in the public sector.`,
     },
     {
@@ -312,7 +313,7 @@ export default function LowStressJobsPage() {
               <AsheSourceNote note="ONS did not publish 2025 pay for police officers (sergeant and below) after a correction on 19 December 2025." />
             </div>
           }
-          notes={`For comparison, HSE's estimates for ${lowerUnits.map((r) => `${r.title.toLowerCase()} (${formatNumber(r.rate)})`).join(" and ")} were statistically lower than average over the same period. Small sample: HSE flags the estimate as based on 20 to 29 survey cases.`}
+          notes={`For comparison, HSE's estimates for ${lowerUnits.map((r) => `${titleInSentence(r.title)} (${formatNumber(r.rate)})`).join(" and ")} were statistically lower than average over the same period. Small sample: HSE flags the estimate as based on 20 to 29 survey cases.`}
         />
         <Prose>
           <p>

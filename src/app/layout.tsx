@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     default: `${SITE_NAME}: the UK guide for people leaving a job`,
     template: "%s | MatchMySkillset",
   },
-  description: `${SITE_TAGLINE} Start from the job you do now, or paste your CV for a free analysis with no account.`,
+  description: `${SITE_TAGLINE} Start from your job or your CV, free and with no account.`,
   applicationName: SITE_NAME,
   openGraph: {
     type: "website",

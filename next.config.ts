@@ -23,6 +23,17 @@ const BASE_REDIRECTS: (RedirectEntry & { has?: { type: "host"; value: string }[]
   { source: "/career-gps", destination: "/discover", permanent: true },
   // Featured job pages were removed; any old link lands on the job search.
   { source: "/jobs/:id", destination: "/jobs", permanent: true },
+  // Browsers and crawlers still ask for /favicon.ico; the site icon is public/icon.svg.
+  { source: "/favicon.ico", destination: "/icon.svg", permanent: true },
+];
+
+/** Sent with every response. HSTS is already added by Vercel. */
+const SECURITY_HEADERS = [
+  { key: "X-Content-Type-Options", value: "nosniff" },
+  // Other sites only ever see our origin, never a /results/<token> or /report/<token> path.
+  { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+  { key: "X-Frame-Options", value: "SAMEORIGIN" },
+  { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
 ];
 
 /**
@@ -94,6 +105,9 @@ const REDIRECTS = buildRedirects();
 const nextConfig: NextConfig = {
   async redirects() {
     return REDIRECTS;
+  },
+  async headers() {
+    return [{ source: "/:path*", headers: SECURITY_HEADERS }];
   },
 };
 

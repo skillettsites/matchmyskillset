@@ -2,6 +2,7 @@ import Link from "next/link";
 import { RouteCard, SourceNote } from "@/components/content";
 import type { Licence } from "@/data/careers";
 import { ASHE, type ResolvedRoute } from "./routes";
+import { titleInSentence } from "@/lib/text";
 
 const LICENCE_KIND: Record<Licence["kind"], string> = {
   "statutory registration": "Registration",
@@ -10,12 +11,9 @@ const LICENCE_KIND: Record<Licence["kind"], string> = {
   "industry card": "Industry card",
 };
 
-const KEEP_CASE = ["Ofsted", "Civil Service", "Border Force", "HGV", "IT ", "GP ", "English", "CAD", "UX"];
-
-/** A job title as it reads mid-sentence: "Data analyst" becomes "data analyst", "Ofsted inspector" stays. */
+/** A job title as it reads mid-sentence: "Data analyst" becomes "data analyst", "Ofsted inspector" and "HR officer" stay. */
 export function inSentence(title: string): string {
-  if (KEEP_CASE.some((k) => title.startsWith(k))) return title;
-  return title.charAt(0).toLowerCase() + title.slice(1);
+  return titleInSentence(title);
 }
 
 /** Citation line for one route's ONS pay figure, with the unit-group caveat. */

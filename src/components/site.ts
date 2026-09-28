@@ -30,7 +30,7 @@ export interface NavItem {
 /** Primary navigation, in the order agreed for the relaunch. */
 export const PRIMARY_NAV: NavItem[] = [
   { label: "Leaving your job", href: "/careers-for" },
-  { label: "Analyse my CV", href: "/discover" },
+  { label: "Analyse my CV", href: "/discover#cv" },
   { label: "Find jobs", href: "/jobs" },
   { label: "Career quiz", href: "/quiz" },
 ];
@@ -63,7 +63,7 @@ export const FIT_LINKS: NavItem[] = [
 
 /** Interactive tools. */
 export const TOOL_LINKS: NavItem[] = [
-  { label: "Analyse my CV", href: "/discover" },
+  { label: "Analyse my CV", href: "/discover#cv" },
   { label: "Career quiz", href: "/quiz" },
   { label: "Find jobs", href: "/jobs" },
 ];

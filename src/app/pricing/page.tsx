@@ -5,9 +5,9 @@ import { REPORT_PRICE_LABEL } from "@/lib/apis/report-product";
 import { CONTACT_EMAIL } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "Pricing: the free career check and the £9.99 report",
+  title: "Pricing: free check and the £9.99 report",
   description:
-    "The career check is free with no account or email. The optional Career Change Report is a one-off £9.99 for one career: pay, ways in, a skills plan, a 90-day plan and CV wording.",
+    "The career check is free, no account or email. The optional Career Change Report is £9.99 once for one career: pay, ways in, a skills plan and a 90-day plan.",
   alternates: { canonical: "/pricing" },
 };
 

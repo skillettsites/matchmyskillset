@@ -20,12 +20,13 @@ import {
   type RouteSpec,
 } from "@/components/hubs";
 import { assertHubRoutes } from "@/lib/skills/families";
+import { titleInSentence } from "@/lib/text";
 
 const PATH = "/jobs-for-ex-police-officers";
 const UPDATED = "2026-09-28";
 const TITLE = "Jobs for ex-police officers in the UK: 15 routes and what they pay";
 const DESCRIPTION =
-  "Where ex-police officers go: 15 civilian jobs with ONS pay, the police pay scale for comparison, SIA and other licences, and funded retraining. Checked September 2026.";
+  "Where ex-police officers go: 15 civilian jobs with ONS pay, the police pay scale for comparison, SIA and other licences, and funded retraining.";
 
 export const metadata: Metadata = {
   title: { absolute: "Jobs for Ex-Police Officers UK: 15 Routes and What They Pay" },
@@ -224,7 +225,7 @@ export default function PoliceHubPage() {
     },
     {
       question: "What is the best-paid job for an ex-police officer?",
-      answer: `Of the 15 routes here, ${top.title.toLowerCase()} has the highest ONS full-time median at ${formatGBP(top.median as number)} (ONS ASHE 2025). ${countWord(higher.length)} of the 15 have a median above the top of the constable scale (${formatGBP(PC_MAX)} from September 2025). A median covers everyone in the job, so it is not a starting salary.`,
+      answer: `Of the 15 routes here, ${titleInSentence(top.title)} has the highest ONS full-time median at ${formatGBP(top.median as number)} (ONS ASHE 2025). ${countWord(higher.length)} of the 15 have a median above the top of the constable scale (${formatGBP(PC_MAX)} from September 2025). A median covers everyone in the job, so it is not a starting salary.`,
     },
     {
       question: "How much does a police constable earn?",
@@ -304,7 +305,7 @@ export default function PoliceHubPage() {
           <p>
             9,240 full-time-equivalent officers left forces in England and Wales in the year to March 2026 (Home Office,
             July 2026). Below are 15 civilian routes with ONS pay for each. {countWord(higher.length)} have a median above the{" "}
-            {formatGBP(PC_MAX)} top of the constable scale, led by {top.title.toLowerCase()} at{" "}
+            {formatGBP(PC_MAX)} top of the constable scale, led by {titleInSentence(top.title)} at{" "}
             {formatGBP(top.median as number)} (ONS ASHE 2025).
           </p>
         }
@@ -485,7 +486,7 @@ export default function PoliceHubPage() {
 
       <RelatedLinks
         links={[
-          { href: "/discover?current=police%20officer", label: "Analyse my CV", note: "Free, no account: see which routes your experience fits." },
+          { href: "/discover?current=police%20officer#cv", label: "Analyse my CV", note: "Free, no account: see which routes your experience fits." },
           { href: "/jobs?q=former%20police%20officer", label: "Live jobs for former police officers", note: "Search current UK vacancies." },
           { href: "/jobs?q=investigator", label: "Live investigator jobs" },
           { href: "/transferable-skills", label: "Transferable skills", note: "How to describe police work to other employers." },

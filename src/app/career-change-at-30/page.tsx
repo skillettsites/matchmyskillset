@@ -5,6 +5,7 @@ import { Breadcrumbs, DataTable, FaqSection, PageHeader, Prose, SourceNote, Tool
 import { guideMetadata, REVAMP_DATE } from "@/components/guides/meta";
 import { ArticleJsonLd, GuideSection, GuideShell, RelatedLinks } from "@/components/guides/GuideShell";
 import { AsheSourceNote, entryApprenticeship, occupationPayById, UK_FT_MEDIAN, type OccupationPay } from "@/components/guides/pay";
+import { titleInSentence } from "@/lib/text";
 
 const PATH = "/career-change-at-30";
 const TITLE = "Career change at 30: a UK guide with real pay data";
@@ -296,8 +297,8 @@ export default function Page() {
           </ul>
           <p>
             As an example of timing, Skills England gives a typical {daStd.typicalDurationMonths} months for the{" "}
-            {daStd.title.toLowerCase()} apprenticeship (level {daStd.level}) and {baStd.typicalDurationMonths} months for
-            the {baStd.title.toLowerCase()} apprenticeship (level {baStd.level}). If you have no savings,
+            {titleInSentence(daStd.title)} apprenticeship (level {daStd.level}) and {baStd.typicalDurationMonths} months for
+            the {titleInSentence(baStd.title)} apprenticeship (level {baStd.level}). If you have no savings,
             our guide to a <Link href="/career-change-with-no-money">career change with no money</Link> goes through each
             option in more detail, and{" "}
             <Link href="/apprenticeships-for-adults-uk">apprenticeships for adults</Link> covers pay and levels.
@@ -335,7 +336,7 @@ export default function Page() {
           },
           {
             question: "How long does a career change take at 30?",
-            answer: `It depends on the route. Skills Bootcamps last up to 16 weeks. GOV.UK says apprenticeships take from 8 months to 6 years, and Skills England gives a typical ${daStd.typicalDurationMonths} months for the ${daStd.title.toLowerCase()} apprenticeship and ${baStd.typicalDurationMonths} months for the ${baStd.title.toLowerCase()} one.`,
+            answer: `It depends on the route. Skills Bootcamps last up to 16 weeks. GOV.UK says apprenticeships take from 8 months to 6 years, and Skills England gives a typical ${daStd.typicalDurationMonths} months for the ${titleInSentence(daStd.title)} apprenticeship and ${baStd.typicalDurationMonths} months for the ${titleInSentence(baStd.title)} one.`,
           },
           {
             question: "Can I get funding to retrain at 30?",

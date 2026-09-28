@@ -9,12 +9,13 @@ import { REPORT_PRICE_LABEL } from "@/lib/apis/report-product";
 import { isMatchesDoc, isSkillsDoc } from "@/lib/skills/profile";
 import { presentMatch, profileSkillNames, resolveCurrentJob, type PresentedMatch } from "@/lib/skills/present";
 import { methodSummary } from "@/lib/skills/scoring";
-import { coursesForSkill, occupationCourseLinks, skillsBootcampLink, FIND_APPRENTICESHIP_URL } from "@/lib/affiliate/courses";
+import { coursesForSkill, occupationCourseLinks, skillHasCourses, skillsBootcampLink, FIND_APPRENTICESHIP_URL } from "@/lib/affiliate/courses";
 import { AffiliateLink } from "@/lib/affiliate/AffiliateLink";
 import { CONTACT_EMAIL } from "@/lib/site";
 import { PayBlock, SkillChips, WaysIn } from "../_components/parts";
 import { EmailLinkForm, ReportCheckout, ViewEvent } from "./ResultsClient";
 import { VacancyCount, VacancyFallback } from "./VacancyCount";
+import { titleInSentence } from "@/lib/text";
 
 export const dynamic = "force-dynamic";
 
@@ -82,11 +83,11 @@ function MatchCard({
       )}
 
       <div className="mt-5 grid gap-5 border-t border-rule pt-5 md:grid-cols-2">
-        <section aria-label="Pay">
+        <section aria-label={`Pay: ${match.title}`}>
           <h4 className="kicker mb-1.5">Pay</h4>
           <PayBlock pay={match.pay} change={match.payChange} fromTitle={fromTitle} scope={match.payScope} note={match.payNote} />
         </section>
-        <section aria-label="Skills">
+        <section aria-label={`Your skills: ${match.title}`}>
           <h4 className="kicker mb-1.5">Your skills for this job</h4>
           <div className="space-y-2">
             <SkillChips skills={match.matched} tone="have" />
@@ -99,7 +100,7 @@ function MatchCard({
             )}
           </div>
         </section>
-        <section aria-label="Ways in">
+        <section aria-label={`Ways in: ${match.title}`}>
           <h4 className="kicker mb-1.5">Ways in</h4>
           <WaysIn match={match} />
           {match.ncsUrl && (
@@ -110,7 +111,7 @@ function MatchCard({
             </p>
           )}
         </section>
-        <section aria-label="Live vacancies">
+        <section aria-label={`Live vacancies: ${match.title}`}>
           <h4 className="kicker mb-1.5">Live vacancies</h4>
           <Suspense fallback={<VacancyFallback />}>
             <VacancyCount title={match.title} aliases={aliases} region={region} />
@@ -140,6 +141,9 @@ export default async function ResultsPage({ params, searchParams }: { params: Pa
   const skills = profileSkillNames(doc?.skills ?? []);
   const cancelled = sp.checkout === "cancelled";
   const top = matches[0];
+  // Gaps a course can help with (not, for example, a driving licence), and whether any paid course link follows.
+  const topCourseGaps = top ? top.gaps.filter((g) => skillHasCourses(g.id)).slice(0, 3) : [];
+  const topPaidCourses = top ? topCourseGaps.length > 0 || occupationCourseLinks(top.occupationId).length > 0 : false;
   const prefs = doc?.preferences;
   const unchecked = prefs ? [prefs.avoidWeekends && "no weekend work", prefs.wantRemote && "working from home", prefs.avoidShifts && "no shift work", prefs.partTime && "part-time hours"].filter(Boolean) : [];
 
@@ -151,7 +155,7 @@ export default async function ResultsPage({ params, searchParams }: { params: Pa
         <p className="kicker text-accent">Your results</p>
         <h1 className="mt-2 font-serif text-h1 font-semibold text-ink">Where your experience could take you</h1>
         <p className="mt-3 text-lede text-ink-2">
-          {fromTitle ? <>Starting from {fromTitle.toLowerCase()}, </> : null}
+          {fromTitle ? <>Starting from {titleInSentence(fromTitle)}, </> : null}
           {matches.length > 0
             ? `here are the ${matches.length} UK careers where we found the most of your skills.`
             : "we could not match enough of your skills to the careers we cover."}{" "}
@@ -167,7 +171,7 @@ export default async function ResultsPage({ params, searchParams }: { params: Pa
         </p>
         {doc?.source === "job" && (
           <p className="mt-2 text-sm text-muted">
-            These use the skills a {fromTitle?.toLowerCase() ?? "person in your job"} usually has. For results built on your own
+            These use the skills a {(fromTitle ? titleInSentence(fromTitle) : undefined) ?? "person in your job"} usually has. For results built on your own
             experience, <Link href="/discover#cv" className="link">paste your CV</Link>.
           </p>
         )}
@@ -211,13 +215,16 @@ export default async function ResultsPage({ params, searchParams }: { params: Pa
           </Link>
         </div>
       ) : (
-        <ol className="mt-8 space-y-6">
-          {matches.map((m, i) => (
-            <li key={m.occupationId}>
-              <MatchCard match={m} rank={i + 1} token={token} fromTitle={fromTitle} region={region} />
-            </li>
-          ))}
-        </ol>
+        <>
+          <h2 className="sr-only">Your career matches</h2>
+          <ol className="mt-8 space-y-6">
+            {matches.map((m, i) => (
+              <li key={m.occupationId}>
+                <MatchCard match={m} rank={i + 1} token={token} fromTitle={fromTitle} region={region} />
+              </li>
+            ))}
+          </ol>
+        </>
       )}
 
       <section id="keep" aria-labelledby="keep-title" className="mt-12 max-w-reading scroll-mt-24 rounded-lg border border-rule bg-surface p-4 sm:p-5">
@@ -237,9 +244,11 @@ export default async function ResultsPage({ params, searchParams }: { params: Pa
       {top && (
         <section aria-labelledby="learn-title" className="mt-12 max-w-reading">
           <h2 id="learn-title" className="font-serif text-h2 font-semibold text-ink">
-            Closing the gaps for {top.title.toLowerCase()}
+            Closing the gaps for {titleInSentence(top.title)}
           </h2>
-          <p className="mt-2 text-ink-2">Free and government-backed options first, then paid courses.</p>
+          <p className="mt-2 text-ink-2">
+            {topPaidCourses ? "Free and government-backed options first, then paid courses." : "Free and government-backed options."}
+          </p>
           <ul className="mt-4 space-y-3 text-ink-2">
             {(() => {
               const bootcamp = skillsBootcampLink(top.occupationId);
@@ -261,7 +270,7 @@ export default async function ResultsPage({ params, searchParams }: { params: Pa
               </li>
             )}
           </ul>
-          {(top.gaps.length > 0 || occupationCourseLinks(top.occupationId).length > 0) && (
+          {topPaidCourses && (
             <>
               <Disclosure className="mt-5" href="/pricing#money">
                 Some links below go to paid course providers. If you sign up through one, we may earn a commission at no
@@ -276,7 +285,7 @@ export default async function ResultsPage({ params, searchParams }: { params: Pa
                     <span className="text-sm text-muted">({l.provider})</span>
                   </li>
                 ))}
-                {top.gaps.slice(0, 3).map((g) => (
+                {topCourseGaps.map((g) => (
                   <li key={g.id}>
                     <span className="font-semibold text-ink">{g.name}:</span>{" "}
                     {coursesForSkill(g.id).map((l, i) => (
