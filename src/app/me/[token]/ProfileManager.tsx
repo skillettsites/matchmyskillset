@@ -111,13 +111,14 @@ export function ProfileManager({
     );
   }
 
-  const showConfirm = !p.discoverable && (askConfirm || !p.confirmed);
+  // The on/off status and its switch are always shown, whatever link was used to get here.
+  const showConfirm = !p.discoverable;
 
   return (
     <div className="space-y-5">
       {showConfirm && (
         <div className="card-white p-6 ring-2 ring-blue/25">
-          <p className="title !text-[24px]">{p.confirmed ? "Your profile is switched off" : "Switch on your profile"}</p>
+          <p className="title !text-[24px]">{p.confirmed ? "Your profile is switched off" : askConfirm ? "Switch on your profile" : "Your profile is not switched on yet"}</p>
           <p className="mt-2 text-[15px] text-ink-2">
             {p.confirmed
               ? "Employers cannot find you at the moment. Switch it back on whenever you like."
