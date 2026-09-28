@@ -1,76 +1,75 @@
 import Link from "next/link";
+import {
+  COMPANY_LINKS,
+  FIT_LINKS,
+  GUIDE_LINKS,
+  JOB_HUBS,
+  SITE_NAME,
+  TOOL_LINKS,
+  type NavItem,
+} from "@/components/site";
+import { Logo } from "@/components/ui/Logo";
 
-export function Footer() {
+function FooterColumn({ title, links }: { title: string; links: NavItem[] }) {
   return (
-    <footer className="bg-gray-50 border-t border-gray-100">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
-          <div>
-            <div className="font-bold text-lg mb-4">
-              <span className="text-gray-900">Match</span>
-              <span className="text-indigo-600">My</span>
-              <span className="text-gray-900">Skills</span>
-            </div>
-            <p className="text-sm text-gray-500">
-              AI-Assisted. Human-Led.
-              <br />
-              Discover careers you never knew existed.
+    <div>
+      <h2 className="font-sans text-xs font-bold uppercase tracking-[0.09em] text-night-muted">
+        {title}
+      </h2>
+      <ul className="mt-3">
+        {links.map((link) => (
+          <li key={link.href}>
+            <Link
+              href={link.href}
+              className="inline-flex min-h-11 items-center py-1 text-[0.9375rem] leading-snug text-night-text underline-offset-4 hover:underline"
+            >
+              {link.label}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+/** Site footer: hub links, guides, tools and the legal pages. Server component. */
+export function Footer() {
+  const year = new Date().getFullYear();
+  return (
+    <footer className="bg-night text-night-text">
+      <div className="mx-auto max-w-page px-4 py-14 sm:px-6">
+        <div className="grid grid-cols-2 gap-x-6 gap-y-10 lg:grid-cols-[1.4fr_repeat(4,1fr)] lg:gap-8">
+          <div className="col-span-2 max-w-xs lg:col-span-1">
+            <Link href="/" aria-label={`${SITE_NAME} home`} className="inline-flex min-h-11 items-center focus-visible:outline-highlight">
+              <Logo tone="dark" />
+            </Link>
+            <p className="mt-4 text-[0.9375rem] leading-relaxed text-night-muted">
+              The UK guide for people leaving a job: where people like you go
+              next, what it pays, and how to get there.
             </p>
           </div>
-
-          <div>
-            <h3 className="font-semibold text-sm text-gray-900 mb-3">
-              Platform
-            </h3>
-            <ul className="space-y-2">
-              <li><Link href="/discover" className="text-sm text-gray-500 hover:text-indigo-600">Discover Careers</Link></li>
-              <li><Link href="/jobs" className="text-sm text-gray-500 hover:text-indigo-600">Browse Jobs</Link></li>
-              <li><Link href="/quiz" className="text-sm text-gray-500 hover:text-indigo-600">Career Quiz</Link></li>
-              <li><Link href="/pricing" className="text-sm text-gray-500 hover:text-indigo-600">Pricing</Link></li>
-              <li><Link href="/about" className="text-sm text-gray-500 hover:text-indigo-600">About Us</Link></li>
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="font-semibold text-sm text-gray-900 mb-3">
-              Career Change
-            </h3>
-            <ul className="space-y-2">
-              <li><Link href="/career-change-at-30" className="text-sm text-gray-500 hover:text-indigo-600">Career Change at 30</Link></li>
-              <li><Link href="/career-change-at-50" className="text-sm text-gray-500 hover:text-indigo-600">Career Change at 50</Link></li>
-              <li><Link href="/career-change-no-experience" className="text-sm text-gray-500 hover:text-indigo-600">No Experience</Link></li>
-              <li><Link href="/career-change-from-teaching" className="text-sm text-gray-500 hover:text-indigo-600">From Teaching</Link></li>
-              <li><Link href="/career-change-from-nursing" className="text-sm text-gray-500 hover:text-indigo-600">From Nursing</Link></li>
-              <li><Link href="/how-to-write-a-cv-for-career-change" className="text-sm text-gray-500 hover:text-indigo-600">CV for Career Change</Link></li>
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="font-semibold text-sm text-gray-900 mb-3">
-              Popular Guides
-            </h3>
-            <ul className="space-y-2">
-              <li><Link href="/jobs-for-introverts" className="text-sm text-gray-500 hover:text-indigo-600">Jobs for Introverts</Link></li>
-              <li><Link href="/work-from-home-jobs" className="text-sm text-gray-500 hover:text-indigo-600">Work from Home Jobs</Link></li>
-              <li><Link href="/high-paying-jobs-no-degree" className="text-sm text-gray-500 hover:text-indigo-600">High Paying, No Degree</Link></li>
-              <li><Link href="/highest-paying-careers-uk" className="text-sm text-gray-500 hover:text-indigo-600">Highest Paying UK</Link></li>
-              <li><Link href="/best-side-hustles-uk" className="text-sm text-gray-500 hover:text-indigo-600">Best Side Hustles</Link></li>
-              <li><Link href="/what-job-is-right-for-me" className="text-sm text-gray-500 hover:text-indigo-600">What Job Is Right for Me?</Link></li>
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="font-semibold text-sm text-gray-900 mb-3">Legal</h3>
-            <ul className="space-y-2">
-              <li><Link href="/privacy" className="text-sm text-gray-500 hover:text-indigo-600">Privacy Policy</Link></li>
-              <li><Link href="/terms" className="text-sm text-gray-500 hover:text-indigo-600">Terms of Service</Link></li>
-            </ul>
-          </div>
+          <FooterColumn title="Leaving your job" links={JOB_HUBS} />
+          <FooterColumn title="Guides" links={GUIDE_LINKS} />
+          <FooterColumn title="Finding the right fit" links={FIT_LINKS} />
+          <FooterColumn title="Tools" links={TOOL_LINKS} />
         </div>
 
-        <div className="mt-10 pt-6 border-t border-gray-200 text-center text-xs text-gray-400">
-          &copy; {new Date().getFullYear()} MatchMySkillset. All rights
-          reserved.
+        <div className="mt-12 flex flex-col gap-4 border-t border-white/15 pt-6 text-sm text-night-muted sm:flex-row sm:items-center sm:justify-between">
+          <p>
+            &copy; {year} {SITE_NAME}
+          </p>
+          <ul className="flex flex-wrap gap-x-6">
+            {COMPANY_LINKS.map((link) => (
+              <li key={link.href}>
+                <Link
+                  href={link.href}
+                  className="inline-flex min-h-11 items-center text-night-text underline-offset-4 hover:underline focus-visible:outline-highlight"
+                >
+                  {link.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </footer>

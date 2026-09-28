@@ -1,299 +1,378 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+import { RouteCard } from "@/components/content/RouteCard";
+import { ToolCallout } from "@/components/content/ToolCallout";
+import { FIT_LINKS, GUIDE_LINKS, JOB_HUBS, TOOL_LINKS, type NavItem } from "@/components/site";
 
-const stats = [
-  { value: "33%", label: "of UK workers want to change careers" },
-  { value: "242", label: "average applicants per job opening" },
-  { value: "88%", label: "of employers say ATS filters out good candidates" },
-  { value: "0.4%", label: "average callback rate on applications" },
+export const metadata: Metadata = {
+  title: { absolute: "Leaving your job? See where people like you go | MatchMySkillset" },
+  description:
+    "See where people like you actually go after leaving a job, what it pays in the UK, and how to get there. Start from your current job or paste your CV for a free analysis. No account needed.",
+  alternates: { canonical: "/" },
+};
+
+/*
+ * Example routes. Deliberately no pay or time figures: those only appear once
+ * they can be cited from ONS data. Every "way in" below was checked against
+ * the body that runs it (CIPD, NIHR, SIA on GOV.UK, the Career Transition
+ * Partnership on GOV.UK) on 28 September 2026.
+ */
+const ROUTES = [
+  {
+    from: "Teacher",
+    to: "Learning and development",
+    href: "/career-change-from-teaching",
+    summary: "Planning lessons, delivering them and checking what people learned is the core of workplace training.",
+    entryRoute: "CIPD Level 5 Associate Diploma in Organisational Learning and Development",
+    linkLabel: "Leaving teaching",
+  },
+  {
+    from: "Nurse",
+    to: "Clinical research",
+    href: "/non-clinical-jobs-for-nurses",
+    summary: "Clinical trials need people who understand patients, consent and careful record keeping.",
+    entryRoute: "Good Clinical Practice (GCP) training, free from the NIHR for NHS staff",
+    linkLabel: "Non-clinical jobs for nurses",
+  },
+  {
+    from: "Police officer",
+    to: "Security and investigations",
+    href: "/jobs-for-ex-police-officers",
+    summary: "Investigation, risk assessment and staying calm under pressure carry straight over.",
+    entryRoute: "A front-line SIA licence for roles such as close protection",
+    linkLabel: "Jobs for ex-police officers",
+  },
+  {
+    from: "Armed forces",
+    to: "Project and operations management",
+    href: "/jobs-for-ex-military",
+    summary: "Planning, logistics and leading teams map onto civilian project and operations roles.",
+    entryRoute: "Resettlement support from the Career Transition Partnership, the official service for service leavers",
+    linkLabel: "Jobs for ex-military",
+  },
+  {
+    from: "Retail manager",
+    to: "Human resources",
+    href: "/career-change-from-retail",
+    summary: "Recruiting, training and managing a shop team is people work every day.",
+    entryRoute: "CIPD Level 3 Foundation Certificate in People Practice",
+    linkLabel: "Leaving retail",
+  },
+] as const;
+
+const REASSURANCE = ["Free to use", "No account needed", "Written for the UK"];
+
+const STEPS = [
+  {
+    title: "Start from your job or your CV",
+    body: "Pick the job you do now to read its guide, or paste your CV for a personal analysis. Both are free, and you do not need an account.",
+  },
+  {
+    title: "See realistic destinations",
+    body: "The jobs people with your background move into, the skills that carry over, the gaps to close, and UK pay where the Office for National Statistics publishes it.",
+  },
+  {
+    title: "Choose your next step",
+    body: "Read the route in full, look at live vacancies, or get everything for one chosen job in a single Career Change Report, paid once.",
+    tag: "Report coming soon",
+  },
 ];
 
-const steps = [
+const TRUST = [
   {
-    number: "1",
-    title: "Tell Us Your Skills",
-    description:
-      "Paste your CV, describe your experience, or just tell us what you have done. We recognise skills from work, volunteering, parenting, and everything in between.",
-    icon: (
-      <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-      </svg>
+    title: "Official pay data, cited",
+    body: (
+      <>
+        Pay comes from the{" "}
+        <a
+          className="link"
+          href="https://www.ons.gov.uk/employmentandlabourmarket/peopleinwork/earningsandworkinghours/bulletins/annualsurveyofhoursandearnings/2025"
+          rel="noopener"
+        >
+          ONS Annual Survey of Hours and Earnings
+        </a>
+        . Each figure shows its source and publication date.
+      </>
     ),
   },
   {
-    number: "2",
-    title: "AI Discovers Your Matches",
-    description:
-      "Our AI analyses your actual skills and maps them to careers you never knew existed. Not keyword matching. Real skills intelligence.",
-    icon: (
-      <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-      </svg>
-    ),
+    title: "Real ways in",
+    body: "Qualifications and schemes link to GOV.UK or the body that runs them, such as the CIPD, the NIHR or the Career Transition Partnership.",
   },
   {
-    number: "3",
-    title: "Find Real Jobs",
-    description:
-      "See thousands of real UK jobs ranked by how well your skills match. Plus exclusive roles from our recruitment network that you will not find anywhere else.",
-    icon: (
-      <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-      </svg>
-    ),
+    title: "Nothing made up",
+    body: "No invented statistics, no success stories we cannot show you, no star ratings and no match percentages we cannot explain.",
+  },
+  {
+    title: "Clear about what is changing",
+    body: "We are bringing older guides up to this standard. Every rebuilt guide shows the date it was last checked.",
   },
 ];
+
+function Arrow({ className = "" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 20 20" aria-hidden="true" className={`h-4 w-4 shrink-0 ${className}`} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 10h11M11 5l5 5-5 5" />
+    </svg>
+  );
+}
+
+function LinkList({ title, links }: { title: string; links: NavItem[] }) {
+  return (
+    <div>
+      <h3 className="kicker">{title}</h3>
+      <ul className="mt-3 border-t border-ink">
+        {links.map((link) => (
+          <li key={link.href} className="border-b border-rule">
+            <Link
+              href={link.href}
+              className="group flex min-h-12 items-center justify-between gap-3 py-2 text-lg text-ink hover:text-accent"
+            >
+              <span className="group-hover:underline group-hover:underline-offset-4">{link.label}</span>
+              <Arrow className="text-muted transition-transform group-hover:translate-x-0.5 group-hover:text-accent" />
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
 
 export default function Home() {
   return (
     <>
-      {/* Hero */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-indigo-950 via-indigo-900 to-purple-900 text-white">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(99,102,241,0.15),transparent_70%)]" />
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-20 sm:py-32 relative">
-          <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur rounded-full px-4 py-1.5 text-sm mb-6">
-              <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-              Free. No signup needed.
-            </div>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-tight">
-              Discover careers you{" "}
-              <span className="text-indigo-300">never knew existed</span>
-            </h1>
-            <p className="mt-6 text-lg sm:text-xl text-indigo-200 max-w-2xl">
-              Our AI analyses your actual skills and matches you to jobs you
-              would never have searched for. Not keywords. Not job titles. Your
-              real, transferable skills.
-            </p>
-            <div className="mt-10 flex flex-col sm:flex-row gap-4">
-              <Link
-                href="/discover"
-                className="inline-flex items-center justify-center bg-white text-indigo-900 font-semibold text-lg px-8 py-4 rounded-xl hover:bg-indigo-50 transition-colors shadow-lg shadow-indigo-900/30"
-              >
-                Discover My Careers
-                <svg className="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+      {/* Hero: the promise and both ways in */}
+      <section className="border-b border-rule">
+        <div className="mx-auto grid max-w-page gap-10 px-4 pb-14 pt-10 sm:px-6 sm:pt-14 lg:grid-cols-[1.15fr_1fr] lg:gap-16 lg:pb-20 lg:pt-20">
+          <div className="lg:pt-6">
+            <p className="kicker text-accent">The UK guide for people leaving a job</p>
+            <h1 className="mt-4 text-display font-semibold text-ink">
+              Leaving your job? See where people like you{" "}
+              <span className="relative whitespace-nowrap">
+                actually go
+                <svg
+                  aria-hidden="true"
+                  viewBox="0 0 220 12"
+                  preserveAspectRatio="none"
+                  className="absolute -bottom-1.5 left-0 h-2.5 w-full text-highlight"
+                >
+                  <path d="M2 8c50-6 120-7 216-2" fill="none" stroke="currentColor" strokeWidth="5" strokeLinecap="round" />
                 </svg>
-              </Link>
-              <Link
-                href="/jobs"
-                className="inline-flex items-center justify-center border border-white/30 text-white font-medium text-lg px-8 py-4 rounded-xl hover:bg-white/10 transition-colors"
-              >
-                Browse Jobs
+              </span>
+              .
+            </h1>
+            <p className="mt-6 max-w-[34rem] text-lede text-ink-2">
+              What it pays in the UK, and how to get there. Start from the job
+              you do now, or paste your CV for a free personal analysis. No
+              account needed.
+            </p>
+            <ul className="mt-9 hidden gap-x-8 gap-y-3 border-t border-rule pt-6 text-[0.9375rem] font-semibold text-ink-2 lg:flex lg:flex-wrap">
+              {REASSURANCE.map((item) => (
+                <li key={item} className="flex items-center gap-2">
+                  <svg viewBox="0 0 20 20" aria-hidden="true" className="h-5 w-5 shrink-0 text-accent" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M4.5 10.5l3.5 3.5 7.5-8" />
+                  </svg>
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Job picker, drawn as stops on a route */}
+          <div className="rounded-xl border border-rule bg-surface p-5 shadow-card sm:p-7">
+            <h2 className="font-sans text-xl font-bold tracking-normal text-ink">Start from the job you do now</h2>
+            <p className="mt-1 text-[0.9375rem] text-muted">Choose one to see where people go from it.</p>
+            <ol className="relative mt-4">
+              <span
+                aria-hidden="true"
+                className="absolute bottom-6 left-[0.6875rem] top-6 border-l-2 border-dotted border-rule-strong"
+              />
+              {JOB_HUBS.map((hub) => (
+                <li key={hub.href}>
+                  <Link
+                    href={hub.href}
+                    className="group relative flex min-h-12 items-center gap-4 rounded-md py-1.5 pr-2 text-lg text-ink hover:bg-accent-wash"
+                  >
+                    <span
+                      aria-hidden="true"
+                      className="relative ml-1 h-4 w-4 shrink-0 rounded-full border-2 border-ink-2 bg-surface transition-colors group-hover:border-accent group-hover:bg-accent"
+                    />
+                    <span className="flex-1 font-medium">{hub.short}</span>
+                    <Arrow className="text-muted transition-transform group-hover:translate-x-0.5 group-hover:text-accent" />
+                  </Link>
+                </li>
+              ))}
+            </ol>
+
+            <div className="mt-5 flex items-center gap-3 text-sm text-muted" aria-hidden="true">
+              <span className="h-px flex-1 bg-rule" />
+              or
+              <span className="h-px flex-1 bg-rule" />
+            </div>
+
+            <div className="mt-4 rounded-lg bg-accent-wash p-4">
+              <p className="font-semibold text-ink">Paste your CV instead</p>
+              <p className="mt-1 text-[0.9375rem] text-ink-2">
+                A free personal analysis of the skills you have and the jobs
+                they lead to.
+              </p>
+              <Link href="/discover" className="btn btn-primary mt-3 w-full">
+                Analyse my CV
+                <Arrow />
               </Link>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Stats bar */}
-      <section className="bg-gray-50 border-b border-gray-100">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-            {stats.map((stat) => (
-              <div key={stat.value} className="text-center">
-                <div className="text-2xl sm:text-3xl font-bold text-indigo-600">
-                  {stat.value}
-                </div>
-                <div className="text-sm text-gray-500 mt-1">{stat.label}</div>
-              </div>
+      {/* Where people actually go */}
+      <section className="py-16 sm:py-24" aria-labelledby="routes-title">
+        <div className="mx-auto max-w-page px-4 sm:px-6">
+          <div className="max-w-2xl">
+            <p className="kicker">Example routes</p>
+            <h2 id="routes-title" className="mt-3 text-h2 text-ink">
+              Where people actually go
+            </h2>
+            <p className="mt-4 text-lede text-ink-2">
+              Five common starting points and one route out of each. Every
+              guide sets out more options and the first steps. We add pay only
+              where we can cite the Office for National Statistics.
+            </p>
+          </div>
+
+          <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {ROUTES.map((route) => (
+              <RouteCard key={route.href} {...route} />
             ))}
+
+            <div className="flex flex-col justify-between rounded-lg bg-night p-6 text-night-text">
+              <div>
+                <p className="kicker text-night-muted">Your job is not listed?</p>
+                <p className="mt-3 font-serif text-[1.625rem] font-semibold leading-tight">
+                  Start from your own experience
+                </p>
+                <p className="mt-3 text-night-muted">
+                  Paste your CV and we will map the skills you already have to
+                  jobs across the UK market.
+                </p>
+              </div>
+              <svg viewBox="0 0 240 84" aria-hidden="true" className="my-6 h-auto w-full max-w-xs">
+                <path
+                  d="M28 62C80 62 120 22 200 22"
+                  fill="none"
+                  stroke="#7fb89f"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                  strokeDasharray="0.01 9"
+                />
+                <circle cx="16" cy="62" r="9" fill="none" stroke="#e9e3d6" strokeWidth="3" />
+                <circle cx="220" cy="22" r="13" fill="#7fb89f" />
+                <circle cx="220" cy="22" r="5" fill="#e0a030" />
+              </svg>
+              <div className="mt-6 flex flex-col gap-2">
+                <Link href="/discover" className="btn bg-night-text text-night hover:bg-white focus-visible:outline-highlight">
+                  Analyse my CV
+                  <Arrow />
+                </Link>
+                <Link
+                  href="/careers-for"
+                  className="inline-flex min-h-11 items-center justify-center font-semibold text-night-text underline-offset-4 hover:underline focus-visible:outline-highlight"
+                >
+                  Browse jobs by profession
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       {/* How it works */}
-      <section className="py-20 sm:py-28">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">
-              How it works
-            </h2>
-            <p className="mt-4 text-lg text-gray-500 max-w-2xl mx-auto">
-              Three steps to discovering career paths you never considered.
-            </p>
-          </div>
-          <div className="grid md:grid-cols-3 gap-8 sm:gap-12">
-            {steps.map((step) => (
-              <div
-                key={step.number}
-                className="relative bg-white rounded-2xl border border-gray-100 p-8 hover:shadow-lg hover:border-indigo-100 transition-all"
-              >
-                <div className="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center mb-5">
-                  {step.icon}
+      <section className="border-y border-rule bg-paper-2/60 py-16 sm:py-24" aria-labelledby="how-title">
+        <div className="mx-auto max-w-page px-4 sm:px-6">
+          <h2 id="how-title" className="text-h2 text-ink">
+            How it works
+          </h2>
+          <ol className="mt-10 grid gap-8 md:grid-cols-3 md:gap-6">
+            {STEPS.map((step, i) => (
+              <li key={step.title} className="relative">
+                <div className="flex items-center gap-3" aria-hidden="true">
+                  <span
+                    className={`inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full font-serif text-lg font-semibold ${
+                      i === STEPS.length - 1 ? "bg-accent text-white" : "border-2 border-ink-2 bg-paper text-ink"
+                    }`}
+                  >
+                    {i + 1}
+                  </span>
+                  {i < STEPS.length - 1 && (
+                    <span className="hidden flex-1 border-t-2 border-dotted border-rule-strong md:block" />
+                  )}
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                <h3 className="mt-4 text-xl font-bold text-ink">
+                  <span className="sr-only">Step {i + 1}: </span>
                   {step.title}
                 </h3>
-                <p className="text-gray-500 leading-relaxed">
-                  {step.description}
-                </p>
+                <p className="mt-2 text-ink-2">{step.body}</p>
+                {step.tag && (
+                  <p className="mt-3 inline-block rounded bg-highlight-soft px-2 py-0.5 text-sm font-semibold text-highlight-ink">
+                    {step.tag}
+                  </p>
+                )}
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      {/* Guides and tools */}
+      <section className="py-16 sm:py-24" aria-labelledby="guides-title">
+        <div className="mx-auto max-w-page px-4 sm:px-6">
+          <div className="max-w-2xl">
+            <h2 id="guides-title" className="text-h2 text-ink">
+              Guides for where you are now
+            </h2>
+            <p className="mt-4 text-lede text-ink-2">
+              Not tied to one profession? Start with your situation.
+            </p>
+          </div>
+          <div className="mt-10 grid gap-10 md:grid-cols-3 md:gap-8">
+            <LinkList title="Your situation" links={GUIDE_LINKS} />
+            <LinkList title="Finding the right fit" links={FIT_LINKS} />
+            <LinkList title="Tools" links={TOOL_LINKS} />
+          </div>
+        </div>
+      </section>
+
+      {/* Why trust us */}
+      <section className="bg-night py-16 text-night-text sm:py-24" aria-labelledby="trust-title">
+        <div className="mx-auto grid max-w-page gap-10 px-4 sm:px-6 lg:grid-cols-[1fr_1.6fr] lg:gap-16">
+          <div>
+            <p className="kicker text-night-muted">How we work</p>
+            <h2 id="trust-title" className="mt-3 text-h2">
+              Why you can trust what you read here
+            </h2>
+            <p className="mt-4 text-night-muted">
+              Changing career is a big decision. You should be able to check
+              every number we show you.
+            </p>
+          </div>
+          <dl className="grid gap-x-10 gap-y-8 sm:grid-cols-2">
+            {TRUST.map((item) => (
+              <div key={item.title} className="border-t border-white/20 pt-4">
+                <dt className="flex items-center gap-2 text-lg font-bold">
+                  <span aria-hidden="true" className="h-2.5 w-2.5 shrink-0 rounded-full bg-highlight" />
+                  {item.title}
+                </dt>
+                <dd className="mt-2 text-night-muted [&_.link]:text-night-text">{item.body}</dd>
               </div>
             ))}
-          </div>
+          </dl>
         </div>
       </section>
 
-      {/* AI + Human section */}
-      <section className="py-20 sm:py-28 bg-gray-50">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">
-              AI-Assisted. Human-Led.
-            </h2>
-            <p className="mt-6 text-lg text-gray-500">
-              Our AI discovers the possibilities. Our recruitment experts
-              validate them. You get the best of both worlds: the intelligence
-              of AI with the judgement of experienced recruiters who understand
-              the real job market.
-            </p>
-            <div className="mt-10 grid sm:grid-cols-2 gap-6">
-              <div className="bg-white rounded-xl p-6 border border-gray-100 text-left">
-                <div className="text-indigo-600 font-semibold mb-2">
-                  AI Does
-                </div>
-                <ul className="text-sm text-gray-600 space-y-2">
-                  <li>Extracts skills from your experience</li>
-                  <li>Maps skills to thousands of careers</li>
-                  <li>Identifies skills gaps with learning paths</li>
-                  <li>Searches thousands of live UK jobs</li>
-                  <li>Ranks jobs by your actual skill match</li>
-                </ul>
-              </div>
-              <div className="bg-white rounded-xl p-6 border border-gray-100 text-left">
-                <div className="text-green-600 font-semibold mb-2">
-                  Humans Do
-                </div>
-                <ul className="text-sm text-gray-600 space-y-2">
-                  <li>Validate career direction recommendations</li>
-                  <li>Review and improve your applications</li>
-                  <li>Source exclusive unadvertised roles</li>
-                  <li>Provide industry-specific guidance</li>
-                  <li>Support you through career transitions</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Career Guides */}
-      <section className="py-20 sm:py-28">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">
-              Career change guides
-            </h2>
-            <p className="mt-4 text-lg text-gray-500 max-w-2xl mx-auto">
-              In-depth guides for every stage of your career transition.
-            </p>
-          </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-10">
-            <div>
-              <h3 className="font-semibold text-gray-900 mb-3">Career Change Guides</h3>
-              <ul className="space-y-2 text-sm">
-                <li><Link href="/career-change-at-30" className="text-gray-600 hover:text-indigo-600">Career Change at 30</Link></li>
-                <li><Link href="/career-change/career-change-at-40" className="text-gray-600 hover:text-indigo-600">Career Change at 40</Link></li>
-                <li><Link href="/career-change-at-50" className="text-gray-600 hover:text-indigo-600">Career Change at 50</Link></li>
-                <li><Link href="/career-change-no-experience" className="text-gray-600 hover:text-indigo-600">Career Change with No Experience</Link></li>
-                <li><Link href="/career-change-with-no-money" className="text-gray-600 hover:text-indigo-600">Career Change with No Money</Link></li>
-                <li><Link href="/career-change-from-teaching" className="text-gray-600 hover:text-indigo-600">Career Change from Teaching</Link></li>
-                <li><Link href="/career-change-from-nursing" className="text-gray-600 hover:text-indigo-600">Career Change from Nursing</Link></li>
-                <li><Link href="/career-change-from-retail" className="text-gray-600 hover:text-indigo-600">Career Change from Retail</Link></li>
-                <li><Link href="/how-to-write-a-cv-for-career-change" className="text-gray-600 hover:text-indigo-600">How to Write a CV for Career Change</Link></li>
-                <li><Link href="/what-job-is-right-for-me" className="text-gray-600 hover:text-indigo-600">What Job Is Right for Me?</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-semibold text-gray-900 mb-3">Jobs by Interest</h3>
-              <ul className="space-y-2 text-sm">
-                <li><Link href="/jobs-for-introverts" className="text-gray-600 hover:text-indigo-600">Jobs for Introverts</Link></li>
-                <li><Link href="/what-jobs/jobs-for-extroverts" className="text-gray-600 hover:text-indigo-600">Jobs for Extroverts</Link></li>
-                <li><Link href="/what-jobs/jobs-for-creative-people" className="text-gray-600 hover:text-indigo-600">Jobs for Creative People</Link></li>
-                <li><Link href="/jobs-for-empaths" className="text-gray-600 hover:text-indigo-600">Jobs for Empaths</Link></li>
-                <li><Link href="/jobs-for-people-with-adhd" className="text-gray-600 hover:text-indigo-600">Jobs for People with ADHD</Link></li>
-                <li><Link href="/what-jobs/jobs-for-people-who-like-helping" className="text-gray-600 hover:text-indigo-600">Jobs for People Who Like Helping</Link></li>
-                <li><Link href="/what-jobs/jobs-for-over-50s" className="text-gray-600 hover:text-indigo-600">Jobs for Over 50s</Link></li>
-                <li><Link href="/what-jobs/jobs-for-parents" className="text-gray-600 hover:text-indigo-600">Jobs for Parents</Link></li>
-                <li><Link href="/what-jobs/jobs-for-ex-military" className="text-gray-600 hover:text-indigo-600">Jobs for Ex-Military</Link></li>
-                <li><Link href="/jobs-for-people-who-hate-their-job" className="text-gray-600 hover:text-indigo-600">Jobs for People Who Hate Their Job</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-semibold text-gray-900 mb-3">Earning & Working</h3>
-              <ul className="space-y-2 text-sm">
-                <li><Link href="/highest-paying-careers-uk" className="text-gray-600 hover:text-indigo-600">Highest Paying Careers UK</Link></li>
-                <li><Link href="/highest-paying-remote-jobs-uk" className="text-gray-600 hover:text-indigo-600">Highest Paying Remote Jobs UK</Link></li>
-                <li><Link href="/high-paying-jobs-no-degree" className="text-gray-600 hover:text-indigo-600">High Paying Jobs, No Degree</Link></li>
-                <li><Link href="/work-from-home-jobs" className="text-gray-600 hover:text-indigo-600">Work from Home Jobs</Link></li>
-                <li><Link href="/best-jobs-for-work-life-balance" className="text-gray-600 hover:text-indigo-600">Best Jobs for Work-Life Balance</Link></li>
-                <li><Link href="/best-side-hustles-uk" className="text-gray-600 hover:text-indigo-600">Best Side Hustles UK</Link></li>
-                <li><Link href="/freelance-careers-uk" className="text-gray-600 hover:text-indigo-600">Freelance Careers UK</Link></li>
-                <li><Link href="/jobs-that-dont-require-a-degree" className="text-gray-600 hover:text-indigo-600">Jobs That Don&apos;t Require a Degree</Link></li>
-                <li><Link href="/apprenticeships-for-adults-uk" className="text-gray-600 hover:text-indigo-600">Apprenticeships for Adults UK</Link></li>
-                <li><Link href="/best-careers-for-the-future-uk" className="text-gray-600 hover:text-indigo-600">Best Careers for the Future UK</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-semibold text-gray-900 mb-3">By Salary</h3>
-              <ul className="space-y-2 text-sm">
-                <li><Link href="/what-jobs/jobs-that-pay-30k" className="text-gray-600 hover:text-indigo-600">Jobs That Pay £30k+</Link></li>
-                <li><Link href="/what-jobs/jobs-that-pay-40k" className="text-gray-600 hover:text-indigo-600">Jobs That Pay £40k+</Link></li>
-                <li><Link href="/what-jobs/jobs-that-pay-50k" className="text-gray-600 hover:text-indigo-600">Jobs That Pay £50k+</Link></li>
-                <li><Link href="/what-jobs/jobs-that-pay-60k" className="text-gray-600 hover:text-indigo-600">Jobs That Pay £60k+</Link></li>
-                <li><Link href="/what-jobs/jobs-that-pay-70k" className="text-gray-600 hover:text-indigo-600">Jobs That Pay £70k+</Link></li>
-                <li><Link href="/what-jobs/jobs-that-pay-100k" className="text-gray-600 hover:text-indigo-600">Jobs That Pay £100k+</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-semibold text-gray-900 mb-3">By Profession</h3>
-              <ul className="space-y-2 text-sm">
-                <li><Link href="/careers-for/teachers" className="text-gray-600 hover:text-indigo-600">Careers for Teachers</Link></li>
-                <li><Link href="/careers-for/nurses" className="text-gray-600 hover:text-indigo-600">Careers for Nurses</Link></li>
-                <li><Link href="/careers-for/retail" className="text-gray-600 hover:text-indigo-600">Careers for Retail Workers</Link></li>
-                <li><Link href="/careers-for/military" className="text-gray-600 hover:text-indigo-600">Careers for Ex-Military</Link></li>
-                <li><Link href="/careers-for/construction" className="text-gray-600 hover:text-indigo-600">Careers for Construction Workers</Link></li>
-                <li><Link href="/careers-for/admin" className="text-gray-600 hover:text-indigo-600">Careers for Admin Staff</Link></li>
-                <li><Link href="/careers-for/finance" className="text-gray-600 hover:text-indigo-600">Careers for Finance Workers</Link></li>
-                <li><Link href="/careers-for/parents" className="text-gray-600 hover:text-indigo-600">Careers for Parents</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-semibold text-gray-900 mb-3">Skills & How-To</h3>
-              <ul className="space-y-2 text-sm">
-                <li><Link href="/what-jobs/teaching-skills" className="text-gray-600 hover:text-indigo-600">Teaching Skills</Link></li>
-                <li><Link href="/what-jobs/project-management-skills" className="text-gray-600 hover:text-indigo-600">Project Management Skills</Link></li>
-                <li><Link href="/what-jobs/leadership-skills" className="text-gray-600 hover:text-indigo-600">Leadership Skills</Link></li>
-                <li><Link href="/what-jobs/communication-skills" className="text-gray-600 hover:text-indigo-600">Communication Skills</Link></li>
-                <li><Link href="/what-jobs/how-to-become-data-analyst" className="text-gray-600 hover:text-indigo-600">How to Become a Data Analyst</Link></li>
-                <li><Link href="/what-jobs/how-to-become-ux-designer" className="text-gray-600 hover:text-indigo-600">How to Become a UX Designer</Link></li>
-                <li><Link href="/what-jobs/how-to-become-product-manager" className="text-gray-600 hover:text-indigo-600">How to Become a Product Manager</Link></li>
-                <li><Link href="/what-jobs/how-to-become-software-developer" className="text-gray-600 hover:text-indigo-600">How to Become a Software Developer</Link></li>
-                <li><Link href="/skills-employers-want-2026" className="text-gray-600 hover:text-indigo-600">Skills Employers Want in 2026</Link></li>
-                <li><Link href="/best-jobs-for-women-returning-to-work" className="text-gray-600 hover:text-indigo-600">Best Jobs for Women Returning to Work</Link></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="py-20 sm:py-28 bg-indigo-600">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold text-white">
-            Ready to discover what you could become?
-          </h2>
-          <p className="mt-4 text-lg text-indigo-200">
-            Free. No signup required. Takes 2 minutes.
-          </p>
-          <Link
-            href="/discover"
-            className="mt-8 inline-flex items-center justify-center bg-white text-indigo-700 font-semibold text-lg px-8 py-4 rounded-xl hover:bg-indigo-50 transition-colors shadow-lg"
-          >
-            Discover My Careers
-            <svg className="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-            </svg>
-          </Link>
+      {/* Final call to action */}
+      <section className="py-16 sm:py-24">
+        <div className="mx-auto max-w-page px-4 sm:px-6">
+          <ToolCallout heading="Not sure where to start? Begin with what you already do." />
         </div>
       </section>
     </>
