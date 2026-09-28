@@ -1,3 +1,7 @@
+-- WARNING: DO NOT RUN THIS FILE. History only; it does not match the live
+-- database, and the revamp drops the recruiter CV-browsing use it was written for.
+-- See supabase/README.md.
+
 -- Add CV text and skills summary to email leads so Fred can browse candidates
 -- Run this in Supabase SQL Editor
 
