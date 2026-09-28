@@ -1,0 +1,261 @@
+{
+ "source": {
+  "retrievedAt": "2026-09-28T12:10:38.998Z",
+  "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126 Safari/537.36"
+ },
+ "licences": {
+  "sia-licence": {
+   "ok": true,
+   "pages": [
+    {
+     "url": "https://www.gov.uk/guidance/apply-for-an-sia-licence",
+     "finalUrl": "https://www.gov.uk/guidance/apply-for-an-sia-licence",
+     "status": 200,
+     "ok": true,
+     "phrasesFound": [
+      "SIA licence",
+      "door supervis"
+     ]
+    }
+   ]
+  },
+  "cscs-card": {
+   "ok": true,
+   "pages": [
+    {
+     "url": "https://www.cscs.uk.com/applying-for-cards/",
+     "finalUrl": "https://www.cscs.uk.com/applying-for-cards/",
+     "status": 200,
+     "ok": true,
+     "phrasesFound": [
+      "CSCS"
+     ]
+    }
+   ]
+  },
+  "cisrs-card": {
+   "ok": true,
+   "pages": [
+    {
+     "url": "https://cisrs.org.uk/",
+     "finalUrl": "https://cisrs.org.uk/",
+     "status": 200,
+     "ok": true,
+     "phrasesFound": [
+      "CISRS",
+      "scaffold"
+     ]
+    }
+   ]
+  },
+  "cpcs-card": {
+   "ok": true,
+   "pages": [
+    {
+     "url": "https://www.nocn.org.uk/products/competence-cards-and-tests/construction-plant-competence-scheme-cpcs/",
+     "finalUrl": "https://www.nocn.org.uk/products/competence-cards-and-tests/construction-plant-competence-scheme-cpcs/",
+     "status": 200,
+     "ok": true,
+     "phrasesFound": [
+      "CPCS"
+     ]
+    }
+   ]
+  },
+  "nmc-registration": {
+   "ok": true,
+   "pages": [
+    {
+     "url": "https://www.nmc.org.uk/registration/",
+     "finalUrl": "https://www.nmc.org.uk/registration/",
+     "status": 200,
+     "ok": true,
+     "phrasesFound": [
+      "register",
+      "nurse"
+     ]
+    }
+   ]
+  },
+  "hcpc-registration": {
+   "ok": true,
+   "pages": [
+    {
+     "url": "https://www.hcpc-uk.org/registration/getting-on-the-register/",
+     "finalUrl": "https://www.hcpc-uk.org/registration/getting-on-the-register/",
+     "status": 200,
+     "ok": true,
+     "phrasesFound": [
+      "register"
+     ]
+    },
+    {
+     "url": "https://www.hcpc-uk.org/about-us/who-we-regulate/the-professions/",
+     "finalUrl": "https://www.hcpc-uk.org/about-us/who-we-regulate/the-professions/",
+     "status": 200,
+     "ok": true,
+     "phrasesFound": [
+      "Practitioner psychologist",
+      "Paramedic",
+      "Occupational therapist"
+     ]
+    }
+   ]
+  },
+  "qts": {
+   "ok": true,
+   "pages": [
+    {
+     "url": "https://www.gov.uk/guidance/qualified-teacher-status-qts",
+     "finalUrl": "https://www.gov.uk/guidance/qualified-teacher-status-qts",
+     "status": 200,
+     "ok": true,
+     "phrasesFound": [
+      "qualified teacher status"
+     ]
+    }
+   ]
+  },
+  "social-work-registration": {
+   "ok": true,
+   "pages": [
+    {
+     "url": "https://www.socialworkengland.org.uk/registration/",
+     "finalUrl": "https://www.socialworkengland.org.uk/registration/",
+     "status": 200,
+     "ok": true,
+     "phrasesFound": [
+      "register"
+     ]
+    }
+   ]
+  },
+  "gas-safe-register": {
+   "ok": true,
+   "pages": [
+    {
+     "url": "https://www.hse.gov.uk/gas/gas-safe-register-check.htm",
+     "finalUrl": "https://www.hse.gov.uk/gas/gas-safe-register-check.htm",
+     "status": 200,
+     "ok": true,
+     "phrasesFound": [
+      "Gas Safe"
+     ]
+    }
+   ]
+  },
+  "lgv-licence-driver-cpc": {
+   "ok": true,
+   "pages": [
+    {
+     "url": "https://www.gov.uk/become-lorry-bus-driver",
+     "finalUrl": "https://www.gov.uk/become-lorry-bus-driver",
+     "status": 200,
+     "ok": true,
+     "phrasesFound": [
+      "Certificate of Professional Competence"
+     ]
+    }
+   ]
+  },
+  "pcv-licence-driver-cpc": {
+   "ok": true,
+   "pages": [
+    {
+     "url": "https://www.gov.uk/become-lorry-bus-driver",
+     "finalUrl": "https://www.gov.uk/become-lorry-bus-driver",
+     "status": 200,
+     "ok": true,
+     "phrasesFound": [
+      "Certificate of Professional Competence",
+      "bus"
+     ]
+    }
+   ]
+  },
+  "adi-register": {
+   "ok": true,
+   "pages": [
+    {
+     "url": "https://www.gov.uk/become-a-driving-instructor",
+     "finalUrl": "https://www.gov.uk/become-a-driving-instructor",
+     "status": 200,
+     "ok": true,
+     "phrasesFound": [
+      "approved driving instructor"
+     ]
+    }
+   ]
+  },
+  "sqe": {
+   "ok": true,
+   "pages": [
+    {
+     "url": "https://www.sra.org.uk/become-solicitor/sqe/",
+     "finalUrl": "https://www.sra.org.uk/become-solicitor/sqe/",
+     "status": 200,
+     "ok": true,
+     "phrasesFound": [
+      "Solicitors Qualifying Examination"
+     ]
+    }
+   ]
+  },
+  "transport-manager-cpc": {
+   "ok": true,
+   "pages": [
+    {
+     "url": "https://www.gov.uk/become-transport-manager",
+     "finalUrl": "https://www.gov.uk/become-transport-manager",
+     "status": 200,
+     "ok": true,
+     "phrasesFound": [
+      "Certificate of Professional Competence"
+     ]
+    }
+   ]
+  },
+  "train-driving-licence": {
+   "ok": true,
+   "pages": [
+    {
+     "url": "https://www.orr.gov.uk/rail-guidance-compliance/train-driving-licences-and-certificates",
+     "finalUrl": "https://www.orr.gov.uk/rail-guidance-compliance/train-driving-licences-and-certificates",
+     "status": 200,
+     "ok": true,
+     "phrasesFound": [
+      "train driving licence"
+     ]
+    }
+   ]
+  },
+  "atco-licence": {
+   "ok": true,
+   "pages": [
+    {
+     "url": "https://www.caa.co.uk/commercial-industry/airspace/air-traffic-management-and-air-navigational-services/licences-for-air-traffic-roles/",
+     "finalUrl": "https://www.caa.co.uk/commercial-industry/airspace/air-traffic-management-and-air-navigational-services/licences-for-air-traffic-roles/",
+     "status": 200,
+     "ok": true,
+     "phrasesFound": [
+      "Air traffic controller licence"
+     ]
+    }
+   ]
+  },
+  "f-gas-certificate": {
+   "ok": true,
+   "pages": [
+    {
+     "url": "https://www.gov.uk/government/collections/fluorinated-gas-f-gas-guidance-for-users-producers-and-traders",
+     "finalUrl": "https://www.gov.uk/government/collections/fluorinated-gas-f-gas-guidance-for-users-producers-and-traders",
+     "status": 200,
+     "ok": true,
+     "phrasesFound": [
+      "F gas"
+     ]
+    }
+   ]
+  }
+ }
+}

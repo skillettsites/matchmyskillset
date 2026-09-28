@@ -1,0 +1,35 @@
+{
+  "dataset": "Earnings and hours worked, occupation by four-digit SOC: ASHE Table 14",
+  "publisher": "Office for National Statistics",
+  "year": 2025,
+  "edition": "provisional",
+  "datasetPage": "https://www.ons.gov.uk/employmentandlabourmarket/peopleinwork/earningsandworkinghours/datasets/occupation4digitsoc2010ashetable14",
+  "zipUrl": "https://www.ons.gov.uk/file?uri=/employmentandlabourmarket/peopleinwork/earningsandworkinghours/datasets/occupation4digitsoc2010ashetable14/2025provisional/ashetable142025provisional.zip",
+  "zipSha256": "85888d690eecc71f062f82b6e75c243f29e2136279cb94dfa4b96d58d03c0d6d",
+  "zipBytes": 11202737,
+  "retrievedAt": "2026-09-28T11:37:26.764Z",
+  "releaseDateOnPageAtRetrieval": "23 October 2025",
+  "latestEditionOnPageAtRetrieval": "2025 provisional",
+  "licence": {
+    "name": "Open Government Licence v3.0",
+    "url": "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+  },
+  "files": {
+    "estimates": {
+      "table": "14.7a",
+      "originalName": "PROV - Occupation SOC20 (4) Table 14.7a   Annual pay - Gross 2025.xlsx",
+      "savedAs": "table-14.7a-annual-pay-gross.xlsx",
+      "sha256": "775da3ffd5435b2b7ae2f11b4230235a219e88590e27b35000d6a7f3f854b73d",
+      "bytes": 596477,
+      "zipEntryDate": "2025-12-19T11:34:46.000Z"
+    },
+    "cv": {
+      "table": "14.7b",
+      "originalName": "PROV - Occupation SOC20 (4) Table 14.7b   Annual pay - Gross 2025 CV.xlsx",
+      "savedAs": "table-14.7b-annual-pay-gross-cv.xlsx",
+      "sha256": "e9b94cf8360354bfbb0340f2aa7037946f19fb39be1a2234120edb7bc683a391",
+      "bytes": 517974,
+      "zipEntryDate": "2025-12-19T11:35:06.000Z"
+    }
+  }
+}

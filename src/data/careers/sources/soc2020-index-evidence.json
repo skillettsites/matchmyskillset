@@ -1,0 +1,3158 @@
+{
+ "source": {
+  "title": "SOC 2020 Volume 2: the coding index",
+  "publisher": "Office for National Statistics",
+  "page": "https://www.ons.gov.uk/methodology/classificationsandstandards/standardoccupationalclassificationsoc/soc2020/soc2020volume2codingrulesandconventions",
+  "fileUrl": "https://www.ons.gov.uk/file?uri=/methodology/classificationsandstandards/standardoccupationalclassificationsoc/soc2020/soc2020volume2codingrulesandconventions/soc2020volume2thecodingindexexcel20260827v2.xlsx",
+  "version": "Version 14 Of The Standard Occupational Classification 2020 Index",
+  "recordsInIndex": 32670,
+  "retrievedAt": "2026-09-28T12:08:17.798Z",
+  "licence": {
+   "name": "Open Government Licence v3.0",
+   "url": "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+  },
+  "note": "Only the index rows whose job title matches a socIndexTitles entry in occupations.ts are kept."
+ },
+ "entries": {
+  "chartered accountant": [
+   {
+    "recno": 41,
+    "title": "Chartered accountant",
+    "soc": "2421",
+    "ext": "2421/02",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Financial accountants (qualified)"
+   }
+  ],
+  "management accountant": [
+   {
+    "recno": 60,
+    "title": "Management accountant",
+    "soc": "2421",
+    "ext": "2421/02",
+    "add": "qualified",
+    "ind": null,
+    "subUnitGroup": "Financial accountants (qualified)"
+   },
+   {
+    "recno": 61,
+    "title": "Management accountant",
+    "soc": "4122",
+    "ext": "4122/01",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Accounting clerks and bookkeepers"
+   }
+  ],
+  "careers adviser": [
+   {
+    "recno": 360,
+    "title": "Careers adviser",
+    "soc": "3572",
+    "ext": "3572/01",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Careers advisers and coaches"
+   }
+  ],
+  "debt adviser": [
+   {
+    "recno": 396,
+    "title": "Debt adviser",
+    "soc": "3224",
+    "ext": "3224/02",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Debt advisers"
+   }
+  ],
+  "financial adviser": [
+   {
+    "recno": 424,
+    "title": "Financial adviser",
+    "soc": "2422",
+    "ext": "2422/02",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Financial advisers, planners and consultants"
+   }
+  ],
+  "occupational health adviser": [
+   {
+    "recno": 430,
+    "title": "Occupational health adviser",
+    "soc": "2259",
+    "ext": "2259/07",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Occupational health advisers"
+   }
+  ],
+  "health and safety adviser": [
+   {
+    "recno": 436,
+    "title": "Health and safety adviser",
+    "soc": "3582",
+    "ext": "3582/03",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Occupational health and safety managers and officers"
+   }
+  ],
+  "hr adviser": [
+   {
+    "recno": 442,
+    "title": "HR adviser",
+    "soc": "3571",
+    "ext": "3571/02",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Human resources advisers"
+   }
+  ],
+  "learning and development adviser": [
+   {
+    "recno": 449,
+    "title": "Learning and development adviser",
+    "soc": "3574",
+    "ext": "3574/04",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Learning and training development officers"
+   }
+  ],
+  "mortgage adviser": [
+   {
+    "recno": 469,
+    "title": "Mortgage adviser",
+    "soc": "2422",
+    "ext": "2422/04",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Mortgage advisers and consultants"
+   }
+  ],
+  "occupational health nurse adviser": [
+   {
+    "recno": 471,
+    "title": "Occupational health nurse adviser",
+    "soc": "2259",
+    "ext": "2259/07",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Occupational health advisers"
+   }
+  ],
+  "policy adviser": [
+   {
+    "recno": 492,
+    "title": "Policy adviser",
+    "soc": "2439",
+    "ext": "2439/01",
+    "add": null,
+    "ind": "government",
+    "subUnitGroup": "Policy officers"
+   },
+   {
+    "recno": 493,
+    "title": "Policy adviser",
+    "soc": "2439",
+    "ext": "2439/01",
+    "add": null,
+    "ind": "local government",
+    "subUnitGroup": "Policy officers"
+   }
+  ],
+  "tax adviser": [
+   {
+    "recno": 571,
+    "title": "Tax adviser",
+    "soc": "2423",
+    "ext": "2423/00",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Taxation experts"
+   }
+  ],
+  "estate agent": [
+   {
+    "recno": 673,
+    "title": "Estate agent",
+    "soc": "3555",
+    "ext": "3555/01",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Estate agents"
+   }
+  ],
+  "business analyst": [
+   {
+    "recno": 865,
+    "title": "Business analyst",
+    "soc": "2133",
+    "ext": "2133/05",
+    "add": "computing/IT",
+    "ind": null,
+    "subUnitGroup": "IT business analysts"
+   },
+   {
+    "recno": 866,
+    "title": "Business analyst",
+    "soc": "2431",
+    "ext": "2431/01",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Business analysts and consultants"
+   }
+  ],
+  "financial crime analyst": [
+   {
+    "recno": 894,
+    "title": "Financial crime analyst",
+    "soc": "2434",
+    "ext": "2434/01",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Intelligence analysts"
+   }
+  ],
+  "data analyst": [
+   {
+    "recno": 897,
+    "title": "Data analyst",
+    "soc": "2134",
+    "ext": "2134/04",
+    "add": "computing/IT",
+    "ind": null,
+    "subUnitGroup": "IT analysts and analyst-programmers"
+   },
+   {
+    "recno": 898,
+    "title": "Data analyst",
+    "soc": "3544",
+    "ext": "3544/00",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Data analysts"
+   }
+  ],
+  "criminal intelligence analyst": [
+   {
+    "recno": 935,
+    "title": "Criminal intelligence analyst",
+    "soc": "2434",
+    "ext": "2434/01",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Intelligence analysts"
+   }
+  ],
+  "risk analyst": [
+   {
+    "recno": 1001,
+    "title": "Risk analyst",
+    "soc": "2431",
+    "ext": "2431/03",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Risk analysts"
+   }
+  ],
+  "cyber security analyst": [
+   {
+    "recno": 1004,
+    "title": "Cyber security analyst",
+    "soc": "2135",
+    "ext": "2135/98",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Other cyber security professionals"
+   }
+  ],
+  "assessor": [
+   {
+    "recno": 1470,
+    "title": "Assessor",
+    "soc": "3574",
+    "ext": "3574/03",
+    "add": "training",
+    "ind": null,
+    "subUnitGroup": "Training assessors"
+   },
+   {
+    "recno": 1471,
+    "title": "Assessor",
+    "soc": "3549",
+    "ext": "3549/99",
+    "add": "work, time and motion",
+    "ind": null,
+    "subUnitGroup": "Business associate professionals n.e.c."
+   },
+   {
+    "recno": 1472,
+    "title": "Assessor",
+    "soc": "3221",
+    "ext": "3221/01",
+    "add": null,
+    "ind": "community care",
+    "subUnitGroup": "Community workers"
+   },
+   {
+    "recno": 1473,
+    "title": "Assessor",
+    "soc": "2323",
+    "ext": "2323/02",
+    "add": null,
+    "ind": "further, higher education",
+    "subUnitGroup": "School inspectors"
+   },
+   {
+    "recno": 1474,
+    "title": "Assessor",
+    "soc": "4111",
+    "ext": "4111/99",
+    "add": "student loans",
+    "ind": "government",
+    "subUnitGroup": "National government administrative occupations n.e.c."
+   },
+   {
+    "recno": 1475,
+    "title": "Assessor",
+    "soc": "3541",
+    "ext": "3541/99",
+    "add": null,
+    "ind": "insurance",
+    "subUnitGroup": "Estimators, valuers and assessors n.e.c."
+   },
+   {
+    "recno": 1476,
+    "title": "Assessor",
+    "soc": "3574",
+    "ext": "3574/03",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Training assessors"
+   }
+  ],
+  "healthcare assistant": [
+   {
+    "recno": 2044,
+    "title": "Healthcare assistant",
+    "soc": "6131",
+    "ext": "6131/98",
+    "add": null,
+    "ind": "hospital service",
+    "subUnitGroup": "Other nursing auxiliaries and assistants"
+   },
+   {
+    "recno": 2047,
+    "title": "Healthcare assistant",
+    "soc": "7114",
+    "ext": "7114/02",
+    "add": null,
+    "ind": "retail pharmacy",
+    "subUnitGroup": "Pharmacy dispensing assistants"
+   }
+  ],
+  "teaching assistant": [
+   {
+    "recno": 2698,
+    "title": "Teaching assistant",
+    "soc": "3231",
+    "ext": "3231/00",
+    "add": "qualified",
+    "ind": null,
+    "subUnitGroup": "Higher level teaching assistants"
+   },
+   {
+    "recno": 2699,
+    "title": "Teaching assistant",
+    "soc": "6113",
+    "ext": "6113/99",
+    "add": "special/additional needs",
+    "ind": null,
+    "subUnitGroup": "Educational support assistants n.e.c."
+   },
+   {
+    "recno": 2700,
+    "title": "Teaching assistant",
+    "soc": "2311",
+    "ext": "2311/00",
+    "add": null,
+    "ind": "higher education, university",
+    "subUnitGroup": "Higher education teaching professionals"
+   },
+   {
+    "recno": 2701,
+    "title": "Teaching assistant",
+    "soc": "6112",
+    "ext": "6112/02",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "School teaching assistants"
+   }
+  ],
+  "nursing associate": [
+   {
+    "recno": 2839,
+    "title": "Nursing associate",
+    "soc": "3213",
+    "ext": "3213/06",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Nursing associates"
+   }
+  ],
+  "clinical research associate": [
+   {
+    "recno": 2847,
+    "title": "Clinical research associate",
+    "soc": "2113",
+    "ext": "2113/04",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Clinical scientists"
+   }
+  ],
+  "technical author": [
+   {
+    "recno": 3508,
+    "title": "Technical author",
+    "soc": "3412",
+    "ext": "3412/07",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Technical writers (excludes computing)"
+   }
+  ],
+  "bodyguard": [
+   {
+    "recno": 3973,
+    "title": "Bodyguard",
+    "soc": "9231",
+    "ext": "9231/99",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Security guards and related occupations n.e.c."
+   }
+  ],
+  "bookkeeper": [
+   {
+    "recno": 4024,
+    "title": "Bookkeeper",
+    "soc": "4122",
+    "ext": "4122/01",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Accounting clerks and bookkeepers"
+   }
+  ],
+  "bricklayer": [
+   {
+    "recno": 4215,
+    "title": "Bricklayer",
+    "soc": "5313",
+    "ext": "5313/00",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Bricklayers"
+   }
+  ],
+  "buyer": [
+   {
+    "recno": 4504,
+    "title": "Buyer",
+    "soc": "3551",
+    "ext": "3551/00",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Buyers and procurement officers"
+   }
+  ],
+  "carpenter": [
+   {
+    "recno": 4710,
+    "title": "Carpenter",
+    "soc": "5316",
+    "ext": "5316/02",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Carpenters"
+   }
+  ],
+  "work coach": [
+   {
+    "recno": 5874,
+    "title": "Work coach",
+    "soc": "4111",
+    "ext": "4111/04",
+    "add": null,
+    "ind": "government",
+    "subUnitGroup": "Work coaches"
+   }
+  ],
+  "clinical coder": [
+   {
+    "recno": 5908,
+    "title": "Clinical coder",
+    "soc": "3549",
+    "ext": "3549/04",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Clinical coders"
+   }
+  ],
+  "train conductor": [
+   {
+    "recno": 6120,
+    "title": "Train conductor",
+    "soc": "6214",
+    "ext": "6214/03",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Train conductors and guards"
+   }
+  ],
+  "police constable": [
+   {
+    "recno": 6148,
+    "title": "Police constable",
+    "soc": "3312",
+    "ext": "3312/01",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Police constable"
+   }
+  ],
+  "learning and development consultant": [
+   {
+    "recno": 6318,
+    "title": "Learning and development consultant",
+    "soc": "3574",
+    "ext": "3574/04",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Learning and training development officers"
+   }
+  ],
+  "management consultant": [
+   {
+    "recno": 6331,
+    "title": "Management consultant",
+    "soc": "2431",
+    "ext": "2431/02",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Management advisers and consultants"
+   }
+  ],
+  "recruitment consultant": [
+   {
+    "recno": 6382,
+    "title": "Recruitment consultant",
+    "soc": "3571",
+    "ext": "3571/03",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Recruitment consultants"
+   }
+  ],
+  "security consultant": [
+   {
+    "recno": 6420,
+    "title": "Security consultant",
+    "soc": "3319",
+    "ext": "3319/06",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Security consultants and managers (excludes cyber security)"
+   }
+  ],
+  "air traffic controller": [
+   {
+    "recno": 6727,
+    "title": "Air traffic controller",
+    "soc": "3511",
+    "ext": "3511/02",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Air traffic controllers"
+   }
+  ],
+  "clinical trial coordinator": [
+   {
+    "recno": 6995,
+    "title": "Clinical trial coordinator",
+    "soc": "2440",
+    "ext": "2440/02",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Clinical trials coordinators"
+   }
+  ],
+  "clinical trials coordinator": [
+   {
+    "recno": 6996,
+    "title": "Clinical trials coordinator",
+    "soc": "2440",
+    "ext": "2440/02",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Clinical trials coordinators"
+   }
+  ],
+  "copywriter": [
+   {
+    "recno": 7023,
+    "title": "Copywriter",
+    "soc": "3412",
+    "ext": "3412/03",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Copywriters"
+   }
+  ],
+  "mental health counsellor": [
+   {
+    "recno": 7083,
+    "title": "Mental health counsellor",
+    "soc": "3224",
+    "ext": "3224/98",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Other counsellors"
+   }
+  ],
+  "therapeutic counsellor": [
+   {
+    "recno": 7097,
+    "title": "Therapeutic counsellor",
+    "soc": "3224",
+    "ext": "3224/98",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Other counsellors"
+   }
+  ],
+  "ux designer": [
+   {
+    "recno": 7912,
+    "title": "UX designer",
+    "soc": "2141",
+    "ext": "2141/02",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "UI and UX designers and researchers"
+   }
+  ],
+  "e-learning developer": [
+   {
+    "recno": 8014,
+    "title": "E-learning developer",
+    "soc": "2134",
+    "ext": "2134/03",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Software developers"
+   }
+  ],
+  "digital learning developer": [
+   {
+    "recno": 8028,
+    "title": "Digital learning developer",
+    "soc": "2134",
+    "ext": "2134/03",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Software developers"
+   }
+  ],
+  "software developer": [
+   {
+    "recno": 8047,
+    "title": "Software developer",
+    "soc": "2134",
+    "ext": "2134/03",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Software developers"
+   }
+  ],
+  "web developer": [
+   {
+    "recno": 8055,
+    "title": "Web developer",
+    "soc": "2134",
+    "ext": "2134/03",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Software developers"
+   }
+  ],
+  "bus driver": [
+   {
+    "recno": 8831,
+    "title": "Bus driver",
+    "soc": "8212",
+    "ext": "8212/00",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Bus and coach drivers"
+   }
+  ],
+  "crane driver": [
+   {
+    "recno": 8866,
+    "title": "Crane driver",
+    "soc": "8221",
+    "ext": "8221/00",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Crane drivers"
+   }
+  ],
+  "hgv driver": [
+   {
+    "recno": 8933,
+    "title": "Hgv driver",
+    "soc": "8211",
+    "ext": "8211/00",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Heavy and large goods vehicle drivers"
+   }
+  ],
+  "lorry driver": [
+   {
+    "recno": 8957,
+    "title": "Lorry driver",
+    "soc": "8211",
+    "ext": "8211/00",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Heavy and large goods vehicle drivers"
+   }
+  ],
+  "train driver": [
+   {
+    "recno": 9063,
+    "title": "Train driver",
+    "soc": "8231",
+    "ext": "8231/00",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Train and tram drivers"
+   }
+  ],
+  "clinical educator": [
+   {
+    "recno": 9324,
+    "title": "Clinical educator",
+    "soc": "2237",
+    "ext": "2237/00",
+    "add": null,
+    "ind": "health authority",
+    "subUnitGroup": "Other registered nursing professionals"
+   }
+  ],
+  "clinical nurse educator": [
+   {
+    "recno": 9328,
+    "title": "Clinical nurse educator",
+    "soc": "2237",
+    "ext": "2237/00",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Other registered nursing professionals"
+   }
+  ],
+  "nurse educator": [
+   {
+    "recno": 9329,
+    "title": "Nurse educator",
+    "soc": "2237",
+    "ext": "2237/00",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Other registered nursing professionals"
+   }
+  ],
+  "electrician": [
+   {
+    "recno": 9347,
+    "title": "Electrician",
+    "soc": "5241",
+    "ext": "5241/03",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Installation and maintenance electricians"
+   }
+  ],
+  "air conditioning engineer": [
+   {
+    "recno": 9534,
+    "title": "Air conditioning engineer",
+    "soc": "2129",
+    "ext": "2129/08",
+    "add": "professional",
+    "ind": null,
+    "subUnitGroup": "Heating and ventilating engineers (professional)"
+   },
+   {
+    "recno": 9535,
+    "title": "Air conditioning engineer",
+    "soc": "5225",
+    "ext": "5225/00",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Air-conditioning and refrigeration installers and repairers"
+   }
+  ],
+  "gas engineer": [
+   {
+    "recno": 9733,
+    "title": "Gas engineer",
+    "soc": "2129",
+    "ext": "2129/07",
+    "add": "professional",
+    "ind": null,
+    "subUnitGroup": "Gas engineers (professional)"
+   },
+   {
+    "recno": 9734,
+    "title": "Gas engineer",
+    "soc": "5315",
+    "ext": "5315/00",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Plumbers and heating and ventilation installers and repairers"
+   }
+  ],
+  "heating engineer": [
+   {
+    "recno": 9757,
+    "title": "Heating engineer",
+    "soc": "2129",
+    "ext": "2129/08",
+    "add": "professional",
+    "ind": null,
+    "subUnitGroup": "Heating and ventilating engineers (professional)"
+   },
+   {
+    "recno": 9758,
+    "title": "Heating engineer",
+    "soc": "5315",
+    "ext": "5315/00",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Plumbers and heating and ventilation installers and repairers"
+   }
+  ],
+  "aircraft maintenance engineer": [
+   {
+    "recno": 9868,
+    "title": "Aircraft maintenance engineer",
+    "soc": "5234",
+    "ext": "5234/00",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Aircraft maintenance and related trades"
+   }
+  ],
+  "track maintenance engineer": [
+   {
+    "recno": 9874,
+    "title": "Track maintenance engineer",
+    "soc": "8153",
+    "ext": "8153/00",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Rail construction and maintenance operatives"
+   }
+  ],
+  "network engineer": [
+   {
+    "recno": 9946,
+    "title": "Network engineer",
+    "soc": "2137",
+    "ext": "2137/00",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "IT network professionals"
+   }
+  ],
+  "heat pump engineer": [
+   {
+    "recno": 10034,
+    "title": "Heat pump engineer",
+    "soc": "5315",
+    "ext": "5315/00",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Plumbers and heating and ventilation installers and repairers"
+   }
+  ],
+  "refrigeration engineer": [
+   {
+    "recno": 10058,
+    "title": "Refrigeration engineer",
+    "soc": "2129",
+    "ext": "2129/99",
+    "add": "professional",
+    "ind": null,
+    "subUnitGroup": "Engineering professionals n.e.c."
+   },
+   {
+    "recno": 10059,
+    "title": "Refrigeration engineer",
+    "soc": "3512",
+    "ext": "3512/02",
+    "add": null,
+    "ind": "shipping",
+    "subUnitGroup": "Marine engineers"
+   },
+   {
+    "recno": 10060,
+    "title": "Refrigeration engineer",
+    "soc": "5225",
+    "ext": "5225/00",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Air-conditioning and refrigeration installers and repairers"
+   }
+  ],
+  "telecommunications engineer": [
+   {
+    "recno": 10244,
+    "title": "Telecommunications engineer",
+    "soc": "2124",
+    "ext": "2124/02",
+    "add": "professional",
+    "ind": null,
+    "subUnitGroup": "Telecommunications engineers (professional)"
+   },
+   {
+    "recno": 10245,
+    "title": "Telecommunications engineer",
+    "soc": "5242",
+    "ext": "5242/00",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Telecoms and related network installers and repairers"
+   }
+  ],
+  "business development executive": [
+   {
+    "recno": 10802,
+    "title": "Business development executive",
+    "soc": "3554",
+    "ext": "3554/01",
+    "add": "marketing",
+    "ind": null,
+    "subUnitGroup": "Advertising and marketing executives"
+   },
+   {
+    "recno": 10803,
+    "title": "Business development executive",
+    "soc": "3552",
+    "ext": "3552/00",
+    "add": "sales",
+    "ind": null,
+    "subUnitGroup": "Business sales executives"
+   }
+  ],
+  "chartered legal executive": [
+   {
+    "recno": 10815,
+    "title": "Chartered legal executive",
+    "soc": "2419",
+    "ext": "2419/05",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Legal executives"
+   }
+  ],
+  "legal executive": [
+   {
+    "recno": 10816,
+    "title": "Legal executive",
+    "soc": "2419",
+    "ext": "2419/05",
+    "add": "professional",
+    "ind": null,
+    "subUnitGroup": "Legal executives"
+   },
+   {
+    "recno": 10817,
+    "title": "Legal executive",
+    "soc": "2419",
+    "ext": "2419/05",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Legal executives"
+   }
+  ],
+  "digital marketing executive": [
+   {
+    "recno": 10823,
+    "title": "Digital marketing executive",
+    "soc": "3554",
+    "ext": "3554/01",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Advertising and marketing executives"
+   }
+  ],
+  "marketing executive": [
+   {
+    "recno": 10827,
+    "title": "Marketing executive",
+    "soc": "3554",
+    "ext": "3554/01",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Advertising and marketing executives"
+   }
+  ],
+  "firefighter": [
+   {
+    "recno": 11435,
+    "title": "Firefighter",
+    "soc": "3313",
+    "ext": "3313/01",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Firefighters"
+   }
+  ],
+  "maintenance fitter": [
+   {
+    "recno": 11726,
+    "title": "Maintenance fitter",
+    "soc": "5234",
+    "ext": "5234/00",
+    "add": "aircraft engines",
+    "ind": null,
+    "subUnitGroup": "Aircraft maintenance and related trades"
+   },
+   {
+    "recno": 11727,
+    "title": "Maintenance fitter",
+    "soc": "5319",
+    "ext": "5319/99",
+    "add": "buildings and other structures",
+    "ind": null,
+    "subUnitGroup": "Construction and building trades n.e.c."
+   },
+   {
+    "recno": 11728,
+    "title": "Maintenance fitter",
+    "soc": "5246",
+    "ext": "5246/00",
+    "add": "office machinery servicing",
+    "ind": null,
+    "subUnitGroup": "Electrical service and maintenance mechanics and repairers"
+   },
+   {
+    "recno": 11729,
+    "title": "Maintenance fitter",
+    "soc": "5236",
+    "ext": "5236/00",
+    "add": "railway and rolling stock",
+    "ind": null,
+    "subUnitGroup": "Rail and rolling stock builders and repairers"
+   },
+   {
+    "recno": 11730,
+    "title": "Maintenance fitter",
+    "soc": "5231",
+    "ext": "5231/98",
+    "add": "vehicle servicing",
+    "ind": null,
+    "subUnitGroup": "Other vehicle technicians, mechanics and electricians"
+   },
+   {
+    "recno": 11731,
+    "title": "Maintenance fitter",
+    "soc": "5315",
+    "ext": "5315/00",
+    "add": null,
+    "ind": "gas supplier: gas works",
+    "subUnitGroup": "Plumbers and heating and ventilation installers and repairers"
+   },
+   {
+    "recno": 11732,
+    "title": "Maintenance fitter",
+    "soc": "5315",
+    "ext": "5315/00",
+    "add": null,
+    "ind": "gas supplier",
+    "subUnitGroup": "Plumbers and heating and ventilation installers and repairers"
+   },
+   {
+    "recno": 11733,
+    "title": "Maintenance fitter",
+    "soc": "5315",
+    "ext": "5315/00",
+    "add": null,
+    "ind": "heating, ventilating",
+    "subUnitGroup": "Plumbers and heating and ventilation installers and repairers"
+   },
+   {
+    "recno": 11734,
+    "title": "Maintenance fitter",
+    "soc": "5243",
+    "ext": "5243/00",
+    "add": null,
+    "ind": "radio, television and video servicing",
+    "subUnitGroup": "TV, video and audio servicers and repairers"
+   },
+   {
+    "recno": 11735,
+    "title": "Maintenance fitter",
+    "soc": "5242",
+    "ext": "5242/00",
+    "add": null,
+    "ind": "telecoms",
+    "subUnitGroup": "Telecoms and related network installers and repairers"
+   },
+   {
+    "recno": 11736,
+    "title": "Maintenance fitter",
+    "soc": "5223",
+    "ext": "5223/13",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Metal working maintenance/service technicians"
+   }
+  ],
+  "mechanical fitter": [
+   {
+    "recno": 11740,
+    "title": "Mechanical fitter",
+    "soc": "5234",
+    "ext": "5234/00",
+    "add": "aircraft",
+    "ind": null,
+    "subUnitGroup": "Aircraft maintenance and related trades"
+   },
+   {
+    "recno": 11741,
+    "title": "Mechanical fitter",
+    "soc": "5236",
+    "ext": "5236/00",
+    "add": "railway and rolling stock",
+    "ind": null,
+    "subUnitGroup": "Rail and rolling stock builders and repairers"
+   },
+   {
+    "recno": 11742,
+    "title": "Mechanical fitter",
+    "soc": "5231",
+    "ext": "5231/98",
+    "add": "vehicles",
+    "ind": null,
+    "subUnitGroup": "Other vehicle technicians, mechanics and electricians"
+   },
+   {
+    "recno": 11743,
+    "title": "Mechanical fitter",
+    "soc": "5223",
+    "ext": "5223/99",
+    "add": "vehicles",
+    "ind": "vehicle mfr",
+    "subUnitGroup": "Metal working production and maintenance fitters n.e.c."
+   },
+   {
+    "recno": 11744,
+    "title": "Mechanical fitter",
+    "soc": "5223",
+    "ext": "5223/99",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Metal working production and maintenance fitters n.e.c."
+   }
+  ],
+  "fundraiser": [
+   {
+    "recno": 12699,
+    "title": "Fundraiser",
+    "soc": "3554",
+    "ext": "3554/02",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Fundraisers"
+   }
+  ],
+  "head of learning and development": [
+   {
+    "recno": 13853,
+    "title": "Head of learning and development",
+    "soc": "1136",
+    "ext": "1136/03",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Learning and development managers and directors"
+   }
+  ],
+  "ofsted inspector": [
+   {
+    "recno": 14512,
+    "title": "OFSTED inspector",
+    "soc": "2323",
+    "ext": "2323/02",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "School inspectors"
+   }
+  ],
+  "school inspector": [
+   {
+    "recno": 14585,
+    "title": "School inspector",
+    "soc": "2323",
+    "ext": "2323/02",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "School inspectors"
+   }
+  ],
+  "driving instructor": [
+   {
+    "recno": 14843,
+    "title": "Driving instructor",
+    "soc": "8215",
+    "ext": "8215/05",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Passenger carrying vehicle (PCV) and car driving instructors"
+   }
+  ],
+  "financial crime investigator": [
+   {
+    "recno": 14962,
+    "title": "Financial crime investigator",
+    "soc": "3319",
+    "ext": "3319/03",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Fraud and financial crime investigators (excludes benefit fraud)"
+   }
+  ],
+  "fraud investigator": [
+   {
+    "recno": 14970,
+    "title": "Fraud investigator",
+    "soc": "3319",
+    "ext": "3319/03",
+    "add": null,
+    "ind": "banking",
+    "subUnitGroup": "Fraud and financial crime investigators (excludes benefit fraud)"
+   },
+   {
+    "recno": 14971,
+    "title": "Fraud investigator",
+    "soc": "3319",
+    "ext": "3319/03",
+    "add": null,
+    "ind": "building society",
+    "subUnitGroup": "Fraud and financial crime investigators (excludes benefit fraud)"
+   },
+   {
+    "recno": 14972,
+    "title": "Fraud investigator",
+    "soc": "4111",
+    "ext": "4111/01",
+    "add": "benefits",
+    "ind": "government",
+    "subUnitGroup": "National government benefits officers"
+   },
+   {
+    "recno": 14973,
+    "title": "Fraud investigator",
+    "soc": "4111",
+    "ext": "4111/99",
+    "add": null,
+    "ind": "government",
+    "subUnitGroup": "National government administrative occupations n.e.c."
+   },
+   {
+    "recno": 14974,
+    "title": "Fraud investigator",
+    "soc": "3319",
+    "ext": "3319/03",
+    "add": null,
+    "ind": "insurance",
+    "subUnitGroup": "Fraud and financial crime investigators (excludes benefit fraud)"
+   },
+   {
+    "recno": 14975,
+    "title": "Fraud investigator",
+    "soc": "4112",
+    "ext": "4112/01",
+    "add": "benefits",
+    "ind": "local government",
+    "subUnitGroup": "Local government benefits officers"
+   },
+   {
+    "recno": 14976,
+    "title": "Fraud investigator",
+    "soc": "3319",
+    "ext": "3319/03",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Fraud and financial crime investigators (excludes benefit fraud)"
+   }
+  ],
+  "private investigator": [
+   {
+    "recno": 14981,
+    "title": "Private investigator",
+    "soc": "3319",
+    "ext": "3319/05",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Private investigators"
+   }
+  ],
+  "crime scene investigator": [
+   {
+    "recno": 14985,
+    "title": "Crime scene investigator",
+    "soc": "3319",
+    "ext": "3319/07",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Crime scene investigators"
+   }
+  ],
+  "joiner": [
+   {
+    "recno": 15085,
+    "title": "Joiner",
+    "soc": "5442",
+    "ext": "5442/01",
+    "add": null,
+    "ind": "cabinet making",
+    "subUnitGroup": "Cabinet makers (excludes metal)"
+   },
+   {
+    "recno": 15086,
+    "title": "Joiner",
+    "soc": "8141",
+    "ext": "8141/00",
+    "add": null,
+    "ind": "lamp, valve mfr",
+    "subUnitGroup": "Assemblers (electrical and electronic products)"
+   },
+   {
+    "recno": 15087,
+    "title": "Joiner",
+    "soc": "8149",
+    "ext": "8149/00",
+    "add": null,
+    "ind": "rubber footwear mfr",
+    "subUnitGroup": "Assemblers and routine operatives n.e.c."
+   },
+   {
+    "recno": 15088,
+    "title": "Joiner",
+    "soc": "5419",
+    "ext": "5419/99",
+    "add": null,
+    "ind": "textile mfr: hosiery mfr",
+    "subUnitGroup": "Textiles, garments and related trades n.e.c."
+   },
+   {
+    "recno": 15089,
+    "title": "Joiner",
+    "soc": "8112",
+    "ext": "8112/00",
+    "add": null,
+    "ind": "textile mfr",
+    "subUnitGroup": "Textile process operatives"
+   },
+   {
+    "recno": 15090,
+    "title": "Joiner",
+    "soc": "5316",
+    "ext": "5316/03",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Joiners"
+   }
+  ],
+  "designated safeguarding lead": [
+   {
+    "recno": 15613,
+    "title": "Designated safeguarding lead",
+    "soc": "3222",
+    "ext": "3222/01",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Child protection officers"
+   }
+  ],
+  "nurse lecturer": [
+   {
+    "recno": 15786,
+    "title": "Nurse lecturer",
+    "soc": "2311",
+    "ext": "2311/00",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Higher education teaching professionals"
+   }
+  ],
+  "nursing lecturer": [
+   {
+    "recno": 15787,
+    "title": "Nursing lecturer",
+    "soc": "2311",
+    "ext": "2311/00",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Higher education teaching professionals"
+   }
+  ],
+  "lecturer": [
+   {
+    "recno": 15794,
+    "title": "Lecturer",
+    "soc": "2253",
+    "ext": "2253/99",
+    "add": "dentistry",
+    "ind": null,
+    "subUnitGroup": "Dental practitioners n.e.c."
+   },
+   {
+    "recno": 15795,
+    "title": "Lecturer",
+    "soc": "3574",
+    "ext": "3574/98",
+    "add": "industrial training",
+    "ind": null,
+    "subUnitGroup": "Other vocational and industrial trainers"
+   },
+   {
+    "recno": 15796,
+    "title": "Lecturer",
+    "soc": "2211",
+    "ext": "2211/99",
+    "add": "medicine",
+    "ind": null,
+    "subUnitGroup": "Generalist medical practitioners n.e.c."
+   },
+   {
+    "recno": 15797,
+    "title": "Lecturer",
+    "soc": "2212",
+    "ext": "2212/14",
+    "add": "surgery",
+    "ind": null,
+    "subUnitGroup": "Surgeons"
+   },
+   {
+    "recno": 15798,
+    "title": "Lecturer",
+    "soc": "2312",
+    "ext": "2312/00",
+    "add": null,
+    "ind": "further education",
+    "subUnitGroup": "Further education teaching professionals"
+   },
+   {
+    "recno": 15799,
+    "title": "Lecturer",
+    "soc": "2311",
+    "ext": "2311/00",
+    "add": null,
+    "ind": "higher education, university",
+    "subUnitGroup": "Higher education teaching professionals"
+   },
+   {
+    "recno": 15800,
+    "title": "Lecturer",
+    "soc": "2311",
+    "ext": "2311/00",
+    "add": null,
+    "ind": "nursing, midwifery",
+    "subUnitGroup": "Higher education teaching professionals"
+   },
+   {
+    "recno": 15801,
+    "title": "Lecturer",
+    "soc": "2311",
+    "ext": "2311/00",
+    "add": null,
+    "ind": "nursing",
+    "subUnitGroup": "Higher education teaching professionals"
+   },
+   {
+    "recno": 15802,
+    "title": "Lecturer",
+    "soc": "2313",
+    "ext": "2313/99",
+    "add": null,
+    "ind": "secondary school",
+    "subUnitGroup": "Secondary education teaching professionals n.e.c."
+   },
+   {
+    "recno": 15803,
+    "title": "Lecturer",
+    "soc": "2313",
+    "ext": "2313/99",
+    "add": null,
+    "ind": "sixth form college",
+    "subUnitGroup": "Secondary education teaching professionals n.e.c."
+   },
+   {
+    "recno": 15804,
+    "title": "Lecturer",
+    "soc": "2316",
+    "ext": "2316/01",
+    "add": null,
+    "ind": "special/additional needs school",
+    "subUnitGroup": "Special and additional educational needs teachers and coordinators"
+   },
+   {
+    "recno": 15805,
+    "title": "Lecturer",
+    "soc": "2311",
+    "ext": "2311/00",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Higher education teaching professionals"
+   }
+  ],
+  "key account manager": [
+   {
+    "recno": 18485,
+    "title": "Key account manager",
+    "soc": "3556",
+    "ext": "3556/03",
+    "add": "sales",
+    "ind": null,
+    "subUnitGroup": "Sales account managers"
+   },
+   {
+    "recno": 18486,
+    "title": "Key account manager",
+    "soc": "3556",
+    "ext": "3556/99",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Sales accounts and business development managers n.e.c."
+   }
+  ],
+  "school business manager": [
+   {
+    "recno": 18646,
+    "title": "School business manager",
+    "soc": "2322",
+    "ext": "2322/00",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Education managers"
+   }
+  ],
+  "supply chain manager": [
+   {
+    "recno": 18726,
+    "title": "Supply chain manager",
+    "soc": "1243",
+    "ext": "1243/00",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Managers in logistics"
+   }
+  ],
+  "commissioning manager": [
+   {
+    "recno": 18774,
+    "title": "Commissioning manager",
+    "soc": "1171",
+    "ext": "1171/02",
+    "add": null,
+    "ind": "hospital service",
+    "subUnitGroup": "Health care service managers and directors"
+   },
+   {
+    "recno": 18775,
+    "title": "Commissioning manager",
+    "soc": "1172",
+    "ext": "1172/00",
+    "add": null,
+    "ind": "local government: social services",
+    "subUnitGroup": "Social services managers and directors"
+   },
+   {
+    "recno": 18776,
+    "title": "Commissioning manager",
+    "soc": "1134",
+    "ext": "1134/99",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Purchasing managers and directors n.e.c."
+   }
+  ],
+  "compliance manager": [
+   {
+    "recno": 18790,
+    "title": "Compliance manager",
+    "soc": "2482",
+    "ext": "2482/01",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Compliance and regulatory professionals"
+   }
+  ],
+  "construction manager": [
+   {
+    "recno": 18800,
+    "title": "Construction manager",
+    "soc": "1122",
+    "ext": "1122/00",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Production managers and directors in construction"
+   }
+  ],
+  "business development manager": [
+   {
+    "recno": 18915,
+    "title": "Business development manager",
+    "soc": "3556",
+    "ext": "3556/02",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Business development managers"
+   }
+  ],
+  "events manager": [
+   {
+    "recno": 19005,
+    "title": "Events manager",
+    "soc": "3557",
+    "ext": "3557/98",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Other events managers and organisers"
+   }
+  ],
+  "facilities manager": [
+   {
+    "recno": 19019,
+    "title": "Facilities manager",
+    "soc": "1251",
+    "ext": "1251/01",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Facilities managers"
+   }
+  ],
+  "healthcare manager": [
+   {
+    "recno": 19106,
+    "title": "Healthcare manager",
+    "soc": "1171",
+    "ext": "1171/02",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Health care service managers and directors"
+   }
+  ],
+  "learning and development manager": [
+   {
+    "recno": 19200,
+    "title": "Learning and development manager",
+    "soc": "1136",
+    "ext": "1136/03",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Learning and development managers and directors"
+   }
+  ],
+  "logistics manager": [
+   {
+    "recno": 19232,
+    "title": "Logistics manager",
+    "soc": "1243",
+    "ext": "1243/00",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Managers in logistics"
+   }
+  ],
+  "marketing manager": [
+   {
+    "recno": 19261,
+    "title": "Marketing manager",
+    "soc": "2432",
+    "ext": "2432/02",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Marketing managers"
+   }
+  ],
+  "social media manager": [
+   {
+    "recno": 19266,
+    "title": "Social media manager",
+    "soc": "2493",
+    "ext": "2493/03",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Social media managers"
+   }
+  ],
+  "office manager": [
+   {
+    "recno": 19310,
+    "title": "Office manager",
+    "soc": "4141",
+    "ext": "4141/00",
+    "add": "credit control",
+    "ind": null,
+    "subUnitGroup": "Office managers"
+   },
+   {
+    "recno": 19311,
+    "title": "Office manager",
+    "soc": "1256",
+    "ext": "1256/01",
+    "add": null,
+    "ind": "bookmakers, turf accountants",
+    "subUnitGroup": "Betting shop managers"
+   },
+   {
+    "recno": 19312,
+    "title": "Office manager",
+    "soc": "4141",
+    "ext": "4141/00",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Office managers"
+   }
+  ],
+  "gp practice manager": [
+   {
+    "recno": 19426,
+    "title": "GP practice manager",
+    "soc": "1231",
+    "ext": "1231/02",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Medical and health care practice managers"
+   }
+  ],
+  "it project manager": [
+   {
+    "recno": 19515,
+    "title": "IT project manager",
+    "soc": "2131",
+    "ext": "2131/00",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "IT project managers"
+   }
+  ],
+  "project manager": [
+   {
+    "recno": 19517,
+    "title": "Project manager",
+    "soc": "2131",
+    "ext": "2131/00",
+    "add": "computing/IT",
+    "ind": null,
+    "subUnitGroup": "IT project managers"
+   },
+   {
+    "recno": 19518,
+    "title": "Project manager",
+    "soc": "2455",
+    "ext": "2455/01",
+    "add": null,
+    "ind": "building construction",
+    "subUnitGroup": "Construction project and contract managers"
+   },
+   {
+    "recno": 19519,
+    "title": "Project manager",
+    "soc": "2440",
+    "ext": "2440/99",
+    "add": null,
+    "ind": "financial services",
+    "subUnitGroup": "Business and financial project management professionals n.e.c."
+   },
+   {
+    "recno": 19520,
+    "title": "Project manager",
+    "soc": "2440",
+    "ext": "2440/99",
+    "add": "residential",
+    "ind": "local government: social services",
+    "subUnitGroup": "Business and financial project management professionals n.e.c."
+   },
+   {
+    "recno": 19521,
+    "title": "Project manager",
+    "soc": "2440",
+    "ext": "2440/99",
+    "add": null,
+    "ind": "local government: social services",
+    "subUnitGroup": "Business and financial project management professionals n.e.c."
+   },
+   {
+    "recno": 19522,
+    "title": "Project manager",
+    "soc": "2440",
+    "ext": "2440/99",
+    "add": null,
+    "ind": "local government",
+    "subUnitGroup": "Business and financial project management professionals n.e.c."
+   },
+   {
+    "recno": 19523,
+    "title": "Project manager",
+    "soc": "2127",
+    "ext": "2127/00",
+    "add": null,
+    "ind": "manufacturing",
+    "subUnitGroup": "Engineering project managers and project engineers"
+   },
+   {
+    "recno": 19524,
+    "title": "Project manager",
+    "soc": "2440",
+    "ext": "2440/99",
+    "add": null,
+    "ind": "publishing",
+    "subUnitGroup": "Business and financial project management professionals n.e.c."
+   },
+   {
+    "recno": 19525,
+    "title": "Project manager",
+    "soc": "2161",
+    "ext": "2161/99",
+    "add": null,
+    "ind": "research and development",
+    "subUnitGroup": "Research and development (R&D) managers n.e.c."
+   },
+   {
+    "recno": 19526,
+    "title": "Project manager",
+    "soc": "2131",
+    "ext": "2131/00",
+    "add": null,
+    "ind": "telecoms",
+    "subUnitGroup": "IT project managers"
+   },
+   {
+    "recno": 19527,
+    "title": "Project manager",
+    "soc": "2440",
+    "ext": "2440/99",
+    "add": null,
+    "ind": "university",
+    "subUnitGroup": "Business and financial project management professionals n.e.c."
+   },
+   {
+    "recno": 19528,
+    "title": "Project manager",
+    "soc": "2440",
+    "ext": "2440/99",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Business and financial project management professionals n.e.c."
+   }
+  ],
+  "purchasing manager": [
+   {
+    "recno": 19553,
+    "title": "Purchasing manager",
+    "soc": "1134",
+    "ext": "1134/02",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Procurement and purchasing managers and directors"
+   }
+  ],
+  "human resources manager": [
+   {
+    "recno": 19636,
+    "title": "Human resources manager",
+    "soc": "1136",
+    "ext": "1136/05",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Human resources managers and directors"
+   }
+  ],
+  "risk manager": [
+   {
+    "recno": 19660,
+    "title": "Risk manager",
+    "soc": "2440",
+    "ext": "2440/03",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Risk managers"
+   }
+  ],
+  "security manager": [
+   {
+    "recno": 19740,
+    "title": "Security manager",
+    "soc": "2135",
+    "ext": "2135/02",
+    "add": null,
+    "ind": "computer services",
+    "subUnitGroup": "Cyber security management and governance specialists"
+   },
+   {
+    "recno": 19741,
+    "title": "Security manager",
+    "soc": "3319",
+    "ext": "3319/06",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Security consultants and managers (excludes cyber security)"
+   }
+  ],
+  "customer service manager": [
+   {
+    "recno": 19753,
+    "title": "Customer service manager",
+    "soc": "4143",
+    "ext": "4143/98",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Other customer service managers"
+   }
+  ],
+  "health service manager": [
+   {
+    "recno": 19760,
+    "title": "Health service manager",
+    "soc": "1171",
+    "ext": "1171/02",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Health care service managers and directors"
+   }
+  ],
+  "transport manager": [
+   {
+    "recno": 20078,
+    "title": "Transport manager",
+    "soc": "1241",
+    "ext": "1241/02",
+    "add": "fleet",
+    "ind": null,
+    "subUnitGroup": "Depot and fleet managers"
+   },
+   {
+    "recno": 20079,
+    "title": "Transport manager",
+    "soc": "1241",
+    "ext": "1241/03",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Transport and distribution managers"
+   }
+  ],
+  "warehouse manager": [
+   {
+    "recno": 20110,
+    "title": "Warehouse manager",
+    "soc": "1242",
+    "ext": "1242/00",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Managers in storage and warehousing"
+   }
+  ],
+  "motor mechanic": [
+   {
+    "recno": 20845,
+    "title": "Motor mechanic",
+    "soc": "5231",
+    "ext": "5231/98",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Other vehicle technicians, mechanics and electricians"
+   }
+  ],
+  "registered nurse": [
+   {
+    "recno": 21681,
+    "title": "Registered nurse",
+    "soc": "2235",
+    "ext": "2235/00",
+    "add": "mental health",
+    "ind": null,
+    "subUnitGroup": "Registered mental health nurses"
+   },
+   {
+    "recno": 21682,
+    "title": "Registered nurse",
+    "soc": "2237",
+    "ext": "2237/00",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Other registered nursing professionals"
+   }
+  ],
+  "victim care officer": [
+   {
+    "recno": 21903,
+    "title": "Victim care officer",
+    "soc": "3229",
+    "ext": "3229/10",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Victim support workers"
+   }
+  ],
+  "clinical coding officer": [
+   {
+    "recno": 21944,
+    "title": "Clinical coding officer",
+    "soc": "3549",
+    "ext": "3549/04",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Clinical coders"
+   }
+  ],
+  "compliance officer": [
+   {
+    "recno": 21986,
+    "title": "Compliance officer",
+    "soc": "4111",
+    "ext": "4111/01",
+    "add": "benefits",
+    "ind": "government",
+    "subUnitGroup": "National government benefits officers"
+   },
+   {
+    "recno": 21987,
+    "title": "Compliance officer",
+    "soc": "2423",
+    "ext": "2423/00",
+    "add": null,
+    "ind": "HM Revenue and Customs",
+    "subUnitGroup": "Taxation experts"
+   },
+   {
+    "recno": 21988,
+    "title": "Compliance officer",
+    "soc": "3520",
+    "ext": "3520/99",
+    "add": null,
+    "ind": "legal services",
+    "subUnitGroup": "Legal associate professionals n.e.c."
+   },
+   {
+    "recno": 21989,
+    "title": "Compliance officer",
+    "soc": "2482",
+    "ext": "2482/01",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Compliance and regulatory professionals"
+   }
+  ],
+  "education officer": [
+   {
+    "recno": 22138,
+    "title": "Education officer",
+    "soc": "2259",
+    "ext": "2259/04",
+    "add": "health",
+    "ind": null,
+    "subUnitGroup": "Health promotion officers"
+   },
+   {
+    "recno": 22139,
+    "title": "Education officer",
+    "soc": "2472",
+    "ext": "2472/04",
+    "add": "museum",
+    "ind": null,
+    "subUnitGroup": "Museum education officers"
+   },
+   {
+    "recno": 22140,
+    "title": "Education officer",
+    "soc": "2472",
+    "ext": "2472/04",
+    "add": null,
+    "ind": "art gallery, museum",
+    "subUnitGroup": "Museum education officers"
+   },
+   {
+    "recno": 22141,
+    "title": "Education officer",
+    "soc": "2259",
+    "ext": "2259/04",
+    "add": null,
+    "ind": "community health",
+    "subUnitGroup": "Health promotion officers"
+   },
+   {
+    "recno": 22142,
+    "title": "Education officer",
+    "soc": "2323",
+    "ext": "2323/01",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Educational advisers"
+   }
+  ],
+  "executive officer": [
+   {
+    "recno": 22215,
+    "title": "Executive officer",
+    "soc": "4111",
+    "ext": "4111/04",
+    "add": "work coach",
+    "ind": null,
+    "subUnitGroup": "Work coaches"
+   },
+   {
+    "recno": 22216,
+    "title": "Executive officer",
+    "soc": "4111",
+    "ext": "4111/01",
+    "add": "benefits",
+    "ind": "government",
+    "subUnitGroup": "National government benefits officers"
+   },
+   {
+    "recno": 22217,
+    "title": "Executive officer",
+    "soc": "4111",
+    "ext": "4111/99",
+    "add": null,
+    "ind": "government",
+    "subUnitGroup": "National government administrative occupations n.e.c."
+   },
+   {
+    "recno": 22218,
+    "title": "Executive officer",
+    "soc": "4132",
+    "ext": "4132/02",
+    "add": null,
+    "ind": "insurance",
+    "subUnitGroup": "Insurance administrators"
+   },
+   {
+    "recno": 22219,
+    "title": "Executive officer",
+    "soc": "4112",
+    "ext": "4112/99",
+    "add": null,
+    "ind": "local government",
+    "subUnitGroup": "Local government administrative occupations n.e.c."
+   },
+   {
+    "recno": 22220,
+    "title": "Executive officer",
+    "soc": "4134",
+    "ext": "4134/00",
+    "add": null,
+    "ind": "PLA",
+    "subUnitGroup": "Transport and distribution clerks and assistants"
+   },
+   {
+    "recno": 22221,
+    "title": "Executive officer",
+    "soc": "4142",
+    "ext": "4142/00",
+    "add": null,
+    "ind": "PO",
+    "subUnitGroup": "Office supervisors"
+   },
+   {
+    "recno": 22222,
+    "title": "Executive officer",
+    "soc": "2329",
+    "ext": "2329/99",
+    "add": null,
+    "ind": "university",
+    "subUnitGroup": "Other educational professionals n.e.c."
+   }
+  ],
+  "border force officer": [
+   {
+    "recno": 22269,
+    "title": "Border force officer",
+    "soc": "3319",
+    "ext": "3319/02",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Customs and border control officers"
+   }
+  ],
+  "local government officer": [
+   {
+    "recno": 22289,
+    "title": "Local government officer",
+    "soc": "4112",
+    "ext": "4112/01",
+    "add": "benefits",
+    "ind": null,
+    "subUnitGroup": "Local government benefits officers"
+   },
+   {
+    "recno": 22290,
+    "title": "Local government officer",
+    "soc": "4112",
+    "ext": "4112/03",
+    "add": "revenue/tax",
+    "ind": null,
+    "subUnitGroup": "Local government revenue officers"
+   },
+   {
+    "recno": 22291,
+    "title": "Local government officer",
+    "soc": "4112",
+    "ext": "4112/02",
+    "add": null,
+    "ind": "local government: housing dept",
+    "subUnitGroup": "Local government housing assistants"
+   },
+   {
+    "recno": 22292,
+    "title": "Local government officer",
+    "soc": "4112",
+    "ext": "4112/99",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Local government administrative occupations n.e.c."
+   }
+  ],
+  "health and safety officer": [
+   {
+    "recno": 22307,
+    "title": "Health and safety officer",
+    "soc": "3582",
+    "ext": "3582/03",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Occupational health and safety managers and officers"
+   }
+  ],
+  "housing officer": [
+   {
+    "recno": 22322,
+    "title": "Housing officer",
+    "soc": "3223",
+    "ext": "3223/00",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Housing officers"
+   }
+  ],
+  "medical liaison officer": [
+   {
+    "recno": 22398,
+    "title": "Medical liaison officer",
+    "soc": "3552",
+    "ext": "3552/00",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Business sales executives"
+   }
+  ],
+  "patient advice and liaison service officer": [
+   {
+    "recno": 22510,
+    "title": "Patient advice and liaison service officer",
+    "soc": "3560",
+    "ext": "3560/02",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Health service administrators"
+   }
+  ],
+  "emergency planning officer": [
+   {
+    "recno": 22531,
+    "title": "Emergency planning officer",
+    "soc": "3319",
+    "ext": "3319/99",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Protective service associate professionals n.e.c."
+   }
+  ],
+  "policy officer": [
+   {
+    "recno": 22542,
+    "title": "Policy officer",
+    "soc": "2439",
+    "ext": "2439/01",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Policy officers"
+   }
+  ],
+  "prison officer": [
+   {
+    "recno": 22570,
+    "title": "Prison officer",
+    "soc": "3314",
+    "ext": "3314/02",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Prison officers"
+   }
+  ],
+  "probation officer": [
+   {
+    "recno": 22572,
+    "title": "Probation officer",
+    "soc": "2462",
+    "ext": "2462/00",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Probation officers"
+   }
+  ],
+  "procurement officer": [
+   {
+    "recno": 22575,
+    "title": "Procurement officer",
+    "soc": "3551",
+    "ext": "3551/00",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Buyers and procurement officers"
+   }
+  ],
+  "child protection officer": [
+   {
+    "recno": 22593,
+    "title": "Child protection officer",
+    "soc": "3222",
+    "ext": "3222/01",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Child protection officers"
+   }
+  ],
+  "close protection officer": [
+   {
+    "recno": 22594,
+    "title": "Close protection officer",
+    "soc": "9231",
+    "ext": "9231/99",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Security guards and related occupations n.e.c."
+   }
+  ],
+  "data protection officer": [
+   {
+    "recno": 22598,
+    "title": "Data protection officer",
+    "soc": "3520",
+    "ext": "3520/99",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Legal associate professionals n.e.c."
+   }
+  ],
+  "public relations officer": [
+   {
+    "recno": 22653,
+    "title": "Public relations officer",
+    "soc": "2493",
+    "ext": "2493/02",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Public relations officers"
+   }
+  ],
+  "human resources officer": [
+   {
+    "recno": 22690,
+    "title": "Human resources officer",
+    "soc": "3571",
+    "ext": "3571/02",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Human resources advisers"
+   }
+  ],
+  "safeguarding officer": [
+   {
+    "recno": 22716,
+    "title": "Safeguarding officer",
+    "soc": "3222",
+    "ext": "3222/01",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Child protection officers"
+   }
+  ],
+  "scenes of crime officer": [
+   {
+    "recno": 22736,
+    "title": "Scenes of crime officer",
+    "soc": "3319",
+    "ext": "3319/07",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Crime scene investigators"
+   }
+  ],
+  "security officer": [
+   {
+    "recno": 22780,
+    "title": "Security officer",
+    "soc": "9231",
+    "ext": "9231/04",
+    "add": "door supervisor",
+    "ind": null,
+    "subUnitGroup": "Door supervisors"
+   },
+   {
+    "recno": 22781,
+    "title": "Security officer",
+    "soc": "9231",
+    "ext": "9231/05",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Security guards and officers"
+   }
+  ],
+  "probation services officer": [
+   {
+    "recno": 22818,
+    "title": "Probation services officer",
+    "soc": "3229",
+    "ext": "3229/08",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Probation service workers"
+   }
+  ],
+  "trading standards officer": [
+   {
+    "recno": 22842,
+    "title": "Trading standards officer",
+    "soc": "3581",
+    "ext": "3581/09",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Trading standards officers"
+   }
+  ],
+  "police community support officer": [
+   {
+    "recno": 22886,
+    "title": "Police community support officer",
+    "soc": "6311",
+    "ext": "6311/00",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Police community support officers"
+   }
+  ],
+  "project support officer": [
+   {
+    "recno": 22909,
+    "title": "Project support officer",
+    "soc": "3543",
+    "ext": "3543/00",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Project support officers"
+   }
+  ],
+  "youth offending team officer": [
+   {
+    "recno": 22944,
+    "title": "Youth offending team officer",
+    "soc": "2464",
+    "ext": "2464/00",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Youth work professionals"
+   }
+  ],
+  "paralegal": [
+   {
+    "recno": 24455,
+    "title": "Paralegal",
+    "soc": "2419",
+    "ext": "2419/03",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Paralegals"
+   }
+  ],
+  "paramedic": [
+   {
+    "recno": 24458,
+    "title": "Paramedic",
+    "soc": "2255",
+    "ext": "2255/00",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Paramedics"
+   }
+  ],
+  "hr business partner": [
+   {
+    "recno": 24479,
+    "title": "HR business partner",
+    "soc": "1136",
+    "ext": "1136/05",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Human resources managers and directors"
+   }
+  ],
+  "town planner": [
+   {
+    "recno": 24891,
+    "title": "Town planner",
+    "soc": "2452",
+    "ext": "2452/02",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Town planning officers"
+   }
+  ],
+  "plasterer": [
+   {
+    "recno": 24912,
+    "title": "Plasterer",
+    "soc": "8119",
+    "ext": "8119/02",
+    "add": null,
+    "ind": "cast concrete products mfr",
+    "subUnitGroup": "Concrete operatives (concrete production)"
+   },
+   {
+    "recno": 24913,
+    "title": "Plasterer",
+    "soc": "9139",
+    "ext": "9139/00",
+    "add": null,
+    "ind": "coke ovens",
+    "subUnitGroup": "Elementary process plant occupations n.e.c."
+   },
+   {
+    "recno": 24914,
+    "title": "Plasterer",
+    "soc": "5441",
+    "ext": "5441/99",
+    "add": null,
+    "ind": "plaster cast mfr",
+    "subUnitGroup": "Glass and ceramics makers, decorators and finishers n.e.c."
+   },
+   {
+    "recno": 24915,
+    "title": "Plasterer",
+    "soc": "5321",
+    "ext": "5321/02",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Plasterers (wall and decorative)"
+   }
+  ],
+  "plumber": [
+   {
+    "recno": 24991,
+    "title": "Plumber",
+    "soc": "5315",
+    "ext": "5315/00",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Plumbers and heating and ventilation installers and repairers"
+   }
+  ],
+  "educational psychologist": [
+   {
+    "recno": 25787,
+    "title": "Educational psychologist",
+    "soc": "2226",
+    "ext": "2226/02",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Educational psychologists"
+   }
+  ],
+  "psychotherapist": [
+   {
+    "recno": 25808,
+    "title": "Psychotherapist",
+    "soc": "2224",
+    "ext": "2224/02",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Psychotherapists"
+   }
+  ],
+  "medical representative": [
+   {
+    "recno": 26446,
+    "title": "Medical representative",
+    "soc": "3552",
+    "ext": "3552/00",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Business sales executives"
+   }
+  ],
+  "sales representative": [
+   {
+    "recno": 26458,
+    "title": "Sales representative",
+    "soc": "7129",
+    "ext": "7129/99",
+    "add": "property",
+    "ind": null,
+    "subUnitGroup": "Sales related occupations n.e.c."
+   },
+   {
+    "recno": 26459,
+    "title": "Sales representative",
+    "soc": "7129",
+    "ext": "7129/99",
+    "add": "services",
+    "ind": null,
+    "subUnitGroup": "Sales related occupations n.e.c."
+   },
+   {
+    "recno": 26460,
+    "title": "Sales representative",
+    "soc": "7121",
+    "ext": "7121/00",
+    "add": null,
+    "ind": "mail order house",
+    "subUnitGroup": "Collector salespersons and credit agents"
+   },
+   {
+    "recno": 26461,
+    "title": "Sales representative",
+    "soc": "7121",
+    "ext": "7121/00",
+    "add": null,
+    "ind": "retail trade: door-to-door sales",
+    "subUnitGroup": "Collector salespersons and credit agents"
+   },
+   {
+    "recno": 26462,
+    "title": "Sales representative",
+    "soc": "7129",
+    "ext": "7129/99",
+    "add": null,
+    "ind": "retail trade: party plan sales",
+    "subUnitGroup": "Sales related occupations n.e.c."
+   },
+   {
+    "recno": 26463,
+    "title": "Sales representative",
+    "soc": "7129",
+    "ext": "7129/99",
+    "add": null,
+    "ind": "retail trade",
+    "subUnitGroup": "Sales related occupations n.e.c."
+   },
+   {
+    "recno": 26464,
+    "title": "Sales representative",
+    "soc": "7129",
+    "ext": "7129/99",
+    "add": null,
+    "ind": "telecoms",
+    "subUnitGroup": "Sales related occupations n.e.c."
+   },
+   {
+    "recno": 26465,
+    "title": "Sales representative",
+    "soc": "3552",
+    "ext": "3552/00",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Business sales executives"
+   }
+  ],
+  "user researcher": [
+   {
+    "recno": 26522,
+    "title": "User researcher",
+    "soc": "2141",
+    "ext": "2141/02",
+    "add": "computing/IT",
+    "ind": null,
+    "subUnitGroup": "UI and UX designers and researchers"
+   },
+   {
+    "recno": 26523,
+    "title": "User researcher",
+    "soc": "2434",
+    "ext": "2434/99",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Business and related research professionals n.e.c."
+   }
+  ],
+  "scaffolder": [
+   {
+    "recno": 26957,
+    "title": "Scaffolder",
+    "soc": "8151",
+    "ext": "8151/02",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Scaffolders and stagers"
+   }
+  ],
+  "data scientist": [
+   {
+    "recno": 27002,
+    "title": "Data scientist",
+    "soc": "2133",
+    "ext": "2133/99",
+    "add": "computing/IT",
+    "ind": null,
+    "subUnitGroup": "IT business analysts, architects and systems designers n.e.c."
+   },
+   {
+    "recno": 27003,
+    "title": "Data scientist",
+    "soc": "2433",
+    "ext": "2433/04",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Statistical data scientists"
+   }
+  ],
+  "signaller": [
+   {
+    "recno": 27741,
+    "title": "Signaller",
+    "soc": "8221",
+    "ext": "8221/00",
+    "add": null,
+    "ind": "mine: not coal",
+    "subUnitGroup": "Crane drivers"
+   },
+   {
+    "recno": 27742,
+    "title": "Signaller",
+    "soc": "8234",
+    "ext": "8234/02",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Railway controllers and signallers"
+   }
+  ],
+  "solicitor": [
+   {
+    "recno": 27951,
+    "title": "Solicitor",
+    "soc": "2412",
+    "ext": "2412/01",
+    "add": "commercial law",
+    "ind": null,
+    "subUnitGroup": "Commercial solicitors and lawyers"
+   },
+   {
+    "recno": 27952,
+    "title": "Solicitor",
+    "soc": "2412",
+    "ext": "2412/02",
+    "add": "criminal law",
+    "ind": null,
+    "subUnitGroup": "Criminal solicitors and lawyers"
+   },
+   {
+    "recno": 27953,
+    "title": "Solicitor",
+    "soc": "2412",
+    "ext": "2412/03",
+    "add": "family law",
+    "ind": null,
+    "subUnitGroup": "Family solicitors and lawyers"
+   },
+   {
+    "recno": 27954,
+    "title": "Solicitor",
+    "soc": "2412",
+    "ext": "2412/04",
+    "add": "property law",
+    "ind": null,
+    "subUnitGroup": "Property solicitors and lawyers"
+   },
+   {
+    "recno": 27955,
+    "title": "Solicitor",
+    "soc": "2412",
+    "ext": "2412/98",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Other solicitors and lawyers"
+   }
+  ],
+  "counter fraud specialist": [
+   {
+    "recno": 28118,
+    "title": "Counter fraud specialist",
+    "soc": "3319",
+    "ext": "3319/03",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Fraud and financial crime investigators (excludes benefit fraud)"
+   }
+  ],
+  "door supervisor": [
+   {
+    "recno": 29127,
+    "title": "Door supervisor",
+    "soc": "9231",
+    "ext": "9231/04",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Door supervisors"
+   }
+  ],
+  "site supervisor": [
+   {
+    "recno": 29276,
+    "title": "Site supervisor",
+    "soc": "6232",
+    "ext": "6232/00",
+    "add": null,
+    "ind": "educational establishments",
+    "subUnitGroup": "Caretakers"
+   },
+   {
+    "recno": 29277,
+    "title": "Site supervisor",
+    "soc": "5330",
+    "ext": "5330/08",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Building/construction site supervisors"
+   }
+  ],
+  "quantity surveyor": [
+   {
+    "recno": 29420,
+    "title": "Quantity surveyor",
+    "soc": "2453",
+    "ext": "2453/00",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Quantity surveyors"
+   }
+  ],
+  "secondary school teacher": [
+   {
+    "recno": 29722,
+    "title": "Secondary school teacher",
+    "soc": "2313",
+    "ext": "2313/99",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Secondary education teaching professionals n.e.c."
+   }
+  ],
+  "teacher of english as a foreign language": [
+   {
+    "recno": 29797,
+    "title": "Teacher of english as a foreign language",
+    "soc": "2317",
+    "ext": "2317/00",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Teachers of English as a Foreign Language"
+   }
+  ],
+  "accounting technician": [
+   {
+    "recno": 29827,
+    "title": "Accounting technician",
+    "soc": "3533",
+    "ext": "3533/01",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Accounting technicians"
+   }
+  ],
+  "cad technician": [
+   {
+    "recno": 29870,
+    "title": "Cad technician",
+    "soc": "3120",
+    "ext": "3120/02",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "BIM and CAD technicians"
+   }
+  ],
+  "engineering technician": [
+   {
+    "recno": 29953,
+    "title": "Engineering technician",
+    "soc": "3113",
+    "ext": "3113/99",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Engineering technicians n.e.c."
+   }
+  ],
+  "it support technician": [
+   {
+    "recno": 30145,
+    "title": "IT support technician",
+    "soc": "3132",
+    "ext": "3132/00",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "IT user support technicians"
+   }
+  ],
+  "wind turbine technician": [
+   {
+    "recno": 30178,
+    "title": "Wind turbine technician",
+    "soc": "3113",
+    "ext": "3113/02",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Wind turbine technicians"
+   }
+  ],
+  "vehicle technician": [
+   {
+    "recno": 30183,
+    "title": "Vehicle technician",
+    "soc": "5231",
+    "ext": "5231/98",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Other vehicle technicians, mechanics and electricians"
+   }
+  ],
+  "software tester": [
+   {
+    "recno": 30455,
+    "title": "Software tester",
+    "soc": "2136",
+    "ext": "2136/00",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "IT quality and testing professionals"
+   }
+  ],
+  "cognitive behavioural therapist": [
+   {
+    "recno": 30506,
+    "title": "Cognitive behavioural therapist",
+    "soc": "2224",
+    "ext": "2224/01",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Cognitive behavioural therapists"
+   }
+  ],
+  "occupational therapist": [
+   {
+    "recno": 30538,
+    "title": "Occupational therapist",
+    "soc": "2222",
+    "ext": "2222/00",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Occupational therapists"
+   }
+  ],
+  "it trainer": [
+   {
+    "recno": 30752,
+    "title": "IT trainer",
+    "soc": "3573",
+    "ext": "3573/00",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Information technology trainers"
+   }
+  ],
+  "private tutor": [
+   {
+    "recno": 31089,
+    "title": "Private tutor",
+    "soc": "2319",
+    "ext": "2319/04",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Private tutors"
+   }
+  ],
+  "welder": [
+   {
+    "recno": 31533,
+    "title": "Welder",
+    "soc": "5317",
+    "ext": "5317/02",
+    "add": "double glazing units",
+    "ind": null,
+    "subUnitGroup": "Window fabricators"
+   },
+   {
+    "recno": 31534,
+    "title": "Welder",
+    "soc": "5213",
+    "ext": "5213/03",
+    "add": "fabrication",
+    "ind": null,
+    "subUnitGroup": "Welder fabricators"
+   },
+   {
+    "recno": 31535,
+    "title": "Welder",
+    "soc": "5412",
+    "ext": "5412/01",
+    "add": null,
+    "ind": "footwear mfr",
+    "subUnitGroup": "Footwear makers and repairers"
+   },
+   {
+    "recno": 31536,
+    "title": "Welder",
+    "soc": "8149",
+    "ext": "8149/00",
+    "add": null,
+    "ind": "plastics goods mfr",
+    "subUnitGroup": "Assemblers and routine operatives n.e.c."
+   },
+   {
+    "recno": 31537,
+    "title": "Welder",
+    "soc": "5213",
+    "ext": "5213/98",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Other welding trades"
+   }
+  ],
+  "social worker": [
+   {
+    "recno": 32414,
+    "title": "Social worker",
+    "soc": "2461",
+    "ext": "2461/02",
+    "add": "adoptions",
+    "ind": null,
+    "subUnitGroup": "Children, family and school social workers"
+   },
+   {
+    "recno": 32415,
+    "title": "Social worker",
+    "soc": "2461",
+    "ext": "2461/01",
+    "add": "adults",
+    "ind": null,
+    "subUnitGroup": "Adult social workers"
+   },
+   {
+    "recno": 32416,
+    "title": "Social worker",
+    "soc": "2461",
+    "ext": "2461/02",
+    "add": "children and families",
+    "ind": null,
+    "subUnitGroup": "Children, family and school social workers"
+   },
+   {
+    "recno": 32417,
+    "title": "Social worker",
+    "soc": "2461",
+    "ext": "2461/02",
+    "add": "fostering",
+    "ind": null,
+    "subUnitGroup": "Children, family and school social workers"
+   },
+   {
+    "recno": 32418,
+    "title": "Social worker",
+    "soc": "2461",
+    "ext": "2461/04",
+    "add": "mental health",
+    "ind": null,
+    "subUnitGroup": "Mental health and healthcare social workers"
+   },
+   {
+    "recno": 32419,
+    "title": "Social worker",
+    "soc": "2461",
+    "ext": "2461/02",
+    "add": "schools",
+    "ind": null,
+    "subUnitGroup": "Children, family and school social workers"
+   },
+   {
+    "recno": 32420,
+    "title": "Social worker",
+    "soc": "2461",
+    "ext": "2461/98",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Other social workers"
+   }
+  ],
+  "family support worker": [
+   {
+    "recno": 32463,
+    "title": "Family support worker",
+    "soc": "3221",
+    "ext": "3221/02",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Family support workers"
+   }
+  ],
+  "healthcare support worker": [
+   {
+    "recno": 32470,
+    "title": "Healthcare support worker",
+    "soc": "6131",
+    "ext": "6131/98",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Other nursing auxiliaries and assistants"
+   }
+  ],
+  "youth worker": [
+   {
+    "recno": 32576,
+    "title": "Youth worker",
+    "soc": "2464",
+    "ext": "2464/00",
+    "add": "professional",
+    "ind": null,
+    "subUnitGroup": "Youth work professionals"
+   },
+   {
+    "recno": 32577,
+    "title": "Youth worker",
+    "soc": "3221",
+    "ext": "3221/03",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Youth workers (excludes youth work professionals)"
+   }
+  ]
+ }
+}
