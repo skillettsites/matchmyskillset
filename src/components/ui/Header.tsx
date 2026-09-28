@@ -1,165 +1,55 @@
-"use client";
-
 import Link from "next/link";
-import { useState, useEffect } from "react";
-import { createClient } from "@/lib/supabase/client";
-import type { User } from "@supabase/supabase-js";
+import { PRIMARY_NAV, SITE_NAME } from "@/components/site";
+import { Logo } from "@/components/ui/Logo";
+import { MobileMenu } from "@/components/ui/MobileMenu";
 
+const CV_HREF = "/discover";
+
+/**
+ * Site header. A server component: no auth, no Supabase, no client state.
+ * The only JavaScript it ships is the small {@link MobileMenu} island.
+ *
+ * Both layouts show the three text links first and "Analyse my CV" last,
+ * styled as the main button, so the primary action is always in the same
+ * place.
+ */
 export function Header() {
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [user, setUser] = useState<User | null>(null);
-
-  useEffect(() => {
-    // Skip auth if Supabase not configured
-    if (
-      !process.env.NEXT_PUBLIC_SUPABASE_URL ||
-      !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-    ) {
-      return;
-    }
-
-    try {
-      const supabase = createClient();
-
-      supabase.auth.getUser().then(({ data }) => {
-        setUser(data.user);
-      });
-
-      const {
-        data: { subscription },
-      } = supabase.auth.onAuthStateChange((_event, session) => {
-        setUser(session?.user ?? null);
-      });
-
-      return () => subscription.unsubscribe();
-    } catch {
-      // Supabase not available
-    }
-  }, []);
-
-  async function handleSignOut() {
-    try {
-      const supabase = createClient();
-      await supabase.auth.signOut();
-    } catch {
-      // ignore
-    }
-    setUser(null);
-    window.location.href = "/";
-  }
+  const textLinks = PRIMARY_NAV.filter((item) => item.href !== CV_HREF);
+  const mobileItems = [...textLinks, ...PRIMARY_NAV.filter((i) => i.href === CV_HREF)];
 
   return (
-    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-gray-100">
-      <nav className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-1 font-bold text-xl">
-          <span className="text-gray-900">Match</span>
-          <span className="text-indigo-600">My</span>
-          <span className="text-gray-900">Skills</span>
+    <header className="sticky top-0 z-40 border-b border-rule bg-paper/95 backdrop-blur-sm">
+      <div className="mx-auto flex h-16 max-w-page items-center justify-between gap-4 px-4 sm:px-6">
+        <Link
+          href="/"
+          aria-label={`${SITE_NAME} home`}
+          className="-ml-1 inline-flex min-h-11 items-center rounded-md px-1"
+        >
+          <Logo />
         </Link>
 
-        {/* Desktop nav */}
-        <div className="hidden md:flex items-center gap-8">
-          <Link
-            href="/discover"
-            className="text-sm text-gray-600 hover:text-indigo-600 transition-colors"
-          >
-            Discover Careers
-          </Link>
-          <Link
-            href="/jobs"
-            className="text-sm text-gray-600 hover:text-indigo-600 transition-colors"
-          >
-            Jobs
-          </Link>
-          <Link
-            href="/about"
-            className="text-sm text-gray-600 hover:text-indigo-600 transition-colors"
-          >
-            About
-          </Link>
-          {user ? (
-            <div className="flex items-center gap-4">
-              <Link
-                href="/dashboard"
-                className="text-sm text-gray-600 hover:text-indigo-600 transition-colors"
-              >
-                Dashboard
+        <nav aria-label="Main" className="hidden md:block">
+          <ul className="flex items-center gap-1">
+            {textLinks.map((item) => (
+              <li key={item.href}>
+                <Link
+                  href={item.href}
+                  className="inline-flex min-h-11 items-center rounded-md px-3 text-[0.9375rem] font-medium text-ink-2 underline-offset-[0.35em] hover:text-accent hover:underline"
+                >
+                  {item.label}
+                </Link>
+              </li>
+            ))}
+            <li className="pl-2">
+              <Link href={CV_HREF} className="btn btn-primary">
+                Analyse my CV
               </Link>
-              <button
-                onClick={handleSignOut}
-                className="text-sm text-gray-400 hover:text-gray-600 transition-colors"
-              >
-                Sign Out
-              </button>
-            </div>
-          ) : (
-            <div className="flex items-center gap-3">
-              <Link
-                href="/login"
-                className="text-sm text-gray-600 hover:text-indigo-600 transition-colors"
-              >
-                Sign In
-              </Link>
-              <Link
-                href="/discover"
-                className="bg-indigo-600 text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors"
-              >
-                Get Started Free
-              </Link>
-            </div>
-          )}
-        </div>
+            </li>
+          </ul>
+        </nav>
 
-        {/* Mobile menu button */}
-        <button
-          onClick={() => setMobileOpen(!mobileOpen)}
-          className="md:hidden p-2 text-gray-600"
-          aria-label="Toggle menu"
-        >
-          <svg
-            className="w-6 h-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            {mobileOpen ? (
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            ) : (
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 6h16M4 12h16M4 18h16"
-              />
-            )}
-          </svg>
-        </button>
-      </nav>
-
-      {/* Mobile menu */}
-      {mobileOpen && (
-        <div className="md:hidden border-t border-gray-100 bg-white px-4 py-4 space-y-3">
-          <Link href="/discover" className="block text-gray-600 hover:text-indigo-600" onClick={() => setMobileOpen(false)}>Discover Careers</Link>
-          <Link href="/jobs" className="block text-gray-600 hover:text-indigo-600" onClick={() => setMobileOpen(false)}>Jobs</Link>
-          <Link href="/about" className="block text-gray-600 hover:text-indigo-600" onClick={() => setMobileOpen(false)}>About</Link>
-          {user ? (
-            <>
-              <Link href="/dashboard" className="block text-gray-600 hover:text-indigo-600" onClick={() => setMobileOpen(false)}>Dashboard</Link>
-              <button onClick={() => { handleSignOut(); setMobileOpen(false); }} className="block w-full text-left text-gray-400 hover:text-gray-600">Sign Out</button>
-            </>
-          ) : (
-            <>
-              <Link href="/login" className="block text-gray-600 hover:text-indigo-600" onClick={() => setMobileOpen(false)}>Sign In</Link>
-              <Link href="/discover" className="block bg-indigo-600 text-white text-center font-medium px-4 py-2 rounded-lg" onClick={() => setMobileOpen(false)}>Get Started Free</Link>
-            </>
-          )}
-        </div>
-      )}
+        <MobileMenu items={mobileItems} primaryHref={CV_HREF} />
+      </div>
     </header>
   );
 }
