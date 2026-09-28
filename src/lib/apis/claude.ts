@@ -71,8 +71,9 @@ export async function extractSkillsAndMatch(
   const userPrompt = USER_PROMPT_TEMPLATE.replace("{INPUT_TEXT}", inputText);
 
   const response = await anthropic.messages.create({
-    model: "claude-sonnet-4-20250514",
-    max_tokens: 4096,
+    model: "claude-sonnet-5",
+    max_tokens: 5300,
+    thinking: { type: "disabled" },
     system: SYSTEM_PROMPT,
     messages: [{ role: "user", content: userPrompt }],
   });
@@ -118,8 +119,9 @@ export async function extractSkillsAndMatch(
     );
 
     const retryResponse = await anthropic.messages.create({
-      model: "claude-sonnet-4-20250514",
-      max_tokens: 4096,
+      model: "claude-sonnet-5",
+      max_tokens: 5300,
+      thinking: { type: "disabled" },
       system:
         SYSTEM_PROMPT +
         "\n\nCRITICAL: Your previous response was not valid JSON. Respond with ONLY a valid JSON object. No markdown, no backticks, no explanation.",
