@@ -1,0 +1,54 @@
+# MatchMySkillset
+
+> A UK guide for people leaving a job: where people with your background usually go next, what those jobs pay in the UK, and how to get in. Start from the job you do now, or paste your CV for a free analysis with no account.
+
+Pay figures on this site come from the Office for National Statistics Annual Survey of Hours and Earnings (ASHE) 2025, Table 14.7a (provisional, published 23 October 2025): median and percentile gross annual pay for full-time employee jobs in the UK, by four-digit SOC 2020 occupation group. ASHE covers employees only, not the self-employed; ONS publishes ASHE 2026 on 22 October 2026 and the pages will be updated then. Occupation titles and entry-route descriptions come from ONS SOC 2020 Volume 1; apprenticeship levels and typical durations from Skills England's apprenticeship standards (England); licences from the body that issues each one (GOV.UK, SIA, NMC, HCPC, CAA, ORR and others). Work-related stress rates come from the Health and Safety Executive's Labour Force Survey tables (published 20 November 2025). Minimum wage and tax figures come from GOV.UK. Pages show the source and publication date beside each figure. Content is written for UK readers.
+
+## Leaving your job: profession guides
+
+- [Leaving teaching](https://matchmyskillset.com/career-change-from-teaching): jobs teachers move into, with UK pay and routes
+- [Non-clinical jobs for nurses](https://matchmyskillset.com/non-clinical-jobs-for-nurses): roles for nurses and NHS staff away from the bedside
+- [Jobs for ex-police officers](https://matchmyskillset.com/jobs-for-ex-police-officers): where police officers go next
+- [Jobs for ex-military](https://matchmyskillset.com/jobs-for-ex-military): civilian jobs for service leavers and veterans
+- [Leaving retail](https://matchmyskillset.com/career-change-from-retail): jobs for retail staff and managers
+- [Any other job](https://matchmyskillset.com/careers-for): start from the job you do now
+
+## Pay data (ONS ASHE 2025)
+
+- [Highest paying jobs in the UK](https://matchmyskillset.com/highest-paying-careers-uk): the 30 best-paid occupation groups by median full-time pay, with quartiles
+- [Well-paid jobs without a degree](https://matchmyskillset.com/jobs-without-a-degree): best-paid jobs with an apprenticeship or licence route below degree level
+- [UK jobs by salary band](https://matchmyskillset.com/what-jobs): how occupations spread across pay bands, and UK full-time pay percentiles
+- [Jobs that pay £30k](https://matchmyskillset.com/what-jobs/jobs-that-pay-30k): occupations with a median of £30,000 to £39,999
+- [Jobs that pay £40k](https://matchmyskillset.com/what-jobs/jobs-that-pay-40k): occupations with a median of £40,000 to £49,999
+- [Jobs that pay £50k](https://matchmyskillset.com/what-jobs/jobs-that-pay-50k): occupations with a median of £50,000 to £59,999
+- [Low-stress jobs in the UK](https://matchmyskillset.com/low-stress-jobs-uk): HSE work-related stress rates by occupation group, alongside ONS pay
+
+## Tools
+
+- [Analyse my CV](https://matchmyskillset.com/discover): paste a CV to see your skills, the jobs they lead to with ONS pay, and the gaps to close (free, no account)
+- [Transferable skills finder](https://matchmyskillset.com/transferable-skills): pick your current job to see the skills that carry over, CV wording, and jobs that share them
+- [Career quiz](https://matchmyskillset.com/quiz): a 10-question quiz that suggests careers to explore
+- [Find jobs](https://matchmyskillset.com/jobs): live UK vacancies
+
+## Guides
+
+- [Career change guides](https://matchmyskillset.com/career-change): how to change career in the UK, step by step
+- [How to change careers](https://matchmyskillset.com/career-change/how-to-change-careers)
+- [Career change at 30](https://matchmyskillset.com/career-change-at-30)
+- [Career change at 50](https://matchmyskillset.com/career-change-at-50)
+- [Changing career with no money](https://matchmyskillset.com/career-change-with-no-money): free and funded training routes
+- [Apprenticeships for adults](https://matchmyskillset.com/apprenticeships-for-adults-uk)
+- [How to write a CV for a career change](https://matchmyskillset.com/how-to-write-a-cv-for-career-change)
+- [Jobs for people with ADHD](https://matchmyskillset.com/jobs-for-people-with-adhd): including Access to Work and reasonable adjustments
+- [Jobs for introverts](https://matchmyskillset.com/jobs-for-introverts)
+- [Best careers for the future in the UK](https://matchmyskillset.com/best-careers-for-the-future-uk)
+- [Jobs you can do from home with no experience](https://matchmyskillset.com/jobs-you-can-do-from-home-with-no-experience)
+
+## Optional
+
+- [About MatchMySkillset](https://matchmyskillset.com/about)
+- [Privacy](https://matchmyskillset.com/privacy)
+- [Skills employers want](https://matchmyskillset.com/skills-employers-want-2026)
+- [Work from home jobs](https://matchmyskillset.com/work-from-home-jobs)
+- [Highest paying remote jobs](https://matchmyskillset.com/highest-paying-remote-jobs-uk)
+- [Best side hustles in the UK](https://matchmyskillset.com/best-side-hustles-uk)

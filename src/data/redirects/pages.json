@@ -1,0 +1,272 @@
+[
+  {
+    "source": "/what-jobs/teaching-skills",
+    "destination": "/career-change-from-teaching",
+    "permanent": true
+  },
+  {
+    "source": "/what-jobs/nursing-skills",
+    "destination": "/non-clinical-jobs-for-nurses",
+    "permanent": true
+  },
+  {
+    "source": "/what-jobs/military-skills",
+    "destination": "/jobs-for-ex-military",
+    "permanent": true
+  },
+  {
+    "source": "/what-jobs/jobs-for-ex-military",
+    "destination": "/jobs-for-ex-military",
+    "permanent": true
+  },
+  {
+    "source": "/what-jobs/retail-skills",
+    "destination": "/career-change-from-retail",
+    "permanent": true
+  },
+  {
+    "source": "/what-jobs/project-management-skills",
+    "destination": "/transferable-skills",
+    "permanent": true
+  },
+  {
+    "source": "/what-jobs/customer-service-skills",
+    "destination": "/transferable-skills",
+    "permanent": true
+  },
+  {
+    "source": "/what-jobs/sales-skills",
+    "destination": "/transferable-skills",
+    "permanent": true
+  },
+  {
+    "source": "/what-jobs/communication-skills",
+    "destination": "/transferable-skills",
+    "permanent": true
+  },
+  {
+    "source": "/what-jobs/leadership-skills",
+    "destination": "/transferable-skills",
+    "permanent": true
+  },
+  {
+    "source": "/what-jobs/problem-solving-skills",
+    "destination": "/transferable-skills",
+    "permanent": true
+  },
+  {
+    "source": "/what-jobs/excel-skills",
+    "destination": "/transferable-skills",
+    "permanent": true
+  },
+  {
+    "source": "/what-jobs/empathy-skills",
+    "destination": "/transferable-skills",
+    "permanent": true
+  },
+  {
+    "source": "/what-jobs/admin-skills",
+    "destination": "/transferable-skills",
+    "permanent": true
+  },
+  {
+    "source": "/what-jobs/management-skills",
+    "destination": "/transferable-skills",
+    "permanent": true
+  },
+  {
+    "source": "/what-jobs/writing-skills",
+    "destination": "/transferable-skills",
+    "permanent": true
+  },
+  {
+    "source": "/what-jobs/data-analysis-skills",
+    "destination": "/transferable-skills",
+    "permanent": true
+  },
+  {
+    "source": "/what-jobs/creative-skills",
+    "destination": "/transferable-skills",
+    "permanent": true
+  },
+  {
+    "source": "/what-jobs/construction-skills",
+    "destination": "/transferable-skills",
+    "permanent": true
+  },
+  {
+    "source": "/what-jobs/accounting-skills",
+    "destination": "/transferable-skills",
+    "permanent": true
+  },
+  {
+    "source": "/what-jobs/it-support-skills",
+    "destination": "/transferable-skills",
+    "permanent": true
+  },
+  {
+    "source": "/what-jobs/caring-skills",
+    "destination": "/best-jobs-for-women-returning-to-work",
+    "permanent": true
+  },
+  {
+    "source": "/what-jobs/how-to-become-data-analyst",
+    "destination": "/jobs-without-a-degree",
+    "permanent": true
+  },
+  {
+    "source": "/what-jobs/how-to-become-ux-designer",
+    "destination": "/jobs-without-a-degree",
+    "permanent": true
+  },
+  {
+    "source": "/what-jobs/how-to-become-product-manager",
+    "destination": "/jobs-without-a-degree",
+    "permanent": true
+  },
+  {
+    "source": "/what-jobs/how-to-become-project-manager",
+    "destination": "/jobs-without-a-degree",
+    "permanent": true
+  },
+  {
+    "source": "/what-jobs/how-to-become-software-developer",
+    "destination": "/jobs-without-a-degree",
+    "permanent": true
+  },
+  {
+    "source": "/what-jobs/how-to-become-digital-marketer",
+    "destination": "/jobs-without-a-degree",
+    "permanent": true
+  },
+  {
+    "source": "/what-jobs/how-to-become-hr-manager",
+    "destination": "/jobs-without-a-degree",
+    "permanent": true
+  },
+  {
+    "source": "/what-jobs/how-to-become-business-analyst",
+    "destination": "/jobs-without-a-degree",
+    "permanent": true
+  },
+  {
+    "source": "/what-jobs/how-to-become-scrum-master",
+    "destination": "/jobs-without-a-degree",
+    "permanent": true
+  },
+  {
+    "source": "/what-jobs/how-to-become-cybersecurity-analyst",
+    "destination": "/jobs-without-a-degree",
+    "permanent": true
+  },
+  {
+    "source": "/what-jobs/how-to-become-content-writer",
+    "destination": "/jobs-without-a-degree",
+    "permanent": true
+  },
+  {
+    "source": "/what-jobs/how-to-become-operations-manager",
+    "destination": "/jobs-without-a-degree",
+    "permanent": true
+  },
+  {
+    "source": "/what-jobs/how-to-become-financial-analyst",
+    "destination": "/jobs-without-a-degree",
+    "permanent": true
+  },
+  {
+    "source": "/what-jobs/how-to-become-graphic-designer",
+    "destination": "/jobs-without-a-degree",
+    "permanent": true
+  },
+  {
+    "source": "/what-jobs/how-to-become-recruitment-consultant",
+    "destination": "/jobs-without-a-degree",
+    "permanent": true
+  },
+  {
+    "source": "/what-jobs/jobs-that-pay-60k",
+    "destination": "/highest-paying-careers-uk",
+    "permanent": true
+  },
+  {
+    "source": "/what-jobs/jobs-that-pay-70k",
+    "destination": "/highest-paying-careers-uk",
+    "permanent": true
+  },
+  {
+    "source": "/what-jobs/jobs-that-pay-100k",
+    "destination": "/highest-paying-careers-uk",
+    "permanent": true
+  },
+  {
+    "source": "/what-jobs/jobs-for-extroverts",
+    "destination": "/what-job-is-right-for-me",
+    "permanent": true
+  },
+  {
+    "source": "/what-jobs/jobs-for-creative-people",
+    "destination": "/what-job-is-right-for-me",
+    "permanent": true
+  },
+  {
+    "source": "/what-jobs/jobs-for-analytical-thinkers",
+    "destination": "/what-job-is-right-for-me",
+    "permanent": true
+  },
+  {
+    "source": "/what-jobs/jobs-for-people-who-like-helping",
+    "destination": "/what-job-is-right-for-me",
+    "permanent": true
+  },
+  {
+    "source": "/what-jobs/jobs-for-graduates",
+    "destination": "/what-job-is-right-for-me",
+    "permanent": true
+  },
+  {
+    "source": "/what-jobs/jobs-for-over-50s",
+    "destination": "/career-change-at-50",
+    "permanent": true
+  },
+  {
+    "source": "/what-jobs/jobs-for-career-changers",
+    "destination": "/career-change",
+    "permanent": true
+  },
+  {
+    "source": "/what-jobs/jobs-for-parents",
+    "destination": "/best-jobs-for-work-life-balance",
+    "permanent": true
+  },
+  {
+    "source": "/what-jobs/jobs-for-people-with-anxiety",
+    "destination": "/low-stress-jobs-uk",
+    "permanent": true
+  },
+  {
+    "source": "/high-paying-jobs-no-degree",
+    "destination": "/jobs-without-a-degree",
+    "permanent": true
+  },
+  {
+    "source": "/jobs-that-dont-require-a-degree",
+    "destination": "/jobs-without-a-degree",
+    "permanent": true
+  },
+  {
+    "source": "/career-change/transferable-skills-guide",
+    "destination": "/transferable-skills",
+    "permanent": true
+  },
+  {
+    "source": "/career-change/career-change-cv",
+    "destination": "/how-to-write-a-cv-for-career-change",
+    "permanent": true
+  },
+  {
+    "source": "/jobs-for-empaths",
+    "destination": "/jobs-for-introverts",
+    "permanent": true
+  }
+]
