@@ -389,29 +389,23 @@ export default function QuizPage() {
               </div>
             </section>
 
-            {/* CTA */}
-            <div className="bg-indigo-50 rounded-xl p-6 sm:p-8 text-center mb-10">
-              <h2 className="text-xl font-semibold text-gray-900 mb-3">
-                Want more accurate, personalised results?
+            {/* Next step: the personal check */}
+            <div className="mb-10 rounded-xl border border-accent/25 bg-accent-wash p-6 text-center sm:p-8">
+              <h2 className="mb-3 text-xl font-semibold text-ink">
+                Turn this into real options
               </h2>
-              <p className="text-gray-500 mb-6 max-w-lg mx-auto">
-                This quiz reveals your broad career archetype. For results specific to YOUR experience, upload your CV and let our AI match your exact skills to real opportunities.
+              <p className="mx-auto mb-6 max-w-lg text-ink-2">
+                The quiz shows your broad style of work. For careers matched to your own skills, with ONS pay figures and the
+                ways in, start from the job you do now or paste your CV. It is free and needs no account or email.
               </p>
-              <Link
-                href="/discover"
-                className="inline-flex items-center justify-center bg-indigo-600 text-white font-semibold px-8 py-4 rounded-xl hover:bg-indigo-700 transition-colors"
-              >
-                Upload My CV for AI-Powered Matching
-              </Link>
-            </div>
-
-            {/* Dark CTA */}
-            <div className="bg-gray-900 text-white rounded-xl p-6 text-center mb-10">
-              <h3 className="text-lg font-semibold mb-2">88% of CVs are rejected by ATS filters</h3>
-              <p className="text-gray-300 text-sm mb-4">Our AI finds the hidden transferable skills in your CV that job boards miss entirely.</p>
-              <Link href="/discover" className="inline-flex items-center bg-white text-gray-900 font-semibold px-6 py-3 rounded-lg hover:bg-gray-100 transition-colors text-sm">
-                Analyse My Skills Free
-              </Link>
+              <div className="flex flex-col justify-center gap-3 sm:flex-row">
+                <Link href="/discover" className="btn btn-primary btn-lg">
+                  Start from my job
+                </Link>
+                <Link href="/discover#cv" className="btn btn-secondary btn-lg">
+                  Paste my CV
+                </Link>
+              </div>
             </div>
 
             {/* Actions */}
@@ -440,7 +434,7 @@ export default function QuizPage() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900 mb-1">Do I need to create an account?</h3>
-                  <p className="text-sm text-gray-600">No. The quiz is completely free with no sign-up required. If you want to upload your CV for AI-powered matching, you can create a free account to save your results.</p>
+                  <p className="text-sm text-gray-600">No. The quiz is free with no sign-up. The CV check needs no account or email either: your results get their own private link, kept for 12 months.</p>
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900 mb-1">What career suits me if I am an introvert?</h3>
