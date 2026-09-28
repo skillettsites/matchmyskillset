@@ -5,7 +5,7 @@ import { cleanText } from "@/lib/input";
 import { isValidEmail } from "@/lib/email/results-email";
 import { getMmsJobRow, isLiveRow } from "@/lib/apis/jobs/mms";
 import { applyConsentText } from "@/lib/candidates/consent";
-import { fitForJob } from "@/lib/candidates/apply";
+import { employerMatch } from "@/lib/candidates/apply";
 import { findCandidateByEmail, getEmployer, hasApplied, insertApplication, markEmployerNotified } from "@/lib/candidates/db";
 import { sendApplicationReceipt, sendApplicationToEmployer, type ApplicationMail } from "@/lib/candidates/emails";
 import { notifyEmployerOfApplication } from "@/lib/employer/notify";
@@ -68,7 +68,8 @@ export async function POST(request: NextRequest) {
       return json(503, { error: "We cannot send applications for this job just now. Please try again later." });
     }
 
-    const fit = await fitForJob(job, { token, cvText }).catch(() => null);
+    // The employer's number (the same function as their matched-candidates page).
+    const fit = await employerMatch(job, { token, cvText }).catch(() => null);
     const consentText = applyConsentText(job.company_name, job.title);
     const candidate = await findCandidateByEmail(email).catch(() => null);
     const saved = await insertApplication({
@@ -94,7 +95,7 @@ export async function POST(request: NextRequest) {
       note,
       cvText,
       match: fit?.match ?? null,
-      matchKind: fit?.kind ?? null,
+      matchKind: fit ? "skills" : null,
       matchedSkills: (fit?.matched ?? []).map((m) => m.name),
     };
     let employerEmailed = false;
