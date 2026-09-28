@@ -1,0 +1,16 @@
+[
+  { "source": "/careers-for/teachers", "destination": "/career-change-from-teaching", "permanent": true },
+  { "source": "/careers-for/nurses", "destination": "/non-clinical-jobs-for-nurses", "permanent": true },
+  { "source": "/careers-for/military", "destination": "/jobs-for-ex-military", "permanent": true },
+  { "source": "/careers-for/retail", "destination": "/career-change-from-retail", "permanent": true },
+  { "source": "/careers-for/construction", "destination": "/careers-for#construction", "permanent": true },
+  { "source": "/careers-for/admin", "destination": "/careers-for#admin", "permanent": true },
+  { "source": "/careers-for/finance", "destination": "/careers-for#accountants", "permanent": true },
+  { "source": "/careers-for/parents", "destination": "/careers-for#returning-to-work", "permanent": true },
+  { "source": "/career-change-from-nursing", "destination": "/non-clinical-jobs-for-nurses", "permanent": true },
+  { "source": "/what-jobs/teaching-skills", "destination": "/career-change-from-teaching", "permanent": true },
+  { "source": "/what-jobs/nursing-skills", "destination": "/non-clinical-jobs-for-nurses", "permanent": true },
+  { "source": "/what-jobs/military-skills", "destination": "/jobs-for-ex-military", "permanent": true },
+  { "source": "/what-jobs/jobs-for-ex-military", "destination": "/jobs-for-ex-military", "permanent": true },
+  { "source": "/what-jobs/retail-skills", "destination": "/career-change-from-retail", "permanent": true }
+]
