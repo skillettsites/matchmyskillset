@@ -193,8 +193,7 @@ JavaScript.
 <ToolCallout current="teacher" heading="Leaving teaching? See your options" />
 ```
 
-Note: `/discover` does not read `current` yet; wire it up there when the tool
-is rebuilt.
+`/discover` reads `current` and pre-selects that job in the "Start from your job" box.
 
 ### `Prose`
 Wraps long-form HTML (h2, h3, p, ul, ol, blockquote, a, strong, hr) with the
