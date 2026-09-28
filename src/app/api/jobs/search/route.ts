@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { searchJobs } from "@/lib/apis/jobs";
+import { isSameSiteRequest } from "@/lib/api-guard";
+import { regionFromLocation } from "@/lib/apis/regions";
 import { checkRateLimit, clientIp } from "@/lib/rate-limit";
 import { cleanText } from "@/lib/input";
 
-// Live listings from every enabled board. Each search spends free-tier quota,
-// so input is capped and each IP is limited; a person browsing will not hit it.
+// Live listings from every enabled board. Each search spends free-tier quota
+// (Jooble's key allows 500 calls in total), so only our own pages may call
+// this, input is capped and each IP is limited; a person browsing will not
+// hit the limit.
 
 export const runtime = "nodejs";
 export const maxDuration = 30;
@@ -15,6 +19,11 @@ const PER_PAGE = 25;
 const MAX_PAGE = 10;
 
 export async function GET(request: NextRequest) {
+  // Checked first, so a refused request never reaches a job board or the rate-limit table.
+  if (!isSameSiteRequest(request)) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403, headers: { "Cache-Control": "no-store" } });
+  }
+
   const { searchParams } = request.nextUrl;
 
   const query = cleanText(searchParams.get("q"), 100);
@@ -24,6 +33,8 @@ export async function GET(request: NextRequest) {
   let location = cleanText(searchParams.get("location"), 80) || undefined;
   // "remote" typed as a place used to be sent to the boards as a town name.
   if (location && /^(remote|anywhere|work from home|wfh|home)$/i.test(location)) location = undefined;
+  // "South West" and the other regions are searched as regions, not as a town name.
+  const region = !remote ? regionFromLocation(location) ?? undefined : undefined;
 
   const pageParam = Number.parseInt(searchParams.get("page") || "1", 10);
   const page = Number.isFinite(pageParam) ? Math.min(Math.max(pageParam, 1), MAX_PAGE) : 1;
@@ -43,6 +54,7 @@ export async function GET(request: NextRequest) {
     const result = await searchJobs({
       query,
       location,
+      region,
       remote,
       page,
       perPage: PER_PAGE,

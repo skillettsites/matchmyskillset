@@ -1,6 +1,8 @@
 // Types shared by the job board adapters, the /api/jobs/search route and the
 // JobCard component. Type-only: safe to import from client components.
 
+import type { UkRegion } from "@/lib/apis/regions";
+
 export type SourceId = "reed" | "adzuna" | "teaching-vacancies" | "careerjet" | "jooble" | "himalayas" | "remotive";
 
 export const SOURCE_IDS: readonly SourceId[] = ["reed", "adzuna", "teaching-vacancies", "careerjet", "jooble", "himalayas", "remotive"];
@@ -34,6 +36,12 @@ export interface JobQuery {
   query: string;
   /** UK place name. Ignored for remote searches. */
   location?: string;
+  /**
+   * Set when `location` is a UK region or nation other than London (e.g.
+   * "South West"). Boards are asked for the region where they support it, and
+   * results are checked against it.
+   */
+  region?: UkRegion;
   /** Work-type filter, not a place. */
   remote: boolean;
   page: number;
@@ -69,4 +77,10 @@ export interface JobSearchResponse {
   /** True when too few ads matched the job title closely, so looser matches are included. */
   relaxed: boolean;
   sources: SourceSummary[];
+  /** The region searched, when the location was a region. */
+  region?: UkRegion;
+  /** Boards left out of a region search because they cannot be narrowed to a region. */
+  skippedForRegion?: string[];
+  /** Adverts dropped because the board dated them more than this many days ago. */
+  maxAgeDays: number;
 }

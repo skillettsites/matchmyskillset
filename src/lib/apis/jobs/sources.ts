@@ -9,16 +9,20 @@
 import { unstable_cache } from "next/cache";
 import { env } from "@/lib/env";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { ADZUNA_REGION, UK_NATIONS } from "@/lib/apis/regions";
 import type { JobListing, JobQuery, SourceId, SourceResult } from "./types";
+import { regionsForLocations } from "./place-region";
 import {
   SourceHttpError,
   fetchJson,
   formatSalary,
   isoOrUndefined,
+  looksNonUk,
   parseUkDate,
   remoteLocationLabel,
   stripHtml,
   tidyLocation,
+  tidySnippet,
   ukEligible,
 } from "./util";
 
@@ -51,6 +55,12 @@ interface ReedJob {
   jobUrl: string;
 }
 
+// Reed reads Wales, Scotland and Northern Ireland as places but not the
+// English regions: "South West" returned Reading, Birmingham and Cardiff
+// (checked 28 September 2026). For a region search it is asked for more
+// adverts (UK-wide, or the nation) and each advert's location is checked.
+const REED_REGION_TAKE = 100;
+
 const reed: JobSource = {
   id: "reed",
   label: "Reed",
@@ -59,12 +69,15 @@ const reed: JobSource = {
   enabled: () => Boolean(env("REED_API_KEY")),
   appliesTo: () => true,
   async search(q) {
+    const take = q.region ? REED_REGION_TAKE : q.perPage;
     const params = new URLSearchParams({
       keywords: q.remote ? `${q.query} remote` : q.query,
-      resultsToTake: String(q.perPage),
-      resultsToSkip: String((q.page - 1) * q.perPage),
+      resultsToTake: String(take),
+      resultsToSkip: String((q.page - 1) * take),
     });
-    if (q.location && !q.remote) {
+    if (q.region) {
+      if (UK_NATIONS.includes(q.region)) params.set("locationName", q.region);
+    } else if (q.location && !q.remote) {
       params.set("locationName", q.location);
       params.set("distanceFromLocation", "15");
     }
@@ -93,6 +106,11 @@ const reed: JobSource = {
         postedAt: parseUkDate(r.date),
       })
     );
+    if (q.region) {
+      // Reed's own total is for the UK or the whole nation, so it is not reported for a region.
+      const where = await regionsForLocations(jobs.map((j) => j.location));
+      return { jobs: jobs.filter((j) => where.get(j.location) === q.region), total: null };
+    }
     return { jobs, total: data.totalResults ?? null };
   },
 };
@@ -109,7 +127,7 @@ interface AdzunaJob {
   redirect_url: string;
   created?: string;
   company?: { display_name?: string };
-  location?: { display_name?: string };
+  location?: { display_name?: string; area?: string[] };
   salary_min?: number;
   salary_max?: number;
   salary_is_predicted?: string;
@@ -139,7 +157,13 @@ const adzuna: JobSource = {
       what: q.query,
     });
     if (q.remote) params.set("what_and", "remote");
-    if (q.location && !q.remote) {
+    // A region is asked for through Adzuna's location tree (location0=UK,
+    // location1=<region>), and each result's `location.area` is checked too.
+    const adzunaRegion = q.region ? ADZUNA_REGION[q.region] : null;
+    if (adzunaRegion) {
+      params.set("location0", "UK");
+      params.set("location1", adzunaRegion);
+    } else if (q.location && !q.remote) {
       params.set("where", q.location);
       params.set("distance", "25");
     }
@@ -149,7 +173,8 @@ const adzuna: JobSource = {
       { headers: { Accept: "application/json" }, next: { revalidate: 1800 } },
       this.timeoutMs
     );
-    const jobs = (data.results ?? []).map((r): JobListing => {
+    const results = (data.results ?? []).filter((r) => !adzunaRegion || r.location?.area?.[1] === adzunaRegion);
+    const jobs = results.map((r): JobListing => {
       // Adzuna estimates salaries it was not given; show only the advertised ones.
       const advertised = r.salary_is_predicted !== "1";
       return {
@@ -277,8 +302,9 @@ const teachingVacancies: JobSource = {
   homepage: "https://teaching-vacancies.service.gov.uk/jobs",
   timeoutMs: 12000,
   enabled: () => true,
-  // School jobs are on site, so this board is skipped for remote searches.
-  appliesTo: (q) => !q.remote,
+  // School jobs are on site, so this board is skipped for remote searches. It
+  // covers England only, so it is skipped for Wales, Scotland and Northern Ireland.
+  appliesTo: (q) => !q.remote && !(q.region && UK_NATIONS.includes(q.region)),
   async search(q) {
     const feed = await teachingVacanciesFeed();
     const now = Date.now();
@@ -288,6 +314,8 @@ const teachingVacancies: JobSource = {
       if (j.closes && new Date(j.closes).getTime() < now) return false;
       const hay = `${j.title} ${j.org}`.toLowerCase();
       if (!words.some((w) => hay.includes(w))) return false;
+      // The feed's addressRegion uses the same region names as the site (checked 28 September 2026).
+      if (q.region) return j.region === q.region;
       if (loc) {
         const where = `${j.place} ${j.region} ${j.postcode}`.toLowerCase();
         if (!where.includes(loc) && !loc.includes(j.place.toLowerCase() || "\u0000")) return false;
@@ -487,7 +515,8 @@ const careerjet: JobSource = {
   homepage: "https://www.careerjet.co.uk/",
   timeoutMs: 8000,
   enabled: () => Boolean(env("CAREERJET_API_KEY")),
-  appliesTo: (q) => Boolean(q.userIp && q.userAgent),
+  // Not checked against regions yet, so left out of region searches.
+  appliesTo: (q) => Boolean(q.userIp && q.userAgent) && !q.region,
   async search(q) {
     const params = new URLSearchParams({
       locale_code: "en_GB",
@@ -531,7 +560,13 @@ const careerjet: JobSource = {
 };
 
 // ---------------------------------------------------------------------------
-// Jooble (UK). Only runs once JOOBLE_API_KEY is set.
+// Jooble. Only runs once JOOBLE_API_KEY is set. The key works on the main
+// endpoint (jooble.org/api) only: uk.jooble.org/api answers 403. The main
+// endpoint searches worldwide, so the location always ends ", United Kingdom"
+// (checked 28 September 2026: "nurse" in "Manchester, United Kingdom" gave
+// only UK adverts, where "Manchester" alone gave Manchester, New Hampshire),
+// and anything that still looks non-UK is dropped. Jooble's total counts its
+// worldwide index, so it is never shown.
 // ---------------------------------------------------------------------------
 
 interface JoobleJob {
@@ -572,35 +607,46 @@ const jooble: JobSource = {
   homepage: "https://uk.jooble.org/",
   timeoutMs: 8000,
   enabled: () => Boolean(env("JOOBLE_API_KEY")),
-  appliesTo: () => true,
+  // Its UK adverts often give only "United Kingdom" as the place, so it cannot be narrowed to a region.
+  appliesTo: (q) => !q.region,
   async search(q) {
     const body: Record<string, string> = {
       keywords: q.remote ? `${q.query} remote` : q.query,
+      location: joobleLocation(q.remote ? undefined : q.location),
       page: String(q.page),
       ResultOnPage: String(q.perPage),
     };
-    if (q.location && !q.remote) body.location = q.location;
     if (q.salaryMin) body.salary = String(q.salaryMin);
     const data = await joobleCached(JSON.stringify(body));
-    const jobs = (data.jobs ?? []).map(
-      (j, i): JobListing => ({
-        id: `jooble_${j.id ?? `${q.page}_${i}`}`,
-        source: "jooble",
-        sourceLabel: "Jooble",
-        title: stripHtml(j.title, 200) || "Untitled role",
-        company: j.company || j.source || "Employer not named",
-        location: j.location || "UK",
-        remote: q.remote ? "maybe" : "no",
-        salary: j.salary || undefined,
-        snippet: stripHtml(j.snippet),
-        url: j.link,
-        postedAt: isoOrUndefined(j.updated),
-        contractType: j.type || undefined,
-      })
-    );
-    return { jobs, total: data.totalCount ?? null };
+    const jobs = (data.jobs ?? [])
+      .filter((j) => !looksNonUk(j.location, j.salary))
+      .map(
+        (j, i): JobListing => ({
+          id: `jooble_${j.id ?? `${q.page}_${i}`}`,
+          source: "jooble",
+          sourceLabel: "Jooble",
+          title: stripHtml(j.title, 200) || "Untitled role",
+          company: j.company || j.source || "Employer not named",
+          location: j.location || "UK",
+          remote: q.remote ? "maybe" : "no",
+          salary: j.salary || undefined,
+          snippet: tidySnippet(stripHtml(j.snippet)),
+          url: j.link,
+          postedAt: isoOrUndefined(j.updated),
+          contractType: j.type || undefined,
+        })
+      );
+    // Only the adverts that survive the UK check are reported, never Jooble's worldwide total.
+    return { jobs, total: null };
   },
 };
+
+/** "Manchester" becomes "Manchester, United Kingdom"; no place searches the whole UK. */
+function joobleLocation(place: string | undefined): string {
+  const p = (place ?? "").trim();
+  if (!p) return "United Kingdom";
+  return /\b(uk|united kingdom|great britain)\b/i.test(p) ? p : `${p}, United Kingdom`;
+}
 
 /** Every board, in the order results are interleaved. Add new boards here. */
 export const JOB_SOURCES: JobSource[] = [reed, adzuna, careerjet, jooble, teachingVacancies, himalayas, remotive];

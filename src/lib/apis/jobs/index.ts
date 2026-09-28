@@ -12,14 +12,28 @@ export { adzunaTitleCount };
 /** Below this many close matches on a page, looser title matches are allowed in. */
 const RELAX_BELOW = 5;
 
+/** Adverts the board dates further back than this are treated as stale and left out. */
+export const MAX_AGE_DAYS = 60;
+
+function isFresh(job: JobListing, cutoff: number): boolean {
+  if (!job.postedAt) return true;
+  const t = Date.parse(job.postedAt);
+  return Number.isNaN(t) || t >= cutoff;
+}
+
 export async function searchJobs(q: JobQuery): Promise<JobSearchResponse> {
   const active = JOB_SOURCES.filter((s) => s.enabled() && s.appliesTo(q));
+  // Boards that would have been asked without the region, but cannot be narrowed to one.
+  const skippedForRegion = q.region
+    ? JOB_SOURCES.filter((s) => s.enabled() && !s.appliesTo(q) && s.appliesTo({ ...q, region: undefined })).map((s) => s.label)
+    : [];
+  const cutoff = Date.now() - MAX_AGE_DAYS * 86_400_000;
 
   const settled = await Promise.all(
     active.map(async (s) => {
       try {
         const r = await s.search(q);
-        return { source: s, ...r };
+        return { source: s, ...r, jobs: r.jobs.filter((j) => isFresh(j, cutoff)) };
       } catch (err) {
         const reason = describeSourceError(err);
         console.warn(`[jobs] ${s.id} failed: ${reason}`);
@@ -54,7 +68,15 @@ export async function searchJobs(q: JobQuery): Promise<JobSearchResponse> {
 
   const hasMore = settled.some((r) => (r.total !== null ? r.total > q.page * q.perPage : r.jobs.length >= q.perPage));
 
-  return { jobs: unique, page: q.page, hasMore: hasMore && q.page < 10, relaxed, sources };
+  return {
+    jobs: unique,
+    page: q.page,
+    hasMore: hasMore && q.page < 10,
+    relaxed,
+    sources,
+    maxAgeDays: MAX_AGE_DAYS,
+    ...(q.region ? { region: q.region, skippedForRegion } : {}),
+  };
 }
 
 /**

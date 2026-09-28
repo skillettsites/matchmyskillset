@@ -110,6 +110,34 @@ export function titleIsRelevant(query: string, title: string, mode: "strict" | "
   return found.length === q.length || (has(head) && found.length >= 2);
 }
 
+const US_STATES = new Set(
+  "AL AK AZ AR CA CO CT DE DC FL GA HI ID IL IN IA KS KY LA ME MD MA MI MN MS MO MT NE NV NH NJ NM NY NC ND OH OK OR PA RI SC SD TN TX UT VT VA WA WV WI WY".split(" ")
+);
+
+const NON_UK_COUNTRIES =
+  /\b(united states|usa|u\.s\.a?|america|canada|australia|new zealand|india|south africa|philippines|germany|france|spain|netherlands|republic of ireland|dublin|uae|dubai|singapore|new york)\b/i;
+
+/**
+ * True when an advert looks as if it is outside the UK: a US state code at
+ * the end of the location ("Manchester, NH", "Bridgeport, CT 06604"), a
+ * non-UK country, or a salary in dollars. Used on boards that search
+ * worldwide (Jooble), where a UK place name can match a US town.
+ */
+export function looksNonUk(location: string | undefined | null, salary?: string | null): boolean {
+  const loc = (location ?? "").trim();
+  if (/\b(uk|united kingdom|england|scotland|wales|northern ireland)\b/i.test(loc)) return false;
+  const state = /,\s*([A-Z]{2})(?:\s+\d{5}(?:-\d{4})?)?\s*$/.exec(loc);
+  if (state && US_STATES.has(state[1])) return true;
+  if (NON_UK_COUNTRIES.test(loc)) return true;
+  if (salary && /\$|\bUSD\b|\bCAD\b|\bAUD\b/.test(salary)) return true;
+  return false;
+}
+
+/** Board snippets sometimes open with stray quotes or an ellipsis ("" " Licensed ..."). */
+export function tidySnippet(value: string): string {
+  return value.replace(/^[\s"'“”‘’.…]+/, "").trim();
+}
+
 /** Remote boards: keep only roles open to someone living in the UK. */
 export function ukEligible(locations: string[]): boolean {
   if (locations.length === 0) return true;

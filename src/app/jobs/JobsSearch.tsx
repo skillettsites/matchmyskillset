@@ -45,6 +45,11 @@ function toQuery(s: SearchState): string {
   return p.toString();
 }
 
+/** "the South West", but "Wales" and "Yorkshire and the Humber". */
+function regionPhrase(region: string): string {
+  return /^(Wales|Scotland|Northern Ireland|London|Yorkshire and the Humber)$/.test(region) ? region : `the ${region}`;
+}
+
 export function JobsSearch() {
   const params = useSearchParams();
   const initial = useMemo(() => fromParams(new URLSearchParams(params.toString())), [params]);
@@ -126,7 +131,7 @@ export function JobsSearch() {
           </div>
           <div>
             <label htmlFor="jobs-loc" className="block text-sm font-semibold text-ink">
-              Town, city or postcode
+              Town, city, postcode or region
             </label>
             <input
               id="jobs-loc"
@@ -199,6 +204,18 @@ export function JobsSearch() {
                   for these words. We show the adverts whose job title matches your search.
                 </p>
               )}
+              {result.region && (
+                <p className="mt-1 text-sm text-muted">
+                  {`Showing adverts in ${regionPhrase(result.region)} only, checked against each advert's location.`}
+                  {result.skippedForRegion && result.skippedForRegion.length > 0 && (
+                    <>
+                      {" "}
+                      {result.skippedForRegion.join(" and ")} cannot be narrowed to a region, so{" "}
+                      {result.skippedForRegion.length === 1 ? "it is" : "they are"} left out of this search.
+                    </>
+                  )}
+                </p>
+              )}
               {result.relaxed && jobs.length > 0 && (
                 <p className="mt-1 text-sm text-muted">Few adverts matched that job title closely, so these include looser matches.</p>
               )}
@@ -251,8 +268,8 @@ export function JobsSearch() {
               </span>
             ))}
             . We do not write or check them; the board that listed a job is shown on each advert, and applying happens on its
-            site. Teaching Vacancies listings contain public sector information licensed under the Open Government Licence
-            v3.0.
+            site. Adverts a board dates more than {result.maxAgeDays} days ago are left out. Teaching Vacancies listings
+            contain public sector information licensed under the Open Government Licence v3.0.
           </p>
         </div>
       )}

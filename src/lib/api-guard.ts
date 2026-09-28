@@ -19,27 +19,51 @@ import { NextRequest } from "next/server";
 
 const ALLOWED_HOSTS = ["matchmyskillset.com", "www.matchmyskillset.com"];
 
+/**
+ * This project's Vercel hosts: matchmyskillset.vercel.app and the team's
+ * deployment URLs, e.g. matchmyskillset-1noyfxv1w-skillettsites-projects.vercel.app.
+ * Any other *.vercel.app site is someone else's.
+ */
+function isOwnVercelHost(host: string): boolean {
+  return (
+    host === "matchmyskillset.vercel.app" ||
+    (host.startsWith("matchmyskillset-") && host.endsWith("-skillettsites-projects.vercel.app"))
+  );
+}
+
+function isOwnHost(value: string | null): boolean {
+  if (!value) return false;
+  try {
+    const host = new URL(value).hostname;
+    return ALLOWED_HOSTS.includes(host) || isOwnVercelHost(host);
+  } catch {
+    return false;
+  }
+}
+
 /** Returns true if the request appears to originate from our own site (or local dev). */
 export function isAllowedOrigin(req: NextRequest): boolean {
   // Always allow non-production (local dev, preview testing).
   if (process.env.NODE_ENV !== "production") return true;
 
-  const origin = req.headers.get("origin");
-  const referer = req.headers.get("referer");
-  const source = origin || referer;
-
   // A browser fetch to a same-origin API always sends an Origin header on POST.
   // A raw curl / script typically sends neither, so reject when absent.
-  if (!source) return false;
+  return isOwnHost(req.headers.get("origin") || req.headers.get("referer"));
+}
 
-  try {
-    const host = new URL(source).hostname;
-    // Vercel preview deployments are ours too.
-    if (host.endsWith(".vercel.app")) return true;
-    return ALLOWED_HOSTS.includes(host);
-  } catch {
-    return false;
-  }
+/**
+ * For GET endpoints called by our own pages. Browsers send no Origin header on
+ * a same-origin GET, but they do send Sec-Fetch-Site (and a Referer). A
+ * request from another site, or typed into the address bar, says so in
+ * Sec-Fetch-Site and is refused; one without it (older browsers, scripts)
+ * needs an Origin or Referer on our own host. Headers can be forged by a
+ * script, so this only stops casual reuse: per-IP limits are the real control.
+ */
+export function isSameSiteRequest(req: NextRequest): boolean {
+  if (process.env.NODE_ENV !== "production") return true;
+  const fetchSite = req.headers.get("sec-fetch-site");
+  if (fetchSite) return fetchSite === "same-origin";
+  return isOwnHost(req.headers.get("origin") || req.headers.get("referer"));
 }
 
 interface Bucket {
