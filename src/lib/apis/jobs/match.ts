@@ -482,8 +482,8 @@ function byMatch(a: MatchedJob, b: MatchedJob): number {
 /**
  * One advert per title, employer and place. The same advert on two boards
  * often gives its place differently ("Leeds, West Yorkshire" and "LS12 6HU"):
- * one per title, employer and region across boards. Several branches on one
- * board are left alone.
+ * one per title, employer and region across boards. On one board, agencies
+ * post the same job under several nearby towns: keep the closest copy.
  */
 function dedupe(list: MatchedJob[]): MatchedJob[] {
   const byKey = new Map<string, MatchedJob>();
@@ -499,7 +499,8 @@ function dedupe(list: MatchedJob[]): MatchedJob[] {
       kept.set(k2, j);
       continue;
     }
-    if (prev.source === j.source) {
+    // Every job posted here is shown: each one is a paid listing.
+    if (prev.source === "mms" && j.source === "mms") {
       kept.set(`${k2}|${j.key}`, j);
       continue;
     }

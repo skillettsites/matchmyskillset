@@ -283,7 +283,7 @@ export default async function AccountPage({ searchParams }: { searchParams: Prom
 
             <Card id="delete" title="Delete your account">
               <form action={deleteCandidateAccount} className="space-y-3 text-[14px] text-ink-2">
-                <p>This deletes your account, your job packs (with the CV text inside them) and your saved CV straight away.{plus ? " Your Plus plan is cancelled first." : ""}</p>
+                <p>This deletes your account, your job packs (with the CV text inside them), your tracked applications and your saved CV straight away.{plus ? " Your Plus plan is cancelled first." : ""}</p>
                 <label className="flex items-start gap-3">
                   <input type="checkbox" name="results" defaultChecked className="mt-0.5 h-4 w-4 shrink-0 accent-[#0071e3]" />
                   <span>Also delete the results pages linked to this account</span>

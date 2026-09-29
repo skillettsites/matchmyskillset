@@ -324,6 +324,8 @@ export const FALSE_FRIENDS: readonly { re: RegExp; family: RoleFamily }[] = [
   // Software testing, business process automation and marketing automation are not factory automation.
   { re: /\b(test|qa|software) automation\b|\bautomation (testers?|testing|test engineers?|qa)\b/i, family: "it" },
   { re: /\b(robotic process automation|rpa|business process automation|intelligent automation)\b/i, family: "it" },
+  // AI, workflow and no-code automation builders (n8n, Zapier, Power Automate) are software jobs.
+  { re: /\b(ai|genai|llm|agentic|workflow|business|no-?code|low-?code|crm|salesforce|hubspot|revops|gtm|office|it|cloud|devops|infrastructure|network|accounting|finance|payroll|sales|hr|data) automations?\b|\b(n8n|zapier|power automate|uipath|blue prism|make\.com)\b/i, family: "it" },
   { re: /\bmarketing automation\b/i, family: "marketing" },
   { re: /\b(software|it|web|app|mobile|game|games) (quality assurance|quality|qa) (engineers?|analysts?|testers?)\b/i, family: "it" },
   { re: /\b(ux|ui|software|web) design engineers?\b/i, family: "it" },
