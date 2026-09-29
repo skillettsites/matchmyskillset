@@ -12,7 +12,6 @@ import {
   MoreLink,
   ResultsMockup,
   SectionHeading,
-  StepList,
   StepTile,
   faqJsonLd,
   type FaqItem,
@@ -27,15 +26,6 @@ export const metadata: Metadata = {
     "Upload your CV and see live UK jobs scored against your skills, from maintenance and CNC to robotics, automation and 3D printing. Works for any job. Free.",
   alternates: { canonical: "/" },
 };
-
-const HERO_STEPS = [
-  { title: "Add your CV", text: "Upload a PDF or Word file, or paste the text, and say where you want to work." },
-  {
-    title: "We read your skills",
-    text: "We pick out what you can do, from fault finding to PLC programming, and search live adverts from Reed, Adzuna and more.",
-  },
-  { title: "Apply to your best matches", text: "See the skills you share with each job and the ones to work on, then apply." },
-];
 
 const SOURCES = ["Reed", "Adzuna", "GOV.UK Teaching Vacancies", "Himalayas", "Remotive"];
 
@@ -92,40 +82,37 @@ export default function Home() {
     <>
       <JsonLd data={faqJsonLd(FAQS)} />
 
-      {/* Hero: the promise on the left, the CV card on the right */}
+      {/* Hero: centred promise, then the CV card */}
       <div className="relative overflow-hidden">
         <HeroGlow top="-8%" opacity={0.18} />
-        <section className="relative px-4 sm:px-6 pb-16 pt-12 md:pb-20 md:pt-20" aria-labelledby="hero-title">
-          <div className="mx-auto grid max-w-[1080px] gap-10 lg:grid-cols-[1fr_500px] lg:gap-x-14 lg:gap-y-10">
-            <div className="lg:pt-8">
-              <p className="eyebrow rise text-link">Engineering, manufacturing and Industry 4.0 jobs</p>
-              <h1 id="hero-title" className="display mt-2">
-                Your CV.
-                <br />
-                <span className="gradient-text">
-                  Matched to
-                  <br />
-                  real jobs.
-                </span>
-              </h1>
-              <p className="lede mt-6 max-w-[520px]">
-                Upload your CV and see the live UK jobs you could apply for today, from maintenance and CNC to robotics, automation and 3D
-                printing, each scored against the skills you already have. It works for any other job too.
-              </p>
-            </div>
-            <div className="rise rise-2 lg:col-start-2 lg:row-span-2 lg:row-start-1">
-              <CvUploadCard variant="hero" />
-            </div>
-            <div className="rise rise-3 lg:col-start-1">
-              <StepList steps={HERO_STEPS} />
-              <p className="mt-8 text-[15px] text-mute">
-                Hiring?{" "}
-                <Link href="/employers" className="text-link hover:underline">
-                  Post a job and get matched candidates
-                </Link>
-                .
-              </p>
-            </div>
+        <section className="relative px-4 sm:px-6 pb-16 pt-14 sm:pt-20 md:pb-24" aria-labelledby="hero-title">
+          <div className="mx-auto max-w-[980px] text-center">
+            <Link
+              href="/engineering-and-manufacturing-jobs"
+              className="rise inline-flex items-center gap-2.5 rounded-full bg-cloud px-4 py-2 text-[14px] font-medium text-ink transition-colors hover:bg-[#ebebef]"
+            >
+              <span className="live-dot" aria-hidden="true" />
+              <span>
+                <span className="sm:hidden">Engineering and manufacturing jobs</span>
+                <span className="hidden sm:inline">Engineering, manufacturing and Industry 4.0 jobs</span>
+              </span>
+              <ChevronRight className="h-4 w-4 text-mute" />
+            </Link>
+            <h1 id="hero-title" className="display-hero rise rise-1 mt-7">
+              Your CV.
+              <br />
+              <span className="gradient-text">Matched.</span>
+            </h1>
+            <p className="lede rise rise-2 mx-auto mt-6 max-w-[560px]">Upload your CV and see live UK jobs scored against your skills. Free, no account.</p>
+          </div>
+          <div className="rise rise-3 mx-auto mt-10 max-w-[560px] md:mt-12">
+            <CvUploadCard variant="hero" />
+            <p className="mt-6 text-center text-[15px] text-mute">
+              Hiring?{" "}
+              <Link href="/employers" className="text-link hover:underline">
+                Post a job and get matched candidates
+              </Link>
+            </p>
           </div>
         </section>
       </div>
