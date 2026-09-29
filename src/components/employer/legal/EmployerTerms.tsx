@@ -80,6 +80,24 @@ export function EmployerTerms() {
         <li>Delete a candidate&apos;s details when you no longer need them for that recruitment, and when the candidate asks you to, unless the law requires you to keep them.</li>
       </ul>
 
+      <h3 className={h3} id="applicant-status">
+        Applicant status, outcomes and placements
+      </h3>
+      <ul className="list-disc space-y-2 pl-5">
+        <li>
+          You can mark where each applicant stands: viewed, shortlisted, interview, offer, hired or not taken forward. Keep it accurate: we record every change to
+          measure how well {SITE_NAME} works, and marking someone hired records a placement.
+        </li>
+        <li>
+          We ask applicants by email, 7 and 21 days after they apply, how it went. If an applicant to your job answers interview, offer or placed, you see it next to
+          their application as &ldquo;Candidate says&rdquo;. It is their own answer; we do not check it.
+        </li>
+        <li>
+          After a placement we may ask the person, separately, whether we can mention their move, anonymised, in our case studies. We will not name your organisation
+          in a case study without asking you first.
+        </li>
+      </ul>
+
       <h3 className={h3} id="shortlists">
         Recruiter shortlists (Growth and Enterprise)
       </h3>
@@ -89,7 +107,8 @@ export function EmployerTerms() {
           when the job has been approved and is live.
         </li>
         <li>
-          It is a human review: one of our recruiters looks at the people who applied to the job and at people who asked employers to find them, and sends you the
+          It is a human review: a recruiter from Flintstone Associates, our recruitment partner, looks at the people who applied to the job and at people who asked
+          employers to find them, and sends you the
           ones they think fit best, in order, with a note on each. We email you when it is ready and it appears in your dashboard.
         </li>
         <li>
@@ -106,11 +125,22 @@ export function EmployerTerms() {
       <h3 className={h3}>Plans, payment and cancelling</h3>
       <ul className="list-disc space-y-2 pl-5">
         <li>
-          Starter and Growth are monthly subscriptions at the price shown on the{" "}
+          Lite, Starter and Growth are monthly subscriptions at the price shown on the{" "}
           <Link href="/employers/pricing" className={link}>
             pricing page
           </Link>{" "}
-          when you subscribe. Stripe takes payment by card at the start of each monthly period, and the subscription renews each month until you cancel.
+          when you subscribe (or your partner rate, below). Stripe takes payment by card at the start of each monthly period, and the subscription renews each month
+          until you cancel.
+        </li>
+        <li>
+          Lite is one live job at a time with its applicants. It does not include matched candidates, candidate search, contact requests, recruiter shortlists,
+          skills-gap reports or a company page.
+        </li>
+        <li>
+          Partner rates: we may agree a lower monthly price for one plan with clients of Flintstone Associates. There is no public partner price. Once we have set it on
+          your account, it is the price charged for that plan from your next card checkout, and your Plan and billing page shows &ldquo;Partner rate&rdquo;. If you
+          already pay by card, choosing the plan again moves you onto it and ends the old subscription, crediting unused time. Everything else in these terms applies
+          as normal.
         </li>
         <li>
           Cancel any time with Manage billing on your Plan and billing page, or by emailing <Mail />. Your plan runs to the end of the period you have paid for and

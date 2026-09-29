@@ -5,6 +5,8 @@ import Link from "next/link";
 import { track } from "@/lib/analytics";
 import { lastResultsToken, readSessionCv } from "@/components/cv/storage";
 import { applyConsentText } from "@/lib/candidates/consent";
+import { CHECKIN_NOTICE } from "@/lib/tracking/constants";
+import { readTracker, rememberTracker } from "@/components/tracking/storage";
 
 interface Fit {
   kind: "full" | "skills";
@@ -94,7 +96,7 @@ export function ApplyForm({ jobId, company, title }: { jobId: string; company: s
   const [consent, setConsent] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
-  const [sent, setSent] = useState<{ match: number | null } | null>(null);
+  const [sent, setSent] = useState<{ match: number | null; tracker: string | null } | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const fileInput = useRef<HTMLInputElement>(null);
   const consentText = applyConsentText(company, title);
@@ -149,15 +151,27 @@ export function ApplyForm({ jobId, company, title }: { jobId: string; company: s
       const res = await fetch("/api/applications", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ jobId, name, email, phone: phone || undefined, note: note || undefined, cvText: cv, consent, token: token ?? undefined }),
+        body: JSON.stringify({
+          jobId,
+          name,
+          email,
+          phone: phone || undefined,
+          note: note || undefined,
+          cvText: cv,
+          consent,
+          token: token ?? undefined,
+          // Same address as the tracker this browser holds: add to it rather than start another.
+          trackerToken: readTracker()?.email === email.trim().toLowerCase() ? readTracker()?.token : undefined,
+        }),
       });
-      const data = (await res.json().catch(() => ({}))) as { error?: string; match?: number | null };
+      const data = (await res.json().catch(() => ({}))) as { error?: string; match?: number | null; tracker?: string | null };
       if (!res.ok) {
         setError(data.error || "We could not send your application. Please try again.");
         return;
       }
       track("job_click", { source: "mms", action: "applied", match: data.match ?? null });
-      setSent({ match: data.match ?? null });
+      if (data.tracker && !readTracker()) rememberTracker({ token: data.tracker, email: email.trim().toLowerCase() });
+      setSent({ match: data.match ?? null, tracker: data.tracker ?? null });
     } catch {
       setError("We could not reach the server. Please check your connection and try again.");
     } finally {
@@ -177,9 +191,17 @@ export function ApplyForm({ jobId, company, title }: { jobId: string; company: s
         <p className="mt-2 text-[15px] text-ink-2">
           We have sent your application to {company} and emailed you a copy. {company} will contact you directly if they want to take it further.
         </p>
-        <Link href="/jobs" className="btn btn-secondary btn-sm mt-4">
-          Find more jobs
-        </Link>
+        {sent.tracker && <p className="mt-2 text-[15px] text-ink-2">It is in your application tracker. We&apos;ll email you at 7 and 21 days to ask how it went.</p>}
+        <div className="mt-4 flex flex-wrap gap-2">
+          {sent.tracker && (
+            <Link href={`/tracker/${encodeURIComponent(sent.tracker)}`} className="btn btn-primary btn-sm">
+              See your tracker
+            </Link>
+          )}
+          <Link href="/jobs" className="btn btn-secondary btn-sm">
+            Find more jobs
+          </Link>
+        </div>
       </div>
     );
   }
@@ -272,6 +294,12 @@ export function ApplyForm({ jobId, company, title }: { jobId: string; company: s
         <input type="checkbox" required className="mt-0.5 h-5 w-5 shrink-0 accent-[#0071e3]" checked={consent} onChange={(e) => setConsent(e.target.checked)} />
         <span>{consentText}</span>
       </label>
+      <p className="mt-3 text-[13px] leading-snug text-mute">
+        {CHECKIN_NOTICE}{" "}
+        <Link href="/privacy#tracking" className="text-link hover:underline">
+          How we use your answers
+        </Link>
+      </p>
       {error && (
         <p role="alert" className="mt-3 rounded-xl bg-[#fff2f2] px-3 py-2 text-[14px] text-[#b3261e]">
           {error}

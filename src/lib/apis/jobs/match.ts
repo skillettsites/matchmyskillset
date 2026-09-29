@@ -224,7 +224,11 @@ export function buildAnchors(doc: SkillsDoc, items: MatchEntry[]): FitAnchor[] {
       family,
     });
   }
-  for (const entry of items) {
+  // Careers the person asked for by name ("I want to move into automation") are
+  // searched first after their own job, then the rest in rank order: the first
+  // search pass only covers the first three anchors.
+  const ordered = [...items.filter((e) => e.flags?.includes("asked")), ...items.filter((e) => !e.flags?.includes("asked"))];
+  for (const entry of ordered) {
     const a = occupationAnchor(entry);
     if (a && !anchors.some((x) => x.title.toLowerCase() === a.title.toLowerCase() || (x.key && x.key === a.key))) anchors.push(a);
   }
@@ -478,8 +482,8 @@ function byMatch(a: MatchedJob, b: MatchedJob): number {
 /**
  * One advert per title, employer and place. The same advert on two boards
  * often gives its place differently ("Leeds, West Yorkshire" and "LS12 6HU"):
- * one per title, employer and region across boards. Several branches on one
- * board are left alone.
+ * one per title, employer and region across boards. On one board, agencies
+ * post the same job under several nearby towns: keep the closest copy.
  */
 function dedupe(list: MatchedJob[]): MatchedJob[] {
   const byKey = new Map<string, MatchedJob>();
@@ -495,7 +499,8 @@ function dedupe(list: MatchedJob[]): MatchedJob[] {
       kept.set(k2, j);
       continue;
     }
-    if (prev.source === j.source) {
+    // Every job posted here is shown: each one is a paid listing.
+    if (prev.source === "mms" && j.source === "mms") {
       kept.set(`${k2}|${j.key}`, j);
       continue;
     }

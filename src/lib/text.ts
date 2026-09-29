@@ -16,6 +16,8 @@ export function titleInSentence(title: string): string {
   }
   return title.replace(/[A-Za-z][A-Za-z'&]*/g, (word: string, offset: number) => {
     if (keep.some(([a, b]) => offset >= a && offset < b)) return word;
+    // "3D printing technician": a letter straight after a digit is part of a code, not a word.
+    if (offset > 0 && /[0-9]/.test(title.charAt(offset - 1))) return word;
     if ((word.match(/[A-Z]/g) ?? []).length >= 2) return word;
     return word.charAt(0).toLowerCase() + word.slice(1);
   });

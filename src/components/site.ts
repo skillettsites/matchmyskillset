@@ -18,7 +18,10 @@ export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://matchmyski
 
 /** One-line positioning used in metadata and the footer. */
 export const SITE_TAGLINE =
-  "Upload your CV and see live UK jobs scored against your skills, plus the careers that fit you and what they pay.";
+  "Upload your CV and see live UK jobs scored against your skills, with a focus on engineering, manufacturing and Industry 4.0. It works for any job.";
+
+/** The engineering and manufacturing careers index: where "Careers" in the header goes. */
+export const CAREERS_HREF = "/engineering-and-manufacturing-jobs";
 
 export interface NavItem {
   /** Visible link text. */
@@ -34,7 +37,8 @@ export const CV_HREF = "/discover";
 export const PRIMARY_NAV: NavItem[] = [
   { label: "Find jobs", href: "/jobs" },
   { label: "Match my CV", href: "/discover" },
-  { label: "Careers", href: "/careers-for" },
+  { label: "Careers", href: CAREERS_HREF },
+  { label: "CV tools", href: "/tools" },
   { label: "For employers", href: "/employers" },
 ];
 
@@ -42,10 +46,14 @@ export const PRIMARY_NAV: NavItem[] = [
 export const JOBSEEKER_LINKS: NavItem[] = [
   { label: "Upload your CV", href: "/discover" },
   { label: "Find jobs", href: "/jobs" },
+  { label: "Engineering and manufacturing careers", href: CAREERS_HREF },
   { label: "Careers by profession", href: "/careers-for" },
   { label: "Career quiz", href: "/quiz" },
   { label: "Transferable skills", href: "/transferable-skills" },
   { label: "Career Change Report", href: "/pricing" },
+  { label: "Tailor my CV", href: "/tools/tailor" },
+  { label: "Plus", href: "/plus" },
+  { label: "Your account", href: "/account" },
 ];
 
 /** Footer: the employer side. */
@@ -53,6 +61,44 @@ export const EMPLOYER_LINKS: NavItem[] = [
   { label: "For employers", href: "/employers" },
   { label: "Employer pricing", href: "/employers/pricing" },
   { label: "Employer sign in", href: "/employers/sign-in" },
+];
+
+/**
+ * Engineering, manufacturing and Industry 4.0 guides, led by the careers index.
+ * These come first everywhere careers are listed; the profession-exit hubs
+ * below are "Other careers".
+ */
+export const ENGINEERING_HUBS: (NavItem & { short: string; blurb: string })[] = [
+  {
+    label: "Engineering and manufacturing jobs",
+    short: "Engineering and manufacturing",
+    href: CAREERS_HREF,
+    blurb: "Careers from maintenance and machining to robotics and design, with ONS pay and the ways in.",
+  },
+  {
+    label: "Robotics and automation jobs",
+    short: "Robotics and automation",
+    href: "/robotics-and-automation-jobs",
+    blurb: "Automation technician, controls, robotics and mechatronics engineer, and how technicians move up.",
+  },
+  {
+    label: "3D printing and additive manufacturing jobs",
+    short: "3D printing",
+    href: "/3d-printing-jobs",
+    blurb: "Technician and engineer roles in additive manufacturing, and the design and materials skills they use.",
+  },
+  {
+    label: "Graduate engineering jobs",
+    short: "Graduate engineers",
+    href: "/graduate-engineering-jobs",
+    blurb: "Where an engineering degree or degree apprenticeship leads in advanced manufacturing, with ONS pay.",
+  },
+  {
+    label: "Jobs for ex-military technicians and engineers",
+    short: "Ex-military",
+    href: "/jobs-for-ex-military",
+    blurb: "Civilian engineering, maintenance and technical routes for service leavers, plus resettlement support.",
+  },
 ];
 
 /** Profession-exit hubs: "start from the job you do now". */
@@ -64,6 +110,9 @@ export const JOB_HUBS: (NavItem & { short: string })[] = [
   { label: "Leaving retail", short: "Retail", href: "/career-change-from-retail" },
   { label: "Any other job", short: "Any other job", href: "/careers-for" },
 ];
+
+/** Profession-exit hubs outside engineering, listed as "Other careers" after the engineering guides. */
+export const OTHER_CAREER_HUBS: (NavItem & { short: string })[] = JOB_HUBS.filter((h) => h.href !== "/jobs-for-ex-military");
 
 /** Guides that are not tied to one profession. */
 export const GUIDE_LINKS: NavItem[] = [

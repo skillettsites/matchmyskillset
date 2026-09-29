@@ -8,7 +8,7 @@ import { normaliseTitle, titleScore } from "./fuzzy";
 import { FAMILIES, familyForSoc } from "./families";
 import type { MatchEntry, MatchSkillRef, Preferences, ProfileSkill } from "./profile";
 
-export const SCORING_METHOD = "skills-overlap-v2";
+export const SCORING_METHOD = "skills-overlap-v3";
 
 /**
  * One line for the results page, per scoring version, so an older results
@@ -20,6 +20,9 @@ export const METHOD_SUMMARIES: Record<string, string> = {
     "Skill match is the share of a job's key skills, weighted by how essential each is, that we found in your profile (skills shown only in part count 60%, closely related ones half), so the same profile always gets the same score.",
   "skills-overlap-v2":
     "Skill match is the share of a job's key skills that we found in your profile, weighted by how essential each skill is to the job and by how few of our 141 careers need it, so everyday skills such as communication count for less (skills shown only in part count 60%, closely related ones half). We then order the list: routes our guides suggest for your line of work and jobs you asked for move up; jobs close to your own, jobs paying over a fifth less than yours, jobs where you do not yet show the most essential skill, routes meant for other professions and jobs that clash with what you told us move down. The same profile always gets the same result.",
+  // v3 (29 September 2026): the engineering and manufacturing careers were added, and a
+  // job the person names in what matters to them stays on the list from a lower match.
+  "skills-overlap-v3": `Skill match is the share of a job's key skills that we found in your profile, weighted by how essential each skill is to the job and by how few of our ${CAREER_OCCUPATIONS.length} careers need it, so everyday skills such as communication count for less (skills shown only in part count 60%, closely related ones half). We then order the list: routes our guides suggest for your line of work and jobs you asked for move up; jobs close to your own, jobs paying over a fifth less than yours, jobs where you do not yet show the most essential skill, routes meant for other professions and jobs that clash with what you told us move down. A job you name in what you are looking for stays on the list even when your skills match it less well, so you can see the gap. The same profile always gets the same result.`,
 };
 
 export const METHOD_SUMMARY = METHOD_SUMMARIES[SCORING_METHOD];
@@ -33,6 +36,12 @@ const STRENGTH_WEIGHT = { strong: 1, some: 0.6 } as const;
 const RELATED_CREDIT = 0.5;
 /** Jobs below this skill match are not shown at all. */
 const MIN_SCORE = 20;
+/**
+ * A job the person named in what they are looking for ("I want to move into
+ * automation") is kept from this lower match, and the best one always makes
+ * the list, so someone planning a move can see what it would take.
+ */
+const ASKED_MIN_SCORE = 10;
 /** Ranking multipliers for stated preferences that the occupation data can check. */
 const DEGREE_PENALTY = 0.7;
 const PAY_PENALTY = 0.8;
@@ -70,7 +79,7 @@ const OTHER_GROUP_PENALTY = 0.8;
 
 /**
  * How distinctive a skill is across the curated careers: ln(careers / careers
- * that need it). Attention to detail (needed by 55 of 141) weighs about 0.9;
+ * that need it). Attention to detail (needed by 60 of 159) weighs about 1;
  * a skill needed by one career weighs about 5.
  */
 const RARITY: ReadonlyMap<string, number> = (() => {
@@ -310,7 +319,8 @@ export function scoreProfile({ skills, preferences, current, limit = 8 }: ScoreO
   for (const occupation of CAREER_OCCUPATIONS) {
     if (isOwnJob(occupation, current)) continue;
     const base = scoreOccupation(occupation, skills);
-    if (base.score < MIN_SCORE || base.matched.length === 0) continue;
+    const wanted = matchesAsked(occupation, asked);
+    if (base.score < (wanted ? ASKED_MIN_SCORE : MIN_SCORE) || base.matched.length === 0) continue;
 
     const flags: string[] = [];
     let rank = base.score;
@@ -327,7 +337,7 @@ export function scoreProfile({ skills, preferences, current, limit = 8 }: ScoreO
       rank *= OTHER_GROUP_PENALTY;
       flags.push("other");
     }
-    if (matchesAsked(occupation, asked)) {
+    if (wanted) {
       rank *= ASKED_BOOST;
       flags.push("asked");
     }
@@ -380,6 +390,15 @@ export function scoreProfile({ skills, preferences, current, limit = 8 }: ScoreO
     void _pay;
     out.push(entry);
     if (out.length >= limit) break;
+  }
+  // The best job the person asked for by name always makes the list, in the last place if need be.
+  const bestAsked = scored.find((s) => s.flags.includes("asked"));
+  if (bestAsked && !out.some((e) => e.flags.includes("asked"))) {
+    const { rank: _rank, pay: _pay, ...entry } = bestAsked;
+    void _rank;
+    void _pay;
+    if (out.length >= limit) out.pop();
+    out.push(entry);
   }
   return out;
 }

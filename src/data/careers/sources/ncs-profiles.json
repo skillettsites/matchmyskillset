@@ -10,9 +10,67 @@
   "note": "The service is renamed 'Get careers information and advice' on 1 October 2026. URLs are recorded as they resolved when retrieved; re-run this script after the change to confirm or update them. NCS salary bands are deliberately not stored."
  },
  "profiles": {
+  "3d-printing-technician": {
+   "ok": true,
+   "retrievedAt": "2026-09-29T17:56:14.214Z",
+   "slug": "3d-printing-technician",
+   "url": "https://nationalcareers.service.gov.uk/job-profiles/3d-printing-technician",
+   "title": "3D printing technician",
+   "alternativeTitles": [],
+   "routes": [
+    {
+     "text": "a university course",
+     "type": "university"
+    },
+    {
+     "text": "a college course",
+     "type": "college"
+    },
+    {
+     "text": "an apprenticeship",
+     "type": "apprenticeship"
+    },
+    {
+     "text": "working towards this role",
+     "type": "work"
+    }
+   ],
+   "entryRequirements": {
+    "university": [
+     "1 or 2 A levels, or equivalent, for a foundation degree or higher national diploma",
+     "2 to 3 A levels, or equivalent, for a degree"
+    ],
+    "college": [
+     "4 or 5 GCSEs at grades 9 to 4 (A* to C), or equivalent, including English, maths and computing",
+     "4 or 5 GCSEs at grades 9 to 4 (A* to C), or equivalent, including English and maths for a T Level"
+    ],
+    "apprenticeship": [
+     "some GCSEs, usually including English and maths, or equivalent, for an intermediate apprenticeship",
+     "5 GCSEs at grades 9 to 4 (A* to C), or equivalent, including English and maths, for an advanced apprenticeship"
+    ]
+   },
+   "apprenticeshipsNamed": [
+    "Lean Manufacturing Operative Level 2 Intermediate Apprenticeship",
+    "Digital Engineering Technician Level 3 Advanced Apprenticeship",
+    "Engineering Technician Level 3 Advanced Apprenticeship"
+   ],
+   "hasSections": {
+    "university": true,
+    "college": true,
+    "apprenticeship": true,
+    "work": true,
+    "volunteering": false,
+    "directApplication": false,
+    "otherRoutes": false
+   },
+   "registration": [],
+   "restrictions": [],
+   "howToBecomeText": "How to become You can get into this job through: a university course a college course an apprenticeship working towards this role University You could do a foundation degree, higher national diploma or a degree in a subject like: 3D design product design engineering materials science Entry requirements You'll usually need: 1 or 2 A levels, or equivalent, for a foundation degree or higher national diploma 2 to 3 A levels, or equivalent, for a degree More Information equivalent entry requirements student finance for fees and living costs university courses and entry requirements",
+   "moreInformationText": "More Information Career tips You could learn more about the basics of 3D printing . This might help you decide if you'd enjoy a career as a 3D printing technician. Further information You can find out more about 3D printing and design engineering from The Welding Institute."
+  },
   "accounting-technician": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:09:32.378Z",
+   "retrievedAt": "2026-09-29T17:56:14.961Z",
    "slug": "accounting-technician",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/accounting-technician",
    "title": "Accounting technician",
@@ -67,7 +125,7 @@
   },
   "advertising-copywriter": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:09:32.855Z",
+   "retrievedAt": "2026-09-29T17:56:15.507Z",
    "slug": "advertising-copywriter",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/advertising-copywriter",
    "title": "Advertising copywriter",
@@ -126,7 +184,7 @@
   },
   "air-traffic-controller": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:09:33.502Z",
+   "retrievedAt": "2026-09-29T17:56:15.918Z",
    "slug": "air-traffic-controller",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/air-traffic-controller",
    "title": "Air traffic controller",
@@ -176,7 +234,7 @@
   },
   "bodyguard": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:09:34.340Z",
+   "retrievedAt": "2026-09-29T17:56:16.443Z",
    "slug": "bodyguard",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/bodyguard",
    "title": "Bodyguard",
@@ -215,7 +273,7 @@
   },
   "bookkeeper": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:09:34.886Z",
+   "retrievedAt": "2026-09-29T17:56:17.113Z",
    "slug": "bookkeeper",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/bookkeeper",
    "title": "Bookkeeper",
@@ -269,7 +327,7 @@
   },
   "border-force-officer": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:09:35.269Z",
+   "retrievedAt": "2026-09-29T17:56:17.701Z",
    "slug": "border-force-officer",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/border-force-officer",
    "title": "Border Force officer",
@@ -327,7 +385,7 @@
   },
   "bricklayer": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:09:35.672Z",
+   "retrievedAt": "2026-09-29T17:56:18.170Z",
    "slug": "bricklayer",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/bricklayer",
    "title": "Bricklayer",
@@ -383,7 +441,7 @@
   },
   "bus-or-coach-driver": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:09:36.180Z",
+   "retrievedAt": "2026-09-29T17:56:18.545Z",
    "slug": "bus-or-coach-driver",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/bus-or-coach-driver",
    "title": "Bus or coach driver",
@@ -430,7 +488,7 @@
   },
   "business-analyst": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:09:36.792Z",
+   "retrievedAt": "2026-09-29T17:56:18.935Z",
    "slug": "business-analyst",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/business-analyst",
    "title": "Business analyst",
@@ -482,7 +540,7 @@
   },
   "business-development-manager": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:09:37.236Z",
+   "retrievedAt": "2026-09-29T17:56:19.351Z",
    "slug": "business-development-manager",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/business-development-manager",
    "title": "Business development manager",
@@ -548,7 +606,7 @@
   },
   "business-project-manager": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:09:37.678Z",
+   "retrievedAt": "2026-09-29T17:56:20.004Z",
    "slug": "business-project-manager",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/business-project-manager",
    "title": "Business project manager",
@@ -604,7 +662,7 @@
   },
   "cad-technician": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:09:38.100Z",
+   "retrievedAt": "2026-09-29T17:56:20.586Z",
    "slug": "cad-technician",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/cad-technician",
    "title": "CAD technician",
@@ -662,7 +720,7 @@
   },
   "careers-adviser": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:09:38.507Z",
+   "retrievedAt": "2026-09-29T17:56:20.964Z",
    "slug": "careers-adviser",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/careers-adviser",
    "title": "Careers adviser",
@@ -713,7 +771,7 @@
   },
   "carpenter": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:09:39.140Z",
+   "retrievedAt": "2026-09-29T17:56:21.334Z",
    "slug": "carpenter",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/carpenter",
    "title": "Carpenter",
@@ -770,7 +828,7 @@
   },
   "charity-fundraiser": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:09:39.829Z",
+   "retrievedAt": "2026-09-29T17:56:21.734Z",
    "slug": "charity-fundraiser",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/charity-fundraiser",
    "title": "Charity fundraiser",
@@ -831,7 +889,7 @@
   },
   "child-protection-officer": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:09:40.240Z",
+   "retrievedAt": "2026-09-29T17:56:22.129Z",
    "slug": "child-protection-officer",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/child-protection-officer",
    "title": "Child protection officer",
@@ -880,7 +938,7 @@
   },
   "civil-service-executive-officer": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:09:40.663Z",
+   "retrievedAt": "2026-09-29T17:56:22.709Z",
    "slug": "civil-service-executive-officer",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/civil-service-executive-officer",
    "title": "Civil Service executive officer",
@@ -935,9 +993,67 @@
    "howToBecomeText": "How to become You can get into this job through: a university course an apprenticeship working towards this role applying directly a graduate training scheme University You could apply to join the Civil Service after doing a foundation degree, higher national diploma or degree, although a university qualification is not essential. The Summer Internship Programme and the Civil Service Care Leavers Internship Scheme , offer undergraduates an insight into working in the Civil Service. Entry requirements You'll usually need: 1 or 2 A levels, or equivalent, for a foundation degree or higher national diploma 2 to 3 A levels, or equivalent, for a degree More Information equivalent entry requirements student finance for fees and living costs university courses and entry requirements",
    "moreInformationText": "More Information Career tips Movement to Work offers work experience opportunities in the Civil Service for unemployed young people. Further information You can find out more about working in the Civil Service from Civil Service Careers."
   },
+  "cnc-machinist": {
+   "ok": true,
+   "retrievedAt": "2026-09-29T17:56:23.252Z",
+   "slug": "cnc-machinist",
+   "url": "https://nationalcareers.service.gov.uk/job-profiles/cnc-machinist",
+   "title": "CNC machinist",
+   "alternativeTitles": [
+    "CNC operator"
+   ],
+   "routes": [
+    {
+     "text": "a college course",
+     "type": "college"
+    },
+    {
+     "text": "an apprenticeship",
+     "type": "apprenticeship"
+    },
+    {
+     "text": "applying directly",
+     "type": "direct"
+    }
+   ],
+   "entryRequirements": {
+    "university": [],
+    "college": [
+     "4 or 5 GCSEs at grades 9 to 4 (A* to C), or equivalent, including English and maths for a T Level"
+    ],
+    "apprenticeship": [
+     "no specific qualifications or experience to apply for a foundation apprenticeship",
+     "some GCSEs, usually including English and maths, or equivalent, for an intermediate apprenticeship",
+     "5 GCSEs at grades 9 to 4 (A* to C), or equivalent, including English and maths, for an advanced apprenticeship"
+    ]
+   },
+   "apprenticeshipsNamed": [
+    "Engineering and Manufacturing Level 2 Foundation Apprenticeship",
+    "Engineering Operative Level 2 Intermediate Apprenticeship",
+    "Machining Technician Level 3 Advanced Apprenticeship",
+    "Engineering and Manufacturing Support Technician Level 3 Advanced Apprenticeship",
+    "have an education, health and care (EHC) plan Level 3 Apprenticeship",
+    "are in care or have been in care Level 3 Apprenticeship",
+    "are in prison or have been in prison Level 3 Apprenticeship",
+    "If you're working in the furniture manufacturing industry, you could do a Furniture CNC Technician Level 3 Advanced Apprenticeship"
+   ],
+   "hasSections": {
+    "university": false,
+    "college": true,
+    "apprenticeship": true,
+    "work": false,
+    "volunteering": false,
+    "directApplication": true,
+    "otherRoutes": false
+   },
+   "registration": [],
+   "restrictions": [],
+   "howToBecomeText": "How to become You can get into this job through: a college course an apprenticeship applying directly College You could do a college course to learn some of the practical engineering skills you'll need in this job. Courses include: advanced manufacturing and engineering performing engineering operations mechanical engineering T Level in Engineering, Manufacturing, Processing and Control Entry requirements Entry requirements for these courses vary. 4 or 5 GCSEs at grades 9 to 4 (A* to C), or equivalent, including English and maths for a T Level More Information equivalent entry requirements funding advice guide to T Levels search for courses",
+   "moreInformationText": ""
+  },
   "cognitive-behavioural-therapist": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:09:41.041Z",
+   "retrievedAt": "2026-09-29T17:56:23.701Z",
    "slug": "cognitive-behavioural-therapist",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/cognitive-behavioural-therapist",
    "title": "Cognitive behavioural therapist",
@@ -973,7 +1089,7 @@
   },
   "construction-manager": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:09:41.435Z",
+   "retrievedAt": "2026-09-29T17:56:24.107Z",
    "slug": "construction-manager",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/construction-manager",
    "title": "Construction manager",
@@ -1032,7 +1148,7 @@
   },
   "construction-site-supervisor": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:09:41.831Z",
+   "retrievedAt": "2026-09-29T17:56:24.516Z",
    "slug": "construction-site-supervisor",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/construction-site-supervisor",
    "title": "Construction site supervisor",
@@ -1099,7 +1215,7 @@
   },
   "counsellor": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:09:42.664Z",
+   "retrievedAt": "2026-09-29T17:56:24.934Z",
    "slug": "counsellor",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/counsellor",
    "title": "Counsellor",
@@ -1147,7 +1263,7 @@
   },
   "crane-driver": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:09:43.682Z",
+   "retrievedAt": "2026-09-29T17:56:25.333Z",
    "slug": "crane-driver",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/crane-driver",
    "title": "Crane driver",
@@ -1201,7 +1317,7 @@
   },
   "criminal-intelligence-analyst": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:09:44.188Z",
+   "retrievedAt": "2026-09-29T17:56:26.037Z",
    "slug": "criminal-intelligence-analyst",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/criminal-intelligence-analyst",
    "title": "Intelligence analyst",
@@ -1267,7 +1383,7 @@
   },
   "customer-services-manager": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:09:44.604Z",
+   "retrievedAt": "2026-09-29T17:56:26.679Z",
    "slug": "customer-services-manager",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/customer-services-manager",
    "title": "Customer services manager",
@@ -1328,7 +1444,7 @@
   },
   "data-analyst-statistician": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:09:45.146Z",
+   "retrievedAt": "2026-09-29T17:56:27.071Z",
    "slug": "data-analyst-statistician",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/data-analyst-statistician",
    "title": "Data analyst-statistician",
@@ -1393,7 +1509,7 @@
   },
   "data-protection-officer": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:09:45.862Z",
+   "retrievedAt": "2026-09-29T17:56:27.439Z",
    "slug": "data-protection-officer",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/data-protection-officer",
    "title": "Data protection officer",
@@ -1451,7 +1567,7 @@
   },
   "data-scientist": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:09:46.225Z",
+   "retrievedAt": "2026-09-29T17:56:27.800Z",
    "slug": "data-scientist",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/data-scientist",
    "title": "Data scientist",
@@ -1509,7 +1625,7 @@
   },
   "driving-instructor": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:09:46.661Z",
+   "retrievedAt": "2026-09-29T17:56:28.254Z",
    "slug": "driving-instructor",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/driving-instructor",
    "title": "Driving instructor",
@@ -1545,7 +1661,7 @@
   },
   "e-learning-developer": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:09:47.124Z",
+   "retrievedAt": "2026-09-29T17:56:28.912Z",
    "slug": "e-learning-developer",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/e-learning-developer",
    "title": "E-learning developer",
@@ -1602,7 +1718,7 @@
   },
   "efl-teacher": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:09:47.519Z",
+   "retrievedAt": "2026-09-29T17:56:29.429Z",
    "slug": "efl-teacher",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/efl-teacher",
    "title": "English as a foreign language (EFL) teacher",
@@ -1655,9 +1771,67 @@
    "howToBecomeText": "How to become You can get into this job through: a university course a college course applying directly professional development training University Some employers may expect you to have a degree or postgraduate course that gives you qualified teacher status (QTS) . Useful subjects include: English linguistics modern foreign languages education studies Entry requirements You'll usually need: 2 to 3 A levels, or equivalent, for a degree a degree in any subject for a postgraduate course More Information equivalent entry requirements student finance for fees and living costs university courses and entry requirements",
    "moreInformationText": "More Information Career tips Teaching roles can be a few hours a week to full time, depending on where you work. There are likely to be more jobs available during holiday periods, as many course providers cater for overseas students visiting the UK at these times. Rates and pay and hours vary widely when teaching abroad, so make sure to check job offers carefully. Further information You can get more details about working as an EFL teacher from Trinity College London and Cambridge English ."
   },
+  "electrical-engineer": {
+   "ok": true,
+   "retrievedAt": "2026-09-29T17:56:29.921Z",
+   "slug": "electrical-engineer",
+   "url": "https://nationalcareers.service.gov.uk/job-profiles/electrical-engineer",
+   "title": "Electrical engineer",
+   "alternativeTitles": [],
+   "routes": [
+    {
+     "text": "a university course",
+     "type": "university"
+    },
+    {
+     "text": "a college course",
+     "type": "college"
+    },
+    {
+     "text": "an apprenticeship",
+     "type": "apprenticeship"
+    },
+    {
+     "text": "working towards this role",
+     "type": "work"
+    },
+    {
+     "text": "applying directly",
+     "type": "direct"
+    }
+   ],
+   "entryRequirements": {
+    "university": [
+     "2 or 3 A levels, or equivalent, including maths and a science for a degree"
+    ],
+    "college": [
+     "1 or 2 A levels, a level 3 diploma or relevant experience for a level 4 or level 5 course"
+    ],
+    "apprenticeship": [
+     "4 or 5 GCSEs at grades 9 to 4 (A* to C) and A levels, or equivalent, for a degree apprenticeship"
+    ]
+   },
+   "apprenticeshipsNamed": [
+    "Electrical or Electronic Technical Support Engineer Level 6 Degree Apprenticeship",
+    "Electro-Mechanical Engineer Level 6 Apprenticeship, which can lead to professional certification"
+   ],
+   "hasSections": {
+    "university": true,
+    "college": true,
+    "apprenticeship": true,
+    "work": true,
+    "volunteering": false,
+    "directApplication": true,
+    "otherRoutes": false
+   },
+   "registration": [],
+   "restrictions": [],
+   "howToBecomeText": "How to become You can get into this job through: a university course a college course an apprenticeship working towards this role applying directly University You can do a foundation degree or degree in electrical or electronic engineering. You may also be able to get into this career with a degree in: electromechanical engineering building services engineering applied physics aeronautical engineering mechatronics Look out for courses that offer work experience opportunities during your studies, such as: internships sandwich course placements Easter and summer vacation schemes These can give you an advantage when applying for jobs or graduate training schemes . Your university careers service can help you to find opportunities. Entry requirements You'll usually need: 2 or 3 A levels, or equivalent, including maths and a science for a degree More Information equivalent entry requirements student finance for fees and living costs university courses and entry requirements",
+   "moreInformationText": "More Information Career tips Many courses and apprenticeships aimed at specific industries, such as aerospace, energy and defence, include electrical engineering as part of their training. It's worth looking into these as another route to becoming a qualified electrical engineer. Further information You can find more details about careers in the electrical industry from The Institution of Engineering and Technology and Electrical Careers ."
+  },
   "electrician": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:09:47.894Z",
+   "retrievedAt": "2026-09-29T17:56:30.404Z",
    "slug": "electrician",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/electrician",
    "title": "Electrician",
@@ -1711,9 +1885,121 @@
    "howToBecomeText": "How to become You can get into this job through: a college course an apprenticeship a work accreditation scheme applying directly College You could start a college course to get some of the technical knowledge and skills that may help you get onto an apprenticeship, or find a trainee position with a company. Courses include: electrical installation electronic and electrical engineering T Level in Building Services Engineering for Construction Even with a qualification, you will still need practical experience in the workplace, along with further on-the-job training, to become fully qualified. Entry requirements Entry requirements for these courses vary. 4 or 5 GCSEs at grades 9 to 4 (A* to C), or equivalent, including English and maths for a T Level More Information equivalent entry requirements funding advice guide to T Levels search for courses",
    "moreInformationText": "More Information Career tips It's very important to check what training courses are offering before signing up. Electrical Careers give advice on how to choose the right training and qualifications to become a qualified electrician. Further information You can find out more about how to become an electrician from: Electrical Careers Go Construct You can also get more information about working in solar energy from Solar Careers UK ."
   },
+  "electronics-engineer": {
+   "ok": true,
+   "retrievedAt": "2026-09-29T17:56:30.871Z",
+   "slug": "electronics-engineer",
+   "url": "https://nationalcareers.service.gov.uk/job-profiles/electronics-engineer",
+   "title": "Electronics engineer",
+   "alternativeTitles": [],
+   "routes": [
+    {
+     "text": "a university course",
+     "type": "university"
+    },
+    {
+     "text": "a college course",
+     "type": "college"
+    },
+    {
+     "text": "an apprenticeship",
+     "type": "apprenticeship"
+    },
+    {
+     "text": "working towards this role",
+     "type": "work"
+    }
+   ],
+   "entryRequirements": {
+    "university": [
+     "1 or 2 A levels, or equivalent, for a foundation degree or higher national diploma",
+     "2 to 3 A levels, or equivalent, for a degree"
+    ],
+    "college": [],
+    "apprenticeship": [
+     "4 or 5 GCSEs at grades 9 to 4 (A* to C) and A levels, or equivalent, for a degree apprenticeship"
+    ]
+   },
+   "apprenticeshipsNamed": [
+    "Electrical or Electronic Technical Support Engineer Level 6 Apprenticeship",
+    "Embedded Electronic Systems Design and Development Engineer Level 6 Apprenticeship",
+    "Apprenticeship You can apply to do a Level 6 Degree Apprenticeship"
+   ],
+   "hasSections": {
+    "university": true,
+    "college": true,
+    "apprenticeship": true,
+    "work": true,
+    "volunteering": false,
+    "directApplication": false,
+    "otherRoutes": false
+   },
+   "registration": [],
+   "restrictions": [],
+   "howToBecomeText": "How to become You can get into this job through: a university course a college course an apprenticeship working towards this role University You could do a foundation degree, higher national diploma or degree in electronic engineering. Employers may also accept related subjects combined with electronics, for example: electronic and electrical engineering aerospace engineering physics and applied physics computer science nanotechnology maths Entry requirements You'll usually need: 1 or 2 A levels, or equivalent, for a foundation degree or higher national diploma 2 to 3 A levels, or equivalent, for a degree More Information equivalent entry requirements student finance for fees and living costs university courses and entry requirements",
+   "moreInformationText": "More Information Career tips Electronics are a fundamental part of everyday day life and there are opportunities to work in many different areas. Examples include: audio equipment telecommunications aerospace vehicle manufacturing medical equipment and assistive technology robotics Further information You can find more details about careers and training from The Institution of Engineering and Technology and Electrical Careers ."
+  },
+  "electronics-engineering-technician": {
+   "ok": true,
+   "retrievedAt": "2026-09-29T17:56:31.580Z",
+   "slug": "electronics-engineering-technician",
+   "url": "https://nationalcareers.service.gov.uk/job-profiles/electronics-engineering-technician",
+   "title": "Electronics engineering technician",
+   "alternativeTitles": [
+    "Electronics maintenance technician",
+    "electronics technician"
+   ],
+   "routes": [
+    {
+     "text": "a university course",
+     "type": "university"
+    },
+    {
+     "text": "a college course",
+     "type": "college"
+    },
+    {
+     "text": "an apprenticeship",
+     "type": "apprenticeship"
+    }
+   ],
+   "entryRequirements": {
+    "university": [
+     "1 or 2 A levels, or equivalent, for a foundation degree or higher national diploma"
+    ],
+    "college": [
+     "4 or 5 GCSEs at grades 9 to 4 (A* to C), or equivalent, including English and maths for a T Level"
+    ],
+    "apprenticeship": [
+     "no specific qualifications or experience to apply for a foundation apprenticeship",
+     "5 GCSEs at grades 9 to 4 (A* to C), or equivalent, including English and maths, for an advanced apprenticeship"
+    ]
+   },
+   "apprenticeshipsNamed": [
+    "Engineering and Manufacturing Level 2 Foundation Apprenticeship",
+    "Engineering Technician Level 3 Advanced Apprenticeship",
+    "have an education, health and care (EHC) plan Level 3 Apprenticeship",
+    "are in care or have been in care Level 3 Apprenticeship",
+    "are in prison or have been in prison Level 3 Apprenticeship",
+    "You might do a Mechatronics Maintenance Technician Level 3 Advanced Apprenticeship"
+   ],
+   "hasSections": {
+    "university": true,
+    "college": true,
+    "apprenticeship": true,
+    "work": false,
+    "volunteering": false,
+    "directApplication": false,
+    "otherRoutes": false
+   },
+   "registration": [],
+   "restrictions": [],
+   "howToBecomeText": "How to become You can get into this job through: a university course a college course an apprenticeship University You can do a foundation degree or higher national diploma in electrical and electronic engineering. Entry requirements You'll usually need: 1 or 2 A levels, or equivalent, for a foundation degree or higher national diploma More Information equivalent entry requirements student finance for fees and living costs university courses and entry requirements",
+   "moreInformationText": "More Information Career tips You'll find career opportunities in many industries, including: power generation advanced manufacturing robotics medical technology aerospace defence Further information You can find out more about training and careers in engineering from Tomorrow's Engineers and The Institution of Engineering and Technology ."
+  },
   "engineering-maintenance-technician": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:09:48.562Z",
+   "retrievedAt": "2026-09-29T17:56:32.108Z",
    "slug": "engineering-maintenance-technician",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/engineering-maintenance-technician",
    "title": "Engineering maintenance technician",
@@ -1771,7 +2057,7 @@
   },
   "estate-agent": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:09:49.122Z",
+   "retrievedAt": "2026-09-29T17:56:32.709Z",
    "slug": "estate-agent",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/estate-agent",
    "title": "Estate agent",
@@ -1832,7 +2118,7 @@
   },
   "events-manager": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:09:49.511Z",
+   "retrievedAt": "2026-09-29T17:56:33.146Z",
    "slug": "events-manager",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/events-manager",
    "title": "Events manager",
@@ -1898,7 +2184,7 @@
   },
   "facilities-manager": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:09:49.925Z",
+   "retrievedAt": "2026-09-29T17:56:33.550Z",
    "slug": "facilities-manager",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/facilities-manager",
    "title": "Facilities manager",
@@ -1957,7 +2243,7 @@
   },
   "family-support-worker": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:09:50.296Z",
+   "retrievedAt": "2026-09-29T17:56:33.954Z",
    "slug": "family-support-worker",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/family-support-worker",
    "title": "Family support worker",
@@ -2015,7 +2301,7 @@
   },
   "financial-adviser": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:09:50.700Z",
+   "retrievedAt": "2026-09-29T17:56:34.401Z",
    "slug": "financial-adviser",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/financial-adviser",
    "title": "Financial adviser",
@@ -2071,7 +2357,7 @@
   },
   "firefighter": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:09:51.337Z",
+   "retrievedAt": "2026-09-29T17:56:35.042Z",
    "slug": "firefighter",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/firefighter",
    "title": "Firefighter",
@@ -2126,7 +2412,7 @@
   },
   "further-education-lecturer": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:09:52.032Z",
+   "retrievedAt": "2026-09-29T17:56:35.927Z",
    "slug": "further-education-lecturer",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/further-education-lecturer",
    "title": "Further education teacher",
@@ -2189,7 +2475,7 @@
   },
   "gp-practice-manager": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:09:52.450Z",
+   "retrievedAt": "2026-09-29T17:56:36.444Z",
    "slug": "gp-practice-manager",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/gp-practice-manager",
    "title": "GP practice manager",
@@ -2235,7 +2521,7 @@
   },
   "health-and-safety-adviser": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:09:52.895Z",
+   "retrievedAt": "2026-09-29T17:56:36.835Z",
    "slug": "health-and-safety-adviser",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/health-and-safety-adviser",
    "title": "Health and safety adviser",
@@ -2288,7 +2574,7 @@
   },
   "health-service-manager": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:09:53.333Z",
+   "retrievedAt": "2026-09-29T17:56:37.246Z",
    "slug": "health-service-manager",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/health-service-manager",
    "title": "Health service manager",
@@ -2342,7 +2628,7 @@
   },
   "healthcare-assistant": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:09:53.759Z",
+   "retrievedAt": "2026-09-29T17:56:37.969Z",
    "slug": "healthcare-assistant",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/healthcare-assistant",
    "title": "Healthcare assistant",
@@ -2398,7 +2684,7 @@
   },
   "higher-education-lecturer": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:09:54.380Z",
+   "retrievedAt": "2026-09-29T17:56:38.703Z",
    "slug": "higher-education-lecturer",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/higher-education-lecturer",
    "title": "Higher education lecturer",
@@ -2443,7 +2729,7 @@
   },
   "housing-officer": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:09:55.119Z",
+   "retrievedAt": "2026-09-29T17:56:39.145Z",
    "slug": "housing-officer",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/housing-officer",
    "title": "Housing officer",
@@ -2511,7 +2797,7 @@
   },
   "human-resources-officer": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:09:55.517Z",
+   "retrievedAt": "2026-09-29T17:56:39.569Z",
    "slug": "human-resources-officer",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/human-resources-officer",
    "title": "Human resources officer",
@@ -2571,7 +2857,7 @@
   },
   "it-project-manager": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:09:55.945Z",
+   "retrievedAt": "2026-09-29T17:56:39.953Z",
    "slug": "it-project-manager",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/it-project-manager",
    "title": "IT project manager",
@@ -2630,7 +2916,7 @@
   },
   "it-security-co-ordinator": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:09:56.343Z",
+   "retrievedAt": "2026-09-29T17:56:40.330Z",
    "slug": "it-security-co-ordinator",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/it-security-co-ordinator",
    "title": "IT security co-ordinator",
@@ -2701,7 +2987,7 @@
   },
   "it-support-technician": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:09:56.746Z",
+   "retrievedAt": "2026-09-29T17:56:40.856Z",
    "slug": "it-support-technician",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/it-support-technician",
    "title": "IT support technician",
@@ -2767,7 +3053,7 @@
   },
   "large-goods-vehicle-driver": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:09:57.405Z",
+   "retrievedAt": "2026-09-29T17:56:41.524Z",
    "slug": "large-goods-vehicle-driver",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/large-goods-vehicle-driver",
    "title": "HGV driver",
@@ -2820,7 +3106,7 @@
   },
   "legal-executive": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:09:58.048Z",
+   "retrievedAt": "2026-09-29T17:56:41.932Z",
    "slug": "legal-executive",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/legal-executive",
    "title": "Legal executive",
@@ -2878,7 +3164,7 @@
   },
   "local-government-officer": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:09:58.457Z",
+   "retrievedAt": "2026-09-29T17:56:42.329Z",
    "slug": "local-government-officer",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/local-government-officer",
    "title": "Local government officer",
@@ -2942,7 +3228,7 @@
   },
   "maintenance-fitter": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:09:58.875Z",
+   "retrievedAt": "2026-09-29T17:56:42.702Z",
    "slug": "maintenance-fitter",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/maintenance-fitter",
    "title": "Maintenance fitter",
@@ -3003,7 +3289,7 @@
   },
   "management-accountant": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:09:59.382Z",
+   "retrievedAt": "2026-09-29T17:56:43.114Z",
    "slug": "management-accountant",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/management-accountant",
    "title": "Management accountant",
@@ -3054,7 +3340,7 @@
   },
   "management-consultant": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:09:59.786Z",
+   "retrievedAt": "2026-09-29T17:56:43.803Z",
    "slug": "management-consultant",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/management-consultant",
    "title": "Management consultant",
@@ -3105,9 +3391,65 @@
    "howToBecomeText": "How to become You can get into this job through: a university course an apprenticeship applying directly a graduate training scheme University You could do a degree or postgraduate qualification in: business studies finance maths science management A postgraduate qualification, like a master's in business administration (MBA), may also be helpful. Entry requirements You'll usually need: 2 to 3 A levels, or equivalent, for a degree a degree in any subject for a postgraduate course More Information equivalent entry requirements student finance for fees and living costs university courses and entry requirements",
    "moreInformationText": "More Information Career tips Foreign language skills could be useful, as many firms work with international clients. Professional and industry bodies You can join the Institute of Consulting for career support and professional development. Further information You can find out more about careers in management consultancy from the Management Consultancies Association and the Chartered Management Institute ."
   },
+  "manufacturing-systems-engineer": {
+   "ok": true,
+   "retrievedAt": "2026-09-29T17:56:44.660Z",
+   "slug": "manufacturing-systems-engineer",
+   "url": "https://nationalcareers.service.gov.uk/job-profiles/manufacturing-systems-engineer",
+   "title": "Manufacturing systems engineer",
+   "alternativeTitles": [],
+   "routes": [
+    {
+     "text": "a university course",
+     "type": "university"
+    },
+    {
+     "text": "a college course",
+     "type": "college"
+    },
+    {
+     "text": "an apprenticeship",
+     "type": "apprenticeship"
+    }
+   ],
+   "entryRequirements": {
+    "university": [
+     "1 or 2 A levels, or equivalent, for a foundation degree or higher national diploma",
+     "2 to 3 A levels, or equivalent, for a degree",
+     "a degree in a relevant subject for postgraduate study"
+    ],
+    "college": [
+     "4 or 5 GCSEs at grades 9 to 4 (A* to C), or equivalent, including English and maths for a T Level"
+    ],
+    "apprenticeship": [
+     "4 or 5 GCSEs at grades 9 to 4 (A* to C) and A levels, or equivalent, for a higher or degree apprenticeship"
+    ]
+   },
+   "apprenticeshipsNamed": [
+    "Manufacturing Engineer Level 5 Apprenticeship",
+    "Robotics Engineer Level 5 Apprenticeship",
+    "Space Systems Engineer Level 5 Apprenticeship",
+    "Science Industry Process and Plant Engineer Level 5 Apprenticeship",
+    "Apprenticeship There are a lot of engineering apprenticeships available and the one you take will depend on your area of interest, for instance Food and Drink Engineer Level 5 Higher Apprenticeship",
+    "There are also Level 6 Degree Apprenticeship"
+   ],
+   "hasSections": {
+    "university": true,
+    "college": true,
+    "apprenticeship": true,
+    "work": false,
+    "volunteering": false,
+    "directApplication": false,
+    "otherRoutes": false
+   },
+   "registration": [],
+   "restrictions": [],
+   "howToBecomeText": "How to become You can get into this job through: a university course a college course an apprenticeship University You could do a foundation degree, higher national diploma or degree in a subject like: manufacturing systems engineering electrical or electronic engineering mechanical engineering production or manufacturing engineering If you've got another engineering qualification, you could take a postgraduate master's course in manufacturing systems engineering. Entry requirements You'll usually need: 1 or 2 A levels, or equivalent, for a foundation degree or higher national diploma 2 to 3 A levels, or equivalent, for a degree a degree in a relevant subject for postgraduate study More Information equivalent entry requirements student finance for fees and living costs university courses and entry requirements",
+   "moreInformationText": "More Information Further information You can find more advice about careers in manufacturing systems engineering from: the Institution of Mechanical Engineers Tomorrow's Engineers The Institution of Engineering and Technology Neon"
+  },
   "marketing-executive": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:00.422Z",
+   "retrievedAt": "2026-09-29T17:56:45.542Z",
    "slug": "marketing-executive",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/marketing-executive",
    "title": "Marketing executive",
@@ -3176,7 +3518,7 @@
   },
   "marketing-manager": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:01.081Z",
+   "retrievedAt": "2026-09-29T17:56:45.951Z",
    "slug": "marketing-manager",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/marketing-manager",
    "title": "Marketing manager",
@@ -3214,9 +3556,63 @@
    "howToBecomeText": "How to become You could get into this job through: a university course an apprenticeship working towards this role applying directly University You can become a marketing manager as graduate of any subject. Some higher national diploma or degree subjects might be particularly relevant like: marketing business management digital marketing advertising psychology Some companies might offer graduate marketing management schemes. You might be able to fast-track through professional marketing qualifications if your degree is accredited. You can find out more about the Chartered Institute of Marketing (CIM) accredited degree . Entry requirements You'll usually need: 1 or 2 A levels, or equivalent, for a higher national diploma 2 to 3 A levels, or equivalent, for a degree More Information equivalent entry requirements student finance for fees and living costs university courses and entry requirements",
    "moreInformationText": "More Information Career tips The Data and Marketing Association runs a Talent Marketing Challenge , which offers opportunities to get some experience of being involved in a marketing campaign. Professional and industry bodies You can join The Chartered Institute of Marketing for professional development and training opportunities. Further information Learn more about how to get into marketing from The Chartered Institute of Marketing."
   },
+  "mechanical-engineer": {
+   "ok": true,
+   "retrievedAt": "2026-09-29T17:56:46.371Z",
+   "slug": "mechanical-engineer",
+   "url": "https://nationalcareers.service.gov.uk/job-profiles/mechanical-engineer",
+   "title": "Mechanical engineer",
+   "alternativeTitles": [],
+   "routes": [
+    {
+     "text": "a university course",
+     "type": "university"
+    },
+    {
+     "text": "a college course",
+     "type": "college"
+    },
+    {
+     "text": "an apprenticeship",
+     "type": "apprenticeship"
+    },
+    {
+     "text": "working towards this role",
+     "type": "work"
+    }
+   ],
+   "entryRequirements": {
+    "university": [
+     "2 or 3 A levels, or equivalent, including maths and physics"
+    ],
+    "college": [
+     "4 or 5 GCSEs at grades 9 to 4 (A* to C), or equivalent, including English and maths for a T Level"
+    ],
+    "apprenticeship": [
+     "4 or 5 GCSEs at grades 9 to 4 (A* to C) and A levels, or equivalent, for a degree apprenticeship"
+    ]
+   },
+   "apprenticeshipsNamed": [
+    "Manufacturing Engineer Level 6 Degree Apprenticeship",
+    "Electro-Mechanical Engineer Level 6 Apprenticeship - leading to a professional qualification"
+   ],
+   "hasSections": {
+    "university": true,
+    "college": true,
+    "apprenticeship": true,
+    "work": true,
+    "volunteering": false,
+    "directApplication": false,
+    "otherRoutes": false
+   },
+   "registration": [],
+   "restrictions": [],
+   "howToBecomeText": "How to become You can get into this job through: a university course a college course an apprenticeship working towards this role University You could do a higher national diploma or degree in: mechanical engineering electromechanical engineering mechatronics engineering manufacturing The Engineering Council has information on accredited courses . You should try to get some work experience during your course through: internships a placement year in industry a science, technology, engineering and maths (STEM) ambassador scheme This will help you to make contacts and pick up work skills that will be useful when you start applying for graduate jobs. Your university careers service can help you find suitable opportunities. Entry requirements You'll usually need: 2 or 3 A levels, or equivalent, including maths and physics More Information equivalent entry requirements student finance for fees and living costs university courses and entry requirements",
+   "moreInformationText": "More Information Further information You can find out more about how to become a mechanical engineer from: the Institution of Mechanical Engineers This is Engineering"
+  },
   "money-adviser": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:01.443Z",
+   "retrievedAt": "2026-09-29T17:56:47.043Z",
    "slug": "money-adviser",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/money-adviser",
    "title": "Money adviser",
@@ -3265,7 +3661,7 @@
   },
   "mortgage-adviser": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:01.866Z",
+   "retrievedAt": "2026-09-29T17:56:47.785Z",
    "slug": "mortgage-adviser",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/mortgage-adviser",
    "title": "Mortgage adviser",
@@ -3325,7 +3721,7 @@
   },
   "motor-mechanic": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:02.239Z",
+   "retrievedAt": "2026-09-29T17:56:48.163Z",
    "slug": "motor-mechanic",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/motor-mechanic",
    "title": "Motor mechanic",
@@ -3362,7 +3758,7 @@
   },
   "network-engineer": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:02.682Z",
+   "retrievedAt": "2026-09-29T17:56:48.573Z",
    "slug": "network-engineer",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/network-engineer",
    "title": "Network engineer",
@@ -3425,7 +3821,7 @@
   },
   "nurse": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:03.355Z",
+   "retrievedAt": "2026-09-29T17:56:48.936Z",
    "slug": "nurse",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/nurse",
    "title": "Nurse",
@@ -3483,7 +3879,7 @@
   },
   "nursing-associate": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:03.996Z",
+   "retrievedAt": "2026-09-29T17:56:49.339Z",
    "slug": "nursing-associate",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/nursing-associate",
    "title": "Nursing associate",
@@ -3536,7 +3932,7 @@
   },
   "occupational-health-nurse": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:04.671Z",
+   "retrievedAt": "2026-09-29T17:56:50.063Z",
    "slug": "occupational-health-nurse",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/occupational-health-nurse",
    "title": "Occupational health nurse",
@@ -3570,7 +3966,7 @@
   },
   "occupational-therapist": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:05.079Z",
+   "retrievedAt": "2026-09-29T17:56:50.734Z",
    "slug": "occupational-therapist",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/occupational-therapist",
    "title": "Occupational therapist",
@@ -3622,7 +4018,7 @@
   },
   "office-manager": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:05.486Z",
+   "retrievedAt": "2026-09-29T17:56:51.119Z",
    "slug": "office-manager",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/office-manager",
    "title": "Office manager",
@@ -3676,7 +4072,7 @@
   },
   "ofsted-inspector": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:05.886Z",
+   "retrievedAt": "2026-09-29T17:56:51.514Z",
    "slug": "ofsted-inspector",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/ofsted-inspector",
    "title": "Ofsted inspector",
@@ -3716,7 +4112,7 @@
   },
   "online-tutor": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:06.577Z",
+   "retrievedAt": "2026-09-29T17:56:51.908Z",
    "slug": "online-tutor",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/online-tutor",
    "title": "Online tutor",
@@ -3776,7 +4172,7 @@
   },
   "paralegal": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:07.201Z",
+   "retrievedAt": "2026-09-29T17:56:52.279Z",
    "slug": "paralegal",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/paralegal",
    "title": "Paralegal",
@@ -3834,7 +4230,7 @@
   },
   "paramedic": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:07.620Z",
+   "retrievedAt": "2026-09-29T17:56:52.878Z",
    "slug": "paramedic",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/paramedic",
    "title": "Paramedic",
@@ -3875,7 +4271,7 @@
   },
   "patient-advice-and-liaison-service-officer": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:07.992Z",
+   "retrievedAt": "2026-09-29T17:56:53.483Z",
    "slug": "patient-advice-and-liaison-service-officer",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/patient-advice-and-liaison-service-officer",
    "title": "Patient advice and liaison service officer",
@@ -3935,7 +4331,7 @@
   },
   "plasterer": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:08.427Z",
+   "retrievedAt": "2026-09-29T17:56:53.865Z",
    "slug": "plasterer",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/plasterer",
    "title": "Plasterer",
@@ -3991,7 +4387,7 @@
   },
   "plumber": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:08.820Z",
+   "retrievedAt": "2026-09-29T17:56:54.299Z",
    "slug": "plumber",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/plumber",
    "title": "Plumber",
@@ -4055,7 +4451,7 @@
   },
   "police-community-support-officer": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:09.543Z",
+   "retrievedAt": "2026-09-29T17:56:54.676Z",
    "slug": "police-community-support-officer",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/police-community-support-officer",
    "title": "Police community support officer",
@@ -4103,7 +4499,7 @@
   },
   "police-officer": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:10.249Z",
+   "retrievedAt": "2026-09-29T17:56:55.086Z",
    "slug": "police-officer",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/police-officer",
    "title": "Police officer",
@@ -4172,7 +4568,7 @@
   },
   "prison-officer": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:10.679Z",
+   "retrievedAt": "2026-09-29T17:56:55.716Z",
    "slug": "prison-officer",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/prison-officer",
    "title": "Prison officer",
@@ -4208,7 +4604,7 @@
   },
   "probation-officer": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:11.082Z",
+   "retrievedAt": "2026-09-29T17:56:56.240Z",
    "slug": "probation-officer",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/probation-officer",
    "title": "Probation officer",
@@ -4254,7 +4650,7 @@
   },
   "probation-services-officer": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:11.482Z",
+   "retrievedAt": "2026-09-29T17:56:56.768Z",
    "slug": "probation-services-officer",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/probation-services-officer",
    "title": "Probation services officer",
@@ -4295,9 +4691,65 @@
    "howToBecomeText": "How to become You can get into this job through: a college course working towards this role applying directly College You'll need GCSEs in English and maths to apply for jobs and most colleges offer these if you do not already have them. Taking a course in public services or youth work practice might also give you some understanding of the justice system, though this is not essential. Entry requirements Entry requirements for these courses vary. More Information search for courses funding advice",
    "moreInformationText": "More Information Further information You can find out more about how to become a probation services officer from HM Prison & Probation Service."
   },
+  "production-manager-manufacturing-": {
+   "ok": true,
+   "retrievedAt": "2026-09-29T17:56:57.146Z",
+   "slug": "production-manager-manufacturing-",
+   "url": "https://nationalcareers.service.gov.uk/job-profiles/production-manager-manufacturing-",
+   "title": "Production manager (manufacturing)",
+   "alternativeTitles": [
+    "Operations manager"
+   ],
+   "routes": [
+    {
+     "text": "a university course",
+     "type": "university"
+    },
+    {
+     "text": "an apprenticeship",
+     "type": "apprenticeship"
+    },
+    {
+     "text": "working towards this role",
+     "type": "work"
+    },
+    {
+     "text": "applying directly",
+     "type": "direct"
+    }
+   ],
+   "entryRequirements": {
+    "university": [
+     "1 or 2 A levels, or equivalent, for a foundation degree or higher national diploma",
+     "2 to 3 A levels, or equivalent, for a degree"
+    ],
+    "college": [],
+    "apprenticeship": [
+     "4 or 5 GCSEs at grades 9 to 4 (A* to C) and A levels, or equivalent, for a higher or degree apprenticeship"
+    ]
+   },
+   "apprenticeshipsNamed": [
+    "Process Leader Level 4 Higher Apprenticeship",
+    "Project Controls Professional Level 6 Degree Apprenticeship",
+    "Manufacturing Management Level 6 Degree Apprenticeship"
+   ],
+   "hasSections": {
+    "university": true,
+    "college": false,
+    "apprenticeship": true,
+    "work": true,
+    "volunteering": false,
+    "directApplication": true,
+    "otherRoutes": false
+   },
+   "registration": [],
+   "restrictions": [],
+   "howToBecomeText": "How to become You can get into this job through: a university course an apprenticeship working towards this role applying directly University You could do a university qualification in manufacturing. Some employers may look for a qualification subject related to their particular industry, for example: automotive or aerospace engineering food and drink production pharmaceuticals chemical engineering fashion and textiles management Getting relevant industry experience during your studies is important. A summer internship or year in industry placement can give you an advantage when looking for work after university. If you complete a degree, you may be able to join a manufacturing or production management graduate training scheme. Entry requirements You'll usually need: 1 or 2 A levels, or equivalent, for a foundation degree or higher national diploma 2 to 3 A levels, or equivalent, for a degree More Information equivalent entry requirements student finance for fees and living costs university courses and entry requirements",
+   "moreInformationText": "More Information Career tips A knowledge of production methods and international quality standards , like ISO9000, will be helpful."
+  },
   "psychologist": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:12.526Z",
+   "retrievedAt": "2026-09-29T17:56:57.552Z",
    "slug": "psychologist",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/psychologist",
    "title": "Psychologist",
@@ -4332,7 +4784,7 @@
   },
   "psychotherapist": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:13.702Z",
+   "retrievedAt": "2026-09-29T17:56:57.948Z",
    "slug": "psychotherapist",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/psychotherapist",
    "title": "Psychotherapist",
@@ -4378,7 +4830,7 @@
   },
   "public-relations-officer": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:14.405Z",
+   "retrievedAt": "2026-09-29T17:56:58.387Z",
    "slug": "public-relations-officer",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/public-relations-officer",
    "title": "Public relations officer",
@@ -4437,7 +4889,7 @@
   },
   "purchasing-manager": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:14.841Z",
+   "retrievedAt": "2026-09-29T17:56:59.086Z",
    "slug": "purchasing-manager",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/purchasing-manager",
    "title": "Purchasing manager",
@@ -4494,7 +4946,7 @@
   },
   "qcf-assessor": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:15.657Z",
+   "retrievedAt": "2026-09-29T17:56:59.730Z",
    "slug": "qcf-assessor",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/qcf-assessor",
    "title": "RQF assessor",
@@ -4543,7 +4995,7 @@
   },
   "quantity-surveyor": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:16.303Z",
+   "retrievedAt": "2026-09-29T17:57:00.103Z",
    "slug": "quantity-surveyor",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/quantity-surveyor",
    "title": "Quantity surveyor",
@@ -4599,7 +5051,7 @@
   },
   "rail-track-maintenance-worker": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:16.698Z",
+   "retrievedAt": "2026-09-29T17:57:00.529Z",
    "slug": "rail-track-maintenance-worker",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/rail-track-maintenance-worker",
    "title": "Rail track maintenance worker",
@@ -4653,7 +5105,7 @@
   },
   "railway-signaller": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:17.138Z",
+   "retrievedAt": "2026-09-29T17:57:00.926Z",
    "slug": "railway-signaller",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/railway-signaller",
    "title": "Railway signaller",
@@ -4707,7 +5159,7 @@
   },
   "recruitment-consultant": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:17.564Z",
+   "retrievedAt": "2026-09-29T17:57:01.360Z",
    "slug": "recruitment-consultant",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/recruitment-consultant",
    "title": "Recruitment consultant",
@@ -4762,7 +5214,7 @@
   },
   "refrigeration-and-air-conditioning-installer": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:18.145Z",
+   "retrievedAt": "2026-09-29T17:57:02.023Z",
    "slug": "refrigeration-and-air-conditioning-installer",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/refrigeration-and-air-conditioning-installer",
    "title": "Refrigeration and air-conditioning installer",
@@ -4824,7 +5276,7 @@
   },
   "road-transport-manager": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:18.818Z",
+   "retrievedAt": "2026-09-29T17:57:02.655Z",
    "slug": "road-transport-manager",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/road-transport-manager",
    "title": "Road transport manager",
@@ -4878,9 +5330,68 @@
    "howToBecomeText": "How to become You can get into this job through: a university course an apprenticeship working towards this role applying directly University You could do a foundation degree, higher national diploma or degree in any subject to become a road transport manager. You might have an advantage if you study: logistics supply chain management transport management business management You can also do a postgraduate course. Graduate scheme Once you have finished university, you could apply for a place on a graduate transport management trainee scheme . Entry requirements You'll usually need: 1 or 2 A levels, or equivalent, for a foundation degree or higher national diploma 2 to 3 A levels, or equivalent, for a degree a degree in a relevant subject for postgraduate study More Information equivalent entry requirements student finance for fees and living costs university courses and entry requirements",
    "moreInformationText": "More Information Career tips You'll find road transport manager roles in the private and public sector and in industries such as retail, engineering and passenger transport. You'll find it useful to have: a good knowledge of the UK road network an understanding of transport rules and regulations experience of using transport management software Professional and industry bodies You can join the The Chartered Institute of Logistics and Transport and United Kingdom Warehousing Association(UKWA) for professional recognition and training opportunities. Further information You can find out more about careers in road transport from: Generation Logistics United Kingdom Warehousing Association (UKWA) Transport Planning Society"
   },
+  "robotics-engineer": {
+   "ok": true,
+   "retrievedAt": "2026-09-29T17:57:03.105Z",
+   "slug": "robotics-engineer",
+   "url": "https://nationalcareers.service.gov.uk/job-profiles/robotics-engineer",
+   "title": "Robotics engineer",
+   "alternativeTitles": [
+    "Automation engineer"
+   ],
+   "routes": [
+    {
+     "text": "a university course",
+     "type": "university"
+    },
+    {
+     "text": "a college course",
+     "type": "college"
+    },
+    {
+     "text": "an apprenticeship",
+     "type": "apprenticeship"
+    },
+    {
+     "text": "working towards this role",
+     "type": "work"
+    }
+   ],
+   "entryRequirements": {
+    "university": [
+     "2 or 3 A levels, or equivalent, including maths and physics",
+     "a degree in a relevant subject for postgraduate study"
+    ],
+    "college": [],
+    "apprenticeship": [
+     "4 or 5 GCSEs at grades 9 to 4 (A* to C) and A levels, or equivalent, for a degree apprenticeship"
+    ]
+   },
+   "apprenticeshipsNamed": [
+    "Robotics Engineer Level 6 Apprenticeship",
+    "Control Systems Engineer Level 6 Apprenticeship",
+    "Electro-Mechanical Engineer Level 6 Apprenticeship",
+    "Embedded Electronic Systems Design and Development Engineer Level 6 Apprenticeship",
+    "Manufacturing Engineer Level 6 Apprenticeship",
+    "Apprenticeship You could apply to do a Level 6 Degree Apprenticeship"
+   ],
+   "hasSections": {
+    "university": true,
+    "college": true,
+    "apprenticeship": true,
+    "work": true,
+    "volunteering": false,
+    "directApplication": false,
+    "otherRoutes": false
+   },
+   "registration": [],
+   "restrictions": [],
+   "howToBecomeText": "How to become You can get into this job through: a university course a college course an apprenticeship working towards this role University You could do a degree or postgraduate qualification in: artificial intelligence and robotics mechatronics robotics engineering mechanical or electronics engineering computer science or mathematics If you have a qualification in psychology or cognitive science, you could also work in the development of artificial intelligence. Entry requirements You'll usually need: 2 or 3 A levels, or equivalent, including maths and physics a degree in a relevant subject for postgraduate study More Information equivalent entry requirements student finance for fees and living costs university courses and entry requirements",
+   "moreInformationText": "More Information Career tips You'll find it useful to join robotics engineering groups or take part in robotics design competitions to build up your skills and knowledge. Further information You can discover more about careers in engineering and robotics from: This is Engineering The Institution of Engineering and Technology Neon"
+  },
   "sales-representative": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:19.270Z",
+   "retrievedAt": "2026-09-29T17:57:03.496Z",
    "slug": "sales-representative",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/sales-representative",
    "title": "Sales representative",
@@ -4940,7 +5451,7 @@
   },
   "scaffolder": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:19.703Z",
+   "retrievedAt": "2026-09-29T17:57:03.884Z",
    "slug": "scaffolder",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/scaffolder",
    "title": "Scaffolder",
@@ -4994,7 +5505,7 @@
   },
   "scenes-of-crime-officer": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:20.115Z",
+   "retrievedAt": "2026-09-29T17:57:04.254Z",
    "slug": "scenes-of-crime-officer",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/scenes-of-crime-officer",
    "title": "Scenes of crime officer",
@@ -5043,7 +5554,7 @@
   },
   "school-business-manager": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:20.526Z",
+   "retrievedAt": "2026-09-29T17:57:04.975Z",
    "slug": "school-business-manager",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/school-business-manager",
    "title": "School business manager",
@@ -5099,7 +5610,7 @@
   },
   "secondary-school-teacher": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:21.028Z",
+   "retrievedAt": "2026-09-29T17:57:05.757Z",
    "slug": "secondary-school-teacher",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/secondary-school-teacher",
    "title": "Secondary school teacher",
@@ -5154,7 +5665,7 @@
   },
   "security-manager": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:21.646Z",
+   "retrievedAt": "2026-09-29T17:57:06.241Z",
    "slug": "security-manager",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/security-manager",
    "title": "Security manager",
@@ -5207,7 +5718,7 @@
   },
   "security-officer": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:22.136Z",
+   "retrievedAt": "2026-09-29T17:57:06.655Z",
    "slug": "security-officer",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/security-officer",
    "title": "Security officer",
@@ -5255,7 +5766,7 @@
   },
   "social-media-manager": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:22.579Z",
+   "retrievedAt": "2026-09-29T17:57:07.177Z",
    "slug": "social-media-manager",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/social-media-manager",
    "title": "Social media manager",
@@ -5310,7 +5821,7 @@
   },
   "social-worker": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:22.972Z",
+   "retrievedAt": "2026-09-29T17:57:07.746Z",
    "slug": "social-worker",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/social-worker",
    "title": "Social worker",
@@ -5362,7 +5873,7 @@
   },
   "software-developer": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:23.418Z",
+   "retrievedAt": "2026-09-29T17:57:08.370Z",
    "slug": "software-developer",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/software-developer",
    "title": "Software developer",
@@ -5426,7 +5937,7 @@
   },
   "solicitor": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:23.839Z",
+   "retrievedAt": "2026-09-29T17:57:08.850Z",
    "slug": "solicitor",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/solicitor",
    "title": "Solicitor",
@@ -5482,7 +5993,7 @@
   },
   "supply-chain-manager": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:24.788Z",
+   "retrievedAt": "2026-09-29T17:57:09.260Z",
    "slug": "supply-chain-manager",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/supply-chain-manager",
    "title": "Supply chain manager",
@@ -5535,7 +6046,7 @@
   },
   "tax-adviser": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:25.331Z",
+   "retrievedAt": "2026-09-29T17:57:09.680Z",
    "slug": "tax-adviser",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/tax-adviser",
    "title": "Tax adviser",
@@ -5590,7 +6101,7 @@
   },
   "teaching-assistant": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:25.808Z",
+   "retrievedAt": "2026-09-29T17:57:10.063Z",
    "slug": "teaching-assistant",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/teaching-assistant",
    "title": "Teaching assistant",
@@ -5644,7 +6155,7 @@
   },
   "technical-author": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:26.275Z",
+   "retrievedAt": "2026-09-29T17:57:10.411Z",
    "slug": "technical-author",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/technical-author",
    "title": "Technical author",
@@ -5692,7 +6203,7 @@
   },
   "telecoms-engineer": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:26.737Z",
+   "retrievedAt": "2026-09-29T17:57:10.998Z",
    "slug": "telecoms-engineer",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/telecoms-engineer",
    "title": "Telecoms engineer",
@@ -5757,7 +6268,7 @@
   },
   "test-lead": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:27.438Z",
+   "retrievedAt": "2026-09-29T17:57:11.559Z",
    "slug": "test-lead",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/test-lead",
    "title": "Test lead",
@@ -5814,7 +6325,7 @@
   },
   "town-planner": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:28.180Z",
+   "retrievedAt": "2026-09-29T17:57:11.975Z",
    "slug": "town-planner",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/town-planner",
    "title": "Town planner",
@@ -5866,7 +6377,7 @@
   },
   "trading-standards-officer": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:28.610Z",
+   "retrievedAt": "2026-09-29T17:57:12.386Z",
    "slug": "trading-standards-officer",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/trading-standards-officer",
    "title": "Trading standards officer",
@@ -5923,7 +6434,7 @@
   },
   "train-conductor": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:29.002Z",
+   "retrievedAt": "2026-09-29T17:57:12.762Z",
    "slug": "train-conductor",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/train-conductor",
    "title": "Train conductor",
@@ -5979,7 +6490,7 @@
   },
   "train-driver": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:29.409Z",
+   "retrievedAt": "2026-09-29T17:57:13.132Z",
    "slug": "train-driver",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/train-driver",
    "title": "Train driver",
@@ -6033,7 +6544,7 @@
   },
   "training-officer": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:29.792Z",
+   "retrievedAt": "2026-09-29T17:57:13.956Z",
    "slug": "training-officer",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/training-officer",
    "title": "Training officer",
@@ -6101,7 +6612,7 @@
   },
   "user-researcher": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:30.546Z",
+   "retrievedAt": "2026-09-29T17:57:14.753Z",
    "slug": "user-researcher",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/user-researcher",
    "title": "User researcher",
@@ -6153,7 +6664,7 @@
   },
   "ux-designer": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:31.162Z",
+   "retrievedAt": "2026-09-29T17:57:15.518Z",
    "slug": "ux-designer",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/ux-designer",
    "title": "User experience (UX) designer",
@@ -6211,7 +6722,7 @@
   },
   "victim-care-officer": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:31.539Z",
+   "retrievedAt": "2026-09-29T17:57:15.896Z",
    "slug": "victim-care-officer",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/victim-care-officer",
    "title": "Victim care officer",
@@ -6252,7 +6763,7 @@
   },
   "warehouse-manager": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:31.975Z",
+   "retrievedAt": "2026-09-29T17:57:16.327Z",
    "slug": "warehouse-manager",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/warehouse-manager",
    "title": "Warehouse manager",
@@ -6311,7 +6822,7 @@
   },
   "web-developer": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:32.835Z",
+   "retrievedAt": "2026-09-29T17:57:17.138Z",
    "slug": "web-developer",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/web-developer",
    "title": "Web developer",
@@ -6373,7 +6884,7 @@
   },
   "welder": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:34.304Z",
+   "retrievedAt": "2026-09-29T17:57:17.736Z",
    "slug": "welder",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/welder",
    "title": "Welder",
@@ -6435,7 +6946,7 @@
   },
   "wind-turbine-technician": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:35.366Z",
+   "retrievedAt": "2026-09-29T17:57:18.137Z",
    "slug": "wind-turbine-technician",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/wind-turbine-technician",
    "title": "Wind turbine technician",
@@ -6497,7 +7008,7 @@
   },
   "youth-offending-team-officer": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:35.718Z",
+   "retrievedAt": "2026-09-29T17:57:18.580Z",
    "slug": "youth-offending-team-officer",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/youth-offending-team-officer",
    "title": "Youth offending team officer",
@@ -6552,7 +7063,7 @@
   },
   "youth-worker": {
    "ok": true,
-   "retrievedAt": "2026-09-28T12:10:36.327Z",
+   "retrievedAt": "2026-09-29T17:57:18.953Z",
    "slug": "youth-worker",
    "url": "https://nationalcareers.service.gov.uk/job-profiles/youth-worker",
    "title": "Youth worker",

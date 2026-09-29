@@ -22,3 +22,4 @@ export {
   type SourceItem,
 } from "./HubBlocks";
 export { ArticleJsonLd } from "./ArticleJsonLd";
+export { AudienceCards, ApprenticeshipTable, LiveJobLinks, OtherCareers, PayRangeTable, type AudienceCard } from "./NicheBlocks";

@@ -206,6 +206,14 @@ export default async function MmsJobPage({ params }: { params: Params }) {
           {live && (
             <aside className="space-y-5 lg:sticky lg:top-24">
               <YourMatch jobId={job.id} />
+              {/* CV tools: tailor the CV for this job (src/app/tools/tailor). */}
+              <div className="tile p-5">
+                <p className="text-[17px] font-semibold tracking-[-0.02em] text-ink">Tailor your CV for this job</p>
+                <p className="mt-1 text-[14px] text-mute">We rewrite your own CV to lead with what {job.company_name} asks for. Your first tailored CV is free.</p>
+                <Link href={`/tools/tailor?mms=${job.id}`} className="btn btn-secondary btn-sm mt-3">
+                  Tailor my CV for this job
+                </Link>
+              </div>
               {job.apply_method === "url" && job.apply_url ? (
                 <div className="card-white p-6">
                   <p className="text-[19px] font-semibold tracking-[-0.02em] text-ink">Apply on {job.company_name}&apos;s site</p>

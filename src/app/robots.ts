@@ -11,7 +11,9 @@ import { SITE_URL } from "@/components/site";
  * listed: they now 301, and crawlers need to be able to see that.
  */
 export default function robots(): MetadataRoute.Robots {
-  const disallow = ["/api/", "/results/", "/report/", "/employers/dashboard", "/employers/sign-in", "/admin", "/recruiter"];
+  const disallow = ["/api/", "/results/", "/report/", "/employers/dashboard", "/employers/sign-in", "/admin", "/recruiter", "/packs/", "/account"];
+  // Application tracker, check-in answers and case-study consent: private token links (journey tracking).
+  disallow.push("/tracker/", "/checkin", "/placement/");
   // The older client-side results page, while it still exists.
   if (fs.existsSync(path.join(process.cwd(), "src", "app", "discover", "results"))) disallow.push("/discover/results");
 

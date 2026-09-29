@@ -2,7 +2,7 @@
  "source": {
   "publisher": "Skills England (Department for Education)",
   "api": "https://skillsengland.education.gov.uk/api/apprenticeshipstandards",
-  "retrievedAt": "2026-09-28T12:04:54.512Z",
+  "retrievedAt": "2026-09-29T17:39:53.366Z",
   "licence": {
    "name": "Open Government Licence v3.0",
    "url": "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
@@ -10,10 +10,10 @@
   "note": "Snapshot of the standards referenced in occupations.ts, taken from the public apprenticeship standards API. typicalDurationMonths is the API's typicalDuration field; maxFunding is the funding band maximum in pounds.",
   "statusCountsAtRetrieval": {
    "Retired": 1052,
-   "In development": 184,
+   "In development": 188,
    "Approved for delivery": 712,
    "Withdrawn": 51,
-   "Proposal in development": 11
+   "Proposal in development": 10
   }
  },
  "standards": {
@@ -87,6 +87,100 @@
     "Junior analyst"
    ],
    "url": "https://skillsengland.education.gov.uk/apprenticeships/st0003-v2-0"
+  },
+  "ST0023": {
+   "referenceNumber": "ST0023",
+   "title": "Control systems engineer (degree)",
+   "level": 6,
+   "typicalDurationMonths": 42,
+   "status": "Approved for delivery",
+   "version": "1.2",
+   "route": "Engineering and manufacturing",
+   "larsCode": 9,
+   "maxFunding": 27000,
+   "approvedForDelivery": "2014-11-12T00:00:00 +00:00",
+   "typicalJobTitles": [
+    "Control System Engineer",
+    "Controls Technical Support Engineer",
+    "Process Control Engineer"
+   ],
+   "url": "https://skillsengland.education.gov.uk/apprenticeships/st0023-v1-2"
+  },
+  "ST0024": {
+   "referenceNumber": "ST0024",
+   "title": "Electrical and electronic engineer (degree)",
+   "level": 6,
+   "typicalDurationMonths": 42,
+   "status": "Approved for delivery",
+   "version": "1.3",
+   "route": "Engineering and manufacturing",
+   "larsCode": 10,
+   "maxFunding": 27000,
+   "approvedForDelivery": "2014-11-12T00:00:00 +00:00",
+   "typicalJobTitles": [
+    "Electrical engineer",
+    "Electrical support engineer",
+    "Electronic engineer",
+    "Electronic technical support engineer",
+    "Support engineer",
+    "Technical support engineer"
+   ],
+   "url": "https://skillsengland.education.gov.uk/apprenticeships/st0024-v1-3"
+  },
+  "ST0025": {
+   "referenceNumber": "ST0025",
+   "title": "Manufacturing engineer (degree)",
+   "level": 6,
+   "typicalDurationMonths": 42,
+   "status": "Approved for delivery",
+   "version": "1.2",
+   "route": "Engineering and manufacturing",
+   "larsCode": 11,
+   "maxFunding": 27000,
+   "approvedForDelivery": "2014-11-12T00:00:00 +00:00",
+   "typicalJobTitles": [
+    "Current manufacturing engineer",
+    "Industrial engineer",
+    "Integrated manufacturing engineer",
+    "Manufacturing engineer",
+    "Manufacturing excellence engineer",
+    "Manufacturing process engineer",
+    "Manufacturing programmes engineer",
+    "Process engineer",
+    "Production engineer"
+   ],
+   "url": "https://skillsengland.education.gov.uk/apprenticeships/st0025-v1-2"
+  },
+  "ST0027": {
+   "referenceNumber": "ST0027",
+   "title": "Product design and development engineer (degree)",
+   "level": 6,
+   "typicalDurationMonths": 42,
+   "status": "Approved for delivery",
+   "version": "1.1",
+   "route": "Engineering and manufacturing",
+   "larsCode": 12,
+   "maxFunding": 27000,
+   "approvedForDelivery": "2014-11-12T00:00:00 +00:00",
+   "typicalJobTitles": [
+    "Composite engineer",
+    "Design engineer",
+    "Design engineer",
+    "Development engineer",
+    "Electric battery engineer",
+    "Electrical engineer",
+    "Electronics engineer",
+    "Manufacturing/facilities engineer",
+    "Product engineer",
+    "Project engineer",
+    "Reliability engineer",
+    "Research and development engineer",
+    "Research and technology engineer",
+    "Simulation engineer",
+    "Stress engineer",
+    "Test engineer"
+   ],
+   "url": "https://skillsengland.education.gov.uk/apprenticeships/st0027-v1-1"
   },
   "ST0033": {
    "referenceNumber": "ST0033",
@@ -459,6 +553,42 @@
     "Tutor"
    ],
    "url": "https://skillsengland.education.gov.uk/apprenticeships/st0149-v1-4"
+  },
+  "ST0150": {
+   "referenceNumber": "ST0150",
+   "title": "Electrical, electronic product service and installation engineer",
+   "level": 3,
+   "typicalDurationMonths": 36,
+   "status": "Approved for delivery",
+   "version": "1.0",
+   "route": "Engineering and manufacturing",
+   "larsCode": 212,
+   "maxFunding": 9000,
+   "approvedForDelivery": "2017-12-06T00:00:00 +00:00",
+   "typicalJobTitles": [
+    "Installer",
+    "Service engineer",
+    "Service technician"
+   ],
+   "url": "https://skillsengland.education.gov.uk/apprenticeships/st0150-v1-0"
+  },
+  "ST0151": {
+   "referenceNumber": "ST0151",
+   "title": "Embedded electronic systems design and development engineer (degree)",
+   "level": 6,
+   "typicalDurationMonths": 36,
+   "status": "Approved for delivery",
+   "version": "1.3",
+   "route": "Engineering and manufacturing",
+   "larsCode": 107,
+   "maxFunding": 27000,
+   "approvedForDelivery": "2016-06-10T00:00:00 +00:00",
+   "typicalJobTitles": [
+    "Hardware engineer",
+    "software engineer",
+    "systems engineer"
+   ],
+   "url": "https://skillsengland.education.gov.uk/apprenticeships/st0151-v1-3"
   },
   "ST0152": {
    "referenceNumber": "ST0152",
@@ -850,6 +980,20 @@
     "Site carpenter"
    ],
    "url": "https://skillsengland.education.gov.uk/apprenticeships/st0264-v1-4"
+  },
+  "ST0266": {
+   "referenceNumber": "ST0266",
+   "title": "Digital engineering technician",
+   "level": 3,
+   "typicalDurationMonths": 36,
+   "status": "Approved for delivery",
+   "version": "1.1",
+   "route": "Construction and the built environment",
+   "larsCode": 195,
+   "maxFunding": 21000,
+   "approvedForDelivery": "2017-09-18T00:00:00 +00:00",
+   "typicalJobTitles": [],
+   "url": "https://skillsengland.education.gov.uk/apprenticeships/st0266-v1-1"
   },
   "ST0267": {
    "referenceNumber": "ST0267",
@@ -1600,6 +1744,26 @@
    ],
    "url": "https://skillsengland.education.gov.uk/apprenticeships/st0510-v2-0"
   },
+  "ST0515": {
+   "referenceNumber": "ST0515",
+   "title": "Manufacturing manager (integrated degree)",
+   "level": 6,
+   "typicalDurationMonths": 42,
+   "status": "Approved for delivery",
+   "version": "1.0",
+   "route": "Engineering and manufacturing",
+   "larsCode": 417,
+   "maxFunding": 24000,
+   "approvedForDelivery": "2019-02-22T00:00:00 +00:00",
+   "typicalJobTitles": [
+    "Factory Manager",
+    "Operations Manager",
+    "Production Manager",
+    "Manufacturing Manager",
+    "Business Unit Manager and Site General Manager"
+   ],
+   "url": "https://skillsengland.education.gov.uk/apprenticeships/st0515-v1-0"
+  },
   "ST0516": {
    "referenceNumber": "ST0516",
    "title": "Intelligence analyst",
@@ -1719,6 +1883,31 @@
     "Planning Consultant"
    ],
    "url": "https://skillsengland.education.gov.uk/apprenticeships/st0536-v1-0"
+  },
+  "ST0537": {
+   "referenceNumber": "ST0537",
+   "title": "Engineering operative",
+   "level": 2,
+   "typicalDurationMonths": 12,
+   "status": "Approved for delivery",
+   "version": "1.5",
+   "route": "Engineering and manufacturing",
+   "larsCode": 352,
+   "maxFunding": 10000,
+   "approvedForDelivery": "2018-09-24T00:00:00 +00:00",
+   "typicalJobTitles": [
+    "Servicing and maintenance operative",
+    "Machine setter/operative",
+    "Mechanical engineering operative",
+    "Fabricator",
+    "Engineering fitter",
+    "Multi-disciplined engineering operative",
+    "Materials",
+    "processing and finishing operative",
+    "Technical Support operative",
+    "Founding/casting operative"
+   ],
+   "url": "https://skillsengland.education.gov.uk/apprenticeships/st0537-v1-5"
   },
   "ST0550": {
    "referenceNumber": "ST0550",
@@ -2012,6 +2201,22 @@
    ],
    "url": "https://skillsengland.education.gov.uk/apprenticeships/st0647-v1-1"
   },
+  "ST0662": {
+   "referenceNumber": "ST0662",
+   "title": "Automation and controls engineering technician",
+   "level": 4,
+   "typicalDurationMonths": 48,
+   "status": "Approved for delivery",
+   "version": "1.1",
+   "route": "Engineering and manufacturing",
+   "larsCode": 474,
+   "maxFunding": 14000,
+   "approvedForDelivery": "2019-07-03T00:00:00 +00:00",
+   "typicalJobTitles": [
+    "Automation and controls engineering technician"
+   ],
+   "url": "https://skillsengland.education.gov.uk/apprenticeships/st0662-v1-1"
+  },
   "ST0663": {
    "referenceNumber": "ST0663",
    "title": "Employability practitioner",
@@ -2047,6 +2252,31 @@
     "Training advisors"
    ],
    "url": "https://skillsengland.education.gov.uk/apprenticeships/st0663-v1-0"
+  },
+  "ST0672": {
+   "referenceNumber": "ST0672",
+   "title": "Electro-mechanical engineer",
+   "level": 6,
+   "typicalDurationMonths": 60,
+   "status": "Approved for delivery",
+   "version": "1.0",
+   "route": "Engineering and manufacturing",
+   "larsCode": 614,
+   "maxFunding": 27000,
+   "approvedForDelivery": "2020-12-16T00:00:00 +00:00",
+   "typicalJobTitles": [
+    "Electro-mechanical engineer",
+    "Mechatronics engineer",
+    "Robotics engineer",
+    "Design engineer",
+    "Mechanical engineer",
+    "Electrical engineer",
+    "Systems engineer",
+    "Manufacturing engineer",
+    "Test engineer",
+    "Instrument engineer"
+   ],
+   "url": "https://skillsengland.education.gov.uk/apprenticeships/st0672-v1-0"
   },
   "ST0694": {
    "referenceNumber": "ST0694",
@@ -2233,6 +2463,30 @@
     "Telecommunications Installation Technician"
    ],
    "url": "https://skillsengland.education.gov.uk/apprenticeships/st0832-v1-1"
+  },
+  "ST0841": {
+   "referenceNumber": "ST0841",
+   "title": "Engineering manufacturing technician",
+   "level": 4,
+   "typicalDurationMonths": 42,
+   "status": "Approved for delivery",
+   "version": "1.4",
+   "route": "Engineering and manufacturing",
+   "larsCode": 523,
+   "maxFunding": 21000,
+   "approvedForDelivery": "2019-11-05T00:00:00 +00:00",
+   "typicalJobTitles": [
+    "Costing engineer",
+    "Installation engineer",
+    "Manufacturing procurement engineer",
+    "Manufacturing production engineer",
+    "Manufacturing quality engineer",
+    "Process engineer",
+    "Production support engineer",
+    "Quality engineer",
+    "Test and commissioning engineer"
+   ],
+   "url": "https://skillsengland.education.gov.uk/apprenticeships/st0841-v1-4"
   },
   "ST0851": {
    "referenceNumber": "ST0851",
@@ -2630,6 +2884,40 @@
    ],
    "url": "https://skillsengland.education.gov.uk/apprenticeships/st1301-v1-0"
   },
+  "ST1305": {
+   "referenceNumber": "ST1305",
+   "title": "Machining technician",
+   "level": 3,
+   "typicalDurationMonths": 42,
+   "status": "Approved for delivery",
+   "version": "1.5",
+   "route": "Engineering and manufacturing",
+   "larsCode": 691,
+   "maxFunding": 27000,
+   "approvedForDelivery": "2022-11-09T00:00:00 +00:00",
+   "typicalJobTitles": [
+    "Centre lathe turner",
+    "Cnc centre lathe turner",
+    "Cnc edm machinist technician",
+    "Cnc gear cutter",
+    "Cnc gear cutter and grinder",
+    "Cnc horizontal borer",
+    "Cnc machinist",
+    "Cnc machinist (miller turner or grinder)",
+    "Cnc machinist programmer",
+    "Cnc vertical borer",
+    "Conventional vertical borer",
+    "Edm machinist technician",
+    "Gear cutter",
+    "Gear cutter and grinder",
+    "Horizontal borer",
+    "Machining technician",
+    "Machinist",
+    "Manual machinist (miller turner or grinder)",
+    "Precision engineer"
+   ],
+   "url": "https://skillsengland.education.gov.uk/apprenticeships/st1305-v1-5"
+  },
   "ST1315": {
    "referenceNumber": "ST1315",
    "title": "Aircraft maintenance technician",
@@ -2654,6 +2942,50 @@
     "Mechanical components technician"
    ],
    "url": "https://skillsengland.education.gov.uk/apprenticeships/st1315-v1-1"
+  },
+  "ST1317": {
+   "referenceNumber": "ST1317",
+   "title": "Robotics engineer - degree",
+   "level": 6,
+   "typicalDurationMonths": 48,
+   "status": "Approved for delivery",
+   "version": "1.2",
+   "route": "Engineering and manufacturing",
+   "larsCode": 697,
+   "maxFunding": 27000,
+   "approvedForDelivery": "2023-02-17T00:00:00 +00:00",
+   "typicalJobTitles": [
+    "Application engineer",
+    "Design engineer",
+    "Manufacturing engineer",
+    "Mechatronic engineer",
+    "Process engineer",
+    "Production engineer",
+    "Research engineer",
+    "Robotics engineer"
+   ],
+   "url": "https://skillsengland.education.gov.uk/apprenticeships/st1317-v1-2"
+  },
+  "ST1326": {
+   "referenceNumber": "ST1326",
+   "title": "Mechatronics maintenance technician",
+   "level": 3,
+   "typicalDurationMonths": 42,
+   "status": "Approved for delivery",
+   "version": "1.0",
+   "route": "Engineering and manufacturing",
+   "larsCode": 775,
+   "maxFunding": 27000,
+   "approvedForDelivery": "2024-08-19T00:00:00 +00:00",
+   "typicalJobTitles": [
+    "Field service maintenance technician",
+    "Maintenance team member",
+    "Maintenance technician",
+    "Mechatronics maintenance technician",
+    "Mechatronics technician",
+    "Multi-skilled site maintenance technician"
+   ],
+   "url": "https://skillsengland.education.gov.uk/apprenticeships/st1326-v1-0"
   },
   "ST1340": {
    "referenceNumber": "ST1340",
@@ -2716,6 +3048,36 @@
     "Tutor"
    ],
    "url": "https://skillsengland.education.gov.uk/apprenticeships/st1380-v1-1"
+  },
+  "ST1381": {
+   "referenceNumber": "ST1381",
+   "title": "Advanced robotics engineer",
+   "level": 7,
+   "typicalDurationMonths": 36,
+   "status": "Approved for delivery",
+   "version": "1.0",
+   "route": "Engineering and manufacturing",
+   "larsCode": 759,
+   "maxFunding": 27000,
+   "approvedForDelivery": "2024-04-26T00:00:00 +00:00",
+   "typicalJobTitles": [
+    "Advanced robotics engineer",
+    "AI research engineer",
+    "Computer vision research engineer - robotics",
+    "Machine learning research engineer",
+    "Research engineer",
+    "Research engineer - coordinated multi robot systems",
+    "Robotic systems application engineer",
+    "Robotics research engineer",
+    "Robotics software engineer",
+    "Robotics specialist",
+    "Senior control and software engineer",
+    "Senior robotics engineer",
+    "Senior robotics research engineer",
+    "Senior software engineer",
+    "Visualisation systems engineer"
+   ],
+   "url": "https://skillsengland.education.gov.uk/apprenticeships/st1381-v1-0"
   },
   "ST1385": {
    "referenceNumber": "ST1385",
@@ -2797,6 +3159,58 @@
     "Talent acquisition partner"
    ],
    "url": "https://skillsengland.education.gov.uk/apprenticeships/st1421-v1-0"
+  },
+  "ST1426": {
+   "referenceNumber": "ST1426",
+   "title": "Engineering maintenance technician - single discipline",
+   "level": 3,
+   "typicalDurationMonths": 42,
+   "status": "Approved for delivery",
+   "version": "1.0",
+   "route": "Engineering and manufacturing",
+   "larsCode": 816,
+   "maxFunding": 27000,
+   "approvedForDelivery": "2025-06-23T00:00:00 +00:00",
+   "typicalJobTitles": [
+    "Control and instrumentation craftsperson",
+    "Control and instrumentation maintenance technician",
+    "Control, instrumentation  and automation technician",
+    "Electrical craftsperson",
+    "Electrical maintenance technician",
+    "Engineering maintenance technician",
+    "Engineering technician",
+    "Maintenance and operations engineering technician",
+    "Maintenance engineering technician",
+    "Maintenance technician",
+    "Mechanical craftsperson",
+    "Mechanical maintenance technician"
+   ],
+   "url": "https://skillsengland.education.gov.uk/apprenticeships/st1426-v1-0"
+  },
+  "ST1443": {
+   "referenceNumber": "ST1443",
+   "title": "Engineering maintenance technician - dual discipline",
+   "level": 3,
+   "typicalDurationMonths": 48,
+   "status": "Approved for delivery",
+   "version": "1.0",
+   "route": "Engineering and manufacturing",
+   "larsCode": 815,
+   "maxFunding": 27000,
+   "approvedForDelivery": "2025-06-23T00:00:00 +00:00",
+   "typicalJobTitles": [
+    "Control, instrumentation and automation technician",
+    "Electrical and instrumentation craftsperson",
+    "Electrical and instrumentation technician",
+    "Electrical and mechanical maintenance craftsperson",
+    "Electrical and mechanical maintenance technician",
+    "Engineering maintenance technician",
+    "Engineering technician",
+    "Maintenance and operations engineering technician",
+    "Maintenance engineering technician",
+    "Maintenance technician"
+   ],
+   "url": "https://skillsengland.education.gov.uk/apprenticeships/st1443-v1-0"
   },
   "ST1476": {
    "referenceNumber": "ST1476",

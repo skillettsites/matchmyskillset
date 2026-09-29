@@ -32,7 +32,13 @@ export function EmployerPrivacy() {
         </li>
         <li>
           <strong>Payments:</strong> Stripe handles card details; we never see them. We keep your Stripe customer and subscription references, your plan and when
-          it renews. Lawful basis: our contract with you, and our legal duty to keep tax records.
+          it renews, the monthly price you pay, and any partner rate we have agreed with you. Lawful basis: our contract with you, and our legal duty to keep tax
+          records.
+        </li>
+        <li>
+          <strong>Applicant status and placements:</strong> each status you give an applicant (viewed, shortlisted, interview, offer, hired or not taken forward) and
+          when, and a placement record when you mark someone hired (job, your company, dates). We use them to measure how well the service works; the log of status
+          changes names no one. Lawful basis: our legitimate interest in running and improving the service.
         </li>
         <li>
           <strong>Enquiries:</strong> what you send through the enquiry form, so we can reply. Lawful basis: our legitimate interest in answering you.
@@ -42,7 +48,8 @@ export function EmployerPrivacy() {
         </li>
         <li>
           <strong>Recruiter shortlists (Growth and Enterprise):</strong> whether you asked for one for each job, and the shortlist itself: who was picked, in what
-          order, the recruiter&apos;s notes and summary, and when it was asked for and sent. Our recruiters see the job and its applicants to put it together, but not
+          order, the recruiter&apos;s notes and summary, and when it was asked for and sent. Recruiters from Flintstone Associates, our recruitment partner, see the job
+          and its applicants to put it together, but not
           your plan or billing details. Lawful basis: our contract with you.
         </li>
       </ul>

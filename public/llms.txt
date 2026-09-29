@@ -1,48 +1,58 @@
 # MatchMySkillset
 
-> A UK guide for people leaving a job: where people with your background usually go next, what those jobs pay in the UK, and how to get in. Start from the job you do now, or paste your CV for a free analysis with no account.
+> Upload your CV and see live UK jobs scored against your skills, with the careers your skills point to and what they pay. The site focuses on engineering, manufacturing and Industry 4.0 (maintenance, CNC, robotics and automation, 3D printing, and AI and connected technology in production), and the CV match works for any job. Free for job seekers, with no account. Employers post jobs on paid plans and meet candidates matched on skills. MatchMySkillset is a joint venture with Flintstone Associates, a specialist recruitment firm whose recruiters prepare the shortlists employers can ask for.
 
-Pay figures on this site come from the Office for National Statistics Annual Survey of Hours and Earnings (ASHE) 2025, Table 14.7a (provisional, published 23 October 2025): median and percentile gross annual pay for full-time employee jobs in the UK, by four-digit SOC 2020 occupation group. ASHE covers employees only, not the self-employed; ONS publishes ASHE 2026 on 22 October 2026 and the pages will be updated then. Occupation titles and entry-route descriptions come from ONS SOC 2020 Volume 1; apprenticeship levels and typical durations from Skills England's apprenticeship standards (England); licences from the body that issues each one (GOV.UK, SIA, NMC, HCPC, CAA, ORR and others). Work-related stress rates come from the Health and Safety Executive's Labour Force Survey tables (published 20 November 2025). Minimum wage and tax figures come from GOV.UK. Pages show the source and publication date beside each figure. Content is written for UK readers.
+Live jobs come from Reed, Adzuna, GOV.UK Teaching Vacancies, Himalayas and Remotive, and from employers who post on MatchMySkillset. Pay figures come from the Office for National Statistics Annual Survey of Hours and Earnings (ASHE) 2025, Table 14.7a (provisional, published 23 October 2025): median and percentile gross annual pay for full-time employee jobs in the UK, by four-digit SOC 2020 occupation group. Each career is placed in the SOC 2020 unit group the ONS coding index (version 14) gives for its title. ASHE covers employees only, not the self-employed; ONS publishes ASHE 2026 on 22 October 2026 and the pages will be updated then. Occupation titles and entry-route descriptions come from ONS SOC 2020 Volume 1; routes into each job from National Careers Service job profiles; apprenticeship levels and typical durations from Skills England's apprenticeship standards (England); licences from the body that issues each one. Pages show the source and publication date beside each figure. Content is written for UK readers.
 
-## Leaving your job: profession guides
+## Engineering, manufacturing and Industry 4.0
 
-- [Leaving teaching](https://matchmyskillset.com/career-change-from-teaching): jobs teachers move into, with UK pay and routes
-- [Non-clinical jobs for nurses](https://matchmyskillset.com/non-clinical-jobs-for-nurses): roles for nurses and NHS staff away from the bedside
-- [Jobs for ex-police officers](https://matchmyskillset.com/jobs-for-ex-police-officers): where police officers go next
-- [Jobs for ex-military](https://matchmyskillset.com/jobs-for-ex-military): civilian jobs for service leavers and veterans
-- [Leaving retail](https://matchmyskillset.com/career-change-from-retail): jobs for retail staff and managers
-- [Any other job](https://matchmyskillset.com/careers-for): start from the job you do now
-
-## Pay data (ONS ASHE 2025)
-
-- [Highest paying jobs in the UK](https://matchmyskillset.com/highest-paying-careers-uk): the 30 best-paid occupation groups by median full-time pay, with quartiles
-- [Well-paid jobs without a degree](https://matchmyskillset.com/jobs-without-a-degree): best-paid jobs with an apprenticeship or licence route below degree level
-- [UK jobs by salary band](https://matchmyskillset.com/what-jobs): how occupations spread across pay bands, and UK full-time pay percentiles
-- [Jobs that pay £30k](https://matchmyskillset.com/what-jobs/jobs-that-pay-30k): occupations with a median of £30,000 to £39,999
-- [Jobs that pay £40k](https://matchmyskillset.com/what-jobs/jobs-that-pay-40k): occupations with a median of £40,000 to £49,999
-- [Jobs that pay £50k](https://matchmyskillset.com/what-jobs/jobs-that-pay-50k): occupations with a median of £50,000 to £59,999
-- [Low-stress jobs in the UK](https://matchmyskillset.com/low-stress-jobs-uk): HSE work-related stress rates by occupation group, alongside ONS pay
+- [Engineering and manufacturing jobs](https://matchmyskillset.com/engineering-and-manufacturing-jobs): careers from maintenance and machining to robotics, automation and design, with ONS pay and the ways in
+- [Robotics and automation jobs](https://matchmyskillset.com/robotics-and-automation-jobs): automation technician, automation, robotics and mechatronics engineer, and how maintenance, CNC and electrical technicians move into automation
+- [3D printing and additive manufacturing jobs](https://matchmyskillset.com/3d-printing-jobs): 3D printing technician and additive manufacturing engineer roles, pay ranges and routes in
+- [Graduate engineering jobs](https://matchmyskillset.com/graduate-engineering-jobs): where an engineering degree or degree apprenticeship leads in advanced manufacturing, with ONS pay ranges
+- [Jobs for ex-military](https://matchmyskillset.com/jobs-for-ex-military): civilian routes for service leavers, led by engineering, maintenance and advanced manufacturing, plus resettlement support
 
 ## Tools
 
-- [Analyse my CV](https://matchmyskillset.com/discover): paste a CV to see your skills, the jobs they lead to with ONS pay, and the gaps to close (free, no account)
-- [Transferable skills finder](https://matchmyskillset.com/transferable-skills): pick your current job to see the skills that carry over, CV wording, and jobs that share them
-- [Career quiz](https://matchmyskillset.com/quiz): a 10-question quiz that suggests careers to explore
+- [Match my CV](https://matchmyskillset.com/discover): upload a CV to see live UK jobs scored against your skills, the careers that fit with ONS pay, and the gaps to close (free, no account, works for any job)
 - [Find jobs](https://matchmyskillset.com/jobs): live UK vacancies
+- [Transferable skills finder](https://matchmyskillset.com/transferable-skills): pick your current job to see the skills that carry over
+- [Career quiz](https://matchmyskillset.com/quiz): a 10-question quiz that suggests careers to explore
+
+## For employers
+
+- [For employers](https://matchmyskillset.com/employers): post jobs, see applicants with a skills match score, search people who chose to be found, and ask for a recruiter shortlist on Growth and Enterprise
+- [Employer pricing](https://matchmyskillset.com/employers/pricing)
+
+## Other careers
+
+- [Careers by profession](https://matchmyskillset.com/careers-for): start from the job you do now, with routes and ONS pay for many professions
+- [Leaving teaching](https://matchmyskillset.com/career-change-from-teaching): jobs teachers move into, with UK pay and routes
+- [Non-clinical jobs for nurses](https://matchmyskillset.com/non-clinical-jobs-for-nurses): roles for nurses and NHS staff away from the bedside
+- [Jobs for ex-police officers](https://matchmyskillset.com/jobs-for-ex-police-officers): where police officers go next
+- [Leaving retail](https://matchmyskillset.com/career-change-from-retail): jobs for retail staff and managers
+
+## Pay data (ONS ASHE 2025)
+
+- [Highest paying jobs in the UK](https://matchmyskillset.com/highest-paying-careers-uk): the best-paid occupation groups by median full-time pay, with quartiles
+- [Well-paid jobs without a degree](https://matchmyskillset.com/jobs-without-a-degree): best-paid jobs with an apprenticeship or licence route below degree level
+- [UK jobs by salary band](https://matchmyskillset.com/what-jobs): how occupations spread across pay bands
+- [Jobs that pay £30k](https://matchmyskillset.com/what-jobs/jobs-that-pay-30k)
+- [Jobs that pay £40k](https://matchmyskillset.com/what-jobs/jobs-that-pay-40k)
+- [Jobs that pay £50k](https://matchmyskillset.com/what-jobs/jobs-that-pay-50k)
+- [Low-stress jobs in the UK](https://matchmyskillset.com/low-stress-jobs-uk): HSE work-related stress rates by occupation group, alongside ONS pay
 
 ## Guides
 
+- [Apprenticeships for adults](https://matchmyskillset.com/apprenticeships-for-adults-uk)
 - [Career change guides](https://matchmyskillset.com/career-change): how to change career in the UK, step by step
-- [How to change careers](https://matchmyskillset.com/career-change/how-to-change-careers)
+- [How to write a CV for a career change](https://matchmyskillset.com/how-to-write-a-cv-for-career-change)
 - [Career change at 30](https://matchmyskillset.com/career-change-at-30)
 - [Career change at 50](https://matchmyskillset.com/career-change-at-50)
 - [Changing career with no money](https://matchmyskillset.com/career-change-with-no-money): free and funded training routes
-- [Apprenticeships for adults](https://matchmyskillset.com/apprenticeships-for-adults-uk)
-- [How to write a CV for a career change](https://matchmyskillset.com/how-to-write-a-cv-for-career-change)
-- [Jobs for people with ADHD](https://matchmyskillset.com/jobs-for-people-with-adhd): including Access to Work and reasonable adjustments
-- [Jobs for introverts](https://matchmyskillset.com/jobs-for-introverts)
 - [Best careers for the future in the UK](https://matchmyskillset.com/best-careers-for-the-future-uk)
-- [Jobs you can do from home with no experience](https://matchmyskillset.com/jobs-you-can-do-from-home-with-no-experience)
+- [Jobs for people with ADHD](https://matchmyskillset.com/jobs-for-people-with-adhd)
+- [Jobs for introverts](https://matchmyskillset.com/jobs-for-introverts)
 
 ## Optional
 
@@ -51,4 +61,5 @@ Pay figures on this site come from the Office for National Statistics Annual Sur
 - [Skills employers want](https://matchmyskillset.com/skills-employers-want-2026)
 - [Work from home jobs](https://matchmyskillset.com/work-from-home-jobs)
 - [Highest paying remote jobs](https://matchmyskillset.com/highest-paying-remote-jobs-uk)
+- [Jobs you can do from home with no experience](https://matchmyskillset.com/jobs-you-can-do-from-home-with-no-experience)
 - [Best side hustles in the UK](https://matchmyskillset.com/best-side-hustles-uk)

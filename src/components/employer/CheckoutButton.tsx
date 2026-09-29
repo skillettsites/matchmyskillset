@@ -1,13 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { PAYMENTS_UNAVAILABLE } from "@/lib/employer/plans";
+import { PAYMENTS_UNAVAILABLE, type SelfServePlan } from "@/lib/employer/plans";
 
 // Starts a Stripe Checkout subscription for the signed-in employer. When card
 // payments are not available (for example the Stripe key has expired) it says
 // so and points to the jobs inbox instead of failing silently.
 
-export function CheckoutButton({ plan, label, className = "btn btn-primary w-full" }: { plan: "starter" | "growth"; label: string; className?: string }) {
+export function CheckoutButton({ plan, label, className = "btn btn-primary w-full" }: { plan: SelfServePlan; label: string; className?: string }) {
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
 

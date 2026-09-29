@@ -22,7 +22,7 @@ interface Fit {
 type ScoredListing = JobListing & { fit?: Fit };
 type Response = Omit<JobSearchResponse, "jobs"> & { jobs: ScoredListing[]; scored?: boolean };
 
-const SUGGESTIONS = ["Data analyst", "Project manager", "Learning and development adviser", "Teaching assistant", "Customer service manager", "HR officer"];
+const SUGGESTIONS = ["Maintenance engineer", "Robotics technician", "Automation engineer", "Additive manufacturing engineer", "CNC machinist", "Field service engineer"];
 
 const SALARY_OPTIONS = [
   { value: "", label: "Any salary" },

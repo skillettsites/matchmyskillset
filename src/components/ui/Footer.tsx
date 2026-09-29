@@ -1,24 +1,28 @@
 import Link from "next/link";
 import {
   EMPLOYER_LINKS,
+  ENGINEERING_HUBS,
   FIT_LINKS,
   GUIDE_LINKS,
   JOBSEEKER_LINKS,
-  JOB_HUBS,
+  OTHER_CAREER_HUBS,
   SITE_NAME,
   type NavItem,
 } from "@/components/site";
 import { LogoMark } from "@/components/ui/Logo";
 import { CookieSettingsButton } from "@/components/GoogleAnalytics";
 
-const HUB_LINKS: NavItem[] = [
-  ...JOB_HUBS.filter((h) => h.href !== "/careers-for").map((h) => ({ label: h.label, href: h.href })),
+const ENGINEERING_LINKS: NavItem[] = ENGINEERING_HUBS.map((h) => ({ label: h.label, href: h.href }));
+
+const OTHER_LINKS: NavItem[] = [
+  ...OTHER_CAREER_HUBS.filter((h) => h.href !== "/careers-for").map((h) => ({ label: h.label, href: h.href })),
   { label: "All professions", href: "/careers-for" },
 ];
 
 const COLS: { title: string; links: NavItem[] }[] = [
   { title: "Job seekers", links: JOBSEEKER_LINKS },
-  { title: "Leaving your job", links: HUB_LINKS },
+  { title: "Engineering careers", links: ENGINEERING_LINKS },
+  { title: "Other careers", links: OTHER_LINKS },
   { title: "Guides", links: [...GUIDE_LINKS, ...FIT_LINKS] },
   { title: "Employers", links: EMPLOYER_LINKS },
 ];
@@ -29,19 +33,26 @@ const LEGAL: NavItem[] = [
   { label: "Terms", href: "/terms" },
 ];
 
-/** Site footer: job seeker links, profession hubs, guides, employer links and the legal line. */
+/** Site footer: job seeker links, engineering careers, other careers, guides, employer links and the legal line. */
 export function Footer() {
   return (
     <footer className="bg-cloud text-[12px] leading-[1.35] text-mute">
       <div className="mx-auto max-w-[1128px] px-4 sm:px-6">
-        <div className="grid grid-cols-2 gap-x-6 gap-y-10 border-b hairline py-12 md:grid-cols-4 lg:grid-cols-[1.3fr_1fr_1fr_1fr_1fr] lg:gap-8">
-          <div className="col-span-2 md:col-span-4 lg:col-span-1">
+        <div className="grid grid-cols-2 gap-x-6 gap-y-10 border-b hairline py-12 md:grid-cols-5 lg:grid-cols-[1.2fr_repeat(5,minmax(0,1fr))] lg:gap-7">
+          <div className="col-span-2 md:col-span-5 lg:col-span-1">
             <Link href="/" aria-label={`${SITE_NAME}, home`} className="inline-flex min-h-11 items-center gap-2.5 text-ink">
               <LogoMark size={24} />
               <span className="text-[15px] font-semibold tracking-[-0.02em]">{SITE_NAME}</span>
             </Link>
             <p className="mt-3 max-w-xs text-[14px] leading-relaxed text-mute">
-              Upload your CV and see live UK jobs scored against your skills. Hiring? Post a job and meet candidates matched to it.
+              Upload your CV and see live UK jobs scored against your skills, with a focus on engineering, manufacturing and Industry 4.0.
+              Hiring? Post a job and meet candidates matched to it.
+            </p>
+            <p className="mt-3 max-w-xs text-[13px] leading-relaxed text-mute">
+              A joint venture with Flintstone Associates, our recruitment partner.{" "}
+              <Link href="/about" className="underline underline-offset-2 hover:text-ink">
+                About us
+              </Link>
             </p>
             <Link href="/discover" className="btn btn-primary btn-sm mt-5">
               Upload your CV

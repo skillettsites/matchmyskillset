@@ -6,7 +6,7 @@
   "fileUrl": "https://www.ons.gov.uk/file?uri=/methodology/classificationsandstandards/standardoccupationalclassificationsoc/soc2020/soc2020volume2codingrulesandconventions/soc2020volume2thecodingindexexcel20260827v2.xlsx",
   "version": "Version 14 Of The Standard Occupational Classification 2020 Index",
   "recordsInIndex": 32670,
-  "retrievedAt": "2026-09-28T12:08:17.798Z",
+  "retrievedAt": "2026-09-29T17:37:55.557Z",
   "licence": {
    "name": "Open Government Licence v3.0",
    "url": "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
@@ -789,6 +789,37 @@
     "subUnitGroup": "Installation and maintenance electricians"
    }
   ],
+  "additive manufacturing applications engineer": [
+   {
+    "recno": 9423,
+    "title": "Additive manufacturing applications engineer",
+    "soc": "2129",
+    "ext": "2129/99",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Engineering professionals n.e.c."
+   }
+  ],
+  "automation engineer": [
+   {
+    "recno": 9451,
+    "title": "Automation engineer",
+    "soc": "2125",
+    "ext": "2125/03",
+    "add": "professional",
+    "ind": null,
+    "subUnitGroup": "Industrial and production engineers"
+   },
+   {
+    "recno": 9452,
+    "title": "Automation engineer",
+    "soc": "5223",
+    "ext": "5223/01",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Automation maintenance technicians"
+   }
+  ],
   "air conditioning engineer": [
    {
     "recno": 9534,
@@ -807,6 +838,171 @@
     "add": null,
     "ind": null,
     "subUnitGroup": "Air-conditioning and refrigeration installers and repairers"
+   }
+  ],
+  "process control engineer": [
+   {
+    "recno": 9554,
+    "title": "Process control engineer",
+    "soc": "2125",
+    "ext": "2125/03",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Industrial and production engineers"
+   }
+  ],
+  "quality control engineer": [
+   {
+    "recno": 9556,
+    "title": "Quality control engineer",
+    "soc": "2481",
+    "ext": "2481/03",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Quality control engineers"
+   }
+  ],
+  "control and instrumentation engineer": [
+   {
+    "recno": 9562,
+    "title": "Control and instrumentation engineer",
+    "soc": "2125",
+    "ext": "2125/02",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Control and instrumentation engineers"
+   }
+  ],
+  "design engineer": [
+   {
+    "recno": 9604,
+    "title": "Design engineer",
+    "soc": "2126",
+    "ext": "2126/99",
+    "add": "aerospace",
+    "ind": null,
+    "subUnitGroup": "Aerospace engineers n.e.c."
+   },
+   {
+    "recno": 9605,
+    "title": "Design engineer",
+    "soc": "2123",
+    "ext": "2123/98",
+    "add": "electrical",
+    "ind": null,
+    "subUnitGroup": "Other electrical engineers"
+   },
+   {
+    "recno": 9606,
+    "title": "Design engineer",
+    "soc": "2124",
+    "ext": "2124/98",
+    "add": "electronic",
+    "ind": null,
+    "subUnitGroup": "Other electronics engineers (professional)"
+   },
+   {
+    "recno": 9607,
+    "title": "Design engineer",
+    "soc": "2122",
+    "ext": "2122/03",
+    "add": "mechanical",
+    "ind": null,
+    "subUnitGroup": "Mechanical design engineers"
+   },
+   {
+    "recno": 9608,
+    "title": "Design engineer",
+    "soc": "2124",
+    "ext": "2124/02",
+    "add": null,
+    "ind": "telecoms",
+    "subUnitGroup": "Telecommunications engineers (professional)"
+   },
+   {
+    "recno": 9609,
+    "title": "Design engineer",
+    "soc": "2129",
+    "ext": "2129/99",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Engineering professionals n.e.c."
+   }
+  ],
+  "electrical engineer": [
+   {
+    "recno": 9661,
+    "title": "Electrical engineer",
+    "soc": "5241",
+    "ext": "5241/03",
+    "add": "nos",
+    "ind": "coal mine",
+    "subUnitGroup": "Installation and maintenance electricians"
+   },
+   {
+    "recno": 9662,
+    "title": "Electrical engineer",
+    "soc": "3512",
+    "ext": "3512/02",
+    "add": "nos",
+    "ind": "shipping",
+    "subUnitGroup": "Marine engineers"
+   },
+   {
+    "recno": 9663,
+    "title": "Electrical engineer",
+    "soc": "3512",
+    "ext": "3512/02",
+    "add": "nos",
+    "ind": "telecoms: cable ship",
+    "subUnitGroup": "Marine engineers"
+   },
+   {
+    "recno": 9664,
+    "title": "Electrical engineer",
+    "soc": "2123",
+    "ext": "2123/98",
+    "add": "professional",
+    "ind": null,
+    "subUnitGroup": "Other electrical engineers"
+   },
+   {
+    "recno": 9665,
+    "title": "Electrical engineer",
+    "soc": "5241",
+    "ext": "5241/03",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Installation and maintenance electricians"
+   }
+  ],
+  "electronics engineer": [
+   {
+    "recno": 9672,
+    "title": "Electronics engineer",
+    "soc": "2124",
+    "ext": "2124/98",
+    "add": "professional",
+    "ind": null,
+    "subUnitGroup": "Other electronics engineers (professional)"
+   },
+   {
+    "recno": 9673,
+    "title": "Electronics engineer",
+    "soc": "5243",
+    "ext": "5243/00",
+    "add": null,
+    "ind": "television, video, audio repairing",
+    "subUnitGroup": "TV, video and audio servicers and repairers"
+   },
+   {
+    "recno": 9674,
+    "title": "Electronics engineer",
+    "soc": "5249",
+    "ext": "5249/04",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Electronics engineers (technicians)"
    }
   ],
   "gas engineer": [
@@ -849,6 +1045,28 @@
     "subUnitGroup": "Plumbers and heating and ventilation installers and repairers"
    }
   ],
+  "continuous improvement engineer": [
+   {
+    "recno": 9787,
+    "title": "Continuous improvement engineer",
+    "soc": "2125",
+    "ext": "2125/03",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Industrial and production engineers"
+   }
+  ],
+  "industrial engineer": [
+   {
+    "recno": 9792,
+    "title": "Industrial engineer",
+    "soc": "2125",
+    "ext": "2125/03",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Industrial and production engineers"
+   }
+  ],
   "aircraft maintenance engineer": [
    {
     "recno": 9868,
@@ -858,6 +1076,28 @@
     "add": null,
     "ind": null,
     "subUnitGroup": "Aircraft maintenance and related trades"
+   }
+  ],
+  "electrical maintenance engineer": [
+   {
+    "recno": 9870,
+    "title": "Electrical maintenance engineer",
+    "soc": "5246",
+    "ext": "5246/00",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Electrical service and maintenance mechanics and repairers"
+   }
+  ],
+  "mechanical maintenance engineer": [
+   {
+    "recno": 9872,
+    "title": "Mechanical maintenance engineer",
+    "soc": "5223",
+    "ext": "5223/13",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Metal working maintenance/service technicians"
    }
   ],
   "track maintenance engineer": [
@@ -871,6 +1111,192 @@
     "subUnitGroup": "Rail construction and maintenance operatives"
    }
   ],
+  "maintenance engineer": [
+   {
+    "recno": 9876,
+    "title": "Maintenance engineer",
+    "soc": "5234",
+    "ext": "5234/00",
+    "add": "aircraft",
+    "ind": null,
+    "subUnitGroup": "Aircraft maintenance and related trades"
+   },
+   {
+    "recno": 9877,
+    "title": "Maintenance engineer",
+    "soc": "5245",
+    "ext": "5245/00",
+    "add": "alarms",
+    "ind": null,
+    "subUnitGroup": "Security system installers and repairers"
+   },
+   {
+    "recno": 9878,
+    "title": "Maintenance engineer",
+    "soc": "5319",
+    "ext": "5319/99",
+    "add": "buildings and other structures",
+    "ind": null,
+    "subUnitGroup": "Construction and building trades n.e.c."
+   },
+   {
+    "recno": 9879,
+    "title": "Maintenance engineer",
+    "soc": "5244",
+    "ext": "5244/00",
+    "add": "computer servicing",
+    "ind": null,
+    "subUnitGroup": "Computer system and equipment installers and servicers"
+   },
+   {
+    "recno": 9880,
+    "title": "Maintenance engineer",
+    "soc": "5246",
+    "ext": "5246/00",
+    "add": "electronics",
+    "ind": null,
+    "subUnitGroup": "Electrical service and maintenance mechanics and repairers"
+   },
+   {
+    "recno": 9881,
+    "title": "Maintenance engineer",
+    "soc": "5315",
+    "ext": "5315/00",
+    "add": "heating and ventilating",
+    "ind": null,
+    "subUnitGroup": "Plumbers and heating and ventilation installers and repairers"
+   },
+   {
+    "recno": 9882,
+    "title": "Maintenance engineer",
+    "soc": "5224",
+    "ext": "5224/01",
+    "add": "instruments",
+    "ind": null,
+    "subUnitGroup": "Calibration and precision instrument technicians"
+   },
+   {
+    "recno": 9883,
+    "title": "Maintenance engineer",
+    "soc": "5246",
+    "ext": "5246/00",
+    "add": "office machinery",
+    "ind": null,
+    "subUnitGroup": "Electrical service and maintenance mechanics and repairers"
+   },
+   {
+    "recno": 9884,
+    "title": "Maintenance engineer",
+    "soc": "5231",
+    "ext": "5231/98",
+    "add": "vehicles",
+    "ind": null,
+    "subUnitGroup": "Other vehicle technicians, mechanics and electricians"
+   },
+   {
+    "recno": 9885,
+    "title": "Maintenance engineer",
+    "soc": "5249",
+    "ext": "5249/99",
+    "add": null,
+    "ind": "electricity supplier",
+    "subUnitGroup": "Electrical and electronic trades n.e.c."
+   },
+   {
+    "recno": 9886,
+    "title": "Maintenance engineer",
+    "soc": "2121",
+    "ext": "2121/05",
+    "add": null,
+    "ind": "local government: highways dept",
+    "subUnitGroup": "Transportation engineers"
+   },
+   {
+    "recno": 9887,
+    "title": "Maintenance engineer",
+    "soc": "5243",
+    "ext": "5243/00",
+    "add": null,
+    "ind": "radio, television and video servicing",
+    "subUnitGroup": "TV, video and audio servicers and repairers"
+   },
+   {
+    "recno": 9888,
+    "title": "Maintenance engineer",
+    "soc": "5242",
+    "ext": "5242/00",
+    "add": null,
+    "ind": "telecoms",
+    "subUnitGroup": "Telecoms and related network installers and repairers"
+   },
+   {
+    "recno": 9889,
+    "title": "Maintenance engineer",
+    "soc": "5223",
+    "ext": "5223/13",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Metal working maintenance/service technicians"
+   }
+  ],
+  "mechanical engineer": [
+   {
+    "recno": 9909,
+    "title": "Mechanical engineer",
+    "soc": "2126",
+    "ext": "2126/02",
+    "add": "professional, aircraft",
+    "ind": null,
+    "subUnitGroup": "Aircraft engineers (professional)"
+   },
+   {
+    "recno": 9910,
+    "title": "Mechanical engineer",
+    "soc": "2126",
+    "ext": "2126/03",
+    "add": "professional, avionics",
+    "ind": null,
+    "subUnitGroup": "Avionics engineers"
+   },
+   {
+    "recno": 9911,
+    "title": "Mechanical engineer",
+    "soc": "2122",
+    "ext": "2122/98",
+    "add": "professional",
+    "ind": null,
+    "subUnitGroup": "Other mechanical engineers (professional)"
+   },
+   {
+    "recno": 9912,
+    "title": "Mechanical engineer",
+    "soc": "5231",
+    "ext": "5231/98",
+    "add": "vehicles",
+    "ind": null,
+    "subUnitGroup": "Other vehicle technicians, mechanics and electricians"
+   },
+   {
+    "recno": 9913,
+    "title": "Mechanical engineer",
+    "soc": "5223",
+    "ext": "5223/14",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Mechanical engineers (technicians)"
+   }
+  ],
+  "mechatronics engineer": [
+   {
+    "recno": 9918,
+    "title": "Mechatronics engineer",
+    "soc": "2129",
+    "ext": "2129/10",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Mechatronic engineers"
+   }
+  ],
   "network engineer": [
    {
     "recno": 9946,
@@ -882,6 +1308,95 @@
     "subUnitGroup": "IT network professionals"
    }
   ],
+  "3d printing engineer": [
+   {
+    "recno": 10002,
+    "title": "3d printing engineer",
+    "soc": "2129",
+    "ext": "2129/99",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Engineering professionals n.e.c."
+   }
+  ],
+  "process engineer": [
+   {
+    "recno": 10003,
+    "title": "Process engineer",
+    "soc": "2125",
+    "ext": "2125/03",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Industrial and production engineers"
+   }
+  ],
+  "production engineer": [
+   {
+    "recno": 10007,
+    "title": "Production engineer",
+    "soc": "2125",
+    "ext": "2125/03",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Industrial and production engineers"
+   }
+  ],
+  "project engineer": [
+   {
+    "recno": 10013,
+    "title": "Project engineer",
+    "soc": "2127",
+    "ext": "2127/00",
+    "add": "aerospace",
+    "ind": null,
+    "subUnitGroup": "Engineering project managers and project engineers"
+   },
+   {
+    "recno": 10014,
+    "title": "Project engineer",
+    "soc": "2127",
+    "ext": "2127/00",
+    "add": "oil & natural gas",
+    "ind": null,
+    "subUnitGroup": "Engineering project managers and project engineers"
+   },
+   {
+    "recno": 10015,
+    "title": "Project engineer",
+    "soc": "2127",
+    "ext": "2127/00",
+    "add": null,
+    "ind": "engineering",
+    "subUnitGroup": "Engineering project managers and project engineers"
+   },
+   {
+    "recno": 10016,
+    "title": "Project engineer",
+    "soc": "2127",
+    "ext": "2127/00",
+    "add": null,
+    "ind": "manufacturing",
+    "subUnitGroup": "Engineering project managers and project engineers"
+   },
+   {
+    "recno": 10017,
+    "title": "Project engineer",
+    "soc": "2127",
+    "ext": "2127/00",
+    "add": null,
+    "ind": "telecoms",
+    "subUnitGroup": "Engineering project managers and project engineers"
+   },
+   {
+    "recno": 10018,
+    "title": "Project engineer",
+    "soc": "2127",
+    "ext": "2127/00",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Engineering project managers and project engineers"
+   }
+  ],
   "heat pump engineer": [
    {
     "recno": 10034,
@@ -891,6 +1406,35 @@
     "add": null,
     "ind": null,
     "subUnitGroup": "Plumbers and heating and ventilation installers and repairers"
+   }
+  ],
+  "quality engineer": [
+   {
+    "recno": 10038,
+    "title": "Quality engineer",
+    "soc": "2136",
+    "ext": "2136/00",
+    "add": "professional, computing/IT",
+    "ind": null,
+    "subUnitGroup": "IT quality and testing professionals"
+   },
+   {
+    "recno": 10039,
+    "title": "Quality engineer",
+    "soc": "2481",
+    "ext": "2481/03",
+    "add": "professional",
+    "ind": null,
+    "subUnitGroup": "Quality control engineers"
+   },
+   {
+    "recno": 10040,
+    "title": "Quality engineer",
+    "soc": "3115",
+    "ext": "3115/00",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Quality assurance technicians"
    }
   ],
   "refrigeration engineer": [
@@ -920,6 +1464,218 @@
     "add": null,
     "ind": null,
     "subUnitGroup": "Air-conditioning and refrigeration installers and repairers"
+   }
+  ],
+  "additive manufacturing research engineer": [
+   {
+    "recno": 10066,
+    "title": "Additive manufacturing research engineer",
+    "soc": "2129",
+    "ext": "2129/99",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Engineering professionals n.e.c."
+   }
+  ],
+  "robotics engineer": [
+   {
+    "recno": 10078,
+    "title": "Robotics engineer",
+    "soc": "2129",
+    "ext": "2129/13",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Robotics engineers"
+   }
+  ],
+  "technical sales engineer": [
+   {
+    "recno": 10086,
+    "title": "Technical sales engineer",
+    "soc": "3552",
+    "ext": "3552/00",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Business sales executives"
+   }
+  ],
+  "sales engineer": [
+   {
+    "recno": 10087,
+    "title": "Sales engineer",
+    "soc": "3552",
+    "ext": "3552/00",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Business sales executives"
+   }
+  ],
+  "service engineer": [
+   {
+    "recno": 10124,
+    "title": "Service engineer",
+    "soc": "5234",
+    "ext": "5234/00",
+    "add": "aircraft",
+    "ind": null,
+    "subUnitGroup": "Aircraft maintenance and related trades"
+   },
+   {
+    "recno": 10125,
+    "title": "Service engineer",
+    "soc": "5245",
+    "ext": "5245/00",
+    "add": "alarms",
+    "ind": null,
+    "subUnitGroup": "Security system installers and repairers"
+   },
+   {
+    "recno": 10126,
+    "title": "Service engineer",
+    "soc": "5244",
+    "ext": "5244/00",
+    "add": "computer equipment",
+    "ind": null,
+    "subUnitGroup": "Computer system and equipment installers and servicers"
+   },
+   {
+    "recno": 10127,
+    "title": "Service engineer",
+    "soc": "5246",
+    "ext": "5246/00",
+    "add": "domestic electrical appliances",
+    "ind": null,
+    "subUnitGroup": "Electrical service and maintenance mechanics and repairers"
+   },
+   {
+    "recno": 10128,
+    "title": "Service engineer",
+    "soc": "5315",
+    "ext": "5315/00",
+    "add": "gas",
+    "ind": null,
+    "subUnitGroup": "Plumbers and heating and ventilation installers and repairers"
+   },
+   {
+    "recno": 10129,
+    "title": "Service engineer",
+    "soc": "5315",
+    "ext": "5315/00",
+    "add": "heating and ventilating",
+    "ind": null,
+    "subUnitGroup": "Plumbers and heating and ventilation installers and repairers"
+   },
+   {
+    "recno": 10130,
+    "title": "Service engineer",
+    "soc": "5225",
+    "ext": "5225/00",
+    "add": "refrigeration",
+    "ind": null,
+    "subUnitGroup": "Air-conditioning and refrigeration installers and repairers"
+   },
+   {
+    "recno": 10131,
+    "title": "Service engineer",
+    "soc": "5242",
+    "ext": "5242/00",
+    "add": "telephone",
+    "ind": null,
+    "subUnitGroup": "Telecoms and related network installers and repairers"
+   },
+   {
+    "recno": 10132,
+    "title": "Service engineer",
+    "soc": "5231",
+    "ext": "5231/98",
+    "add": "vehicles",
+    "ind": null,
+    "subUnitGroup": "Other vehicle technicians, mechanics and electricians"
+   },
+   {
+    "recno": 10133,
+    "title": "Service engineer",
+    "soc": "5317",
+    "ext": "5317/99",
+    "add": "windows",
+    "ind": null,
+    "subUnitGroup": "Glaziers, window fabricators and fitters n.e.c."
+   },
+   {
+    "recno": 10134,
+    "title": "Service engineer",
+    "soc": "5223",
+    "ext": "5223/13",
+    "add": null,
+    "ind": "engineering",
+    "subUnitGroup": "Metal working maintenance/service technicians"
+   },
+   {
+    "recno": 10135,
+    "title": "Service engineer",
+    "soc": "5315",
+    "ext": "5315/00",
+    "add": null,
+    "ind": "heating contracting",
+    "subUnitGroup": "Plumbers and heating and ventilation installers and repairers"
+   },
+   {
+    "recno": 10136,
+    "title": "Service engineer",
+    "soc": "5223",
+    "ext": "5223/13",
+    "add": null,
+    "ind": "oil company",
+    "subUnitGroup": "Metal working maintenance/service technicians"
+   },
+   {
+    "recno": 10137,
+    "title": "Service engineer",
+    "soc": "5243",
+    "ext": "5243/00",
+    "add": null,
+    "ind": "radio, television and video servicing",
+    "subUnitGroup": "TV, video and audio servicers and repairers"
+   },
+   {
+    "recno": 10138,
+    "title": "Service engineer",
+    "soc": "5236",
+    "ext": "5236/00",
+    "add": null,
+    "ind": "railway, rolling stock maintenance",
+    "subUnitGroup": "Rail and rolling stock builders and repairers"
+   },
+   {
+    "recno": 10139,
+    "title": "Service engineer",
+    "soc": "5246",
+    "ext": "5246/00",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Electrical service and maintenance mechanics and repairers"
+   }
+  ],
+  "embedded software engineer": [
+   {
+    "recno": 10156,
+    "title": "Embedded software engineer",
+    "soc": "2134",
+    "ext": "2134/03",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Software developers"
+   }
+  ],
+  "robotics software engineer": [
+   {
+    "recno": 10160,
+    "title": "Robotics software engineer",
+    "soc": "2129",
+    "ext": "2129/13",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Robotics engineers"
    }
   ],
   "telecommunications engineer": [
@@ -1526,6 +2282,17 @@
     "subUnitGroup": "Higher education teaching professionals"
    }
   ],
+  "cnc machinist": [
+   {
+    "recno": 16202,
+    "title": "CNC machinist",
+    "soc": "5221",
+    "ext": "5221/01",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Machine setters and setter-operators"
+   }
+  ],
   "key account manager": [
    {
     "recno": 18485,
@@ -1685,6 +2452,17 @@
     "subUnitGroup": "Managers in logistics"
    }
   ],
+  "manufacturing manager": [
+   {
+    "recno": 19250,
+    "title": "Manufacturing manager",
+    "soc": "1121",
+    "ext": "1121/00",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Production managers and directors in manufacturing"
+   }
+  ],
   "marketing manager": [
    {
     "recno": 19261,
@@ -1745,6 +2523,224 @@
     "add": null,
     "ind": null,
     "subUnitGroup": "Medical and health care practice managers"
+   }
+  ],
+  "production manager": [
+   {
+    "recno": 19472,
+    "title": "Production manager",
+    "soc": "2132",
+    "ext": "2132/99",
+    "add": "computing/IT",
+    "ind": null,
+    "subUnitGroup": "IT managers n.e.c."
+   },
+   {
+    "recno": 19473,
+    "title": "Production manager",
+    "soc": "1241",
+    "ext": "1241/03",
+    "add": "distribution company",
+    "ind": null,
+    "subUnitGroup": "Transport and distribution managers"
+   },
+   {
+    "recno": 19474,
+    "title": "Production manager",
+    "soc": "1255",
+    "ext": "1255/99",
+    "add": "entertainment",
+    "ind": null,
+    "subUnitGroup": "Managers and directors in the creative industries n.e.c."
+   },
+   {
+    "recno": 19475,
+    "title": "Production manager",
+    "soc": "3557",
+    "ext": "3557/98",
+    "add": "events",
+    "ind": null,
+    "subUnitGroup": "Other events managers and organisers"
+   },
+   {
+    "recno": 19476,
+    "title": "Production manager",
+    "soc": "2432",
+    "ext": "2432/02",
+    "add": "marketing",
+    "ind": null,
+    "subUnitGroup": "Marketing managers"
+   },
+   {
+    "recno": 19477,
+    "title": "Production manager",
+    "soc": "2494",
+    "ext": "2494/01",
+    "add": null,
+    "ind": "advertising",
+    "subUnitGroup": "Advertising account managers"
+   },
+   {
+    "recno": 19478,
+    "title": "Production manager",
+    "soc": "1255",
+    "ext": "1255/99",
+    "add": null,
+    "ind": "broadcasting",
+    "subUnitGroup": "Managers and directors in the creative industries n.e.c."
+   },
+   {
+    "recno": 19479,
+    "title": "Production manager",
+    "soc": "1122",
+    "ext": "1122/00",
+    "add": null,
+    "ind": "building construction",
+    "subUnitGroup": "Production managers and directors in construction"
+   },
+   {
+    "recno": 19480,
+    "title": "Production manager",
+    "soc": "3557",
+    "ext": "3557/01",
+    "add": null,
+    "ind": "conference organisers",
+    "subUnitGroup": "Conference managers and organisers"
+   },
+   {
+    "recno": 19481,
+    "title": "Production manager",
+    "soc": "3557",
+    "ext": "3557/04",
+    "add": null,
+    "ind": "corporate hospitality",
+    "subUnitGroup": "Hospitality managers"
+   },
+   {
+    "recno": 19482,
+    "title": "Production manager",
+    "soc": "1123",
+    "ext": "1123/02",
+    "add": null,
+    "ind": "electricity supplier",
+    "subUnitGroup": "Managers and directors in the production of energy"
+   },
+   {
+    "recno": 19483,
+    "title": "Production manager",
+    "soc": "1121",
+    "ext": "1121/00",
+    "add": null,
+    "ind": "engineering",
+    "subUnitGroup": "Production managers and directors in manufacturing"
+   },
+   {
+    "recno": 19484,
+    "title": "Production manager",
+    "soc": "3557",
+    "ext": "3557/02",
+    "add": null,
+    "ind": "exhibition contracting",
+    "subUnitGroup": "Exhibition managers and organisers"
+   },
+   {
+    "recno": 19485,
+    "title": "Production manager",
+    "soc": "1255",
+    "ext": "1255/02",
+    "add": null,
+    "ind": "film, television production",
+    "subUnitGroup": "Film and television production managers"
+   },
+   {
+    "recno": 19486,
+    "title": "Production manager",
+    "soc": "1252",
+    "ext": "1252/00",
+    "add": null,
+    "ind": "garage",
+    "subUnitGroup": "Garage managers and proprietors"
+   },
+   {
+    "recno": 19487,
+    "title": "Production manager",
+    "soc": "1211",
+    "ext": "1211/00",
+    "add": null,
+    "ind": "horticulture",
+    "subUnitGroup": "Managers and proprietors in agriculture and horticulture"
+   },
+   {
+    "recno": 19488,
+    "title": "Production manager",
+    "soc": "3556",
+    "ext": "3556/99",
+    "add": null,
+    "ind": "import agency",
+    "subUnitGroup": "Sales accounts and business development managers n.e.c."
+   },
+   {
+    "recno": 19489,
+    "title": "Production manager",
+    "soc": "1121",
+    "ext": "1121/00",
+    "add": null,
+    "ind": "manufacturing",
+    "subUnitGroup": "Production managers and directors in manufacturing"
+   },
+   {
+    "recno": 19490,
+    "title": "Production manager",
+    "soc": "1121",
+    "ext": "1121/00",
+    "add": null,
+    "ind": "printing",
+    "subUnitGroup": "Production managers and directors in manufacturing"
+   },
+   {
+    "recno": 19491,
+    "title": "Production manager",
+    "soc": "1123",
+    "ext": "1123/02",
+    "add": null,
+    "ind": "public utilities",
+    "subUnitGroup": "Managers and directors in the production of energy"
+   },
+   {
+    "recno": 19492,
+    "title": "Production manager",
+    "soc": "1255",
+    "ext": "1255/03",
+    "add": null,
+    "ind": "publishing",
+    "subUnitGroup": "Publishing managers and directors"
+   },
+   {
+    "recno": 19493,
+    "title": "Production manager",
+    "soc": "1241",
+    "ext": "1241/99",
+    "add": null,
+    "ind": "transport",
+    "subUnitGroup": "Managers in transport and distribution n.e.c."
+   },
+   {
+    "recno": 19494,
+    "title": "Production manager",
+    "soc": "1150",
+    "ext": "1150/00",
+    "add": null,
+    "ind": "wholesale, retail trade",
+    "subUnitGroup": "Managers and directors in retail and wholesale"
+   },
+   {
+    "recno": 19495,
+    "title": "Production manager",
+    "soc": "1121",
+    "ext": "1121/00",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Production managers and directors in manufacturing"
    }
   ],
   "it project manager": [
@@ -2486,6 +3482,17 @@
     "subUnitGroup": "Youth work professionals"
    }
   ],
+  "cnc operator": [
+   {
+    "recno": 23342,
+    "title": "CNC operator",
+    "soc": "5221",
+    "ext": "5221/01",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Machine setters and setter-operators"
+   }
+  ],
   "paralegal": [
    {
     "recno": 24455,
@@ -2577,6 +3584,17 @@
     "add": null,
     "ind": null,
     "subUnitGroup": "Plumbers and heating and ventilation installers and repairers"
+   }
+  ],
+  "cnc programmer": [
+   {
+    "recno": 25703,
+    "title": "CNC programmer",
+    "soc": "5221",
+    "ext": "5221/01",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Machine setters and setter-operators"
    }
   ],
   "educational psychologist": [
@@ -2737,6 +3755,17 @@
     "subUnitGroup": "Statistical data scientists"
    }
   ],
+  "cnc setter": [
+   {
+    "recno": 27397,
+    "title": "CNC setter",
+    "soc": "5221",
+    "ext": "5221/01",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Machine setters and setter-operators"
+   }
+  ],
   "signaller": [
    {
     "recno": 27741,
@@ -2890,6 +3919,17 @@
     "subUnitGroup": "Accounting technicians"
    }
   ],
+  "avionics technician": [
+   {
+    "recno": 29857,
+    "title": "Avionics technician",
+    "soc": "3112",
+    "ext": "3112/01",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Avionics technicians"
+   }
+  ],
   "cad technician": [
    {
     "recno": 29870,
@@ -2901,6 +3941,48 @@
     "subUnitGroup": "BIM and CAD technicians"
    }
   ],
+  "electrical technician": [
+   {
+    "recno": 29935,
+    "title": "Electrical technician",
+    "soc": "5242",
+    "ext": "5242/00",
+    "add": null,
+    "ind": "telecoms",
+    "subUnitGroup": "Telecoms and related network installers and repairers"
+   },
+   {
+    "recno": 29936,
+    "title": "Electrical technician",
+    "soc": "3112",
+    "ext": "3112/99",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Electrical and electronics technicians n.e.c."
+   }
+  ],
+  "electronic technician": [
+   {
+    "recno": 29939,
+    "title": "Electronic technician",
+    "soc": "3112",
+    "ext": "3112/99",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Electrical and electronics technicians n.e.c."
+   }
+  ],
+  "electronics technician": [
+   {
+    "recno": 29940,
+    "title": "Electronics technician",
+    "soc": "3112",
+    "ext": "3112/99",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "Electrical and electronics technicians n.e.c."
+   }
+  ],
   "engineering technician": [
    {
     "recno": 29953,
@@ -2910,6 +3992,17 @@
     "add": null,
     "ind": null,
     "subUnitGroup": "Engineering technicians n.e.c."
+   }
+  ],
+  "3d printing technician": [
+   {
+    "recno": 30090,
+    "title": "3d printing technician",
+    "soc": "3120",
+    "ext": "3120/99",
+    "add": null,
+    "ind": null,
+    "subUnitGroup": "CAD, drawing and architectural technicians n.e.c."
    }
   ],
   "it support technician": [

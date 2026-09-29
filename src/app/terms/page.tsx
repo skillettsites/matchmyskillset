@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { CONTACT_EMAIL, LEGAL_ENTITY_NAME, LEGAL_LAST_UPDATED, SITE_NAME } from "@/lib/site";
+import { CONTACT_EMAIL, LEGAL_ENTITY_NAME, LEGAL_LAST_UPDATED, SHORTLIST_PARTNER_NAME, SITE_NAME } from "@/lib/site";
 import { EmployerTerms } from "@/components/employer/legal/EmployerTerms";
+import { CandidateToolsTerms } from "@/components/candidate/legal/CandidateToolsTerms";
+import { TrackingTerms } from "@/components/tracking/legal/TrackingTerms";
 
 export const metadata: Metadata = {
   title: "Terms of Service",
@@ -59,9 +61,10 @@ export default function TermsPage() {
           </li>
           <li>
             <strong>Recruiter shortlists:</strong> if you apply to a job, or switch on &lsquo;Let
-            employers find me&rsquo;, our recruitment team may review your application or profile to put
-            together shortlists for employers on Growth and Enterprise plans. Employers only see your
-            name and contact details if you applied to them or you accept their request.
+            employers find me&rsquo;, recruiters from {SHORTLIST_PARTNER_NAME}, our recruitment partner,
+            may review your application or profile to put together shortlists for employers on Growth
+            and Enterprise plans. Employers only see your name and contact details if you applied to them
+            or you accept their request.
           </li>
           <li>
             <strong>Career Change Report (paid):</strong> a one-off report about one career you
@@ -175,6 +178,11 @@ export default function TermsPage() {
           </a>
           .
         </p>
+
+        {/* CV tools terms (job packs, Plus, accounts): kept in its own component. */}
+        <CandidateToolsTerms />
+        {/* Application tracker: kept in its own component. */}
+        <TrackingTerms />
 
         {/* Employer terms: owned by the employer side, kept in its own component. */}
         <EmployerTerms />

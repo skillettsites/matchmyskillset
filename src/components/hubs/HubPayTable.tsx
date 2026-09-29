@@ -108,7 +108,7 @@ export function HubPayTable({ caption, description, routes, comparator, notes, j
       source={
         <SourceNote
           label="Sources"
-          source={`${ASHE.name}; Skills England apprenticeship standards (retrieved 28 September 2026)`}
+          source={`${ASHE.name}; Skills England apprenticeship standards (retrieved 29 September 2026)`}
           href={ASHE.href}
           published={ASHE.published}
           note="Full-time medians unless marked. Pay covers the whole ONS unit group behind each job."

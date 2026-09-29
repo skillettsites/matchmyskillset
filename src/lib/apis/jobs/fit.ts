@@ -4,7 +4,7 @@
 //
 // The score is led by skills:
 //   skills (60%)  the skills named in the advert that the profile shows,
-//                 weighted by how rare each is across our 141 careers (skills
+//                 weighted by how rare each is across our 159 careers (skills
 //                 shown only in part count 60%, closely related skills half),
 //                 plus, at half weight, the skills our careers data says the
 //                 advert's kind of job usually needs ("typical for this role").
@@ -52,6 +52,8 @@ const CAP_BIG_STEP_UP = 60;
 const CAP_BIG_STEP_DOWN = 65;
 /** Below this title fit, an advert of unknown kind is not treated as close to any of the person's jobs. */
 export const MIN_TITLE_FIT = 0.4;
+/** From this title fit an advert is the same job as the anchor it fits (a close name, or the same job in our data). */
+const SAME_JOB_FIT = 0.75;
 
 export type Track = "field" | "new";
 
@@ -318,7 +320,19 @@ export function assessJob(job: FitInput, ctx: FitContext, filter = true): Assess
   // suit the job it is closest to (their own job, or a career match), scaled by
   // how close it is; the evidence cap below keeps the result low.
   if (evidence === "title") skillsFit = (anchor?.prior ?? 0) * roleFit;
-  const track: Track = kind.family && ctx.currentFamily ? (kind.family === ctx.currentFamily ? "field" : "new") : anchor && bestFit >= 0.5 ? anchor.track : "new";
+  // The same job as one of the person's career matches is something new even
+  // inside their own family of work: for a CNC operator, an "Automation
+  // Engineer" advert is the move they asked about, not more of the same.
+  const sameAsCareerMatch = bestIdx >= 0 && ctx.anchors[bestIdx].track === "new" && bestFit >= SAME_JOB_FIT;
+  const track: Track = sameAsCareerMatch
+    ? "new"
+    : kind.family && ctx.currentFamily
+      ? kind.family === ctx.currentFamily
+        ? "field"
+        : "new"
+      : anchor && bestFit >= 0.5
+        ? anchor.track
+        : "new";
 
   // Level.
   const person = ctx.person;

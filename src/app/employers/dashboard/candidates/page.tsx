@@ -6,7 +6,7 @@ import { requireEmployer } from "@/lib/employer/session";
 import { listAccountJobs } from "@/lib/employer/jobs";
 import { jobSkillSet, MATCH_METHOD_SUMMARY, skillName, type JobSkillSet } from "@/lib/employer/matching";
 import { contactStatusMap, loadDiscoverable, rankCandidates } from "@/lib/employer/candidates";
-import { effectivePlan, limitsFor, moreMatchesHint } from "@/lib/employer/plans";
+import { CANDIDATE_SEARCH_UPGRADE, effectivePlan, hasCandidateSearch, limitsFor, moreMatchesHint } from "@/lib/employer/plans";
 import { CandidateCard } from "@/components/employer/CandidateCard";
 import { EmptyState, Notice, PageHead, SkillChip } from "@/components/employer/ui";
 
@@ -35,7 +35,8 @@ export default async function CandidateSearchPage({ searchParams }: { searchPara
   const searched = Boolean(job || skillsText.trim() || keyword || region || minYears);
   const unrecognised = !job && skillsText.trim() !== "" && skillSet.ids.length === 0;
 
-  const ranked = limits && !unrecognised ? rankCandidates(skillSet, await loadDiscoverable({ region }), { minYears, keyword }) : [];
+  const searchIncluded = hasCandidateSearch(plan);
+  const ranked = limits && searchIncluded && !unrecognised ? rankCandidates(skillSet, await loadDiscoverable({ region }), { minYears, keyword }) : [];
   const cap = limits?.matchedPerRole ?? null;
   const visible = cap === null ? ranked : ranked.slice(0, cap);
   const contacts = await contactStatusMap(account.id, visible.map((r) => r.candidate.id));
@@ -113,6 +114,13 @@ export default async function CandidateSearchPage({ searchParams }: { searchPara
             Choose a plan to search candidates.{" "}
             <Link href="/employers/dashboard/billing" className="font-semibold underline">
               See plans
+            </Link>
+          </Notice>
+        ) : !searchIncluded ? (
+          <Notice tone="amber">
+            {CANDIDATE_SEARCH_UPGRADE}{" "}
+            <Link href="/employers/dashboard/billing" className="font-semibold underline">
+              Compare plans
             </Link>
           </Notice>
         ) : unrecognised ? (

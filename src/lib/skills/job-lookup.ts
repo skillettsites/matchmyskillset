@@ -1,4 +1,4 @@
-// The list of jobs a person can start from on /discover: the 141 curated
+// The list of jobs a person can start from on /discover: the 159 curated
 // occupations in @/data/careers plus the common starting jobs in
 // starting-jobs.ts. Server-side only (it pulls in the careers dataset).
 

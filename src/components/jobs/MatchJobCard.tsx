@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { track } from "@/lib/analytics";
+import { noteApplyClick, TrackApplied } from "@/components/tracking/TrackApplied";
 import { postedLabel } from "./format";
 
 /** What a job card needs. Built from a results snapshot or a /jobs search. */
@@ -59,6 +60,8 @@ function MatchDial({ value }: { value: number }) {
 function recordClick(job: CardJob, position: number | undefined) {
   track("job_click", { source: job.source, position: position ?? null, match: job.match ?? null });
   if (job.source === "mms") return;
+  // Application tracker: ask "Did you apply?" when they come back from the advert.
+  noteApplyClick(job);
   fetch("/api/track-click", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -67,7 +70,7 @@ function recordClick(job: CardJob, position: number | undefined) {
   }).catch(() => {});
 }
 
-export function MatchJobCard({ job, position }: { job: CardJob; position?: number }) {
+export function MatchJobCard({ job, position, tailorHref }: { job: CardJob; position?: number; /** CV tools: "Tailor my CV for this job" link, on results pages. */ tailorHref?: string }) {
   const [why, setWhy] = useState(false);
   const mms = job.source === "mms";
   const posted = postedLabel(job.postedAt);
@@ -181,8 +184,19 @@ export function MatchJobCard({ job, position }: { job: CardJob; position?: numbe
             Why {job.match}%?
           </button>
         )}
+        {/* CV tools: tailor the CV for this job (src/app/tools/tailor). */}
+        {tailorHref && (
+          <Link href={tailorHref} className="inline-flex items-center gap-1.5 text-[14px] font-medium text-link hover:underline">
+            <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" />
+              <path d="M14 3v5h5M9 13h6M9 17h4" />
+            </svg>
+            Tailor my CV for this job
+          </Link>
+        )}
       </div>
       {why && job.explain && <p className="mt-2 rounded-xl bg-cloud px-3 py-2 text-[13px] leading-relaxed text-ink-2">{job.explain}</p>}
+      {!mms && <TrackApplied job={job} />}
     </article>
   );
 }

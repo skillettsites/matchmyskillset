@@ -15,7 +15,7 @@ Everything here is server-side data. `ashe-data.json` (about 480 KB) and
 | `ashe-data.json` | Every SOC 2020 unit group (412) plus the 139 higher-level groups and the UK "All employees" row, with ASHE gross annual pay for full-time and all employee jobs | Sourced (ONS), generated |
 | `ashe.ts` | Typed loader: `SOURCE`, `getAsheUnitGroup`, `getAsheFigures`, `cvQuality`, `sourceLine` | Code |
 | `soc2020.json`, `soc2020.ts` | Official unit group titles, ONS group descriptions, ONS "typical entry routes and associated qualifications" text, related job titles | Sourced (ONS), generated |
-| `occupations.ts` | 141 curated destination occupations across 110 unit groups | Mixed: see its header |
+| `occupations.ts` | 159 curated destination occupations across 121 unit groups | Mixed: see its header |
 | `licences.ts` | 17 licences, registrations and industry cards, each linked to the official body | Summaries editorial, pages checked |
 | `index.ts` | `getCareerProfile(id)` joins an occupation with pay, ONS text, apprenticeships and licences | Code |
 | `sources/apprenticeship-standards.json` | Snapshot of the 139 Skills England standards referenced | Sourced, generated |
@@ -142,6 +142,17 @@ openpyxl): 0 mismatches.
 1. **Destinations** follow the build order in the market research (teachers, police,
    nurses and NHS staff, military veterans, jobs without a degree, the highest-paid
    options and common destinations). `audiences` records which group each suits.
+   On 29 September 2026, 18 engineering, manufacturing and Industry 4.0 destinations
+   were added for the site's engineering focus (robotics, mechatronics, automation,
+   additive manufacturing, manufacturing, mechanical, electrical and electronics,
+   quality and project engineers, automation, electrical and electronics and 3D printing
+   technicians, CNC machinist, field service engineer, embedded software engineer,
+   technical sales engineer and production manager), with three new audiences:
+   `graduate`, `technician-upskill` and `manufacturing-pro`. The coding index sometimes
+   splits one job title by level, and the ONS answer was kept: a professional automation
+   engineer is 2125 but an automation engineer who maintains equipment is 5223, a
+   professional quality engineer is 2481 but a technician-level one is 3115, and 3D
+   printing technicians are 3120 with CAD technicians.
 2. **SOC code.** Each job title was looked up in the ONS coding index and assigned
    the unit group ONS itself uses. `socIndexTitles` lists the exact index titles and
    `socExt` the extended sub-unit group. The mapping sometimes differs from intuition,
@@ -152,8 +163,8 @@ openpyxl): 0 mismatches.
 3. **Apprenticeships.** A standard is listed only if it is "Approved for delivery" and
    either the occupation's NCS profile names it (with the same level), or the standard
    lists the occupation title or an alias among its typical job titles, or the
-   standard's title is the occupation title. Of 156 links, 132 are named on the NCS
-   profile, 22 come from typical job titles and 2 from an identical title.
+   standard's title is the occupation title. Of 188 links, 145 are named on the NCS
+   profile, 41 come from typical job titles and 2 from an identical title.
 4. **Licences.** Listed only when the NCS profile mentions it (25 links), the ONS SOC
    entry text mentions it (1: the CAA licence for air traffic controllers), or the
    licence body's own page names the profession (2: HCPC for practitioner
@@ -172,6 +183,19 @@ openpyxl): 0 mismatches.
    in the job hold degrees (ONS says, for example, that most data analysts do).
 
 ### Taxonomy fixes
+
+29 September 2026: s380 to s408 were added for engineering and manufacturing (PLC
+programming, robotics programming, industrial automation, SCADA and HMI, CNC machining,
+CAM programming, additive manufacturing, mechatronics, embedded systems, IoT, sensors and
+instrumentation, hydraulics and pneumatics, electrical fault finding, preventive and
+predictive maintenance, root cause analysis, GD&T and engineering drawings, metrology,
+quality management systems, welding and fabrication, machine vision, digital twins and
+simulation, electronic engineering, equipment commissioning, technical sales, production
+planning, materials science, engineering simulation, machine and line operation, and
+working at height). "root cause analysis" moved from an alias of s024 Problem Solving to
+s394, which is related to s024. Aliases that are also common words or other things
+("PLC" for public limited company, "SLA", "CFD", "HMI", "CAM") are left out, because
+advert text is matched on every alias.
 
 `src/data/skills-taxonomy.ts`: s056 is now "Professional Networking" and s220
 "Computer Networking" (both were "Networking"); ids are unchanged. s023 Statistical

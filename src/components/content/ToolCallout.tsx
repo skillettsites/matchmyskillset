@@ -10,6 +10,12 @@ export interface ToolCalloutProps {
    * `?current=<value>` so the CV tool can start from it.
    */
   current?: string;
+  /**
+   * The field the reader wants, e.g. "Robotics and automation". Added to the
+   * upload link as `?looking=<value>` so "What are you looking for?" starts
+   * filled in, and the matching searches that field first.
+   */
+  looking?: string;
   /** Heading. Defaults to "Upload your CV to see matching jobs". */
   heading?: string;
   /** Body copy. Defaults to a line on what the CV match does. */
@@ -27,8 +33,8 @@ const DEFAULT_HEADING = "Upload your CV to see matching jobs";
 // Illustrative rows for the little preview. Generic titles, no employers, no
 // salaries, and labelled as examples.
 const PREVIEW = [
-  { title: "Operations Manager", match: 86 },
-  { title: "Project Coordinator", match: 74 },
+  { title: "Maintenance Engineer", match: 86 },
+  { title: "Automation Technician", match: 74 },
 ];
 
 /**
@@ -38,6 +44,7 @@ const PREVIEW = [
  */
 export function ToolCallout({
   current,
+  looking,
   heading,
   body,
   headingLevel = 2,
@@ -45,7 +52,11 @@ export function ToolCallout({
   className = "",
 }: ToolCalloutProps) {
   const H = `h${headingLevel}` as "h2" | "h3";
-  const cvHref = current ? `/discover?current=${encodeURIComponent(current)}` : "/discover";
+  const params = new URLSearchParams();
+  if (current) params.set("current", current);
+  if (looking) params.set("looking", looking);
+  const query = params.toString();
+  const cvHref = query ? `/discover?${query}` : "/discover";
   const title = heading ?? DEFAULT_HEADING;
 
   return (

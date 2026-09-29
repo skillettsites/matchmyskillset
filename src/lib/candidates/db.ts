@@ -6,6 +6,7 @@ import { createAdminClient, isSupabaseConfigured } from "@/lib/supabase/admin";
 import { DatabaseUnavailableError } from "@/lib/apis/reports-db";
 import type { FitAnchor, PersonFit } from "@/lib/apis/jobs/fit";
 import type { SnapshotPlace } from "@/lib/apis/jobs/match";
+import { deleteTrackerDataForEmail } from "@/lib/tracking/tracker";
 
 export { newToken } from "@/lib/apis/reports-db";
 
@@ -266,6 +267,8 @@ export async function deleteCandidateEverything(c: CandidateRow): Promise<void> 
   if (appsByEmail.error) fail("mms_applications delete failed", appsByEmail.error);
   const alerts = await client.from("mms_job_alerts").delete().ilike("email", c.email);
   if (alerts.error) fail("mms_job_alerts delete failed", alerts.error);
+  // Their application tracker too (migration 010; does nothing before it is applied).
+  await deleteTrackerDataForEmail(c.email);
   const cand = await client.from("mms_candidates").delete().eq("id", c.id);
   if (cand.error) fail("mms_candidates delete failed", cand.error);
 }

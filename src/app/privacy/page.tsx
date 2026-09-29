@@ -8,9 +8,12 @@ import {
   LEGAL_LAST_UPDATED,
   RECRUITER_SHARING_ENABLED,
   RECRUITMENT_PARTNER_NAME,
+  SHORTLIST_PARTNER_NAME,
   SITE_NAME,
 } from "@/lib/site";
 import { EmployerPrivacy } from "@/components/employer/legal/EmployerPrivacy";
+import { CandidateToolsPrivacy } from "@/components/candidate/legal/CandidateToolsPrivacy";
+import { TrackingPrivacy } from "@/components/tracking/legal/TrackingPrivacy";
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
@@ -40,12 +43,15 @@ export default function PrivacyPage() {
         <div className="rounded-xl border border-gray-200 bg-gray-50 p-5">
           <h2 className="font-semibold text-gray-900 mb-2">The short version</h2>
           <ul className="list-disc pl-5 space-y-1">
-            <li>There are no accounts. You can check your CV without signing up.</li>
+            <li>
+              You can check your CV without signing up. Accounts are optional, for the paid CV tools
+              (see <a href="#cv-tools" className={link}>CV tools</a>).
+            </li>
             <li>
               Your CV text is sent to Anthropic (the company behind the Claude AI model) in the
               United States to identify your skills. We do not keep the raw CV text once the
-              analysis has finished, unless you apply for a job posted here or choose to add it to
-              an employer-visible profile.
+              analysis has finished, unless you apply for a job posted here, choose to add it to
+              an employer-visible profile, or use the CV tools (it is then kept inside your job pack).
             </li>
             <li>
               To find live jobs for you we send job titles and the place you typed (never your name,
@@ -55,6 +61,11 @@ export default function PrivacyPage() {
               We keep your results (skills, career matches, the job title you gave, and for a CV a few
               paraphrased achievements, short notes on where each skill shows and what you said matters to you) for 12 months so your results
               link keeps working, then delete them.
+            </li>
+            <li>
+              Recruiters from {SHORTLIST_PARTNER_NAME}, our recruitment partner, review applications and
+              profiles to prepare shortlists for employers, but only for people who applied for a job
+              here or switched on &lsquo;Let employers find me&rsquo;.
             </li>
             <li>Payments are handled by Stripe. We keep purchase records for 6 years for tax.</li>
             <li>Google Analytics cookies are only used if you click Accept.</li>
@@ -72,8 +83,10 @@ export default function PrivacyPage() {
         <h2 className={h2}>1. Who we are</h2>
         <p>
           {SITE_NAME} (matchmyskillset.com) is run by {LEGAL_ENTITY_NAME}, the controller of the
-          personal data described here. You can contact us about anything in this policy at{" "}
-          <Email />.
+          personal data described here. {SITE_NAME} is a joint venture with {SHORTLIST_PARTNER_NAME}, a
+          specialist recruitment firm whose recruiters prepare the shortlists employers can ask for
+          (see &ldquo;Recruiter shortlists for employers&rdquo;). You can contact us about anything in this
+          policy at <Email />.
         </p>
 
         <h2 className={h2}>2. What we collect and why</h2>
@@ -215,10 +228,12 @@ export default function PrivacyPage() {
 
         <h3 className={h3} id="shortlists">Recruiter shortlists for employers</h3>
         <p>
-          If you apply to a job, or switch on &lsquo;Let employers find me&rsquo;, our recruitment team
-          may review your application or profile to put together shortlists for employers on Growth and
-          Enterprise plans. Employers only see your name and contact details if you applied to them or
-          you accept their request.
+          If you apply to a job, or switch on &lsquo;Let employers find me&rsquo;, recruiters from{" "}
+          {SHORTLIST_PARTNER_NAME}, our recruitment partner, may review your application or profile to put
+          together shortlists for employers on Growth and Enterprise plans. They only see people who
+          applied for a job here or switched on &lsquo;Let employers find me&rsquo;, and use what they see
+          only to prepare those shortlists. Employers only see your name and contact details if you
+          applied to them or you accept their request.
         </p>
         <p>
           A shortlist lists the people a recruiter thinks fit a job best, in order, with a short note on
@@ -310,6 +325,14 @@ export default function PrivacyPage() {
             &ldquo;Recruiter shortlists for employers&rdquo;).
           </li>
           <li>
+            <strong>{SHORTLIST_PARTNER_NAME}</strong> (specialist recruitment firm, our joint venture
+            partner): its recruiters see applications for jobs posted here and profiles people have
+            chosen to make findable (including a CV they added) to prepare recruiter shortlists for
+            employers, as described in &ldquo;Recruiter shortlists for employers&rdquo;. Only people who
+            applied or switched on &lsquo;Let employers find me&rsquo; are included, and the details are
+            used only for that.
+          </li>
+          <li>
             <strong>Stripe</strong>: processes payments. For some purposes, such as preventing fraud
             and meeting its own legal duties, Stripe acts as a separate controller under its own
             privacy policy.
@@ -377,7 +400,8 @@ export default function PrivacyPage() {
         <ul className="list-disc pl-5 space-y-2">
           <li>
             <strong>Raw CV text and uploaded files:</strong> not stored by us after the analysis
-            {RECRUITER_SHARING_ENABLED ? " unless you tick the recruiter box" : ""}. Anthropic keeps
+            {RECRUITER_SHARING_ENABLED ? " unless you tick the recruiter box" : ""}, except inside a
+            job pack you ask for (see <a href="#cv-tools" className={link}>CV tools</a>). Anthropic keeps
             API data for up to 30 days, as described above.
           </li>
           <li>
@@ -493,6 +517,11 @@ export default function PrivacyPage() {
           If we change how we use personal data, we will update this page and the date at the top.
           See also our <Link href="/terms" className={link}>Terms of Service</Link>.
         </p>
+
+        {/* CV tools section (accounts, job packs, Plus): kept in its own component. */}
+        <CandidateToolsPrivacy />
+        {/* Application tracking, outcomes and placements: kept in its own component. */}
+        <TrackingPrivacy />
 
         {/* Employer section: owned by the employer side, kept in its own component. */}
         <EmployerPrivacy />

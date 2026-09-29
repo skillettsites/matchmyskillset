@@ -8,9 +8,9 @@ import { PRICING_TIERS } from "@/lib/employer/plans";
 import { SITE_URL } from "@/components/site";
 
 export const metadata: Metadata = {
-  title: "Employer pricing: jobs from £199 a month",
+  title: "Employer pricing: jobs from £49 a month",
   description:
-    "Starter £199 a month for 3 live jobs, Growth £499 for 10 with recruiter shortlists, skills-gap reports and a company page, Enterprise from £999, or pay per hire.",
+    "Lite £49 a month for one live job, Starter £199 for 3 with matched candidates, Growth £499 for 10 with recruiter shortlists, skills-gap reports and a company page, Enterprise from £999, or pay per hire.",
   alternates: { canonical: "/employers/pricing" },
 };
 
@@ -60,14 +60,13 @@ export default async function EmployerPricingPage() {
       <section id="enquiry" className="scroll-mt-20 bg-cloud px-5 py-20 md:py-24" aria-labelledby="enquiry-title">
         <div className="mx-auto grid max-w-[1080px] gap-10 lg:grid-cols-[1fr_1.3fr] lg:items-start">
           <div>
-            <p className="eyebrow text-link">Enterprise and pay per hire</p>
+            <p className="eyebrow text-link">Enterprise, pay per hire and partner rates</p>
             <h2 id="enquiry-title" className="headline mt-2">
               Talk to us.
             </h2>
             <p className="mt-5 max-w-[440px] text-[19px] leading-snug text-mute">
               Tell us what you are hiring for and we will reply by email with a price. You can also use this form for any question about the plans.
-            </p>
-          </div>
+            </p>          </div>
           <EnquiryForm />
         </div>
       </section>
