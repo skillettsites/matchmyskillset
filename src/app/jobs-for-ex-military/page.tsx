@@ -28,17 +28,19 @@ import {
   type Fact,
   type RouteSpec,
 } from "@/components/hubs";
+import { CAREERS_HREF } from "@/components/site";
+import { CAREER_OCCUPATIONS, getAsheUnitGroup } from "@/data/careers";
 import { assertHubRoutes } from "@/lib/skills/families";
 import { titleInSentence } from "@/lib/text";
 
 const PATH = "/jobs-for-ex-military";
-const UPDATED = "2026-09-28";
-const TITLE = "Jobs for ex-military in the UK: civilian careers and what they pay";
+const UPDATED = "2026-09-29";
+const TITLE = "Jobs for ex-military: engineering, technical and civilian careers";
 const DESCRIPTION =
-  "15 civilian jobs for armed forces veterans with ONS pay, plus resettlement support: the Career Transition Partnership, Enhanced Learning Credits and more.";
+  "Civilian jobs for service leavers, led by engineering, maintenance and advanced manufacturing, with ONS pay and resettlement support: CTP, ELCAS and more.";
 
 export const metadata: Metadata = {
-  title: { absolute: "Jobs for Ex-Military UK: Civilian Careers and What They Pay" },
+  title: { absolute: "Jobs for Ex-Military UK: Engineering and Civilian Careers" },
   description: DESCRIPTION,
   alternates: { canonical: PATH },
   openGraph: { title: TITLE, description: DESCRIPTION, type: "article", url: PATH },
@@ -60,6 +62,60 @@ const SIA = "https://www.gov.uk/guidance/apply-for-an-sia-licence";
 /* Routes                                                              */
 /* ------------------------------------------------------------------ */
 
+// Where train driving ranks by ONS median among the destinations that do not usually need a degree.
+const TRAIN_DRIVER_RANK = (() => {
+  const median = (soc: string) => getAsheUnitGroup(soc)?.ft.median ?? null;
+  const list = CAREER_OCCUPATIONS.filter((o) => !o.degreeUsuallyRequired && median(o.soc) !== null).sort(
+    (a, b) => (median(b.soc) as number) - (median(a.soc) as number)
+  );
+  const rank = list.findIndex((o) => o.id === "train-driver") + 1;
+  const words = ["", "the highest", "the second-highest", "the third-highest", "the fourth-highest", "the fifth-highest"];
+  return `${words[rank] ?? `number ${rank} by`} ONS median of the ${CAREER_OCCUPATIONS.length} destination jobs we track, among those that do not usually need a degree`;
+})();
+
+const ENGINEERING: RouteSpec[] = [
+  {
+    id: "maintenance-fitter",
+    why: "Keeping vehicles, weapons systems, generators or aircraft serviceable is maintenance work: planned servicing, fault finding and records. Factories need the same discipline to keep production lines running.",
+    jobsQuery: "Maintenance engineer",
+  },
+  {
+    id: "engineering-technician",
+    why: "Maintaining vehicles, weapons systems, plant or electronics builds the fault-finding and procedure skills engineering technicians use. ONS puts wind turbine technicians in the same pay group.",
+  },
+  {
+    id: "automation-technician",
+    why: "If you worked on electrical, electronic or complex mechanical equipment, you already find faults to a procedure. Adding PLC and robot skills turns that into keeping automated production lines running.",
+  },
+  {
+    id: "electrical-electronics-technician",
+    why: "Electronics, avionics and communications trades test and repair equipment from schematics, which is this job. ONS codes avionics technicians to the same group.",
+    jobsQuery: "Electronics technician",
+  },
+  {
+    id: "aircraft-maintenance-engineer",
+    why: "Aircraft technicians work to maintenance procedures, inspections and records that civil aviation depends on too.",
+  },
+  {
+    id: "field-service-engineer",
+    why: "Working on your own, finding the fault and fixing it with what you have will be familiar. Field service engineers do it at customers' sites.",
+  },
+  {
+    id: "electrician",
+    why: "Service electricians and technicians bring theory and hands-on experience, which you then show against the civilian qualification.",
+    note: "The National Careers Service lists a work accreditation scheme as one route in, alongside apprenticeships and college courses.",
+    aiSlug: "electrician",
+  },
+  {
+    id: "3d-printing-technician",
+    why: "A newer route into advanced manufacturing for people drawn to design and making parts. The National Careers Service describes college, apprenticeship and on-the-job routes in.",
+  },
+  {
+    id: "quality-engineer",
+    why: "Inspections, audits, records and following procedures to the letter are daily service life. Quality engineers apply the same rigour to products and processes.",
+  },
+];
+
 const PLAN_SUPPLY: RouteSpec[] = [
   {
     id: "project-manager",
@@ -78,22 +134,9 @@ const PLAN_SUPPLY: RouteSpec[] = [
     id: "facilities-manager",
     why: "Running the services on a base or a ship is facilities management: maintenance, contractors, safety and budgets.",
   },
-];
-
-const ENGINEERING: RouteSpec[] = [
   {
-    id: "aircraft-maintenance-engineer",
-    why: "Aircraft technicians work to maintenance procedures, inspections and records that civil aviation depends on too.",
-  },
-  {
-    id: "engineering-technician",
-    why: "Maintaining vehicles, weapons systems, plant or electronics builds the fault-finding and procedure skills engineering technicians use. ONS puts wind turbine technicians in the same pay group.",
-  },
-  {
-    id: "electrician",
-    why: "Service electricians and technicians bring theory and hands-on experience, which you then show against the civilian qualification.",
-    note: "The National Careers Service lists a work accreditation scheme as one route in, alongside apprenticeships and college courses.",
-    aiSlug: "electrician",
+    id: "production-manager",
+    why: "Running a unit's output with people, plans, safety and standards is close to running production. The National Careers Service describes moving up into production management through training and promotion.",
   },
 ];
 
@@ -121,7 +164,7 @@ const TRANSPORT: RouteSpec[] = [
   },
   {
     id: "train-driver",
-    why: "Long periods of concentration, strict procedures and shift work will be familiar. It has the second-highest ONS median of the 141 destination jobs we track that do not usually need a degree.",
+    why: `Long periods of concentration, strict procedures and shift work will be familiar. It has ${TRAIN_DRIVER_RANK}.`,
     note: "The National Careers Service says you apply to a train operating company for a place on the Train driver apprenticeship, which takes between 1 and 2 years.",
   },
 ];
@@ -145,8 +188,13 @@ const SECURITY_SAFETY: RouteSpec[] = [
 ];
 
 const GROUPS = [
+  {
+    id: "engineering",
+    title: "Engineering, maintenance and advanced manufacturing",
+    intro: "For technicians and engineers, and the largest group here. Service training is a strong base, and apprenticeships, college courses or accreditation schemes turn it into a civilian qualification. Automation and 3D printing build on the same fault-finding and procedure skills.",
+    specs: ENGINEERING,
+  },
   { id: "plan-supply", title: "Plan, run and supply", intro: "Management routes built on planning, logistics and leading people. Recognised civilian qualifications, such as PRINCE2 for projects, help translate service experience.", specs: PLAN_SUPPLY },
-  { id: "engineering", title: "Engineering and trades", intro: "For technical trades. Service training is a strong base, and apprenticeships or accreditation schemes turn it into a civilian qualification.", specs: ENGINEERING },
   { id: "digital", title: "Digital, cyber and intelligence", intro: "Well paid at the median. Expect to add civilian certifications or an apprenticeship to your service experience.", specs: DIGITAL },
   { id: "transport", title: "Driving and rail", intro: "Licences and medical checks come first. Train driving pays far above the UK median; HGV driving pays just above it.", specs: TRANSPORT },
   { id: "security-safety", title: "Security, safety and teaching", intro: "Protecting people, keeping workplaces safe, or teaching the next generation.", specs: SECURITY_SAFETY },
@@ -223,11 +271,16 @@ export default function MilitaryHubPage() {
   const faqs: FaqItem[] = [
     {
       question: "What jobs can ex-military personnel do in the UK?",
-      answer: `Common routes use planning and leadership (project, logistics, transport and facilities management), technical trades (aircraft maintenance, engineering technician, electrician), digital and intelligence work, driving and rail, and security, safety or teaching. This page lists 15 with ONS pay: ${higher.length} have a median above the UK full-time median of ${formatGBP(uk)} (ONS ASHE 2025).`,
+      answer: `This page leads with engineering and technical routes: maintenance, automation, electrical and electronics, aircraft maintenance, field service, 3D printing and quality. It also covers planning and leadership (project, production, logistics, transport and facilities management), digital and intelligence work, driving and rail, and security, safety or teaching. It lists ${routes.length} jobs with ONS pay: ${higher.length} have a median above the UK full-time median of ${formatGBP(uk)} (ONS ASHE 2025).`,
+    },
+    {
+      question: "Can I move into automation or robotics after the forces?",
+      answer:
+        "Yes. Technical trades that fault-find on electrical, electronic or mechanical equipment are a strong base for automation technician roles, which add PLC and robot skills. Enhanced Learning Credits can help pay for level 3 and above courses if you registered in service. Our robotics and automation guide has the apprenticeships and routes.",
     },
     {
       question: "What are the best-paid civilian jobs for veterans?",
-      answer: `Of the 15 routes here, ${titleInSentence(top.title)} has the highest ONS full-time median at ${formatGBP(top.median as number)}, followed by project management at ${gbpFt("2440")} (ONS ASHE 2025). A median covers everyone in the job, including people with years of experience, so it is not a starting salary.`,
+      answer: `Of the ${routes.length} routes here, ${titleInSentence(top.title)} has the highest ONS full-time median at ${formatGBP(top.median as number)}, followed by project management at ${gbpFt("2440")} (ONS ASHE 2025). A median covers everyone in the job, including people with years of experience, so it is not a starting salary.`,
     },
     {
       question: "What resettlement support do I get when I leave the armed forces?",
@@ -282,7 +335,7 @@ export default function MilitaryHubPage() {
     {
       question: "Do I need a degree for a civilian career?",
       answer:
-        "For most routes on this page, no. Project, logistics and facilities management, trades, cyber, driving and security all have documented routes without a degree. Teaching in a state school needs a degree and QTS.",
+        "For most routes on this page, no. Maintenance, automation, electrical and other technician roles, project, logistics and facilities management, cyber, driving and security all have documented routes without a degree. Teaching in a state school needs a degree and QTS.",
     },
     {
       question: "What if I served less than four years?",
@@ -300,23 +353,24 @@ export default function MilitaryHubPage() {
     <HubPage>
       <ArticleJsonLd path={PATH} headline={TITLE} description={DESCRIPTION} dateModified={UPDATED} />
       <PageHeader
-        breadcrumbs={<Breadcrumbs items={[{ name: "Leaving your job", href: "/careers-for" }, { name: "Jobs for ex-military" }]} />}
+        breadcrumbs={<Breadcrumbs items={[{ name: "Engineering and manufacturing careers", href: CAREERS_HREF }, { name: "Jobs for ex-military" }]} />}
         kicker="Leaving the armed forces"
         title={TITLE}
         updated={UPDATED}
         intro={
           <p>
-            13,050 people left the UK Regular Armed Forces in the year to 30 June 2026 (MOD, September 2026). Below are 15
-            civilian routes with ONS pay for each: {higher.length} pay more than the {formatGBP(uk)} UK full-time median,
-            led by {titleInSentence(top.title)} at {formatGBP(top.median as number)} (ONS ASHE 2025). Your resettlement
-            support is set out below too.
+            13,050 people left the UK Regular Armed Forces in the year to 30 June 2026 (MOD, September 2026). Below are{" "}
+            {routes.length} civilian routes with ONS pay for each, led by engineering, maintenance and advanced manufacturing roles
+            for technicians and engineers: {higher.length} pay more than the {formatGBP(uk)} UK full-time median, led by{" "}
+            {titleInSentence(top.title)} at {formatGBP(top.median as number)} (ONS ASHE 2025). Your resettlement support is set
+            out below too.
           </p>
         }
       >
         <OnThisPage
           items={[
             { href: "#in-numbers", label: "Leaving the forces in numbers" },
-            { href: "#at-a-glance", label: "15 routes at a glance" },
+            { href: "#at-a-glance", label: `${routes.length} routes at a glance` },
             { href: "#routes", label: "Each route in detail" },
             { href: "#resettlement", label: "Your resettlement support" },
             { href: "#funded", label: "Funded training and schemes" },
@@ -341,7 +395,8 @@ export default function MilitaryHubPage() {
 
       <ToolCallout
         current="armed forces"
-        heading="Leaving the forces? See where your own experience fits"
+        looking="Engineering, maintenance or technician roles"
+        heading="Leaving the forces? See where your technical experience fits"
         body={
           <p>
             Paste your CV and get a free analysis of the skills you already have, in civilian language, and which of these
@@ -353,7 +408,7 @@ export default function MilitaryHubPage() {
 
       <HubSection
         id="at-a-glance"
-        title="15 civilian routes at a glance"
+        title={`${routes.length} civilian routes at a glance`}
         intro={
           <p>
             The change column compares each job&apos;s ONS full-time median with the UK full-time median for all
@@ -469,6 +524,7 @@ export default function MilitaryHubPage() {
       <ToolCallout
         id="check-your-options-2"
         current="armed forces"
+        looking="Engineering, maintenance or technician roles"
         heading="Not sure which route fits you?"
         body={
           <p>
@@ -512,6 +568,8 @@ export default function MilitaryHubPage() {
       <RelatedLinks
         links={[
           { href: "/discover?current=armed%20forces#cv", label: "Analyse my CV", note: "Free, no account: see which routes your experience fits." },
+          { href: CAREERS_HREF, label: "Engineering and manufacturing jobs", note: "All the engineering careers, from maintenance to design." },
+          { href: "/robotics-and-automation-jobs", label: "Robotics and automation jobs", note: "How technicians move into automation." },
           { href: "/jobs?q=ex%20military", label: "Live jobs for ex-military", note: "Search current UK vacancies." },
           { href: "/transferable-skills", label: "Transferable skills", note: "How to put service experience in civilian language." },
           { href: "/jobs-without-a-degree", label: "Jobs without a degree" },

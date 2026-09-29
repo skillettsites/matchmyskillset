@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { CONTACT_EMAIL, LEGAL_ENTITY_NAME, LEGAL_LAST_UPDATED, SITE_NAME } from "@/lib/site";
+import { CONTACT_EMAIL, LEGAL_ENTITY_NAME, LEGAL_LAST_UPDATED, SHORTLIST_PARTNER_NAME, SITE_NAME } from "@/lib/site";
 import { EmployerTerms } from "@/components/employer/legal/EmployerTerms";
 
 export const metadata: Metadata = {
@@ -59,9 +59,10 @@ export default function TermsPage() {
           </li>
           <li>
             <strong>Recruiter shortlists:</strong> if you apply to a job, or switch on &lsquo;Let
-            employers find me&rsquo;, our recruitment team may review your application or profile to put
-            together shortlists for employers on Growth and Enterprise plans. Employers only see your
-            name and contact details if you applied to them or you accept their request.
+            employers find me&rsquo;, recruiters from {SHORTLIST_PARTNER_NAME}, our recruitment partner,
+            may review your application or profile to put together shortlists for employers on Growth
+            and Enterprise plans. Employers only see your name and contact details if you applied to them
+            or you accept their request.
           </li>
           <li>
             <strong>Career Change Report (paid):</strong> a one-off report about one career you

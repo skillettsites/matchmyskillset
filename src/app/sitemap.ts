@@ -23,19 +23,33 @@ import { hasCompanyPage } from "@/lib/employer/company";
 export const revalidate = 3600;
 
 const REVAMP = "2026-09-28";
+/** Engineering, manufacturing and Industry 4.0 focus (29 September 2026). */
+const NICHE = "2026-09-29";
 
 type Route = { path: string; lastModified: string; priority?: number };
 
 const ROUTES: Route[] = [
   // Home and tools
-  { path: "/", lastModified: REVAMP, priority: 1 },
+  { path: "/", lastModified: NICHE, priority: 1 },
   { path: "/discover", lastModified: REVAMP, priority: 0.9 },
-  { path: "/careers-for", lastModified: REVAMP, priority: 0.9 },
-  ...JOB_HUBS.filter((hub) => hub.href !== "/careers-for").map((hub) => ({ path: hub.href, lastModified: REVAMP, priority: 0.9 })),
-  { path: "/jobs", lastModified: REVAMP, priority: 0.6 },
+
+  // Engineering, manufacturing and Industry 4.0
+  { path: "/engineering-and-manufacturing-jobs", lastModified: NICHE, priority: 0.9 },
+  { path: "/robotics-and-automation-jobs", lastModified: NICHE, priority: 0.9 },
+  { path: "/3d-printing-jobs", lastModified: NICHE, priority: 0.8 },
+  { path: "/graduate-engineering-jobs", lastModified: NICHE, priority: 0.8 },
+
+  // Profession hubs (the ex-military hub was reframed for engineering on 29 September 2026)
+  { path: "/careers-for", lastModified: NICHE, priority: 0.8 },
+  ...JOB_HUBS.filter((hub) => hub.href !== "/careers-for").map((hub) => ({
+    path: hub.href,
+    lastModified: hub.href === "/jobs-for-ex-military" ? NICHE : REVAMP,
+    priority: hub.href === "/jobs-for-ex-military" ? 0.9 : 0.7,
+  })),
+  { path: "/jobs", lastModified: NICHE, priority: 0.6 },
   { path: "/quiz", lastModified: REVAMP, priority: 0.7 },
   { path: "/pricing", lastModified: REVAMP, priority: 0.5 },
-  { path: "/employers", lastModified: REVAMP, priority: 0.6 },
+  { path: "/employers", lastModified: NICHE, priority: 0.6 },
   { path: "/employers/pricing", lastModified: REVAMP, priority: 0.5 },
   { path: "/transferable-skills", lastModified: REVAMP, priority: 0.8 },
 
@@ -77,9 +91,9 @@ const ROUTES: Route[] = [
   { path: "/best-side-hustles-uk", lastModified: REVAMP, priority: 0.5 },
 
   // Company
-  { path: "/about", lastModified: REVAMP, priority: 0.4 },
-  { path: "/privacy", lastModified: REVAMP, priority: 0.2 },
-  { path: "/terms", lastModified: REVAMP, priority: 0.2 },
+  { path: "/about", lastModified: NICHE, priority: 0.4 },
+  { path: "/privacy", lastModified: NICHE, priority: 0.2 },
+  { path: "/terms", lastModified: NICHE, priority: 0.2 },
 ];
 
 /** Sources of every redirect in src/data/redirects/*.json (imported, so they are there when the sitemap is rebuilt on the server). */

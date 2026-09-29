@@ -42,7 +42,8 @@ export function EmployerPrivacy() {
         </li>
         <li>
           <strong>Recruiter shortlists (Growth and Enterprise):</strong> whether you asked for one for each job, and the shortlist itself: who was picked, in what
-          order, the recruiter&apos;s notes and summary, and when it was asked for and sent. Our recruiters see the job and its applicants to put it together, but not
+          order, the recruiter&apos;s notes and summary, and when it was asked for and sent. Recruiters from Flintstone Associates, our recruitment partner, see the job
+          and its applicants to put it together, but not
           your plan or billing details. Lawful basis: our contract with you.
         </li>
       </ul>

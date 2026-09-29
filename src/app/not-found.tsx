@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { GUIDE_LINKS, JOB_HUBS } from "@/components/site";
+import { ENGINEERING_HUBS, GUIDE_LINKS, OTHER_CAREER_HUBS } from "@/components/site";
 import { HeroGlow } from "@/components/marketing";
 import { ChevronRight } from "@/components/marketing/Icons";
 
@@ -55,8 +55,8 @@ export default function NotFound() {
         </div>
       </div>
       <div className="relative mx-auto mt-16 grid max-w-[880px] gap-4 md:grid-cols-2">
-        <LinkColumn id="nf-jobs" title="Leaving your job" links={JOB_HUBS} />
-        <LinkColumn id="nf-guides" title="Popular guides" links={GUIDE_LINKS} />
+        <LinkColumn id="nf-jobs" title="Engineering and manufacturing" links={ENGINEERING_HUBS} />
+        <LinkColumn id="nf-guides" title="Other careers and guides" links={[...OTHER_CAREER_HUBS, ...GUIDE_LINKS.slice(0, 2)]} />
       </div>
     </div>
   );

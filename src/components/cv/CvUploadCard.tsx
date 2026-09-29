@@ -161,11 +161,19 @@ export function CvUploadCard({ variant = "page" }: { variant?: "hero" | "page" }
     return () => clearInterval(t);
   }, [skillsStarted]);
 
-  // Links from the guides pass ?current=<job> so the job title path starts filled in.
+  // Links from the guides pass ?current=<job> so the job title path starts filled in,
+  // and ?looking=<field> (for example "Robotics and automation") so "What are you
+  // looking for?" starts filled in and the matching searches that field first.
   useEffect(() => {
     try {
-      const current = new URLSearchParams(window.location.search).get("current");
+      const params = new URLSearchParams(window.location.search);
+      const current = params.get("current");
       if (current) setJobText(current.replace(/\s+/g, " ").trim().slice(0, 80));
+      const looking = params.get("looking");
+      if (looking) {
+        setLookingFor(looking.replace(/\s+/g, " ").trim().slice(0, 120));
+        setLookingOpen(true);
+      }
     } catch {
       // ignore
     }
@@ -456,7 +464,7 @@ export function CvUploadCard({ variant = "page" }: { variant?: "hero" | "page" }
                 className="field"
                 value={jobText}
                 autoComplete="organization-title"
-                placeholder="For example, retail manager"
+                placeholder="For example, maintenance technician"
                 onChange={(e) => setJobText(e.target.value)}
               />
               {suggestions.length > 0 && (
@@ -504,7 +512,7 @@ export function CvUploadCard({ variant = "page" }: { variant?: "hero" | "page" }
               maxLength={300}
               value={lookingFor}
               onChange={(e) => setLookingFor(e.target.value)}
-              placeholder="For example: project work, no weekends, more pay"
+              placeholder="For example: automation and robotics, no nights, more pay"
             />
           </div>
         ) : (

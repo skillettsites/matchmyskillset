@@ -24,7 +24,7 @@ export const EMPLOYER_FAQS: FaqItem[] = [
   },
   {
     q: "What is the recruiter shortlist?",
-    a: "It comes with Growth and Enterprise. Once your job is live, one of our experienced recruiters reviews the people who applied and the people who asked employers to find them, and sends you the best fits for the role, in order, with a short note on each. We email you when it is ready and it appears in your dashboard. People who applied are shown in full; people who have not applied stay anonymous until they accept your request to contact them. It is a recruiter's judgement to help you decide who to talk to first, not a promise of a hire.",
+    a: "It comes with Growth and Enterprise. Once your job is live, an experienced recruiter from Flintstone Associates, our recruitment partner, reviews the people who applied and the people who asked employers to find them, and sends you the best fits for the role, in order, with a short note on each. We email you when it is ready and it appears in your dashboard. People who applied are shown in full; people who have not applied stay anonymous until they accept your request to contact them. It is a recruiter's judgement to help you decide who to talk to first, not a promise of a hire.",
   },
   {
     q: "What can I not post?",

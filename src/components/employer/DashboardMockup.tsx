@@ -3,9 +3,9 @@
 // candidate or result is shown.
 
 const APPLICANTS = [
-  { label: "Applicant A", score: 86, skills: ["Customer service", "Team leadership", "Complaint handling"], status: "New" },
-  { label: "Applicant B", score: 71, skills: ["Customer service", "Scheduling", "Coaching"], status: "Shortlisted" },
-  { label: "Applicant C", score: 58, skills: ["Complaint handling", "Data entry"], status: "Viewed" },
+  { label: "Applicant A", score: 86, skills: ["PLC programming", "Fault finding", "Robotics"], status: "New" },
+  { label: "Applicant B", score: 71, skills: ["Preventive maintenance", "Hydraulics", "Fault finding"], status: "Shortlisted" },
+  { label: "Applicant C", score: 58, skills: ["CNC machining", "Engineering drawings"], status: "Viewed" },
 ];
 
 export function DashboardMockup() {
@@ -28,9 +28,9 @@ export function DashboardMockup() {
           <div className="hidden border-r border-black/[0.06] bg-snow p-5 md:block">
             <p className="text-[11px] font-semibold uppercase tracking-wide text-mute">Your jobs</p>
             {[
-              ["Customer service team leader", "Live", "12 applicants"],
-              ["Warehouse supervisor", "Waiting for approval", "0 applicants"],
-              ["Office administrator", "Live", "7 applicants"],
+              ["Robotics technician", "Live", "12 applicants"],
+              ["Maintenance engineer", "Waiting for approval", "0 applicants"],
+              ["Quality engineer", "Live", "7 applicants"],
             ].map(([t, s, a], i) => (
               <div key={t} className={`mt-3 rounded-2xl p-3 ${i === 0 ? "bg-white shadow-[0_1px_2px_rgba(0,0,0,0.06)]" : ""}`}>
                 <p className="truncate text-[13px] font-semibold text-ink">{t}</p>
@@ -45,7 +45,7 @@ export function DashboardMockup() {
           <div className="p-5 sm:p-7">
             <div className="flex flex-wrap items-end justify-between gap-3">
               <div>
-                <p className="text-[12px] font-semibold text-mute">Customer service team leader · Leeds</p>
+                <p className="text-[12px] font-semibold text-mute">Robotics technician · Derby</p>
                 <p className="mt-1 text-[22px] font-bold tracking-[-0.03em] text-ink">Applicants</p>
               </div>
               <div className="flex gap-2">

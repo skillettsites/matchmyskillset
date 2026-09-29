@@ -15,25 +15,25 @@ interface MockJob {
 
 const JOBS: MockJob[] = [
   {
-    title: "Operations Manager",
-    meta: "Example listing · Leeds · Full time",
+    title: "Maintenance Engineer",
+    meta: "Example listing · Derby · Full time",
     match: 86,
-    have: ["Team leadership", "Scheduling", "Budgeting"],
-    missing: ["Lean methods"],
+    have: ["Fault finding", "Preventive maintenance", "Hydraulics"],
+    missing: ["PLC programming"],
   },
   {
-    title: "Project Coordinator",
-    meta: "Example listing · Hybrid · Full time",
+    title: "Automation Technician",
+    meta: "Example listing · Nottingham · Full time",
     match: 74,
-    have: ["Planning", "Stakeholder management"],
-    missing: ["PRINCE2"],
+    have: ["Electrical fault finding", "Mechatronics"],
+    missing: ["SCADA and HMI"],
   },
   {
-    title: "Learning and Development Adviser",
-    meta: "Example listing · Remote · Full time",
+    title: "Additive Manufacturing Engineer",
+    meta: "Example listing · Hybrid · Full time",
     match: 63,
-    have: ["Training delivery", "Coaching"],
-    missing: ["CIPD qualification", "E-learning tools"],
+    have: ["CAD", "Engineering drawings"],
+    missing: ["Metal 3D printing", "Materials science"],
   },
 ];
 
@@ -131,7 +131,7 @@ export function ResultsMockup({ rows = 3, className = "" }: { rows?: 1 | 2 | 3; 
           <div className="no-scrollbar mt-2.5 flex gap-1.5 overflow-hidden">
             <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-white px-2.5 py-1 text-[11px] font-medium text-ink ring-1 ring-black/[0.06]">
               <MapPin className="h-3 w-3 text-mute" />
-              Leeds, 10 miles
+              Derby, 10 miles
             </span>
             <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-white px-2.5 py-1 text-[11px] font-medium text-ink ring-1 ring-black/[0.06]">
               <Pound className="h-3 w-3 text-mute" />
@@ -162,9 +162,9 @@ interface MockCandidate {
 }
 
 const CANDIDATES: MockCandidate[] = [
-  { label: "Candidate A", meta: "Operations lead · Yorkshire · 8 years", match: 88, skills: ["Scheduling", "Team leadership", "Budgeting"] },
-  { label: "Candidate B", meta: "Shift manager · Leeds · 5 years", match: 79, skills: ["Rota planning", "Health and safety"] },
-  { label: "Candidate C", meta: "Logistics coordinator · Remote · 6 years", match: 71, skills: ["Stock control", "Reporting"] },
+  { label: "Candidate A", meta: "Maintenance technician · East Midlands · 8 years", match: 88, skills: ["PLC programming", "Fault finding", "Hydraulics"] },
+  { label: "Candidate B", meta: "Ex-forces vehicle technician · West Midlands · 6 years", match: 79, skills: ["Preventive maintenance", "Team leadership"] },
+  { label: "Candidate C", meta: "Graduate mechatronics engineer · Remote · 1 year", match: 71, skills: ["Robotics", "CAD"] },
 ];
 
 /**
@@ -180,7 +180,7 @@ export function EmployerMockup({ className = "", dark = false }: { className?: s
           <div className="flex items-start justify-between gap-3">
             <div>
               <p className="text-[11px] font-semibold uppercase tracking-[0.06em] text-mute">Matched candidates</p>
-              <p className="mt-0.5 text-[17px] font-bold tracking-[-0.025em] text-ink">Operations Manager</p>
+              <p className="mt-0.5 text-[17px] font-bold tracking-[-0.025em] text-ink">Robotics Technician</p>
               <p className="text-[12px] text-mute">Example role</p>
             </div>
             <IllustrationTag className="bg-white" />

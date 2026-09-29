@@ -20,5 +20,17 @@ export const RECRUITMENT_PARTNER_NAME = "";
 /** True once the recruitment partner is named; gates the opt-in box and policy text. */
 export const RECRUITER_SHARING_ENABLED = RECRUITMENT_PARTNER_NAME.trim().length > 0;
 
+// The joint venture partner (owner decision, 29 September 2026): Flintstone
+// Associates, a specialist recruitment firm whose recruiters prepare the recruiter
+// shortlists employers ask for on Growth and Enterprise (src/lib/employer/shortlists.ts).
+// They only see people who applied to a job here or switched on "Let employers find
+// me". This is separate from RECRUITMENT_PARTNER_NAME above, the switched-off /discover
+// box that would pass CV text to an agency. OWNER TO CONFIRM: whether Flintstone
+// Associates acts for MatchMySkillset (a processor) or as a joint controller, and its
+// registered legal name, so /privacy can say so exactly.
+export const SHORTLIST_PARTNER_NAME = "Flintstone Associates";
+/** Its website (returned HTTP 200 when checked on 29 September 2026). */
+export const SHORTLIST_PARTNER_URL = "https://flintstone-associates.vercel.app";
+
 // Date shown on /privacy and /terms. Update it whenever either page changes.
 export const LEGAL_LAST_UPDATED = "29 September 2026";

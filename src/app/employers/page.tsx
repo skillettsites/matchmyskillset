@@ -16,7 +16,7 @@ export const revalidate = 600;
 export const metadata: Metadata = {
   title: { absolute: "Post a job and hire on skills | MatchMySkillset" },
   description:
-    "Post a UK job and we match it to job seekers whose CV skills fit. Applicants arrive in your dashboard and inbox. Plans from £199 a month.",
+    "Post an engineering, manufacturing or any UK job and we match it to job seekers whose CV skills fit. Applicants arrive in your dashboard. From £199 a month.",
   alternates: { canonical: "/employers" },
 };
 
@@ -51,8 +51,8 @@ export default async function EmployersPage() {
             Hire people whose skills <span className="gradient-text">fit.</span>
           </h1>
           <p className="lede rise rise-2 mx-auto mt-6 max-w-[680px]">
-            Post a job and we match it to job seekers whose CVs show the skills you ask for. Applications arrive in your dashboard and your inbox, each with a
-            match score.
+            Post a job and we match it to job seekers whose CVs show the skills you ask for, from maintenance and robotics to design and quality. Applications
+            arrive in your dashboard and your inbox, each with a match score.
           </p>
           <div className="rise rise-3 mt-9 flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-6">
             <Link href="/employers/sign-in" className="btn btn-primary btn-lg">
@@ -61,6 +61,10 @@ export default async function EmployersPage() {
             <More href="#pricing">See pricing</More>
           </div>
           <p className="rise rise-3 mt-6 text-[14px] text-mute">Plans from £199 a month. A person checks every job before it goes live.</p>
+          <p className="rise rise-3 mx-auto mt-2 max-w-[640px] text-[14px] text-mute">
+            Built for engineering, manufacturing and Industry 4.0 hiring, and open to any UK job. Recruiter shortlists on Growth and Enterprise are prepared by
+            recruiters from Flintstone Associates, our recruitment partner.
+          </p>
         </div>
         <div className="rise rise-3 relative mt-14 md:mt-20">
           <DashboardMockup />
@@ -101,7 +105,7 @@ export default async function EmployersPage() {
             <Step n={1} title="Post your job." text="Sign in with your email, fill in one form and submit it. A person checks it before it goes live.">
               <div className="rounded-2xl bg-white p-4 shadow-[0_1px_2px_rgba(0,0,0,0.05)]">
                 <div className="text-[11px] font-semibold text-mute">Job title</div>
-                <div className="mt-1 text-[13px] font-semibold text-ink">Office administrator</div>
+                <div className="mt-1 text-[13px] font-semibold text-ink">Robotics technician</div>
                 <div className="mt-3 h-2 w-4/5 rounded-full bg-cloud" />
                 <div className="mt-1.5 h-2 w-3/5 rounded-full bg-cloud" />
                 <div className="mt-4 inline-flex rounded-full bg-blue px-3 py-1 text-[11px] font-medium text-white">Submit for approval</div>
@@ -109,7 +113,7 @@ export default async function EmployersPage() {
             </Step>
             <Step n={2} title="We match it to CVs." text="We read the skills in your advert and show the job to people whose CV skills fit, with their match score.">
               <div className="space-y-2">
-                {["Data entry", "Scheduling", "Written communication"].map((s, i) => (
+                {["PLC programming", "Fault finding", "SCADA and HMI"].map((s, i) => (
                   <div key={s} className="flex items-center justify-between rounded-2xl bg-white px-3 py-2.5 text-[12px] font-semibold text-ink shadow-[0_1px_2px_rgba(0,0,0,0.05)]">
                     {s}
                     <span className={`h-2 w-2 rounded-full ${i < 2 ? "bg-[#30d158]" : "bg-line"}`} />
@@ -130,7 +134,7 @@ export default async function EmployersPage() {
             <Step n={4} title="Search and reach out." text="Search people who chose to be found and ask to talk. If they accept, you get their name, email and CV.">
               <div className="rounded-2xl bg-white p-4 shadow-[0_1px_2px_rgba(0,0,0,0.05)]">
                 <div className="text-[12px] font-semibold text-ink">Anonymous profile</div>
-                <div className="mt-1 text-[11px] text-mute">Retail supervisor · North West · 6 years</div>
+                <div className="mt-1 text-[11px] text-mute">Maintenance technician · North West · 6 years</div>
                 <div className="mt-3 inline-flex rounded-full border border-blue px-3 py-1 text-[11px] font-medium text-blue">Request contact</div>
               </div>
             </Step>

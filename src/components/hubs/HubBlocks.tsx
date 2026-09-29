@@ -212,7 +212,7 @@ export function MethodNote({ baseline, extra }: { baseline: ReactNode; extra?: R
             describe. &quot;No&quot; means a documented route exists below degree level, not that nobody in the job has a degree.
           </li>
           <li>
-            Apprenticeships are Skills England standards approved for delivery on 28 September 2026. They apply in England.
+            Apprenticeships are Skills England standards approved for delivery on 29 September 2026. They apply in England.
             Durations are Skills England&apos;s typical figures, and relevant experience can shorten them.
           </li>
           <li>

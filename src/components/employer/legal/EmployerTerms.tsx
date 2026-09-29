@@ -89,7 +89,8 @@ export function EmployerTerms() {
           when the job has been approved and is live.
         </li>
         <li>
-          It is a human review: one of our recruiters looks at the people who applied to the job and at people who asked employers to find them, and sends you the
+          It is a human review: a recruiter from Flintstone Associates, our recruitment partner, looks at the people who applied to the job and at people who asked
+          employers to find them, and sends you the
           ones they think fit best, in order, with a note on each. We email you when it is ready and it appears in your dashboard.
         </li>
         <li>

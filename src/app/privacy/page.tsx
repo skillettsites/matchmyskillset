@@ -8,6 +8,7 @@ import {
   LEGAL_LAST_UPDATED,
   RECRUITER_SHARING_ENABLED,
   RECRUITMENT_PARTNER_NAME,
+  SHORTLIST_PARTNER_NAME,
   SITE_NAME,
 } from "@/lib/site";
 import { EmployerPrivacy } from "@/components/employer/legal/EmployerPrivacy";
@@ -56,6 +57,11 @@ export default function PrivacyPage() {
               paraphrased achievements, short notes on where each skill shows and what you said matters to you) for 12 months so your results
               link keeps working, then delete them.
             </li>
+            <li>
+              Recruiters from {SHORTLIST_PARTNER_NAME}, our recruitment partner, review applications and
+              profiles to prepare shortlists for employers, but only for people who applied for a job
+              here or switched on &lsquo;Let employers find me&rsquo;.
+            </li>
             <li>Payments are handled by Stripe. We keep purchase records for 6 years for tax.</li>
             <li>Google Analytics cookies are only used if you click Accept.</li>
             <li>
@@ -72,8 +78,10 @@ export default function PrivacyPage() {
         <h2 className={h2}>1. Who we are</h2>
         <p>
           {SITE_NAME} (matchmyskillset.com) is run by {LEGAL_ENTITY_NAME}, the controller of the
-          personal data described here. You can contact us about anything in this policy at{" "}
-          <Email />.
+          personal data described here. {SITE_NAME} is a joint venture with {SHORTLIST_PARTNER_NAME}, a
+          specialist recruitment firm whose recruiters prepare the shortlists employers can ask for
+          (see &ldquo;Recruiter shortlists for employers&rdquo;). You can contact us about anything in this
+          policy at <Email />.
         </p>
 
         <h2 className={h2}>2. What we collect and why</h2>
@@ -215,10 +223,12 @@ export default function PrivacyPage() {
 
         <h3 className={h3} id="shortlists">Recruiter shortlists for employers</h3>
         <p>
-          If you apply to a job, or switch on &lsquo;Let employers find me&rsquo;, our recruitment team
-          may review your application or profile to put together shortlists for employers on Growth and
-          Enterprise plans. Employers only see your name and contact details if you applied to them or
-          you accept their request.
+          If you apply to a job, or switch on &lsquo;Let employers find me&rsquo;, recruiters from{" "}
+          {SHORTLIST_PARTNER_NAME}, our recruitment partner, may review your application or profile to put
+          together shortlists for employers on Growth and Enterprise plans. They only see people who
+          applied for a job here or switched on &lsquo;Let employers find me&rsquo;, and use what they see
+          only to prepare those shortlists. Employers only see your name and contact details if you
+          applied to them or you accept their request.
         </p>
         <p>
           A shortlist lists the people a recruiter thinks fit a job best, in order, with a short note on
@@ -308,6 +318,14 @@ export default function PrivacyPage() {
             details as separate controllers. Employers on Growth and Enterprise plans may also see your
             anonymous profile on a recruiter shortlist, without your name or contact details (see
             &ldquo;Recruiter shortlists for employers&rdquo;).
+          </li>
+          <li>
+            <strong>{SHORTLIST_PARTNER_NAME}</strong> (specialist recruitment firm, our joint venture
+            partner): its recruiters see applications for jobs posted here and profiles people have
+            chosen to make findable (including a CV they added) to prepare recruiter shortlists for
+            employers, as described in &ldquo;Recruiter shortlists for employers&rdquo;. Only people who
+            applied or switched on &lsquo;Let employers find me&rsquo; are included, and the details are
+            used only for that.
           </li>
           <li>
             <strong>Stripe</strong>: processes payments. For some purposes, such as preventing fraud

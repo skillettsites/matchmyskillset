@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Breadcrumbs, FaqSection, PageHeader, ToolCallout, formatGBP, type FaqItem } from "@/components/content";
-import { JOB_HUBS } from "@/components/site";
+import { ENGINEERING_HUBS, OTHER_CAREER_HUBS } from "@/components/site";
 import {
   ArticleJsonLd,
   FundedTraining,
@@ -21,10 +21,10 @@ import {
 import { CAREER_OCCUPATIONS } from "@/data/careers";
 
 const PATH = "/careers-for";
-const UPDATED = "2026-09-28";
+const UPDATED = "2026-09-29";
 const TITLE = "Career change by profession: where people go and what it pays";
 const DESCRIPTION =
-  "Start from the job you do now. Guides for teachers, nurses, police, the armed forces and retail, plus routes with ONS pay for 18 more professions.";
+  "Start from the job you do now. Engineering and manufacturing guides first, then teachers, nurses, police and retail, plus ONS pay for 18 more professions.";
 
 export const metadata: Metadata = {
   title: { absolute: "Career Change by Profession UK: Where People Go and the Pay" },
@@ -261,7 +261,7 @@ export default function CareersForPage() {
       source: "ONS ASHE 2025",
     },
   };
-  const hubs = JOB_HUBS.filter((h) => h.href !== "/careers-for");
+  const hubs = OTHER_CAREER_HUBS.filter((h) => h.href !== "/careers-for");
   const gp = ftMedian("2211") as number;
   const hsm = ftMedian("1171") as number;
 
@@ -324,15 +324,17 @@ export default function CareersForPage() {
         updated={UPDATED}
         intro={
           <p>
-            Start from the job you do now. Our five in-depth guides cover teaching, nursing, policing, the armed forces and
-            retail; below them, 18 more professions, plus returning after a career break, each get 3 to 5 realistic routes with 2025 ONS pay. For example,
-            chefs had a full-time median of {gbpFt("5434")} and events managers {gbpFt("3557")} (ONS ASHE 2025).
+            Start from the job you do now. Engineering, manufacturing and Industry 4.0 come first, with guides for ex-military
+            technicians and graduates; then in-depth guides for leaving teaching, nursing, policing and retail; then 18 more professions,
+            plus returning after a career break, each with 3 to 5 realistic routes and 2025 ONS pay. For example, chefs had a full-time
+            median of {gbpFt("5434")} and events managers {gbpFt("3557")} (ONS ASHE 2025).
           </p>
         }
       >
         <OnThisPage
           items={[
-            { href: "#guides", label: "In-depth guides" },
+            { href: "#engineering", label: "Engineering, manufacturing and Industry 4.0" },
+            { href: "#guides", label: "Other careers: in-depth guides" },
             { href: "#professions", label: "18 more professions, and returning after a break" },
             { href: "#funded", label: "Free and funded retraining" },
             { href: "#faq", label: "Common questions" },
@@ -340,7 +342,31 @@ export default function CareersForPage() {
         />
       </PageHeader>
 
-      <HubSection id="guides" title="In-depth guides" intro={<p>Each guide has 14 or 15 routes, the facts specific to leaving that job, and a full FAQ.</p>}>
+      <HubSection
+        id="engineering"
+        title="Engineering, manufacturing and Industry 4.0"
+        intro={<p>Careers from maintenance and machining to robotics, automation and 3D printing, with ONS pay and the ways in.</p>}
+      >
+        <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {ENGINEERING_HUBS.map((h) => (
+            <li key={h.href}>
+              <Link
+                href={h.href}
+                className="group flex h-full flex-col rounded-[28px] bg-white p-6 shadow-card ring-1 ring-black/[0.05] transition-[box-shadow,transform] duration-300 hover:-translate-y-0.5 hover:shadow-lift sm:p-7"
+              >
+                <span className="kicker !text-link">{h.short}</span>
+                <span className="mt-1.5 text-[24px] font-bold leading-[1.15] tracking-[-0.03em] text-ink group-hover:underline group-hover:underline-offset-4">
+                  {h.label}
+                </span>
+                <span className="mt-3 flex-1 text-[15px] leading-relaxed text-ink-2">{h.blurb}</span>
+                <span className="mt-5 inline-flex items-center gap-0.5 text-[15px] text-link">Read the guide</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </HubSection>
+
+      <HubSection id="guides" title="Other careers: in-depth guides" intro={<p>Each guide has 14 or 15 routes, the facts specific to leaving that job, and a full FAQ.</p>}>
         <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {hubs.map((h) => {
             const f = hubFacts[h.href];
