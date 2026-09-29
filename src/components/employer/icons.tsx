@@ -20,6 +20,14 @@ export function Check({ className = "h-4 w-4" }: P) {
   );
 }
 
+export function Minus({ className = "h-4 w-4" }: P) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} {...base} strokeWidth={2.6} aria-hidden="true">
+      <path d="M6 12h12" />
+    </svg>
+  );
+}
+
 export function Target({ className = "h-6 w-6" }: P) {
   return (
     <svg viewBox="0 0 24 24" className={className} {...base} aria-hidden="true">

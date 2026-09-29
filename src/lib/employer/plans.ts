@@ -30,13 +30,33 @@ export interface PlanLimits {
   skillsGap: boolean;
   companyPage: boolean;
   prioritySupport: boolean;
+  /** A top-candidate shortlist for each live job, picked by our recruiters (/recruiter). */
+  recruiterShortlist: boolean;
 }
 
+// "Unlimited" is Enterprise only: it is the one plan with null limits.
 export const PLAN_LIMITS: Record<PlanId, PlanLimits> = {
-  starter: { liveJobs: 3, matchedPerRole: 10, skillsGap: false, companyPage: false, prioritySupport: false },
-  growth: { liveJobs: 10, matchedPerRole: null, skillsGap: true, companyPage: true, prioritySupport: true },
-  enterprise: { liveJobs: null, matchedPerRole: null, skillsGap: true, companyPage: true, prioritySupport: true },
+  starter: { liveJobs: 3, matchedPerRole: 10, skillsGap: false, companyPage: false, prioritySupport: false, recruiterShortlist: false },
+  growth: { liveJobs: 10, matchedPerRole: 30, skillsGap: true, companyPage: true, prioritySupport: true, recruiterShortlist: true },
+  enterprise: { liveJobs: null, matchedPerRole: null, skillsGap: true, companyPage: true, prioritySupport: true, recruiterShortlist: true },
 };
+
+/** True when this plan includes recruiter shortlists (Growth and Enterprise). */
+export function hasRecruiterShortlist(plan: PlanId | null): boolean {
+  return Boolean(plan && PLAN_LIMITS[plan].recruiterShortlist);
+}
+
+/** The pricing line for the shortlist, shared by the cards, checkout and dashboard. */
+export const SHORTLIST_FEATURE = "Top-candidate shortlist for every role, hand-picked by experienced recruiters";
+
+/**
+ * Shown when a plan caps matched candidates and there are more: what the
+ * bigger plans show instead. Only Enterprise is unlimited.
+ */
+export function moreMatchesHint(plan: PlanId | null): string {
+  if (plan === "starter") return `Growth shows up to ${PLAN_LIMITS.growth.matchedPerRole} per role and Enterprise shows every match.`;
+  return "Enterprise shows every match.";
+}
 
 /** Plans a card can pay for online, monthly, in pence. */
 export const SELF_SERVE_PRICES: Record<"starter" | "growth", number> = {
@@ -86,9 +106,12 @@ export interface PricingTier {
   per: string;
   blurb: string;
   features: string[];
+  /** Shown muted under the features, so it is clear what a plan leaves out. */
+  notIncluded?: string[];
   /** "checkout" = pay by card online; "contact" = the enquiry form. */
   action: "checkout" | "contact";
-  popular?: boolean;
+  /** A factual label that also draws the card in the dark style. Never a sales claim such as "most popular". */
+  highlight?: string;
 }
 
 export const PRICING_TIERS: PricingTier[] = [
@@ -99,6 +122,7 @@ export const PRICING_TIERS: PricingTier[] = [
     per: "a month",
     blurb: "For a small team hiring now and then.",
     features: ["3 live job listings", "Up to 10 matched candidates shown per role", "Basic analytics: views and applications"],
+    notIncluded: ["No recruiter shortlist (on Growth and Enterprise)"],
     action: "checkout",
   },
   {
@@ -109,13 +133,14 @@ export const PRICING_TIERS: PricingTier[] = [
     blurb: "For teams hiring every month.",
     features: [
       "10 live job listings",
-      "Unlimited matched candidates",
+      "Up to 30 matched candidates shown per role",
+      SHORTLIST_FEATURE,
       "Skills-gap report for every role",
       "Your own company page",
       "Priority email support",
     ],
     action: "checkout",
-    popular: true,
+    highlight: "Recruiter shortlists included",
   },
   {
     id: "enterprise",
@@ -123,7 +148,7 @@ export const PRICING_TIERS: PricingTier[] = [
     price: "£999+",
     per: "a month",
     blurb: "For larger hiring programmes.",
-    features: ["Unlimited listings", "Bulk posting, handled for you", "A named account manager"],
+    features: ["Unlimited listings", "Unlimited matched candidates", SHORTLIST_FEATURE, "Bulk posting, handled for you", "A named account manager"],
     action: "contact",
   },
   {

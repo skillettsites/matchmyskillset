@@ -1,5 +1,5 @@
 // Row shapes for the job board tables (supabase/migrations/006_job_board.sql,
-// plus the optional columns from 007_employer_extras.sql).
+// plus the optional columns from 007_employer_extras.sql and 008_shortlists.sql).
 
 export interface EmployerAccount {
   id: string;
@@ -55,6 +55,8 @@ export interface JobRow {
   views: number;
   /** 007: the reason given when a job is sent back. */
   review_note?: string | null;
+  /** 008: the employer ticked "Send me a recruiter shortlist"; the request is opened when the job goes live. */
+  shortlist_wanted?: boolean;
 }
 
 export type ApplicationStatus = "new" | "viewed" | "shortlisted" | "rejected";
@@ -100,4 +102,32 @@ export interface ContactRequestRow {
   status: ContactStatus;
   response_token: string;
   responded_at: string | null;
+}
+
+export type ShortlistStatus = "requested" | "in_progress" | "sent" | "cancelled";
+
+/** 008: one recruiter shortlist request per job. */
+export interface ShortlistRow {
+  id: string;
+  created_at: string;
+  updated_at: string;
+  job_id: string;
+  account_id: string | null;
+  status: ShortlistStatus;
+  requested_at: string;
+  started_at: string | null;
+  sent_at: string | null;
+  recruiter_name: string | null;
+  summary: string | null;
+}
+
+/** 008: one pick on a shortlist: an application to the job, or an opted-in candidate (never both). */
+export interface ShortlistItemRow {
+  id: string;
+  created_at: string;
+  shortlist_id: string;
+  application_id: string | null;
+  candidate_id: string | null;
+  rank: number;
+  recruiter_note: string | null;
 }

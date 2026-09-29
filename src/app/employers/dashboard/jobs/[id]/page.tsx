@@ -19,7 +19,9 @@ import {
 import { jobSkillSet, parseSkillIds, skillName } from "@/lib/employer/matching";
 import { loadDiscoverable, rankCandidates } from "@/lib/employer/candidates";
 import { isUuid } from "@/lib/employer/server";
-import { LISTING_DAYS } from "@/lib/employer/plans";
+import { effectivePlan, hasRecruiterShortlist, JOBS_EMAIL, LISTING_DAYS } from "@/lib/employer/plans";
+import { getJobShortlist, shortlistItems } from "@/lib/employer/shortlists";
+import { ShortlistSection } from "@/components/employer/ShortlistSection";
 import { JobTabs } from "@/components/employer/JobTabs";
 import { Badge, Notice, PageHead, SkillChip, Stat } from "@/components/employer/ui";
 import { jobCommand } from "../../actions";
@@ -35,6 +37,13 @@ const NOTICES: Record<string, { tone: "blue" | "amber" | "green"; text: string }
   renewed: { tone: "green", text: `Renewed for another ${LISTING_DAYS} days.` },
   limit: { tone: "amber", text: "Your plan has no free live listings right now. Close another job or move to a bigger plan first." },
   unchanged: { tone: "blue", text: "Nothing changed." },
+  "shortlist-requested": { tone: "green", text: "Thanks. Your recruiter shortlist is in the queue. We will email you when it is ready." },
+  "shortlist-queued": { tone: "green", text: "Thanks. Our recruiters will start your shortlist as soon as the job is approved and live." },
+  "shortlist-exists": { tone: "blue", text: "You have already asked for a shortlist for this job. Its progress is shown below." },
+  "shortlist-closed": { tone: "amber", text: "This job is not live. Renew or reopen it to ask for a recruiter shortlist." },
+  "shortlist-plan": { tone: "amber", text: "Recruiter shortlists come with the Growth and Enterprise plans." },
+  "shortlist-off": { tone: "amber", text: `Recruiter shortlists are not switched on yet, so we could not record your request. Please try again later, or email ${JOBS_EMAIL}.` },
+  "shortlist-error": { tone: "amber", text: "We could not ask for the shortlist just now. Please try again." },
 };
 
 function Command({ id, op, label, variant = "btn-secondary" }: { id: string; op: string; label: string; variant?: string }) {
@@ -49,10 +58,10 @@ function Command({ id, op, label, variant = "btn-secondary" }: { id: string; op:
   );
 }
 
-export default async function JobPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ notice?: string }> }) {
+export default async function JobPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ notice?: string; shortlist?: string }> }) {
   const account = await requireEmployer();
   const { id } = await params;
-  const { notice } = await searchParams;
+  const { notice, shortlist: shortlistNotice } = await searchParams;
   const job = isUuid(id) ? await getAccountJob(account.id, id) : null;
   if (!job) notFound();
 
@@ -70,17 +79,25 @@ export default async function JobPage({ params, searchParams }: { params: Promis
   const soc = job.soc_code ? getSocUnitGroup(job.soc_code) : undefined;
   const skills = parseSkillIds(job.skills);
   const reviewNote = job.review_note;
+  const { ready: shortlistsOn, shortlist } = await getJobShortlist(job.id);
+  const picks = shortlist?.status === "sent" ? (await shortlistItems(shortlist.id)).length : 0;
+  const jobState = job.status === "live" && !expired ? "live" : job.status === "closed" || expired ? "ended" : "waiting";
 
   return (
     <div>
       <PageHead title={job.title} back={{ href: "/employers/dashboard", label: "All jobs" }}>
         {job.company_name} · {job.remote === "remote" ? "Remote" : job.location}
       </PageHead>
-      <JobTabs jobId={job.id} active="overview" applicants={total} />
+      <JobTabs jobId={job.id} active="overview" applicants={total} shortlistReady={shortlist?.status === "sent"} />
 
       {notice && NOTICES[notice] && (
         <div className="mb-6">
           <Notice tone={NOTICES[notice].tone}>{NOTICES[notice].text}</Notice>
+        </div>
+      )}
+      {shortlistNotice === "off" && (
+        <div className="mb-6">
+          <Notice tone="amber">{NOTICES["shortlist-off"].text}</Notice>
         </div>
       )}
 
@@ -119,6 +136,20 @@ export default async function JobPage({ params, searchParams }: { params: Promis
             {reviewNote || "we emailed you the reason. Reply to that email if you have any questions."}
           </div>
         )}
+      </div>
+
+      <div className="mt-6">
+        <ShortlistSection
+          jobId={job.id}
+          included={hasRecruiterShortlist(effectivePlan(account))}
+          ready={shortlistsOn}
+          shortlist={shortlist}
+          wanted={Boolean(job.shortlist_wanted)}
+          jobState={jobState}
+          picks={picks}
+          sentOn={formatDate(shortlist?.sent_at)}
+          requestedOn={formatDate(shortlist?.requested_at)}
+        />
       </div>
 
       <h2 className="mt-10 text-[20px] font-bold tracking-[-0.02em] text-ink">How it is doing</h2>

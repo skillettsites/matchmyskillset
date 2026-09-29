@@ -6,7 +6,7 @@ import { requireEmployer } from "@/lib/employer/session";
 import { listAccountJobs } from "@/lib/employer/jobs";
 import { jobSkillSet, MATCH_METHOD_SUMMARY, skillName, type JobSkillSet } from "@/lib/employer/matching";
 import { contactStatusMap, loadDiscoverable, rankCandidates } from "@/lib/employer/candidates";
-import { effectivePlan, limitsFor } from "@/lib/employer/plans";
+import { effectivePlan, limitsFor, moreMatchesHint } from "@/lib/employer/plans";
 import { CandidateCard } from "@/components/employer/CandidateCard";
 import { EmptyState, Notice, PageHead, SkillChip } from "@/components/employer/ui";
 
@@ -125,7 +125,7 @@ export default async function CandidateSearchPage({ searchParams }: { searchPara
           <>
             <p className="mb-4 text-[15px] text-mute">
               {ranked.length} {ranked.length === 1 ? "person" : "people"}
-              {cap !== null && ranked.length > cap ? `, showing your top ${cap}. Growth shows everyone.` : "."}
+              {cap !== null && ranked.length > cap ? `, showing your top ${cap}. ${moreMatchesHint(plan)}` : "."}
             </p>
             <ul className="space-y-3">
               {visible.map((r) => (

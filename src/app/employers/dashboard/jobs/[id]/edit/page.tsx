@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { JobForm } from "@/components/employer/JobForm";
+import { JobForm, type ShortlistOption } from "@/components/employer/JobForm";
 import { JobTabs } from "@/components/employer/JobTabs";
 import { PageHead } from "@/components/employer/ui";
 import { requireEmployer } from "@/lib/employer/session";
 import { getAccountJob, listingBlocker } from "@/lib/employer/jobs";
 import { isUuid } from "@/lib/employer/server";
+import { effectivePlan, hasRecruiterShortlist } from "@/lib/employer/plans";
+import { EMPLOYER_SHORTLIST_TEXT, getJobShortlist } from "@/lib/employer/shortlists";
 
 export const metadata: Metadata = { title: "Edit job", robots: { index: false, follow: false } };
 export const dynamic = "force-dynamic";
@@ -16,6 +18,13 @@ export default async function EditJobPage({ params }: { params: Promise<{ id: st
   const job = isUuid(id) ? await getAccountJob(account.id, id) : null;
   if (!job) notFound();
   const blocker = await listingBlocker(account, job.id);
+  let shortlist: ShortlistOption = { mode: "upsell" };
+  if (hasRecruiterShortlist(effectivePlan(account))) {
+    const found = await getJobShortlist(job.id);
+    if (!found.ready) shortlist = { mode: "off" };
+    else if (found.shortlist && found.shortlist.status !== "cancelled") shortlist = { mode: "status", text: EMPLOYER_SHORTLIST_TEXT[found.shortlist.status] };
+    else shortlist = { mode: "offer", checked: Boolean(job.shortlist_wanted) };
+  }
   const money = (n: number | null) => (n === null || n === undefined ? "" : String(n));
   return (
     <div>
@@ -40,6 +49,7 @@ export default async function EditJobPage({ params }: { params: Promise<{ id: st
         }}
         canSubmit={!blocker}
         blocker={blocker}
+        shortlist={shortlist}
       />
     </div>
   );

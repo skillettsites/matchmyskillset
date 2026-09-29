@@ -213,6 +213,30 @@ export default function PrivacyPage() {
           profile off or deleting it.
         </p>
 
+        <h3 className={h3} id="shortlists">Recruiter shortlists for employers</h3>
+        <p>
+          If you apply to a job, or switch on &lsquo;Let employers find me&rsquo;, our recruitment team
+          may review your application or profile to put together shortlists for employers on Growth and
+          Enterprise plans. Employers only see your name and contact details if you applied to them or
+          you accept their request.
+        </p>
+        <p>
+          A shortlist lists the people a recruiter thinks fit a job best, in order, with a short note on
+          each. If you applied to that employer, they see your application as described above. If you
+          did not, they see only your anonymous profile (headline, job title, region, years of experience
+          and skills) and the recruiter&apos;s note, which must not identify you (we also remove your
+          first name, email addresses, phone numbers and links from it); to talk to you they have to send
+          a contact request, which you can accept or decline. The recruiter reviewing a profile sees the
+          profile and, if you added one, your CV. Your place on a shortlist, and the note about you, are
+          deleted when your application or profile is deleted, and a profile you switch off stops showing
+          on shortlists straight away.
+        </p>
+        <p>
+          <strong>Lawful basis:</strong> this is part of sending your application or showing your
+          profile to employers, so it rests on the same consent, which you can withdraw as described
+          above.
+        </p>
+
         <h3 className={h3}>Security and abuse prevention</h3>
         <p>
           Our hosting provider receives your IP address and browser details with every request, as
@@ -281,7 +305,9 @@ export default function PrivacyPage() {
           <li>
             <strong>Employers who post jobs on MatchMySkillset</strong>: only when you apply for their
             job or accept their request to contact you, as described in section 2. They receive your
-            details as separate controllers.
+            details as separate controllers. Employers on Growth and Enterprise plans may also see your
+            anonymous profile on a recruiter shortlist, without your name or contact details (see
+            &ldquo;Recruiter shortlists for employers&rdquo;).
           </li>
           <li>
             <strong>Stripe</strong>: processes payments. For some purposes, such as preventing fraud

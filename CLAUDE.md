@@ -24,12 +24,13 @@ WebBuildYourIdeas design system (`src/app/globals.css`: `.btn-primary`, `.displa
 - Careers tab: ONS data `src/data/careers/` (ASHE 2025; refresh `scripts/ashe/` when ASHE 2026 lands 22 Oct 2026), deterministic career scoring `src/lib/skills/scoring.ts`, £9.99 report.
 
 ## Employers
-- `/employers`, `/employers/pricing`, magic-link auth (`mms_login_tokens`, `mms_employer_sessions`, cookie `mms_employer`), `/employers/dashboard/**`, `/companies/[slug]`, `/admin` (ADMIN_SECRET; approve jobs, comp plans).
-- Plans: Starter £199/mo (3 live jobs, 10 matches/role), Growth £499/mo (10 jobs, unlimited, skills-gap, company page), Enterprise/pay-per-hire by contact. Stripe subscriptions via `/api/employers/checkout` + `/api/stripe/webhook` branches. `isStripeReady()` hides pay buttons while the key is invalid.
+- `/employers`, `/employers/pricing`, magic-link auth (`mms_login_tokens`, `mms_employer_sessions`, cookie `mms_employer`), `/employers/dashboard/**`, `/companies/[slug]`, `/admin` (ADMIN_SECRET; approve jobs, comp plans, read-only shortlist list).
+- Plans (`src/lib/employer/plans.ts`): Starter £199/mo (3 live jobs, 10 matches/role, no shortlist), Growth £499/mo (10 jobs, 30 matches/role, recruiter shortlist, skills-gap, company page), Enterprise £999+ by contact (the ONLY plan with "unlimited": listings and matches, plus shortlist), pay per hire by contact. No "popular" badge (no sales yet; a highlight must be factual). Stripe subscriptions via `/api/employers/checkout` + `/api/stripe/webhook` branches. `isStripeReady()` hides pay buttons while the key is invalid.
+- Recruiter shortlists (`src/lib/employer/shortlists.ts`, migration 008): "Send me a recruiter shortlist" box on the job form (Growth/Enterprise, ticked) sets `mms_jobs.shortlist_wanted`; the `mms_shortlists` request opens when admin approves the job (or from the job page later), Telegram to Dave. Recruiters (Fred) work at `/recruiter` (RECRUITER_SECRET, separate from ADMIN_SECRET, cookie `mms_recruiter` scoped to /recruiter): applicants in full + opted-in matches (same ranking as matched candidates), pick/order/note, save, send (emails the employer). Employer sees `/employers/dashboard/jobs/[id]/shortlist`: applicants in full, non-applicants anonymous with Request contact. Notes/summary have emails, phones, links and the candidate's first name stripped. No turnaround or shortlist size is promised anywhere until Dave decides.
 - `src/lib/employer/notify.ts` emails employers; Telegram alerts via `TELEGRAM_BOT_TOKEN`/`TELEGRAM_CHAT_ID`.
 
 ## Data
-Supabase shared project `noxczmrnyyosgvvjlqca`; tables `mms_*`, service role only, migrations 003-007 applied 28 Sep 2026 (never re-run 001/002). Test data: @example.com or delivered+...@resend.dev and source 'qa-test', delete after.
+Supabase shared project `noxczmrnyyosgvvjlqca`; tables `mms_*`, service role only, migrations 003-007 applied 28 Sep 2026 (never re-run 001/002); 008_shortlists.sql (mms_shortlists, mms_shortlist_items, mms_jobs.shortlist_wanted) written 29 Sep 2026, the code fails soft until it is applied. Test data: @example.com or delivered+...@resend.dev and source 'qa-test', delete after.
 
 ## Rules
 - No em dashes. UK English. No invented statistics, jobs, candidates, testimonials or ratings; every figure sourced.

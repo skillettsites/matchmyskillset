@@ -12,12 +12,13 @@ import { cleanHttpUrl, cleanText } from "@/lib/input";
 import { SITE_URL } from "@/components/site";
 import { sendContactRequestToCandidate } from "@/lib/employer/email";
 import { notifyOwner } from "@/lib/employer/telegram";
-import { effectivePlan, JOBS_EMAIL, PLAN_NAMES } from "@/lib/employer/plans";
+import { effectivePlan, hasRecruiterShortlist, JOBS_EMAIL, PLAN_NAMES } from "@/lib/employer/plans";
 import { destroySession, requireEmployer } from "@/lib/employer/session";
 import { isMissingColumn, isUuid, linkBase, randomToken } from "@/lib/employer/server";
 import { hasCompanyPage, uniqueSlug } from "@/lib/employer/company";
 import { contactDisplayStatus } from "@/lib/employer/candidates";
-import { deriveJobFields, getAccountJob, invalidatePublicJobs, listingBlocker, listingExpiry, readJobForm } from "@/lib/employer/jobs";
+import { deriveJobFields, getAccountJob, invalidatePublicJobs, isExpired, listingBlocker, listingExpiry, readJobForm } from "@/lib/employer/jobs";
+import { getJobShortlist, isShortlistSchemaMissing, openShortlistRequest, setShortlistWanted } from "@/lib/employer/shortlists";
 
 function website(value: unknown): string | null {
   const raw = String(value ?? "").trim();
@@ -156,13 +157,27 @@ export async function saveJob(_prev: JobFormState, form: FormData): Promise<JobF
   const derived = await deriveJobFields(input);
   const now = new Date().toISOString();
   const row = { ...input, ...derived, company_name: account.company_name ?? "", status, updated_at: now };
+  // The "Send me a recruiter shortlist" box is only on the form for Growth and Enterprise; otherwise leave the saved choice alone.
+  const shortlistOffered = form.get("shortlist_offered") === "1" && hasRecruiterShortlist(effectivePlan(account));
+  const wanted = form.get("shortlist") === "on";
+  const withShortlist = shortlistOffered ? { ...row, shortlist_wanted: wanted } : row;
+  let shortlistOff = false;
   const admin = createAdminClient();
   let jobId = id;
   if (existing) {
-    const { error } = await admin.from("mms_jobs").update(row).eq("id", existing.id).eq("account_id", account.id);
+    let { error } = await admin.from("mms_jobs").update(withShortlist).eq("id", existing.id).eq("account_id", account.id);
+    if (error && shortlistOffered && isShortlistSchemaMissing(error)) {
+      // Migration 008 is not applied yet: save the job without the shortlist choice.
+      shortlistOff = wanted;
+      ({ error } = await admin.from("mms_jobs").update(row).eq("id", existing.id).eq("account_id", account.id));
+    }
     if (error) return { errors: {}, message: "We could not save the job just now. Please try again." };
   } else {
-    const { data, error } = await admin.from("mms_jobs").insert({ ...row, account_id: account.id }).select("id").single();
+    let { data, error } = await admin.from("mms_jobs").insert({ ...withShortlist, account_id: account.id }).select("id").single();
+    if (error && shortlistOffered && isShortlistSchemaMissing(error)) {
+      shortlistOff = wanted;
+      ({ data, error } = await admin.from("mms_jobs").insert({ ...row, account_id: account.id }).select("id").single());
+    }
     if (error || !data) return { errors: {}, message: "We could not save the job just now. Please try again." };
     jobId = data.id as string;
   }
@@ -180,7 +195,7 @@ export async function saveJob(_prev: JobFormState, form: FormData): Promise<JobF
       [{ text: "Review in admin", url: `${SITE_URL}/admin#pending` }]
     );
   }
-  redirect(`/employers/dashboard/jobs/${jobId}?notice=${notice}`);
+  redirect(`/employers/dashboard/jobs/${jobId}?notice=${notice}${shortlistOff ? "&shortlist=off" : ""}`);
 }
 
 export async function jobCommand(form: FormData): Promise<void> {
@@ -218,6 +233,25 @@ export async function jobCommand(form: FormData): Promise<void> {
   if (op === "delete" && (job.status === "draft" || job.status === "rejected")) {
     await admin.from("mms_jobs").delete().eq("id", job.id).eq("account_id", account.id);
     redirect("/employers/dashboard?notice=deleted");
+  }
+  if (op === "shortlist") {
+    // Ask for a recruiter shortlist after posting (Growth and Enterprise, one per job).
+    if (!hasRecruiterShortlist(effectivePlan(account))) back("shortlist-plan");
+    if (job.status === "closed" || isExpired(job)) back("shortlist-closed");
+    if (job.status === "live") {
+      const opened = await openShortlistRequest(job, account);
+      if (opened === "off") back("shortlist-off");
+      if (opened === "error") back("shortlist-error");
+      if (opened === "exists") back("shortlist-exists");
+      await setShortlistWanted(job.id, true);
+      back("shortlist-requested");
+    }
+    // Not live yet: remember the choice; the request opens when the job is approved.
+    const { ready, shortlist } = await getJobShortlist(job.id);
+    if (!ready) back("shortlist-off");
+    if (shortlist && shortlist.status !== "cancelled") back("shortlist-exists");
+    if (!(await setShortlistWanted(job.id, true))) back("shortlist-off");
+    back("shortlist-queued");
   }
   back("unchanged");
 }

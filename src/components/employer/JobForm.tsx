@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useActionState, useMemo, useState } from "react";
 import { useKeepValues } from "@/components/employer/useKeepValues";
 import { saveJob, type JobFormState } from "@/app/employers/dashboard/actions";
@@ -42,7 +43,61 @@ function Err({ msg }: { msg?: string }) {
   return msg ? <p className="mt-2 text-[14px] text-[#b3261e]">{msg}</p> : null;
 }
 
-export function JobForm({ initial, canSubmit, blocker }: { initial: JobFormValues; canSubmit: boolean; blocker: string | null }) {
+/**
+ * The recruiter shortlist part of the form:
+ * - offer: Growth and Enterprise, a box ticked by default for a new job
+ * - status: a shortlist is already requested for this job, so say where it is
+ * - upsell: Starter or no plan, a line pointing to the billing page
+ * - off: the plan includes it but shortlists are not switched on yet (migration 008)
+ */
+export type ShortlistOption = { mode: "offer"; checked: boolean } | { mode: "status"; text: string } | { mode: "upsell" } | { mode: "off" };
+
+function ShortlistBox({ option }: { option: ShortlistOption }) {
+  if (option.mode === "upsell") {
+    return (
+      <p className="rounded-[22px] bg-white px-6 py-4 text-[14px] leading-snug text-mute">
+        Want a shortlist of the best people for this role, picked by an experienced recruiter? Recruiter shortlists come with Growth and Enterprise.{" "}
+        <Link href="/employers/dashboard/billing" className="font-semibold text-link hover:underline">
+          See plans
+        </Link>
+      </p>
+    );
+  }
+  return (
+    <section className="card-white space-y-3 p-6 sm:p-8">
+      <h2 className="text-[19px] font-bold tracking-[-0.02em] text-ink">Recruiter shortlist</h2>
+      {option.mode === "offer" && (
+        <>
+          <input type="hidden" name="shortlist_offered" value="1" />
+          <label className="flex cursor-pointer gap-3 rounded-2xl border border-hair p-4 has-[:checked]:border-blue has-[:checked]:bg-[#f5f9ff]">
+            <input type="checkbox" name="shortlist" defaultChecked={option.checked} className="mt-1 h-4 w-4 shrink-0 accent-[#0071e3]" />
+            <span>
+              <span className="block text-[16px] font-semibold text-ink">Send me a recruiter shortlist for this role</span>
+              <span className="mt-0.5 block text-[14px] leading-snug text-mute">
+                Once the job is live, an experienced recruiter reviews your applicants and the people who asked to be found, and sends you the best fits in order, with a
+                note on each. We email you when it is ready.
+              </span>
+            </span>
+          </label>
+        </>
+      )}
+      {option.mode === "status" && <p className="text-[15px] leading-snug text-mute">{option.text}</p>}
+      {option.mode === "off" && <p className="text-[15px] leading-snug text-mute">Recruiter shortlists are not switched on yet. You can ask for one from the job&apos;s page once they are.</p>}
+    </section>
+  );
+}
+
+export function JobForm({
+  initial,
+  canSubmit,
+  blocker,
+  shortlist,
+}: {
+  initial: JobFormValues;
+  canSubmit: boolean;
+  blocker: string | null;
+  shortlist: ShortlistOption;
+}) {
   const [v, setV] = useState<JobFormValues>(initial);
   const [state, action, pending] = useActionState<JobFormState, FormData>(saveJob, { errors: {} });
   const keep = useKeepValues(action);
@@ -209,6 +264,8 @@ export function JobForm({ initial, canSubmit, blocker }: { initial: JobFormValue
             </div>
           )}
         </section>
+
+        <ShortlistBox option={shortlist} />
       </div>
 
       <aside className="space-y-4 lg:sticky lg:top-24">

@@ -4,6 +4,7 @@ import { requireEmployer } from "@/lib/employer/session";
 import { applicationCounts, applicationRate, displayStatus, formatDate, isExpired, listAccountJobs } from "@/lib/employer/jobs";
 import { effectivePlan, limitsFor, PLAN_NAMES, STATUS_LABELS, type PlanStatus } from "@/lib/employer/plans";
 import { contactDisplayStatus } from "@/lib/employer/candidates";
+import { accountShortlists, EMPLOYER_SHORTLIST_STATUS } from "@/lib/employer/shortlists";
 import { Badge, EmptyState, Notice, PageHead, Stat } from "@/components/employer/ui";
 import { Plus } from "@/components/employer/icons";
 
@@ -20,7 +21,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
   const plan = effectivePlan(account);
   const limits = limitsFor(plan);
   const jobs = await listAccountJobs(account.id);
-  const counts = await applicationCounts(jobs.map((j) => j.id));
+  const [counts, shortlists] = await Promise.all([applicationCounts(jobs.map((j) => j.id)), accountShortlists(account.id)]);
   const requests = await createAdminClient().from("mms_contact_requests").select("status, created_at").eq("account_id", account.id).limit(1000);
 
   const liveNow = jobs.filter((j) => j.status === "live" && !isExpired(j)).length;
@@ -99,6 +100,8 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
             {jobs.map((job) => {
               const s = displayStatus(job);
               const c = counts.get(job.id) ?? { total: 0, fresh: 0 };
+              const sl = shortlists.get(job.id);
+              const slStatus = sl && sl.status !== "cancelled" ? EMPLOYER_SHORTLIST_STATUS[sl.status] : null;
               return (
                 <li key={job.id}>
                   <Link href={`/employers/dashboard/jobs/${job.id}`} className="block rounded-[18px] bg-white p-5 transition-shadow hover:shadow-[0_8px_28px_-12px_rgba(0,0,0,0.18)]">
@@ -112,7 +115,10 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
                           {job.status !== "live" ? ` · Updated ${formatDate(job.updated_at)}` : ""}
                         </p>
                       </div>
-                      <Badge tone={s.tone}>{s.label}</Badge>
+                      <div className="flex flex-wrap gap-2">
+                        {slStatus && <Badge tone={slStatus.tone}>Recruiter shortlist: {slStatus.label.toLowerCase()}</Badge>}
+                        <Badge tone={s.tone}>{s.label}</Badge>
+                      </div>
                     </div>
                     <dl className="mt-4 grid grid-cols-3 gap-3 text-[14px] sm:max-w-[460px]">
                       <div>

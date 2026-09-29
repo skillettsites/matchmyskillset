@@ -80,6 +80,29 @@ export function EmployerTerms() {
         <li>Delete a candidate&apos;s details when you no longer need them for that recruitment, and when the candidate asks you to, unless the law requires you to keep them.</li>
       </ul>
 
+      <h3 className={h3} id="shortlists">
+        Recruiter shortlists (Growth and Enterprise)
+      </h3>
+      <ul className="list-disc space-y-2 pl-5">
+        <li>
+          On Growth and Enterprise you can ask for a recruiter shortlist for each job, when you post it or later from the job&apos;s page, once per job. Work starts
+          when the job has been approved and is live.
+        </li>
+        <li>
+          It is a human review: one of our recruiters looks at the people who applied to the job and at people who asked employers to find them, and sends you the
+          ones they think fit best, in order, with a note on each. We email you when it is ready and it appears in your dashboard.
+        </li>
+        <li>
+          We do not promise a set number of candidates, a time by which a shortlist will be ready, or that anyone on it will be hired. A shortlist is a professional
+          opinion to help you decide who to talk to first; the hiring decision, and the checks that go with it, stay with you.
+        </li>
+        <li>
+          People on a shortlist who applied to your job are shown with their details, on the terms above. People who have not applied are shown anonymously; you may
+          ask to contact them in the usual way, and you get their name, email address and CV only if they accept. Do not try to identify them from the
+          recruiter&apos;s note or their profile.
+        </li>
+      </ul>
+
       <h3 className={h3}>Plans, payment and cancelling</h3>
       <ul className="list-disc space-y-2 pl-5">
         <li>
@@ -104,7 +127,7 @@ export function EmployerTerms() {
 
       <h3 className={h3}>Our responsibility to employers</h3>
       <p>
-        We do our best to match your jobs with suitable people, but we do not promise any number of views, applicants, matches or hires. To the extent the law
+        We do our best to match your jobs with suitable people, but we do not promise any number of views, applicants, matches, shortlisted candidates or hires. To the extent the law
         allows, we are not liable to business users for indirect or consequential loss or for loss of profit, and our total liability to you in any 12 months is
         limited to what you paid us in that period. Nothing in these terms limits liability that cannot be limited by law. We may suspend or close an account that
         breaks these terms.

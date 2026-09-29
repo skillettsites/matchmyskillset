@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { EVERY_PLAN, JOBS_EMAIL, PRICING_TIERS, type PlanId } from "@/lib/employer/plans";
 import { CheckoutButton } from "./CheckoutButton";
-import { Check } from "./icons";
+import { Check, Minus } from "./icons";
 
 // The four employer tiers. On public pages the Starter and Growth buttons go
 // to sign-in and then billing; inside the dashboard they start checkout. While
@@ -13,11 +13,16 @@ export function PricingCards({ mode, currentPlan = null, paymentsOpen = true }: 
     <div>
       <div className="mx-auto grid max-w-[1180px] gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {PRICING_TIERS.map((tier) => {
-          const dark = Boolean(tier.popular);
+          // A highlight is a factual label (never "most popular"); it also draws the card dark.
+          const dark = Boolean(tier.highlight);
           const isCurrent = currentPlan !== null && tier.id === currentPlan;
           return (
             <div key={tier.id} className={`relative flex flex-col rounded-[28px] p-7 ${dark ? "bg-ink text-white" : "bg-cloud text-ink"}`}>
-              {dark && <span className="absolute right-6 top-6 rounded-full bg-white/15 px-3 py-1 text-[12px] font-semibold">Recommended</span>}
+              {tier.highlight && (
+                <p className="absolute -top-3 left-7 rounded-full bg-blue px-3 py-1 text-[12px] font-semibold text-white shadow-[0_4px_14px_-4px_rgba(0,113,227,0.6)]">
+                  {tier.highlight}
+                </p>
+              )}
               <h3 className="text-[24px] font-bold tracking-[-0.03em]">{tier.name}</h3>
               <p className={`mt-1 min-h-[44px] text-[15px] leading-snug ${dark ? "text-white/70" : "text-mute"}`}>{tier.blurb}</p>
               <p className="mt-5 flex flex-wrap items-baseline gap-x-1.5">
@@ -28,6 +33,12 @@ export function PricingCards({ mode, currentPlan = null, paymentsOpen = true }: 
                 {tier.features.map((f) => (
                   <li key={f} className="flex gap-2.5 text-[15px] leading-snug">
                     <Check className={`mt-0.5 h-4 w-4 shrink-0 ${dark ? "text-[#30d158]" : "text-green"}`} />
+                    {f}
+                  </li>
+                ))}
+                {tier.notIncluded?.map((f) => (
+                  <li key={f} className={`flex gap-2.5 text-[15px] leading-snug ${dark ? "text-white/60" : "text-mute"}`}>
+                    <Minus className="mt-0.5 h-4 w-4 shrink-0" />
                     {f}
                   </li>
                 ))}

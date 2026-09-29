@@ -21,4 +21,4 @@ export const RECRUITMENT_PARTNER_NAME = "";
 export const RECRUITER_SHARING_ENABLED = RECRUITMENT_PARTNER_NAME.trim().length > 0;
 
 // Date shown on /privacy and /terms. Update it whenever either page changes.
-export const LEGAL_LAST_UPDATED = "28 September 2026";
+export const LEGAL_LAST_UPDATED = "29 September 2026";

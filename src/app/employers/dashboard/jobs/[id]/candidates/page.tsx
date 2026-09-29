@@ -6,7 +6,7 @@ import { requireEmployer } from "@/lib/employer/session";
 import { getAccountJob, listAccountJobs } from "@/lib/employer/jobs";
 import { jobSkillSet, MATCH_METHOD_SUMMARY } from "@/lib/employer/matching";
 import { contactStatusMap, loadDiscoverable, rankCandidates } from "@/lib/employer/candidates";
-import { effectivePlan, limitsFor } from "@/lib/employer/plans";
+import { effectivePlan, limitsFor, moreMatchesHint } from "@/lib/employer/plans";
 import { isUuid } from "@/lib/employer/server";
 import { CandidateCard } from "@/components/employer/CandidateCard";
 import { JobTabs } from "@/components/employer/JobTabs";
@@ -77,7 +77,7 @@ export default async function MatchedCandidatesPage({ params, searchParams }: { 
           {cap !== null && ranked.length > cap && (
             <div className="mb-5">
               <Notice>
-                Showing your top {cap} of {ranked.length} matches. Growth shows every match.{" "}
+                Showing your top {cap} of {ranked.length} matches. {moreMatchesHint(plan)}{" "}
                 <Link href="/employers/dashboard/billing" className="font-semibold underline">
                   Compare plans
                 </Link>

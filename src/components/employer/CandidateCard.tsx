@@ -2,7 +2,7 @@ import type { RankedCandidate } from "@/lib/employer/candidates";
 import { topSkillNames } from "@/lib/employer/matching";
 import type { ContactStatus } from "@/lib/employer/types";
 import { ContactRequestForm } from "./ContactRequestForm";
-import { Badge, MatchBar, SkillChip } from "./ui";
+import { Badge, MatchBar, RankDot, RecruiterNote, SkillChip } from "./ui";
 
 // An anonymous profile: no name, email, phone or CV until the person accepts.
 
@@ -20,6 +20,8 @@ export function CandidateCard({
   jobs,
   defaultJobId,
   canContact,
+  note,
+  rank,
 }: {
   ranked: RankedCandidate;
   showScore: boolean;
@@ -27,6 +29,10 @@ export function CandidateCard({
   jobs: { id: string; title: string }[];
   defaultJobId?: string;
   canContact: boolean;
+  /** A recruiter's note, on a recruiter shortlist. */
+  note?: string | null;
+  /** Position on a recruiter shortlist. */
+  rank?: number;
 }) {
   const { candidate: c, skills, match } = ranked;
   const top = topSkillNames(skills, match.matched, 10);
@@ -36,9 +42,12 @@ export function CandidateCard({
   return (
     <div className="rounded-[22px] bg-white p-5 sm:p-6">
       <div className="grid gap-4 sm:grid-cols-[1fr_280px] sm:items-start">
-        <div className="min-w-0">
-          <p className="text-[17px] font-semibold leading-snug text-ink">{c.headline || c.current_role || "Candidate"}</p>
-          {facts.length > 0 && <p className="mt-1 text-[14px] text-mute">{facts.join(" · ")}</p>}
+        <div className="flex min-w-0 gap-3">
+          {rank !== undefined && <RankDot rank={rank} />}
+          <div className="min-w-0">
+            <p className="text-[17px] font-semibold leading-snug text-ink">{c.headline || c.current_role || "Candidate"}</p>
+            {facts.length > 0 && <p className="mt-1 text-[14px] text-mute">{facts.join(" · ")}</p>}
+          </div>
         </div>
         {showScore && <MatchBar score={match.score} />}
       </div>
@@ -49,6 +58,7 @@ export function CandidateCard({
           ))}
         </div>
       )}
+      {note && <RecruiterNote note={note} />}
       <div className="mt-5">
         {contact && contact !== "expired" ? (
           <Badge tone={CONTACT[contact].tone}>{CONTACT[contact].label}</Badge>

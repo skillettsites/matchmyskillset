@@ -152,16 +152,54 @@ export function sendNewApplication(
   return send({ to, subject: `New applicant for ${opts.jobTitle}`, html, text });
 }
 
-export function sendJobApproved(to: string, opts: { jobTitle: string; expires: string; url: string }): Promise<EmailResult> {
+const SHORTLIST_STARTED = "Our recruiters are now putting together your shortlist for this role. We will email you when it is ready.";
+
+export function sendJobApproved(to: string, opts: { jobTitle: string; expires: string; url: string; shortlist?: boolean }): Promise<EmailResult> {
   const html = layout(
     `Your job is live: ${opts.jobTitle}`,
     `${h1("Your job is live")}
      ${p(`<strong>${esc(opts.jobTitle)}</strong> is now live on MatchMySkillset and is being matched to job seekers whose CV skills fit. It runs until ${esc(opts.expires)}; you can renew it from your dashboard.`)}
+     ${opts.shortlist ? p(esc(SHORTLIST_STARTED)) : ""}
      ${button(opts.url, "Open your dashboard")}`,
     EMPLOYER_FOOTER
   );
-  const text = `${opts.jobTitle} is now live on MatchMySkillset. It runs until ${opts.expires}.\n\nYour dashboard: ${opts.url}`;
+  const text = `${opts.jobTitle} is now live on MatchMySkillset. It runs until ${opts.expires}.${opts.shortlist ? `\n\n${SHORTLIST_STARTED}` : ""}\n\nYour dashboard: ${opts.url}`;
   return send({ to, subject: `Your job is live: ${opts.jobTitle}`, html, text });
+}
+
+export function sendShortlistReady(
+  to: string,
+  opts: { jobTitle: string; count: number; applicants: number; recruiter: string | null; summary: string | null; url: string }
+): Promise<EmailResult> {
+  const people = `${opts.count} ${opts.count === 1 ? "person" : "people"}`;
+  const from = opts.recruiter ? `${opts.recruiter} from our recruitment team` : "Our recruitment team";
+  const mix =
+    opts.applicants === opts.count
+      ? opts.count === 1
+        ? "They applied to this job."
+        : "All of them applied to this job."
+      : opts.applicants === 0
+        ? "They asked employers to find them and have not applied yet, so they stay anonymous until they accept a request to contact them."
+        : `${opts.applicants} applied to this job. The others asked employers to find them, so they stay anonymous until they accept a request to contact them.`;
+  const html = layout(
+    `Your recruiter shortlist: ${opts.jobTitle}`,
+    `${h1(`Your shortlist for ${opts.jobTitle} is ready`)}
+     ${p(`${esc(from)} has picked <strong>${esc(people)}</strong> for this role, in order, with a note on each.`)}
+     ${p(esc(mix))}
+     ${opts.summary ? `${p("Their summary:", true)}${quote(opts.summary.slice(0, 2000))}` : ""}
+     ${button(opts.url, "See the shortlist")}
+     ${p("A shortlist is a recruiter's view of who fits best, to help you decide who to talk to first. The hiring decision is yours.", true)}`,
+    EMPLOYER_FOOTER
+  );
+  const text = [
+    `Your shortlist for ${opts.jobTitle} is ready.`,
+    `${from} has picked ${people} for this role, in order, with a note on each. ${mix}`,
+    opts.summary ? `Their summary:\n${opts.summary.slice(0, 2000)}` : "",
+    `See the shortlist: ${opts.url}`,
+  ]
+    .filter(Boolean)
+    .join("\n\n");
+  return send({ to, subject: `Your recruiter shortlist for ${opts.jobTitle} is ready`, html, text });
 }
 
 export function sendJobRejected(to: string, opts: { jobTitle: string; reason: string; url: string }): Promise<EmailResult> {

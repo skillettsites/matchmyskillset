@@ -3,7 +3,7 @@ import { isAllowedOrigin } from "@/lib/api-guard";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { getStripe, isStripeConfigError } from "@/lib/apis/stripe";
 import { getEmployer, isSetUp } from "@/lib/employer/session";
-import { EMPLOYER_PRODUCT, JOBS_EMAIL, PAYMENTS_UNAVAILABLE, PLAN_NAMES, SELF_SERVE_PRICES } from "@/lib/employer/plans";
+import { EMPLOYER_PRODUCT, JOBS_EMAIL, PAYMENTS_UNAVAILABLE, PLAN_LIMITS, PLAN_NAMES, SELF_SERVE_PRICES } from "@/lib/employer/plans";
 import { localBase } from "@/lib/employer/server";
 
 // Starts a monthly subscription for Starter or Growth with Stripe Checkout.
@@ -15,7 +15,7 @@ export const dynamic = "force-dynamic";
 
 const DESCRIPTIONS = {
   starter: "3 live job listings, up to 10 matched candidates shown per role, views and applications for every job. Billed monthly, cancel any time.",
-  growth: "10 live job listings, unlimited matched candidates, skills-gap report per role, company page and priority email support. Billed monthly, cancel any time.",
+  growth: `${PLAN_LIMITS.growth.liveJobs} live job listings, up to ${PLAN_LIMITS.growth.matchedPerRole} matched candidates shown per role, a recruiter shortlist for every role, skills-gap report per role, company page and priority email support. Billed monthly, cancel any time.`,
 };
 
 export async function POST(request: NextRequest) {

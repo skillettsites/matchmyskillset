@@ -74,3 +74,25 @@ export function EmptyState({ title, children, action }: { title: string; childre
     </div>
   );
 }
+
+/** Position on a recruiter shortlist. */
+export function RankDot({ rank }: { rank: number }) {
+  return (
+    <span
+      className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#0071e3] to-[#7d4cdb] text-[14px] font-bold text-white"
+      aria-label={`Number ${rank}`}
+    >
+      {rank}
+    </span>
+  );
+}
+
+/** A recruiter's note about one person on a shortlist. */
+export function RecruiterNote({ note }: { note: string }) {
+  return (
+    <div className="mt-4 rounded-2xl bg-[#f5f9ff] p-4">
+      <p className="text-[13px] font-semibold text-[#0058b0]">Recruiter&apos;s note</p>
+      <p className="mt-1 whitespace-pre-wrap text-[15px] leading-relaxed text-ink-2">{note}</p>
+    </div>
+  );
+}

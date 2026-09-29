@@ -23,6 +23,10 @@ export const EMPLOYER_FAQS: FaqItem[] = [
     a: "Yes, but only people who have chosen to be found. You see an anonymous profile: headline, current role, region, years of experience and skills. You can ask to contact them, with a short message. If they accept, we share their name, email address and CV with you. If they decline, you are not told who they are.",
   },
   {
+    q: "What is the recruiter shortlist?",
+    a: "It comes with Growth and Enterprise. Once your job is live, one of our experienced recruiters reviews the people who applied and the people who asked employers to find them, and sends you the best fits for the role, in order, with a short note on each. We email you when it is ready and it appears in your dashboard. People who applied are shown in full; people who have not applied stay anonymous until they accept your request to contact them. It is a recruiter's judgement to help you decide who to talk to first, not a promise of a hire.",
+  },
+  {
     q: "What can I not post?",
     a: "Jobs must be real UK vacancies that follow UK employment and equality law. No discriminatory wording, no fees to apply, no recruitment for pyramid schemes, and no adverts that hide commission-only pay. The full list is in our terms.",
   },

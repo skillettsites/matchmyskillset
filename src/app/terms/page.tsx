@@ -58,6 +58,12 @@ export default function TermsPage() {
             employers can ask to contact. Nothing about who you are is shared unless you accept.
           </li>
           <li>
+            <strong>Recruiter shortlists:</strong> if you apply to a job, or switch on &lsquo;Let
+            employers find me&rsquo;, our recruitment team may review your application or profile to put
+            together shortlists for employers on Growth and Enterprise plans. Employers only see your
+            name and contact details if you applied to them or you accept their request.
+          </li>
+          <li>
             <strong>Career Change Report (paid):</strong> a one-off report about one career you
             choose. It is not a subscription.
           </li>
@@ -75,7 +81,7 @@ export default function TermsPage() {
           {SITE_NAME} is not an employer and does not decide who is hired. We never charge job
           seekers for finding work. When you apply for a job posted here, we pass your application to
           the employer because you asked us to; the employer decides what happens next. We do not
-          pass your details to employers or recruiters unless you choose to. A match score is an
+          pass your details to employers or outside recruiters unless you choose to. A match score is an
           automatic indicator of how your skills compare with an advert, not an assessment of you.
         </p>
 

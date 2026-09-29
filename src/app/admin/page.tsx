@@ -6,7 +6,8 @@ import { CONTRACT_OPTIONS, formatDate, formatSalary, isExpired, publicJobPath } 
 import { jobSkillSet, skillName } from "@/lib/employer/matching";
 import { contactDisplayStatus } from "@/lib/employer/candidates";
 import { PLAN_IDS, PLAN_NAMES, PLAN_STATUSES, STATUS_LABELS, effectivePlan, limitsFor, type PlanStatus } from "@/lib/employer/plans";
-import type { EmployerAccount, JobRow } from "@/lib/employer/types";
+import type { EmployerAccount, JobRow, ShortlistRow } from "@/lib/employer/types";
+import { isShortlistSchemaMissing } from "@/lib/employer/shortlists";
 import { isoDaysAgo } from "@/lib/employer/server";
 import { AdminLogin } from "@/components/employer/AdminLogin";
 import { Badge, SkillChip, Stat } from "@/components/employer/ui";
@@ -60,6 +61,32 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
     const { data } = await admin.from("mms_jobs").select("id, title").in("id", appJobIds);
     for (const j of data ?? []) jobTitles.set(j.id, j.title);
   }
+  // Recruiter shortlists (read only here; recruiters work on them in /recruiter). Fails soft before migration 008.
+  const shortlistsRes = await admin
+    .from("mms_shortlists")
+    .select("id, created_at, updated_at, job_id, account_id, status, requested_at, started_at, sent_at, recruiter_name, summary")
+    .order("requested_at", { ascending: false })
+    .limit(100);
+  const shortlistsOff = isShortlistSchemaMissing(shortlistsRes.error);
+  const shortlists = (shortlistsRes.data as ShortlistRow[]) ?? [];
+  const shortlistJobIds = [...new Set(shortlists.map((s) => s.job_id))].filter((jid) => !jobTitles.has(jid));
+  if (shortlistJobIds.length) {
+    const { data } = await admin.from("mms_jobs").select("id, title").in("id", shortlistJobIds);
+    for (const j of data ?? []) jobTitles.set(j.id, j.title);
+  }
+  const picksByShortlist = new Map<string, number>();
+  if (shortlists.length) {
+    const { data } = await admin
+      .from("mms_shortlist_items")
+      .select("shortlist_id")
+      .in(
+        "shortlist_id",
+        shortlists.map((s) => s.id)
+      );
+    for (const row of data ?? []) picksByShortlist.set(row.shortlist_id, (picksByShortlist.get(row.shortlist_id) ?? 0) + 1);
+  }
+  const shortlistsWaiting = shortlists.filter((s) => s.status === "requested" || s.status === "in_progress").length;
+
   const candIds = [...new Set(requests.map((r) => r.candidate_id))];
   const candHeadlines = new Map<string, string>();
   if (candIds.length) {
@@ -288,6 +315,57 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
             </tbody>
           </table>
         </div>
+
+        {/* Recruiter shortlists */}
+        <h2 id="shortlists" className="title mt-14 scroll-mt-24">
+          Recruiter shortlists
+        </h2>
+        <p className="mt-2 text-[14px] text-mute">
+          {shortlistsOff
+            ? "Not switched on yet: apply supabase/migrations/008_shortlists.sql."
+            : `${shortlistsWaiting} waiting for a recruiter. Requests open when a Growth or Enterprise job goes live; recruiters work on them at /recruiter (RECRUITER_SECRET).`}
+        </p>
+        {!shortlistsOff && (
+          <div className="mt-4 overflow-x-auto rounded-[18px] bg-white">
+            <table className="w-full min-w-[720px] text-left text-[14px]">
+              <thead className="text-[12px] text-mute">
+                <tr className="border-b border-black/[0.06]">
+                  <th className="px-4 py-3 font-semibold">Asked for</th>
+                  <th className="px-4 py-3 font-semibold">Job</th>
+                  <th className="px-4 py-3 font-semibold">Employer</th>
+                  <th className="px-4 py-3 font-semibold">Status</th>
+                  <th className="px-4 py-3 font-semibold">Recruiter</th>
+                  <th className="px-4 py-3 font-semibold">Picks</th>
+                  <th className="px-4 py-3 font-semibold">Sent</th>
+                </tr>
+              </thead>
+              <tbody>
+                {shortlists.length === 0 && (
+                  <tr>
+                    <td colSpan={7} className="px-4 py-4 text-mute">
+                      None yet.
+                    </td>
+                  </tr>
+                )}
+                {shortlists.map((s) => (
+                  <tr key={s.id} className="border-b border-black/[0.04] last:border-0">
+                    <td className="px-4 py-3 text-mute">{when(s.requested_at)}</td>
+                    <td className="px-4 py-3">{jobTitles.get(s.job_id) ?? s.job_id}</td>
+                    <td className="px-4 py-3">{(s.account_id && accountById.get(s.account_id)?.company_name) || ""}</td>
+                    <td className="px-4 py-3">
+                      <Badge tone={s.status === "sent" ? "green" : s.status === "cancelled" ? "grey" : s.status === "in_progress" ? "amber" : "blue"}>
+                        {s.status === "in_progress" ? "in progress" : s.status}
+                      </Badge>
+                    </td>
+                    <td className="px-4 py-3">{s.recruiter_name ?? ""}</td>
+                    <td className="px-4 py-3">{picksByShortlist.get(s.id) ?? 0}</td>
+                    <td className="px-4 py-3 text-mute">{when(s.sent_at)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
 
         {/* Contact requests */}
         <h2 id="requests" className="title mt-14 scroll-mt-24">

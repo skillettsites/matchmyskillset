@@ -10,7 +10,7 @@ import { SITE_URL } from "@/components/site";
 export const metadata: Metadata = {
   title: "Employer pricing: jobs from £199 a month",
   description:
-    "Starter £199 a month for 3 live jobs, Growth £499 for 10 with skills-gap reports and a company page, Enterprise from £999, or pay per hire.",
+    "Starter £199 a month for 3 live jobs, Growth £499 for 10 with recruiter shortlists, skills-gap reports and a company page, Enterprise from £999, or pay per hire.",
   alternates: { canonical: "/employers/pricing" },
 };
 

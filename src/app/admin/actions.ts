@@ -9,7 +9,8 @@ import { cleanText } from "@/lib/input";
 import { checkAdminPassword, endAdminSession, isAdmin, startAdminSession } from "@/lib/employer/admin-auth";
 import { sendJobApproved, sendJobRejected } from "@/lib/employer/email";
 import { formatDate, invalidatePublicJobs, listingBlocker, listingExpiry, setReviewNote } from "@/lib/employer/jobs";
-import { isPlanId, isPlanStatus } from "@/lib/employer/plans";
+import { effectivePlan, hasRecruiterShortlist, isPlanId, isPlanStatus } from "@/lib/employer/plans";
+import { openShortlistRequest } from "@/lib/employer/shortlists";
 import { isUuid, linkBase, requestIp } from "@/lib/employer/server";
 import type { EmployerAccount, JobRow } from "@/lib/employer/types";
 
@@ -67,12 +68,23 @@ export async function approveJob(form: FormData): Promise<void> {
   if (error) back(`err=${encodeURIComponent(error.message)}`, "pending");
   await setReviewNote(job.id, null);
   invalidatePublicJobs();
+  // The employer ticked "Send me a recruiter shortlist": open the request now the job is live.
+  const shortlist = job.shortlist_wanted && hasRecruiterShortlist(effectivePlan(account)) ? await openShortlistRequest(job, account) : null;
+  const shortlistStarted = shortlist === "created" || shortlist === "reopened";
   const sent = await sendJobApproved(account.email, {
     jobTitle: job.title,
     expires: formatDate(expires),
     url: `${await linkBase()}/employers/dashboard/jobs/${job.id}`,
+    shortlist: shortlistStarted,
   });
-  back(`msg=${encodeURIComponent(`Approved "${job.title}"${sent.ok ? " and emailed the employer" : ", but the email failed"}.`)}`, "pending");
+  const shortlistNote = shortlistStarted
+    ? " A recruiter shortlist request is now in the recruiter queue."
+    : shortlist === "off"
+      ? " They asked for a recruiter shortlist, but shortlists are not switched on yet (migration 008)."
+      : shortlist === "error"
+        ? " They asked for a recruiter shortlist, but opening it failed: check the logs."
+        : "";
+  back(`msg=${encodeURIComponent(`Approved "${job.title}"${sent.ok ? " and emailed the employer" : ", but the email failed"}.${shortlistNote}`)}`, "pending");
 }
 
 export async function rejectJob(form: FormData): Promise<void> {

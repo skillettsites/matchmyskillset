@@ -40,6 +40,11 @@ export function EmployerPrivacy() {
         <li>
           <strong>Contact requests:</strong> the message you write and which candidate and job it is about. We email it to the candidate with your company name.
         </li>
+        <li>
+          <strong>Recruiter shortlists (Growth and Enterprise):</strong> whether you asked for one for each job, and the shortlist itself: who was picked, in what
+          order, the recruiter&apos;s notes and summary, and when it was asked for and sent. Our recruiters see the job and its applicants to put it together, but not
+          your plan or billing details. Lawful basis: our contract with you.
+        </li>
       </ul>
 
       <h3 className={h3}>Cookies for employers</h3>
@@ -51,8 +56,8 @@ export function EmployerPrivacy() {
       <h3 className={h3}>Who else handles it</h3>
       <p>
         The same service providers listed above: Supabase (database), Vercel (hosting), Resend (sign-in links and notification emails) and Stripe (payments). We
-        also send ourselves short alerts on Telegram when an employer signs up, submits a job, sends an enquiry or changes plan; these name the company, not the
-        person.
+        also send ourselves short alerts on Telegram when an employer signs up, submits a job, sends an enquiry, changes plan, or has a recruiter shortlist
+        requested or sent; these name the company, not the person.
       </p>
 
       <h3 className={h3}>Candidate details you receive</h3>
