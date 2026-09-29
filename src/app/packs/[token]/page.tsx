@@ -37,9 +37,11 @@ export default async function PackPage({ params, searchParams }: { params: Param
   }
   if (!row) notFound();
 
-  // Back from Stripe before the webhook: confirm the payment with Stripe directly.
+  // Back from Stripe before the webhook: confirm the payment with Stripe directly
+  // (a new pack, or a free tailored CV being made a full pack).
   const sessionId = sp.session_id ?? "";
-  if (row.status === "awaiting_payment" && sessionId) row = await confirmPackPayment(row, sessionId);
+  const upgradePending = row.scope === "cv" && sessionId && sessionId !== row.stripe_session_id && !row.upgrade_session_id;
+  if (sessionId && (row.status === "awaiting_payment" || upgradePending)) row = await confirmPackPayment(row, sessionId);
 
   const [account, paymentsOpen] = await Promise.all([getCandidate(), isStripeReady().catch(() => false)]);
   const ent = await entitlementFor(account);

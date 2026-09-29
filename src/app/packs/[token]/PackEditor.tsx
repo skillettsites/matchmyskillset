@@ -137,22 +137,34 @@ export function PackEditor(props: { initial: PackView; sessionId: string; paymen
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const running = useRef(false);
+  const shown = useRef(props.initial);
 
   const writing = view.status === "queued" || view.status === "generating" || view.status === "awaiting_payment";
+  // Back from paying to add the cover letter and interview prep, before the payment is confirmed.
+  const upgradePaying = Boolean(sessionId) && view.scope === "cv" && view.status === "ready";
 
+  useEffect(() => {
+    shown.current = view;
+  }, [view]);
+
+  /** Takes a newer copy of the pack, keeping unsaved edits to any part the server has not changed. */
   const adopt = useCallback((v: PackView) => {
+    const prev = shown.current;
+    shown.current = v;
     setView(v);
-    setCv(v.tailoredCv);
-    setLetter(v.coverLetter ?? "");
-    setPrep(v.interviewPrep);
+    if (JSON.stringify(prev.tailoredCv) !== JSON.stringify(v.tailoredCv)) setCv(v.tailoredCv);
+    if (prev.coverLetter !== v.coverLetter) setLetter(v.coverLetter ?? "");
+    if (JSON.stringify(prev.interviewPrep) !== JSON.stringify(v.interviewPrep)) setPrep(v.interviewPrep);
   }, []);
 
   // Ask for the pack to be written (only one writer wins), and meanwhile check on it every few seconds.
   useEffect(() => {
-    if (!writing || running.current) return;
+    if (!(writing || upgradePaying) || running.current) return;
     running.current = true;
     let stop = false;
+    let lastKick = 0;
     const kick = async () => {
+      lastKick = Date.now();
       try {
         const res = await fetch(`/api/packs/${view.token}/generate`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ sessionId }) });
         const d = (await res.json().catch(() => ({}))) as { pack?: PackView; error?: string };
@@ -168,9 +180,15 @@ export function PackEditor(props: { initial: PackView; sessionId: string; paymen
         const res = await fetch(`/api/packs/${view.token}`, { cache: "no-store" });
         const d = (await res.json().catch(() => ({}))) as { pack?: PackView };
         if (stop || !d.pack) return;
-        if (d.pack.status === "ready" || d.pack.status === "failed") {
+        if (d.pack.status === "ready" && d.pack.scope === "cv" && sessionId) {
+          // Still waiting for the upgrade payment to be confirmed.
+          if (Date.now() - lastKick > 10_000) void kick();
+        } else if (d.pack.status === "ready" || d.pack.status === "failed") {
           adopt(d.pack);
         } else if (d.pack.status === "queued" || (d.pack.status === "awaiting_payment" && sessionId)) {
+          void kick();
+        } else if (d.pack.status === "generating" && Date.now() - lastKick > 90_000) {
+          // The writer may have stopped (a claim goes stale after 5 minutes); asking again is harmless.
           void kick();
         }
       } catch {
@@ -182,7 +200,7 @@ export function PackEditor(props: { initial: PackView; sessionId: string; paymen
       running.current = false;
       clearInterval(timer);
     };
-  }, [writing, view.token, sessionId, adopt]);
+  }, [writing, upgradePaying, view.token, sessionId, adopt]);
 
   const dirty = useMemo(
     () =>
@@ -311,7 +329,13 @@ export function PackEditor(props: { initial: PackView; sessionId: string; paymen
                 ) : view.extrasPending ? (
                   <p className="text-[15px] text-mute">Being written now.</p>
                 ) : (
-                  <Upgrade view={view} plus={plus} plusLeft={plusLeft} paymentsOpen={paymentsOpen} onDone={adopt} />
+                  upgradePaying ? (
+                    <p role="status" className="flex items-center gap-2 text-[15px] text-ink-2">
+                      <span className="live-dot" aria-hidden="true" /> Confirming your payment. Your cover letter and interview prep are written as soon as it is through.
+                    </p>
+                  ) : (
+                    <Upgrade view={view} plus={plus} plusLeft={plusLeft} paymentsOpen={paymentsOpen} onDone={adopt} />
+                  )
                 ))}
               {tab === "prep" &&
                 (prep ? (
@@ -319,7 +343,13 @@ export function PackEditor(props: { initial: PackView; sessionId: string; paymen
                 ) : view.extrasPending ? (
                   <p className="text-[15px] text-mute">Being written now.</p>
                 ) : (
-                  <Upgrade view={view} plus={plus} plusLeft={plusLeft} paymentsOpen={paymentsOpen} onDone={adopt} />
+                  upgradePaying ? (
+                    <p role="status" className="flex items-center gap-2 text-[15px] text-ink-2">
+                      <span className="live-dot" aria-hidden="true" /> Confirming your payment. Your cover letter and interview prep are written as soon as it is through.
+                    </p>
+                  ) : (
+                    <Upgrade view={view} plus={plus} plusLeft={plusLeft} paymentsOpen={paymentsOpen} onDone={adopt} />
+                  )
                 ))}
               {tab === "gaps" && (
                 <div className="space-y-8 text-[15px]">

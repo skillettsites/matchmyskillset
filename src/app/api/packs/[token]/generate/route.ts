@@ -35,7 +35,8 @@ export async function POST(request: NextRequest, { params }: Ctx) {
   try {
     let row = await getPack(token);
     if (!row) return NextResponse.json({ error: "This pack has expired or the link is wrong." }, { status: 404 });
-    if (row.status === "awaiting_payment" && sessionId) row = await confirmPackPayment(row, sessionId);
+    const upgradePending = row.scope === "cv" && sessionId && sessionId !== row.stripe_session_id && !row.upgrade_session_id;
+    if (sessionId && (row.status === "awaiting_payment" || upgradePending)) row = await confirmPackPayment(row, sessionId);
     if (row.status === "awaiting_payment") return NextResponse.json({ pack: toView(row) });
     const after = (await runGeneration(token)) ?? row;
     return NextResponse.json({ pack: toView(after) }, { headers: { "Cache-Control": "no-store" } });

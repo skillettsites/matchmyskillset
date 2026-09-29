@@ -15,7 +15,7 @@ import { notifyOwner } from "@/lib/employer/telegram";
 import { sendCandidateSignInLink } from "@/lib/candidate/email";
 import { NotSwitchedOnError } from "@/lib/candidate/db";
 import { NOT_SWITCHED_ON } from "@/lib/candidate/plans";
-import { deleteAccount, deleteSavedCv, setConsents } from "@/lib/candidate/account";
+import { claimGuestPacks, deleteAccount, deleteSavedCv, setConsents } from "@/lib/candidate/account";
 import { isPlusAccount } from "@/lib/candidate/entitlements";
 import { consumeLoginToken, createSession, destroySession, findOrCreateAccount, getCandidate, issueLoginToken, safeNext } from "@/lib/candidate/session";
 
@@ -61,6 +61,8 @@ export async function completeCandidateSignIn(form: FormData): Promise<void> {
     if (email) {
       const { account } = await findOrCreateAccount(email);
       await createSession(account.id);
+      // Packs bought without an account, sent to this (now proven) email address.
+      await claimGuestPacks(account.id, email);
     }
   } catch (err) {
     if (err instanceof NotSwitchedOnError) redirect("/account/sign-in?error=off");

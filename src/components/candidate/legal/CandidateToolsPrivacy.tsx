@@ -77,7 +77,8 @@ export function CandidateToolsPrivacy() {
           deletes them all.
         </li>
         <li>
-          <strong>Job packs bought without an account:</strong> 12 months from the purchase, then deleted. You can delete one sooner from its page.
+          <strong>Job packs bought without an account:</strong> 12 months from the purchase, then deleted. You can delete one sooner from its page. If you later
+          sign in with the email address the pack was sent to, it moves into your account and is kept as above.
         </li>
         <li>
           <strong>Packs started but never paid for:</strong> deleted after a day.

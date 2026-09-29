@@ -34,6 +34,30 @@ export async function deleteSavedCv(accountId: string): Promise<void> {
   if (error) raise(error, "saved CV delete failed");
 }
 
+/**
+ * Moves packs bought without an account into it, once the person has proved
+ * they own the email the packs were sent to (by signing in with it). They are
+ * then kept while the account exists instead of 12 months. Never throws.
+ */
+export async function claimGuestPacks(accountId: string, email: string): Promise<number> {
+  try {
+    const { data, error } = await db()
+      .from("mms_job_packs")
+      .update({ account_id: accountId, expires_at: null, updated_at: new Date().toISOString() })
+      .is("account_id", null)
+      .eq("email", email)
+      .neq("status", "awaiting_payment")
+      .select("id");
+    if (error) {
+      if (!isMissingObject(error)) console.warn("[account] guest packs claim failed:", error.message);
+      return 0;
+    }
+    return data?.length ?? 0;
+  } catch {
+    return 0;
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Results pages linked to the account
 // ---------------------------------------------------------------------------
