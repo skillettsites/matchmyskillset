@@ -38,6 +38,7 @@ export const PRIMARY_NAV: NavItem[] = [
   { label: "Find jobs", href: "/jobs" },
   { label: "Match my CV", href: "/discover" },
   { label: "Careers", href: CAREERS_HREF },
+  { label: "CV tools", href: "/tools" },
   { label: "For employers", href: "/employers" },
 ];
 
@@ -50,6 +51,9 @@ export const JOBSEEKER_LINKS: NavItem[] = [
   { label: "Career quiz", href: "/quiz" },
   { label: "Transferable skills", href: "/transferable-skills" },
   { label: "Career Change Report", href: "/pricing" },
+  { label: "Tailor my CV", href: "/tools/tailor" },
+  { label: "Plus", href: "/plus" },
+  { label: "Your account", href: "/account" },
 ];
 
 /** Footer: the employer side. */

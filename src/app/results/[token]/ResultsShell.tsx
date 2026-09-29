@@ -478,7 +478,11 @@ export function ResultsShell(props: Props) {
             <ol className="mt-4 space-y-4">
               {shown.map((j, i) => (
                 <li key={j.key}>
-                  <MatchJobCard job={toCard(j, snap?.skillNames ?? {})} position={(current - 1) * PER_PAGE + i + 1} />
+                  <MatchJobCard
+                    job={toCard(j, snap?.skillNames ?? {})}
+                    position={(current - 1) * PER_PAGE + i + 1}
+                    tailorHref={`/tools/tailor?from=${encodeURIComponent(token)}&job=${encodeURIComponent(j.id)}`}
+                  />
                 </li>
               ))}
             </ol>

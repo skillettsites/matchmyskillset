@@ -49,6 +49,10 @@ const ROUTES: Route[] = [
   { path: "/jobs", lastModified: NICHE, priority: 0.6 },
   { path: "/quiz", lastModified: REVAMP, priority: 0.7 },
   { path: "/pricing", lastModified: REVAMP, priority: 0.5 },
+  // CV tools (job packs and Plus), 29 Sep 2026
+  { path: "/tools", lastModified: "2026-09-29", priority: 0.6 },
+  { path: "/plus", lastModified: "2026-09-29", priority: 0.5 },
+  { path: "/tools/check", lastModified: "2026-09-29", priority: 0.4 },
   { path: "/employers", lastModified: NICHE, priority: 0.6 },
   { path: "/employers/pricing", lastModified: REVAMP, priority: 0.5 },
   { path: "/transferable-skills", lastModified: REVAMP, priority: 0.8 },

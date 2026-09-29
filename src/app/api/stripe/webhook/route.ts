@@ -13,6 +13,8 @@ import {
 import { ensureReport } from "@/lib/apis/report-builder";
 import { isValidEmail, sendReportLink } from "@/lib/email/results-email";
 import { handleEmployerEvent, isEmployerEvent } from "@/lib/employer/billing-webhook";
+// Candidate CV tools (job packs and Plus): checked first, see src/lib/candidate/billing-webhook.ts.
+import { handleCandidateEvent, isCandidateEvent } from "@/lib/candidate/billing-webhook";
 
 // Stripe webhook for the Career Change Report. Register it in the Stripe
 // dashboard at https://matchmyskillset.com/api/stripe/webhook for
@@ -31,7 +33,8 @@ import { handleEmployerEvent, isEmployerEvent } from "@/lib/employer/billing-web
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-export const maxDuration = 120;
+// 300: a job pack paid for by card is written in after() (src/lib/candidate/billing-webhook.ts).
+export const maxDuration = 300;
 
 const HANDLED = new Set(["checkout.session.completed", "checkout.session.async_payment_succeeded"]);
 
@@ -53,6 +56,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "bad_signature" }, { status: 400 });
   }
 
+  // Candidate job packs and Plus first: the employer handler treats every subscription event as an employer's.
+  if (isCandidateEvent(event)) return handleCandidateEvent(event);
   if (isEmployerEvent(event)) return handleEmployerEvent(event);
 
   if (!HANDLED.has(event.type)) return NextResponse.json({ received: true, ignored: event.type });
