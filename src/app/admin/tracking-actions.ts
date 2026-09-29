@@ -47,10 +47,11 @@ export async function setPartnerRate(form: FormData): Promise<void> {
   }
 
   const plan = String(form.get("partner_plan") ?? "");
-  const pence = Number.parseInt(String(form.get("partner_price_pence") ?? ""), 10);
+  const pounds = String(form.get("partner_price_pounds") ?? "").replace(/[£,\s]/g, "");
+  const pence = /^\d+(\.\d{1,2})?$/.test(pounds) ? Math.round(Number(pounds) * 100) : NaN;
   if (!isSelfServePlan(plan)) backToEmployers("err=Pick Lite, Starter or Growth for the partner rate.");
   if (!Number.isInteger(pence) || pence < 100 || pence > SELF_SERVE_PRICES[plan]) {
-    backToEmployers(`err=${encodeURIComponent(`Enter a monthly price in pence from 100 to ${SELF_SERVE_PRICES[plan]} (the standard ${PLAN_NAMES[plan]} price).`)}`);
+    backToEmployers(`err=${encodeURIComponent(`Enter a monthly price in pounds from £1 to ${formatPence(SELF_SERVE_PRICES[plan])} (the standard ${PLAN_NAMES[plan]} price).`)}`);
   }
   const { error } = await admin.from("mms_employer_accounts").update({ partner_plan: plan, partner_price_pence: pence, partner_set_at: now, updated_at: now }).eq("id", id);
   if (error) backToEmployers(`err=${encodeURIComponent(isTrackingSchemaMissing(error) ? "Partner rates are not switched on yet: apply supabase/migrations/010_tracking.sql." : error.message)}`);

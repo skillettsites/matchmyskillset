@@ -3,7 +3,7 @@ import type { EmployerAccount } from "@/lib/employer/types";
 import { setPartnerRate } from "@/app/admin/tracking-actions";
 
 // Partner rate for one employer (Flintstone Associates clients), in /admin.
-// A monthly price in pence for one self-serve plan; their checkout for that
+// A monthly price in pounds (stored in pence) for one self-serve plan; their checkout for that
 // plan then charges it, and their billing page says "Partner rate". There is
 // no public partner price.
 
@@ -31,15 +31,16 @@ export function PartnerRateForm({ account }: { account: EmployerAccount }) {
           ))}
         </select>
         <input
-          name="partner_price_pence"
+          name="partner_price_pounds"
           type="number"
-          min={100}
-          max={SELF_SERVE_PRICES.growth}
-          step={1}
-          defaultValue={rate?.pence ?? ""}
+          inputMode="decimal"
+          min={1}
+          max={SELF_SERVE_PRICES.growth / 100}
+          step={0.01}
+          defaultValue={rate ? rate.pence / 100 : ""}
           className="field !bg-white !py-2 !text-[14px]"
-          placeholder="Monthly price in pence"
-          aria-label="Partner monthly price in pence"
+          placeholder="Monthly price in £, e.g. 129"
+          aria-label="Partner monthly price in pounds"
         />
         <button className="btn btn-dark btn-sm">Save partner rate</button>
         {rate && (
