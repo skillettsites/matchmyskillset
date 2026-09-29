@@ -3,8 +3,10 @@
 import { useState } from "react";
 import Link from "next/link";
 import { track } from "@/lib/analytics";
-import { noteApplyClick, TrackApplied } from "@/components/tracking/TrackApplied";
+import { TrackApplied } from "@/components/tracking/TrackApplied";
 import { postedLabel } from "./format";
+import { noteJobOpened, recordApplyClick } from "./apply";
+import { SourceBadge } from "./SourceBadge";
 
 /** What a job card needs. Built from a results snapshot or a /jobs search. */
 export interface CardJob {
@@ -42,7 +44,7 @@ function matchTone(m: number): { ring: string; text: string } {
   return { ring: "#86868b", text: "text-ink-2" };
 }
 
-function MatchDial({ value }: { value: number }) {
+export function MatchDial({ value }: { value: number }) {
   const r = 22;
   const c = 2 * Math.PI * r;
   const tone = matchTone(value);
@@ -58,21 +60,33 @@ function MatchDial({ value }: { value: number }) {
 }
 
 function recordClick(job: CardJob, position: number | undefined) {
-  track("job_click", { source: job.source, position: position ?? null, match: job.match ?? null });
-  if (job.source === "mms") return;
-  // Application tracker: ask "Did you apply?" when they come back from the advert.
-  noteApplyClick(job);
-  fetch("/api/track-click", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ source: job.source, jobId: job.id, jobTitle: job.title, jobUrl: job.url }),
-    keepalive: true,
-  }).catch(() => {});
+  recordApplyClick(job, position);
 }
 
-export function MatchJobCard({ job, position, tailorHref }: { job: CardJob; position?: number; /** CV tools: "Tailor my CV for this job" link, on results pages. */ tailorHref?: string }) {
+export function MatchJobCard({
+  job,
+  position,
+  tailorHref,
+  detailHref,
+  onOpen,
+}: {
+  job: CardJob;
+  position?: number;
+  /** CV tools: "Tailor my CV for this job" link, on results pages. */
+  tailorHref?: string;
+  /** The job page (/jobs/<id>) for an advert from another board. */
+  detailHref?: string;
+  /** Called when the job page is opened, so the list can keep its place. */
+  onOpen?: () => void;
+}) {
   const [why, setWhy] = useState(false);
   const mms = job.source === "mms";
+  const page = !mms && detailHref ? detailHref : null;
+  const open = () => {
+    track("job_view", { source: job.source, position: position ?? null, match: job.match ?? null });
+    noteJobOpened(job.id);
+    onOpen?.();
+  };
   const posted = postedLabel(job.postedAt);
   const hasMatch = typeof job.match === "number";
 
@@ -81,11 +95,7 @@ export function MatchJobCard({ job, position, tailorHref }: { job: CardJob; posi
       <div className="flex items-start gap-4">
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5 text-[13px]">
-            {mms ? (
-              <span className="pill !px-2.5 !py-0.5 bg-blue text-[12px] text-white">Posted on MatchMySkillset</span>
-            ) : (
-              <span className="pill !px-2.5 !py-0.5 bg-cloud text-[12px] text-ink-2">{job.sourceLabel}</span>
-            )}
+            <SourceBadge source={job.source} label={job.sourceLabel} />
             {job.workplace === "remote" && <span className="pill !px-2.5 !py-0.5 bg-green-soft text-[12px] text-green">Remote</span>}
             {job.workplace === "hybrid" && <span className="pill !px-2.5 !py-0.5 bg-green-soft text-[12px] text-green">Hybrid</span>}
             {hasMatch && job.level && (
@@ -98,6 +108,10 @@ export function MatchJobCard({ job, position, tailorHref }: { job: CardJob; posi
           <h3 className="mt-2 text-[19px] font-semibold leading-snug tracking-[-0.02em] text-ink">
             {mms ? (
               <Link href={job.url} className="hover:text-blue" onClick={() => recordClick(job, position)}>
+                {job.title}
+              </Link>
+            ) : page ? (
+              <Link href={page} className="hover:text-blue" onClick={open}>
                 {job.title}
               </Link>
             ) : (
@@ -171,13 +185,20 @@ export function MatchJobCard({ job, position, tailorHref }: { job: CardJob; posi
             Apply with MatchMySkillset
           </Link>
         ) : (
-          <a href={job.url} target="_blank" rel="noopener noreferrer" className="btn btn-secondary btn-sm" onClick={() => recordClick(job, position)}>
-            Apply on {job.sourceLabel}
-            <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M7 17L17 7M9 7h8v8" />
-            </svg>
-            <span className="sr-only"> (opens in a new tab)</span>
-          </a>
+          <>
+            {page && (
+              <Link href={page} className="btn btn-primary btn-sm" onClick={open}>
+                View job
+              </Link>
+            )}
+            <a href={job.url} target="_blank" rel="noopener noreferrer" className="btn btn-secondary btn-sm" onClick={() => recordClick(job, position)}>
+              Apply on {job.sourceLabel}
+              <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M7 17L17 7M9 7h8v8" />
+              </svg>
+              <span className="sr-only"> (opens in a new tab)</span>
+            </a>
+          </>
         )}
         {hasMatch && job.explain && (
           <button type="button" className="text-[13px] text-link hover:underline" aria-expanded={why} onClick={() => setWhy((v) => !v)}>

@@ -16,6 +16,7 @@ export const ANALYTICS_EVENTS = [
   "purchase",
   "affiliate_click",
   "job_click",
+  "job_view",
   "email_saved",
   "quiz_completed",
   "tool_used",

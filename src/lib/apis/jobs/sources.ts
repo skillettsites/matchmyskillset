@@ -540,6 +540,7 @@ const himalayas: JobSource = {
           // The whole advert, for scoring and for spotting roles only open to people in the US.
           text: trimBoilerplate(stripHtml(j.description || j.excerpt, 8000)),
           fullText: Boolean(j.description),
+          ...(j.description ? { advertHtml: j.description.slice(0, 40_000) } : {}),
           url: j.applicationLink,
           postedAt: isoOrUndefined(j.pubDate),
           contractType: j.employmentType?.replace(/_/g, " ").toLowerCase(),

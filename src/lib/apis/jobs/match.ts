@@ -12,6 +12,7 @@
 // are read in full (at most READ_IN_FULL per results link, cached for a day
 // per advert) before the list is stored.
 
+import { after } from "next/server";
 import { getCareerOccupation } from "@/data/careers";
 import { createAdminClient, isSupabaseConfigured } from "@/lib/supabase/admin";
 import { regionByName, type UkRegion } from "@/lib/apis/regions";
@@ -24,6 +25,7 @@ import { titleScore } from "@/lib/skills/fuzzy";
 import { runSource, type SourceRun } from "./index";
 import { isLiveRow, listLiveMmsJobs } from "./mms";
 import { regionsForLocations } from "./place-region";
+import { rememberListings } from "./job-page";
 import { reedDetails } from "./sources";
 import {
   JOB_FIT_METHOD,
@@ -598,6 +600,20 @@ export async function gatherForAnchors({ anchors: rawAnchors, skills, person, wa
     }
   }
   const jobs = list.slice(0, MAX_JOBS);
+
+  // Job pages (/jobs/<id>) open from the listing id: keep the adverts shown (not for alerts).
+  if (!forAlert) {
+    const shown = new Set(jobs.map((j) => j.id));
+    const listings = [...scoredById.values()].filter((s) => shown.has(s.job.id)).map((s) => s.job);
+    if (listings.length) {
+      try {
+        after(() => rememberListings(listings));
+      } catch {
+        // outside a request (scripts): write it now
+        void rememberListings(listings);
+      }
+    }
+  }
 
   const skillNames: Record<string, string> = {};
   for (const j of jobs) for (const id of [...j.matched, ...j.missing, ...(j.typical ?? [])]) skillNames[id] = skillName(id);

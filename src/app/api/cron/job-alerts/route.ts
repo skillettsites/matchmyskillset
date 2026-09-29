@@ -3,6 +3,7 @@ import { timingSafeEqual } from "crypto";
 import { env } from "@/lib/env";
 import { runDueAlerts } from "@/lib/candidates/alerts";
 import { purgeExpired } from "@/lib/candidates/db";
+import { forgetOldListings } from "@/lib/apis/jobs/job-page";
 
 // Sends job alert emails. Called by Vercel Cron (vercel.json):
 //   "0 7 * * *"  daily alerts, every day at 07:00 UTC
@@ -41,10 +42,12 @@ export async function GET(request: NextRequest) {
   try {
     const summary = await runDueAlerts({ frequency, dryRun, limit });
     const purged = !dryRun && frequency === "daily" ? await purgeExpired() : null;
+    // Job page adverts nobody has been shown for 14 days.
+    const listingsForgotten = !dryRun && frequency === "daily" ? await forgetOldListings().catch(() => 0) : null;
     console.log(
       `[cron/job-alerts] ${frequency}${dryRun ? " (dry run)" : ""}: due ${summary.due}, sent ${summary.sent}, nothing new ${summary.nothingNew}, failed ${summary.failed}, skipped ${summary.skipped} in ${Date.now() - started}ms`
     );
-    return NextResponse.json({ ...summary, purged, ms: Date.now() - started }, { headers: { "Cache-Control": "no-store" } });
+    return NextResponse.json({ ...summary, purged, listingsForgotten, ms: Date.now() - started }, { headers: { "Cache-Control": "no-store" } });
   } catch (err) {
     console.error("[cron/job-alerts] failed:", err instanceof Error ? err.message : err);
     return NextResponse.json({ error: "Run failed" }, { status: 500 });

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import Link from "next/link";
 import type { JobsSnapshot, MatchedJob } from "@/lib/apis/jobs/match";
 import { MatchJobCard, type CardJob } from "@/components/jobs/MatchJobCard";
 import { rememberResults } from "@/components/cv/storage";
@@ -51,6 +52,43 @@ function sourcesLine(s: JobsSnapshot | null): string {
       : `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}`
     : "Reed, Adzuna, GOV.UK Teaching Vacancies, Himalayas and Remotive";
   return `Adverts come from ${list}. We do not write or check them: each links to the board that listed it, where you apply. Adverts dated more than 60 days ago are left out. Teaching Vacancies listings contain public sector information licensed under the Open Government Licence v3.0.`;
+}
+
+interface SavedView {
+  tab: Tab;
+  where: Where;
+  field: Field;
+  salary: number;
+  pattern: Pattern;
+  contract: Contract;
+  sort: Sort;
+  career: { id: string; title: string } | null;
+  page: number;
+  y: number;
+  at: number;
+}
+
+const viewKey = (token: string) => `mms-results-view:${token}`;
+
+function writeView(token: string, v: Omit<SavedView, "at">): void {
+  try {
+    sessionStorage.setItem(viewKey(token), JSON.stringify({ ...v, at: Date.now() }));
+  } catch {
+    // storage blocked: the list opens at the top
+  }
+}
+
+/** The view saved when a job page was opened, used once and only within the hour. */
+function readView(token: string): SavedView | null {
+  try {
+    const raw = sessionStorage.getItem(viewKey(token));
+    if (!raw) return null;
+    sessionStorage.removeItem(viewKey(token));
+    const v = JSON.parse(raw) as SavedView;
+    return v && typeof v.at === "number" && Date.now() - v.at < 3_600_000 ? v : null;
+  } catch {
+    return null;
+  }
 }
 
 function toCard(j: MatchedJob, names: Record<string, string>): CardJob {
@@ -143,6 +181,8 @@ export function ResultsShell(props: Props) {
   const [page, setPage] = useState(1);
   const listTop = useRef<HTMLDivElement>(null);
   const started = useRef(false);
+  // Where to scroll back to after returning from a job page (see saveView).
+  const pendingScroll = useRef<number | null>(null);
 
   const call = useCallback(
     async (action: "load" | "more") => {
@@ -192,6 +232,20 @@ export function ResultsShell(props: Props) {
     if (!initial || !fresh) void call("load");
     const h = window.location.hash.replace("#", "");
     if (h === "careers" || h === "skills") setTab(h);
+    // Back from a job page: the same tab, filters, page and scroll position.
+    const saved = readView(token);
+    if (saved) {
+      setTab(saved.tab);
+      setWhere(saved.where);
+      setField(saved.field);
+      setSalary(saved.salary);
+      setPattern(saved.pattern);
+      setContract(saved.contract);
+      setSort(saved.sort);
+      setCareer(saved.career);
+      setPage(saved.page);
+      pendingScroll.current = saved.y;
+    }
   }, [token, initial, fresh, call]);
 
   useEffect(() => {
@@ -248,6 +302,17 @@ export function ResultsShell(props: Props) {
   const pages = Math.max(1, Math.ceil(filtered.length / PER_PAGE));
   const current = Math.min(page, pages);
   const shown = filtered.slice((current - 1) * PER_PAGE, current * PER_PAGE);
+
+  useEffect(() => {
+    if (pendingScroll.current === null || shown.length === 0) return;
+    const y = pendingScroll.current;
+    pendingScroll.current = null;
+    requestAnimationFrame(() => window.scrollTo(0, y));
+  }, [shown.length]);
+
+  function saveView() {
+    writeView(token, { tab, where, field, salary, pattern, contract, sort, career, page: current, y: window.scrollY });
+  }
   const filtersOn = Boolean(career) || where !== "all" || field !== "all" || salary > 0 || pattern !== "any" || contract !== "any";
 
   function clearFilters() {
@@ -482,6 +547,8 @@ export function ResultsShell(props: Props) {
                     job={toCard(j, snap?.skillNames ?? {})}
                     position={(current - 1) * PER_PAGE + i + 1}
                     tailorHref={`/tools/tailor?from=${encodeURIComponent(token)}&job=${encodeURIComponent(j.id)}`}
+                    detailHref={`/jobs/${encodeURIComponent(j.id)}?r=${encodeURIComponent(token)}`}
+                    onOpen={saveView}
                   />
                 </li>
               ))}
@@ -520,9 +587,9 @@ export function ResultsShell(props: Props) {
                       {loading === "more" ? "Searching…" : "Search more"}
                     </button>
                   )}
-                  <a href="/jobs" className="btn btn-secondary btn-sm">
+                  <Link href="/jobs" className="btn btn-secondary btn-sm">
                     Search any job title
-                  </a>
+                  </Link>
                 </div>
                 <p className="mt-4 text-[12px] leading-relaxed text-mute">{sourcesLine(snap)}</p>
               </div>

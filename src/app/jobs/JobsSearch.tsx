@@ -318,7 +318,7 @@ export function JobsSearch() {
             <ul className="mt-5 space-y-4">
               {jobs.map((job, i) => (
                 <li key={job.id}>
-                  <MatchJobCard job={toCard(job)} position={(result.page - 1) * 25 + i + 1} />
+                  <MatchJobCard job={toCard(job)} position={(result.page - 1) * 25 + i + 1} detailHref={`/jobs/${encodeURIComponent(job.id)}`} />
                 </li>
               ))}
             </ul>

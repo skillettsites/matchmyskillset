@@ -21,8 +21,13 @@ const BASE_REDIRECTS: (RedirectEntry & { has?: { type: "host"; value: string }[]
   { source: "/signup", destination: "/", permanent: true },
   { source: "/dashboard", destination: "/", permanent: true },
   { source: "/career-gps", destination: "/discover", permanent: true },
-  // Featured job pages were removed; any old link lands on the job search.
-  { source: "/jobs/:id", destination: "/jobs", permanent: true },
+  // Featured job pages (/jobs/featured_...) were removed; any old link lands on the job search.
+  // Job pages for adverts from other boards (/jobs/reed_57381080...) are left alone.
+  {
+    source: "/jobs/:id((?!(?:reed|adzuna|teaching-vacancies|himalayas|remotive|careerjet|jooble)_)[^/]+)",
+    destination: "/jobs",
+    permanent: true,
+  },
   // Browsers and crawlers still ask for /favicon.ico; the site icon is public/icon.svg.
   { source: "/favicon.ico", destination: "/icon.svg", permanent: true },
 ];

@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { after, NextRequest, NextResponse } from "next/server";
 import { searchJobs } from "@/lib/apis/jobs";
 import { isSameSiteRequest } from "@/lib/api-guard";
 import { regionFromLocation } from "@/lib/apis/regions";
@@ -10,6 +10,7 @@ import { skillName } from "@/lib/skills/taxonomy";
 import { fitContextFromDoc, fitInputFor } from "@/lib/apis/jobs/match";
 import { scoreJobFit } from "@/lib/apis/jobs/fit";
 import type { JobListing } from "@/lib/apis/jobs";
+import { rememberListings } from "@/lib/apis/jobs/job-page";
 
 // Live listings from every enabled board. Each search spends free-tier quota
 // (Jooble's key allows 500 calls in total), so only our own pages may call
@@ -96,10 +97,13 @@ export async function GET(request: NextRequest) {
       }
     }
     // Advert text is for scoring only: never sent to the browser in bulk.
+    // Job pages (/jobs/<id>) open from the listing id, so keep what was shown.
+    after(() => rememberListings(result.jobs));
     const jobs = result.jobs.map((j) => {
-      const { text: _text, skillHits: _hits, ...rest } = j;
+      const { text: _text, skillHits: _hits, advertHtml: _html, ...rest } = j;
       void _text;
       void _hits;
+      void _html;
       return rest.mms ? { ...rest, mms: { ...rest.mms, description: "" } } : rest;
     });
     return NextResponse.json({ ...result, jobs, scored }, { headers: { "Cache-Control": "private, max-age=300" } });

@@ -37,6 +37,11 @@ export interface JobListing {
   text?: string;
   /** True when `text` or `skillHits` come from the whole advert, not a summary. */
   fullText?: boolean;
+  /**
+   * The whole advert as the board sent it (HTML), for boards we cannot ask
+   * for one job later (Himalayas). Kept for the job page; server-side only.
+   */
+  advertHtml?: string;
   /** Skills already found in the whole advert, for boards whose full text is not kept. */
   skillHits?: TextSkillHit[];
   /** The advert asks for a US licence, US registration or the right to work in the US. */
