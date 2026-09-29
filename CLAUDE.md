@@ -30,7 +30,7 @@ WebBuildYourIdeas design system (`src/app/globals.css`: `.btn-primary`, `.displa
 - `src/lib/employer/notify.ts` emails employers; Telegram alerts via `TELEGRAM_BOT_TOKEN`/`TELEGRAM_CHAT_ID`.
 
 ## Data
-Supabase shared project `noxczmrnyyosgvvjlqca`; tables `mms_*`, service role only, migrations 003-007 applied 28 Sep 2026 (never re-run 001/002); 008_shortlists.sql (mms_shortlists, mms_shortlist_items, mms_jobs.shortlist_wanted) written 29 Sep 2026, the code fails soft until it is applied. Test data: @example.com or delivered+...@resend.dev and source 'qa-test', delete after.
+Supabase shared project `noxczmrnyyosgvvjlqca`; tables `mms_*`, service role only, migrations 003-007 applied 28 Sep 2026 (never re-run 001/002); 008_shortlists.sql (mms_shortlists, mms_shortlist_items, mms_jobs.shortlist_wanted) applied 29 Sep 2026 and tested end to end. Test data: @example.com or delivered+...@resend.dev and source 'qa-test', delete after.
 
 ## Rules
 - No em dashes. UK English. No invented statistics, jobs, candidates, testimonials or ratings; every figure sourced.
