@@ -10,7 +10,7 @@ import { getShortlist, MAX_NOTE_LENGTH, MAX_SHORTLIST_ITEMS, MAX_SUMMARY_LENGTH,
 import { recruiterPool, RECRUITER_POOL_SIZE, type PoolApplicant, type PoolCandidate } from "@/lib/employer/recruiter";
 import { isUuid } from "@/lib/employer/server";
 import type { JobRow } from "@/lib/employer/types";
-import { PickButton, ShortlistPanel, ShortlistProvider, type PickMeta } from "@/components/recruiter/ShortlistBuilder";
+import { ConfirmSubmit, PickButton, ShortlistPanel, ShortlistProvider, type PickMeta } from "@/components/recruiter/ShortlistBuilder";
 import { Badge, EmptyState, MatchBar, Notice, SkillChip } from "@/components/employer/ui";
 import { cancelShortlist } from "../actions";
 
@@ -103,9 +103,7 @@ export default async function RecruiterShortlistPage({ params }: { params: Promi
             {!locked && (
               <form action={cancelShortlist}>
                 <input type="hidden" name="shortlist_id" value={shortlist.id} />
-                <button type="submit" className="btn btn-secondary btn-sm">
-                  Cancel request
-                </button>
+                <ConfirmSubmit label="Cancel request" message="Cancel this shortlist request? The employer will see it as cancelled and can ask again." />
               </form>
             )}
           </div>

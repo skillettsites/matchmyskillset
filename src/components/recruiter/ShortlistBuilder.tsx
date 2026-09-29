@@ -215,3 +215,18 @@ export function ShortlistPanel({
     </form>
   );
 }
+
+/** A submit button that asks first (for cancelling a request, which cannot be undone here). */
+export function ConfirmSubmit({ label, message, className = "btn btn-secondary btn-sm" }: { label: string; message: string; className?: string }) {
+  return (
+    <button
+      type="submit"
+      className={className}
+      onClick={(e) => {
+        if (!window.confirm(message)) e.preventDefault();
+      }}
+    >
+      {label}
+    </button>
+  );
+}
