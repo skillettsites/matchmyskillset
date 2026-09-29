@@ -224,7 +224,11 @@ export function buildAnchors(doc: SkillsDoc, items: MatchEntry[]): FitAnchor[] {
       family,
     });
   }
-  for (const entry of items) {
+  // Careers the person asked for by name ("I want to move into automation") are
+  // searched first after their own job, then the rest in rank order: the first
+  // search pass only covers the first three anchors.
+  const ordered = [...items.filter((e) => e.flags?.includes("asked")), ...items.filter((e) => !e.flags?.includes("asked"))];
+  for (const entry of ordered) {
     const a = occupationAnchor(entry);
     if (a && !anchors.some((x) => x.title.toLowerCase() === a.title.toLowerCase() || (x.key && x.key === a.key))) anchors.push(a);
   }
