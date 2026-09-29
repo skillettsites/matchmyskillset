@@ -107,6 +107,11 @@ async function findPlacement(where: { applicationId?: string | null; trackedId?:
   return null;
 }
 
+/** Linked to an application (through us or an outside one tracked), so it can imply the interview and offer stages. */
+function isLinked(p: Pick<PlacementRow, "application_id" | "tracked_id">): boolean {
+  return Boolean(p.application_id || p.tracked_id);
+}
+
 function eventContext(p: PlacementRow, channel?: "mms" | "external" | null): EventContext {
   return {
     applicationId: p.application_id,
@@ -158,7 +163,7 @@ export async function recordPlacement(input: PlacementInput, attempt = 0): Promi
     if (error || !data) throw new Error(`mms_placements update failed: ${error?.message ?? "no row"}`);
     const placement = data as PlacementRow;
     await logEvent("placement", input.source, existing.cancelled_at ? "restored" : "confirmed", eventContext(placement, input.channel), { confirmed_by: placement.confirmed_by });
-    await reachStage(stageKey({ applicationId: placement.application_id, trackedId: placement.tracked_id, placementId: placement.id }), "placed", input.source, eventContext(placement, input.channel));
+    await reachStage(stageKey({ applicationId: placement.application_id, trackedId: placement.tracked_id, placementId: placement.id }), "placed", input.source, eventContext(placement, input.channel), isLinked(placement));
     return { placement, created: false };
   }
 
@@ -196,7 +201,7 @@ export async function recordPlacement(input: PlacementInput, attempt = 0): Promi
   }
   const placement = data as PlacementRow;
   await logEvent("placement", input.source, "recorded", eventContext(placement, input.channel));
-  await reachStage(stageKey({ applicationId: placement.application_id, trackedId: placement.tracked_id, placementId: placement.id }), "placed", input.source, eventContext(placement, input.channel));
+  await reachStage(stageKey({ applicationId: placement.application_id, trackedId: placement.tracked_id, placementId: placement.id }), "placed", input.source, eventContext(placement, input.channel), isLinked(placement));
   return { placement, created: true };
 }
 

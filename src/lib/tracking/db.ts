@@ -102,14 +102,16 @@ const STAGE_ORDER: Stage[] = ["applied", "interview", "offer", "placed"];
  * Records that an application reached a funnel stage, once per application
  * (the unique stage_key + status drops repeats). Reaching an offer or a
  * placement also counts the stages before it, back to interview, so the
- * funnel never shows more offers than interviews. "applied" is never implied.
+ * funnel never shows more offers than interviews. "applied" is never implied,
+ * and nothing is implied for a placement admin recorded without an
+ * application (`imply` false), so those do not add interviews or offers.
  * `key` is app:<application id> for applications made through us,
  * trk:<tracked id> for outside jobs and plc:<placement id> for placements
  * admin recorded with neither. Never throws.
  */
-export async function reachStage(key: string, stage: Stage, source: EventSource, ctx: EventContext): Promise<void> {
+export async function reachStage(key: string, stage: Stage, source: EventSource, ctx: EventContext, imply = true): Promise<void> {
   if (!isSupabaseConfigured()) return;
-  const stages = stage === "applied" ? (["applied"] as Stage[]) : STAGE_ORDER.slice(1, STAGE_ORDER.indexOf(stage) + 1);
+  const stages = stage === "applied" || !imply ? [stage] : STAGE_ORDER.slice(1, STAGE_ORDER.indexOf(stage) + 1);
   const rows = stages.map((s) => ({
     kind: "stage",
     source,

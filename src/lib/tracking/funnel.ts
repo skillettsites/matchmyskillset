@@ -145,6 +145,12 @@ export interface FunnelData {
   /** Why a total is null, for the tiles. */
   notes: Partial<Record<Metric, string>>;
   trend: { start: string; values: Partial<Record<Metric, number>> }[];
+  /**
+   * Placements linked to an application (through us, or an outside one
+   * tracked). Conversion rates use these: a placement admin recorded without
+   * an application has no application, interview or offer behind it.
+   */
+  placedLinked: number | null;
 }
 
 function emptyTotals(): Record<Metric, number | null> {
@@ -168,7 +174,7 @@ export async function loadFunnel(f: FunnelFilters): Promise<FunnelData> {
   const notes: Partial<Record<Metric, string>> = {};
   const starts = bucketStarts(f, bucket);
   const trend = starts.map((start) => ({ start, values: {} as Partial<Record<Metric, number>> }));
-  if (!isSupabaseConfigured()) return { ready: false, bucket, totals, notes, trend };
+  if (!isSupabaseConfigured()) return { ready: false, bucket, totals, notes, trend, placedLinked: null };
 
   const admin = createAdminClient();
   const { fromIso, toIso } = rangeOf(f);
@@ -212,6 +218,22 @@ export async function loadFunnel(f: FunnelFilters): Promise<FunnelData> {
     for (const m of ["applied_mms", "applied_external", "interview", "offer", "placed"] as Metric[]) notes[m] = "Not switched on yet";
   }
 
+  let placedLinked: number | null = null;
+  if (ready) {
+    let q = admin
+      .from("mms_placements")
+      .select("id", { count: "exact", head: true })
+      .is("cancelled_at", null)
+      .gte("created_at", fromIso)
+      .lt("created_at", toIso)
+      .or("application_id.not.is.null,tracked_id.not.is.null");
+    if (f.field) q = q.eq("field", f.field);
+    if (f.client) q = q.eq("employer_account_id", f.client);
+    if (!f.includeTest) q = q.eq("is_test", false);
+    const linked = await q;
+    placedLinked = linked.error ? null : (linked.count ?? 0);
+  }
+
   if (filtered) {
     for (const m of METRICS.filter((x) => !x.filterable)) {
       totals[m.id] = null;
@@ -224,7 +246,7 @@ export async function loadFunnel(f: FunnelFilters): Promise<FunnelData> {
     if (accounts === null) notes.accounts = "Not switched on yet";
     if (tools === null) notes.cv_tools = "Not switched on yet";
   }
-  return { ready, bucket, totals, notes, trend };
+  return { ready, bucket, totals, notes, trend, placedLinked };
 }
 
 export interface Conversion {
@@ -234,16 +256,17 @@ export interface Conversion {
   rate: number | null;
 }
 
-/** Stage-to-stage rates. Applications = through us + outside ones tracked. */
-export function conversions(t: Record<Metric, number | null>): Conversion[] {
+/** Stage-to-stage rates. Applications = through us + outside ones tracked; placements = those linked to an application. */
+export function conversions(t: Record<Metric, number | null>, placedLinked: number | null): Conversion[] {
+  const placed = placedLinked ?? t.placed;
   const apps = t.applied_mms === null && t.applied_external === null ? null : (t.applied_mms ?? 0) + (t.applied_external ?? 0);
   const rate = (a: number | null, b: number | null) => (a && b !== null ? b / a : null);
   return [
     { label: "Opt-in profiles per results link", from: t.results, to: t.optins, rate: rate(t.results, t.optins) },
     { label: "Interviews per application", from: apps, to: t.interview, rate: rate(apps, t.interview) },
     { label: "Offers per interview", from: t.interview, to: t.offer, rate: rate(t.interview, t.offer) },
-    { label: "Placements per offer", from: t.offer, to: t.placed, rate: rate(t.offer, t.placed) },
-    { label: "Placements per application", from: apps, to: t.placed, rate: rate(apps, t.placed) },
+    { label: "Placements per offer", from: t.offer, to: placed, rate: rate(t.offer, placed) },
+    { label: "Placements per application", from: apps, to: placed, rate: rate(apps, placed) },
   ];
 }
 

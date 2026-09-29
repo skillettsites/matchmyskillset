@@ -29,8 +29,9 @@ export async function GET(request: NextRequest) {
   if (view === "stages") {
     const data = await loadFunnel(f);
     const rows: unknown[][] = METRICS.map((m) => [m.label, data.totals[m.id] ?? "", data.notes[m.id] ?? ""]);
+    rows.push(["Placements linked to an application", data.placedLinked ?? "", "Used for the placement rates below"]);
     rows.push([]);
-    for (const c of conversions(data.totals)) rows.push([c.label, c.rate === null ? "" : percent(c.rate), c.from === null || c.to === null ? "" : `${c.to} of ${c.from}`]);
+    for (const c of conversions(data.totals, data.placedLinked)) rows.push([c.label, c.rate === null ? "" : percent(c.rate), c.from === null || c.to === null ? "" : `${c.to} of ${c.from}`]);
     return csv(`mms-funnel-totals_${stamp}.csv`, toCsv(["Measure", "Value", "Note"], rows));
   }
 

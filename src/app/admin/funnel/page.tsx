@@ -90,9 +90,11 @@ export default async function FunnelPage({ searchParams }: { searchParams: Promi
     { label: "Applications", value: apps },
     { label: "Interviews", value: t.interview },
     { label: "Offers", value: t.offer },
-    { label: "Placements", value: t.placed },
+    { label: "Placements", value: funnel.placedLinked ?? t.placed },
   ];
   const maxStage = Math.max(1, ...stages.map((s) => s.value ?? 0));
+  // Placements admin recorded without an application: counted in the total, left out of the stage bars and rates.
+  const unlinked = t.placed !== null && funnel.placedLinked !== null ? t.placed - funnel.placedLinked : 0;
   const trendMetrics: Metric[] = ["results", "optins", "applied_mms", "applied_external", "interview", "offer", "placed"];
   const filtered = Boolean(f.field || f.client);
 
@@ -187,7 +189,12 @@ export default async function FunnelPage({ searchParams }: { searchParams: Promi
         </h2>
         <div className="mt-4 grid gap-3 sm:grid-cols-3 lg:grid-cols-5">
           {METRICS.map((m) => (
-            <Stat key={m.id} label={m.label} value={<Num value={t[m.id]} note={funnel.notes[m.id]} />} hint={m.hint} />
+            <Stat
+              key={m.id}
+              label={m.label}
+              value={<Num value={t[m.id]} note={funnel.notes[m.id]} />}
+              hint={m.id === "placed" && unlinked > 0 ? `${m.hint}; ${unlinked} recorded without an application` : m.hint}
+            />
           ))}
         </div>
 
@@ -195,7 +202,7 @@ export default async function FunnelPage({ searchParams }: { searchParams: Promi
         <div className="mt-8 grid gap-6 lg:grid-cols-[1.2fr_1fr]">
           <div className="rounded-[22px] bg-white p-6">
             <h3 className="text-[18px] font-bold tracking-[-0.02em] text-ink">From application to placement</h3>
-            <p className="mt-1 text-[13px] text-mute">Each application counts once per stage, the first time it gets there. Applications include outside jobs people told us about.</p>
+            <p className="mt-1 text-[13px] text-mute">Each application counts once per stage, the first time it gets there. Applications include outside jobs people told us about. Placements here are those linked to an application.</p>
             <div className="mt-5 space-y-4" role="list">
               {stages.map((s) => (
                 <div key={s.label} role="listitem" title={`${s.label}: ${s.value ?? "n/a"}`}>
@@ -214,7 +221,7 @@ export default async function FunnelPage({ searchParams }: { searchParams: Promi
             <h3 className="text-[18px] font-bold tracking-[-0.02em] text-ink">Conversion</h3>
             <table className="mt-3 w-full text-left text-[14px]">
               <tbody>
-                {conversions(t).map((c) => (
+                {conversions(t, funnel.placedLinked).map((c) => (
                   <tr key={c.label} className="border-b border-black/[0.05] last:border-0">
                     <td className="py-2.5 pr-3 text-ink-2">{c.label}</td>
                     <td className="py-2.5 text-right text-mute tabular-nums">{c.from === null || c.to === null ? "" : `${c.to} of ${c.from}`}</td>
