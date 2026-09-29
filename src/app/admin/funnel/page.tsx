@@ -176,7 +176,7 @@ export default async function FunnelPage({ searchParams }: { searchParams: Promi
         {filtered && funnel.ready && (
           <p className="mt-4 text-[14px] text-mute">
             Filtered{f.field ? ` to ${fieldLabel(f.field)}` : ""}
-            {f.client ? `${f.field ? " and" : ""} to ${employerName.get(f.client) ?? "one client"}` : ""}. Results links, profiles, accounts and CV tools belong to no job, so
+            {f.client ? `${f.field ? " and" : ""} to ${employerName.get(f.client) ?? "one client"}` : ""}. Results links, profiles, accounts and job packs belong to no job, so
             they are not filtered. A client filter leaves out outside jobs.
           </p>
         )}

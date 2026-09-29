@@ -31,7 +31,7 @@ export const METRICS: MetricInfo[] = [
   { id: "results", label: "Results created", hint: "CV or job title checks that made a results link", filterable: false },
   { id: "optins", label: "Opt-in profiles", hint: "Profiles switched on for employers to find", filterable: false },
   { id: "accounts", label: "Candidate accounts", hint: "Job seeker accounts created", filterable: false },
-  { id: "cv_tools", label: "CV tool uses", hint: "CV tools run by job seekers", filterable: false },
+  { id: "cv_tools", label: "CV job packs", hint: "Tailored CV packs made (free, paid or Plus)", filterable: false },
   { id: "applied_mms", label: "Applications via MatchMySkillset", hint: "Apply with MatchMySkillset", filterable: true },
   { id: "applied_external", label: "Outside applications tracked", hint: "Jobs on other sites people told us they applied for", filterable: true },
   { id: "interview", label: "Interviews", hint: "Employer status or the job seeker's own answer", filterable: true },
@@ -40,13 +40,14 @@ export const METRICS: MetricInfo[] = [
 ];
 
 /**
- * Tables from the candidate accounts work, counted by created_at when they
- * exist. INTEGRATION NOTE: after merging revamp/tools, set these to that
- * branch's table names (and a test-row filter if it has one).
+ * Tables from the candidate accounts work (branch revamp/tools, migration
+ * 009_candidate_tools.sql), counted by created_at once they exist: accounts,
+ * and job packs (tailored CV, cover letter, interview prep) other than unpaid
+ * drafts. Test rows use @example.com addresses and are left out.
  */
-export const OPTIONAL_SOURCES: Record<"accounts" | "cv_tools", { table: string; dateColumn: string }> = {
+export const OPTIONAL_SOURCES: Record<"accounts" | "cv_tools", { table: string; dateColumn: string; excludeStatus?: string }> = {
   accounts: { table: "mms_candidate_accounts", dateColumn: "created_at" },
-  cv_tools: { table: "mms_cv_tool_runs", dateColumn: "created_at" },
+  cv_tools: { table: "mms_job_packs", dateColumn: "created_at", excludeStatus: "awaiting_payment" },
 };
 
 export interface FunnelFilters {
@@ -150,15 +151,13 @@ function emptyTotals(): Record<Metric, number | null> {
   return { results: null, optins: null, accounts: null, cv_tools: null, applied_mms: null, applied_external: null, interview: null, offer: null, placed: null };
 }
 
-async function countOptional(which: "accounts" | "cv_tools", fromIso: string, toIso: string): Promise<number | null> {
+async function countOptional(which: "accounts" | "cv_tools", fromIso: string, toIso: string, includeTest: boolean): Promise<number | null> {
   const src = OPTIONAL_SOURCES[which];
   // Not a HEAD request: PostgREST answers HEAD on a missing table with 204 and no error.
-  const { count, error } = await createAdminClient()
-    .from(src.table)
-    .select(src.dateColumn, { count: "exact" })
-    .gte(src.dateColumn, fromIso)
-    .lt(src.dateColumn, toIso)
-    .limit(1);
+  let q = createAdminClient().from(src.table).select(src.dateColumn, { count: "exact" }).gte(src.dateColumn, fromIso).lt(src.dateColumn, toIso);
+  if (src.excludeStatus) q = q.neq("status", src.excludeStatus);
+  if (!includeTest) q = q.or("email.is.null,and(email.not.ilike.*@example.com,email.not.ilike.*@resend.dev)");
+  const { count, error } = await q.limit(1);
   if (error) return null;
   return count ?? 0;
 }
@@ -219,7 +218,7 @@ export async function loadFunnel(f: FunnelFilters): Promise<FunnelData> {
       notes[m.id] = "Not linked to a job, so not filtered";
     }
   } else {
-    const [accounts, tools] = await Promise.all([countOptional("accounts", fromIso, toIso), countOptional("cv_tools", fromIso, toIso)]);
+    const [accounts, tools] = await Promise.all([countOptional("accounts", fromIso, toIso, f.includeTest), countOptional("cv_tools", fromIso, toIso, f.includeTest)]);
     totals.accounts = accounts;
     totals.cv_tools = tools;
     if (accounts === null) notes.accounts = "Not switched on yet";
