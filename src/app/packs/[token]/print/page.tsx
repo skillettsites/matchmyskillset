@@ -20,7 +20,7 @@ const PRINT_CSS = `
 .doc h1 { font-size: 22pt; line-height: 1.1; margin: 0 0 2pt; letter-spacing: -0.01em; }
 .doc .contact { color: #6e6e73; font-size: 9.5pt; margin: 0 0 8pt; }
 .doc h2 { font-family: inherit; font-size: 10.5pt; text-transform: uppercase; letter-spacing: 0.04em; color: #0071e3; border-bottom: 1px solid #d2d2d7; padding-bottom: 2pt; margin: 14pt 0 5pt; }
-.doc h3 { font-size: 10.5pt; margin: 8pt 0 0; letter-spacing: 0; }
+.doc h3 { font-size: 10.5pt; font-weight: 700; margin: 8pt 0 0; letter-spacing: 0; }
 .doc .meta { color: #6e6e73; font-style: italic; font-size: 9.5pt; margin: 1pt 0 3pt; }
 .doc p { margin: 0 0 5pt; }
 .doc ul { margin: 2pt 0 4pt; padding-left: 14pt; list-style: disc; }

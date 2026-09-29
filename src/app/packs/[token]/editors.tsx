@@ -7,6 +7,7 @@
 import { useState } from "react";
 import type { CvEducation, CvRole, CvSection, InterviewPrep, TailoredCv } from "@/lib/candidate/pack-types";
 
+/** Rows for browsers that cannot size a textarea to its content (CSS field-sizing). */
 function rowsFor(text: string, min = 2, perRow = 80): number {
   return Math.min(14, Math.max(min, Math.ceil((text.length || 1) / perRow) + text.split("\n").length - 1));
 }
@@ -17,7 +18,7 @@ export function Area({ id, label, value, onChange, min = 2, className = "", hint
       <label htmlFor={id} className="field-label !text-[13px]">
         {label}
       </label>
-      <textarea id={id} className="field !py-2.5 !text-[15px] leading-relaxed" rows={rowsFor(value, min)} value={value} onChange={(e) => onChange(e.target.value)} />
+      <textarea id={id} className="field resize-y !py-2.5 !text-[15px] leading-relaxed [field-sizing:content]" style={{ minHeight: `${min * 1.65 + 1.3}em` }} rows={rowsFor(value, min, 60)} value={value} onChange={(e) => onChange(e.target.value)} />
       {hint && <p className="field-hint">{hint}</p>}
     </div>
   );
@@ -87,8 +88,8 @@ function LineList({ idBase, label, items, onChange, addLabel, multiline = false 
               <textarea
                 aria-label={`${label} ${i + 1}`}
                 id={`${idBase}-${i}`}
-                className="field ml-2 !py-2 !text-[15px] leading-relaxed"
-                rows={rowsFor(item, 1, 90)}
+                className="field ml-2 resize-y !py-2 !text-[15px] leading-relaxed [field-sizing:content]"
+                rows={rowsFor(item, 1, 45)}
                 value={item}
                 onChange={(e) => onChange(set(items, i, e.target.value))}
               />

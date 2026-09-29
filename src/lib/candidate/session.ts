@@ -17,7 +17,6 @@ import { cache } from "react";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { after } from "next/server";
-import { unstable_cache } from "next/cache";
 import { randomToken, sha256, TOKEN_RE } from "@/lib/employer/server";
 import { SIGN_IN_MINUTES } from "./plans";
 import { ACCOUNT_COLUMNS, db, isMissingObject, NotSwitchedOnError, raise, type CandidateAccount } from "./db";
@@ -177,17 +176,23 @@ export async function loadAccount(id: string): Promise<CandidateAccount | null> 
   return (data as unknown as CandidateAccount) ?? null;
 }
 
-/** True when the tables from migration 009 are there (one cheap query, remembered for a minute). */
-export const candidateTablesReady = unstable_cache(
-  async (): Promise<boolean> => {
-    try {
-      // A plain read: a HEAD request for a missing table comes back as 204 with no error.
-      const { error } = await db().from("mms_job_packs").select("id").limit(1);
-      return !error;
-    } catch {
-      return false;
-    }
-  },
-  ["mms-candidate-tables-v2"],
-  { revalidate: 60 }
-);
+// Only a "yes" is remembered (for the life of the server instance). A cached
+// "no" (unstable_cache serves a stale value once while it refreshes) kept
+// saying "not switched on" after migration 009 had been applied.
+let tablesReady = false;
+let lastCheck = 0;
+
+/** True when the tables from migration 009 are there. One cheap query, at most every 15 seconds while they are not. */
+export async function candidateTablesReady(): Promise<boolean> {
+  if (tablesReady) return true;
+  if (Date.now() - lastCheck < 15_000) return false;
+  lastCheck = Date.now();
+  try {
+    // A plain read: a HEAD request for a missing table comes back as 204 with no error.
+    const { error } = await db().from("mms_job_packs").select("id").limit(1);
+    tablesReady = !error;
+  } catch {
+    tablesReady = false;
+  }
+  return tablesReady;
+}
