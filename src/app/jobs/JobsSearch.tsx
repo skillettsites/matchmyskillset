@@ -105,6 +105,10 @@ export function JobsSearch() {
   const [token, setToken] = useState<string | null>(null);
   const [tokenChecked, setTokenChecked] = useState(false);
   const listTop = useRef<HTMLDivElement>(null);
+  // The last search run. replaceState below updates useSearchParams, which
+  // changes `initial`; without this the effect ran the same search again in an
+  // endless loop (over 100 requests in 10 seconds).
+  const lastRun = useRef<string | null>(null);
 
   useEffect(() => {
     setToken(lastResultsToken());
@@ -114,10 +118,11 @@ export function JobsSearch() {
   const run = useCallback(
     async (s: SearchState, scroll = false) => {
       if (s.q.trim().length < 2) return;
+      const qs = toQuery(s);
+      lastRun.current = qs;
       setLoading(true);
       setError("");
       try {
-        const qs = toQuery(s);
         window.history.replaceState(null, "", `/jobs?${qs}`);
         const res = await fetch(`/api/jobs/search?${qs}${token ? `&token=${encodeURIComponent(token)}` : ""}`);
         const data = await res.json();
@@ -140,7 +145,7 @@ export function JobsSearch() {
   );
 
   useEffect(() => {
-    if (tokenChecked && initial.q) void run(initial);
+    if (tokenChecked && initial.q && toQuery(initial) !== lastRun.current) void run(initial);
   }, [initial, run, tokenChecked]);
 
   function submit(e: React.FormEvent) {
