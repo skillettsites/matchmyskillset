@@ -81,6 +81,23 @@ async function update(admin: Admin, id: string, fields: Record<string, unknown>)
   if (error) throw new Error(`account update failed: ${error.message}`);
 }
 
+/**
+ * Partner rates (migration 010): remembers the monthly price of the card
+ * subscription in force, so the billing page can say "Partner rate" only when
+ * that is what they pay. Best effort: a missing column (010 not applied) or a
+ * failure here never fails the webhook.
+ */
+async function recordBilledPrice(admin: Admin, accountId: string, pence: number | null): Promise<void> {
+  if (pence === null || !Number.isInteger(pence) || pence < 0) return;
+  const { error } = await admin.from("mms_employer_accounts").update({ billed_price_pence: pence }).eq("id", accountId);
+  if (error && !["42703", "PGRST204"].includes(error.code || "")) console.error("[employer-webhook] billed price not saved:", error.message);
+}
+
+function subscriptionPrice(sub: Stripe.Subscription): number | null {
+  const amount = sub.items?.data?.[0]?.price?.unit_amount;
+  return typeof amount === "number" ? amount : null;
+}
+
 async function closeJobs(admin: Admin, accountId: string): Promise<number> {
   const { data, error } = await admin
     .from("mms_jobs")
@@ -110,6 +127,9 @@ async function processEvent(event: Stripe.Event, admin: Admin): Promise<Record<s
       stripe_customer_id: idOf(session.customer) ?? account.stripe_customer_id,
       stripe_subscription_id: subscriptionId,
     });
+    const pricePence = Number.parseInt(session.metadata?.price_pence ?? "", 10);
+    await recordBilledPrice(admin, account.id, Number.isFinite(pricePence) ? pricePence : null);
+    const partnerNote = session.metadata?.partner_rate === "1" && Number.isFinite(pricePence) ? `Partner rate: £${(pricePence / 100).toFixed(2)} a month` : null;
     // Moving plan by card starts a new subscription; stop the old one so nobody pays twice.
     if (oldSubscription) {
       try {
@@ -121,7 +141,12 @@ async function processEvent(event: Stripe.Event, admin: Admin): Promise<Record<s
       }
     }
     await notifyOwner(
-      [`MatchMySkillset subscription started: ${PLAN_NAMES[plan]}`, account.company_name ?? `account ${account.id}`, paid ? "Paid" : `Payment status: ${session.payment_status}`],
+      [
+        `MatchMySkillset subscription started: ${PLAN_NAMES[plan]}`,
+        account.company_name ?? `account ${account.id}`,
+        paid ? "Paid" : `Payment status: ${session.payment_status}`,
+        ...(partnerNote ? [partnerNote] : []),
+      ],
       [{ text: "Open admin", url: `${SITE_URL}/admin#employers` }]
     );
     return { account: account.id, plan };
@@ -154,6 +179,8 @@ async function processEvent(event: Stripe.Event, admin: Admin): Promise<Record<s
       stripe_customer_id: idOf(sub.customer) ?? account.stripe_customer_id,
       current_period_end: periodEnd(sub),
     });
+    // The price in force, including one changed by hand in Stripe.
+    await recordBilledPrice(admin, account.id, subscriptionPrice(sub));
     return { account: account.id, status };
   }
 

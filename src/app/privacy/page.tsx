@@ -11,6 +11,7 @@ import {
   SITE_NAME,
 } from "@/lib/site";
 import { EmployerPrivacy } from "@/components/employer/legal/EmployerPrivacy";
+import { TrackingPrivacy } from "@/components/tracking/legal/TrackingPrivacy";
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
@@ -493,6 +494,9 @@ export default function PrivacyPage() {
           If we change how we use personal data, we will update this page and the date at the top.
           See also our <Link href="/terms" className={link}>Terms of Service</Link>.
         </p>
+
+        {/* Application tracking, outcomes and placements: kept in its own component. */}
+        <TrackingPrivacy />
 
         {/* Employer section: owned by the employer side, kept in its own component. */}
         <EmployerPrivacy />

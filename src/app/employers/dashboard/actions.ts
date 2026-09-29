@@ -12,13 +12,15 @@ import { cleanHttpUrl, cleanText } from "@/lib/input";
 import { SITE_URL } from "@/components/site";
 import { sendContactRequestToCandidate } from "@/lib/employer/email";
 import { notifyOwner } from "@/lib/employer/telegram";
-import { effectivePlan, hasRecruiterShortlist, JOBS_EMAIL, PLAN_NAMES } from "@/lib/employer/plans";
+import { CANDIDATE_SEARCH_UPGRADE, effectivePlan, hasCandidateSearch, hasRecruiterShortlist, JOBS_EMAIL, PLAN_NAMES } from "@/lib/employer/plans";
 import { destroySession, requireEmployer } from "@/lib/employer/session";
 import { isMissingColumn, isUuid, linkBase, randomToken } from "@/lib/employer/server";
 import { hasCompanyPage, uniqueSlug } from "@/lib/employer/company";
 import { contactDisplayStatus } from "@/lib/employer/candidates";
 import { deriveJobFields, getAccountJob, invalidatePublicJobs, isExpired, listingBlocker, listingExpiry, readJobForm } from "@/lib/employer/jobs";
 import { getJobShortlist, isShortlistSchemaMissing, openShortlistRequest, setShortlistWanted } from "@/lib/employer/shortlists";
+import { isApplicationStatus, type JobRow } from "@/lib/employer/types";
+import { recordEmployerStatus } from "@/lib/tracking/employer";
 
 function website(value: unknown): string | null {
   const raw = String(value ?? "").trim();
@@ -258,29 +260,38 @@ export async function jobCommand(form: FormData): Promise<void> {
 
 /* ---------- Applicants ---------- */
 
-async function ownApplication(accountId: string, appId: string): Promise<{ id: string; job_id: string; status: string } | null> {
+type OwnApplication = { id: string; job_id: string; status: string; email: string; candidate_id: string | null };
+
+async function ownApplication(accountId: string, appId: string): Promise<{ app: OwnApplication; job: JobRow } | null> {
   if (!isUuid(appId)) return null;
-  const { data } = await createAdminClient().from("mms_applications").select("id, job_id, status").eq("id", appId).maybeSingle();
+  const { data } = await createAdminClient().from("mms_applications").select("id, job_id, status, email, candidate_id").eq("id", appId).maybeSingle();
   if (!data) return null;
   const job = await getAccountJob(accountId, data.job_id);
-  return job ? data : null;
+  return job ? { app: data as OwnApplication, job } : null;
 }
 
+/** Moves an applicant along: new, viewed, shortlisted, interview, offer, hired or not taken forward. Every change is logged (journey tracking). */
 export async function setApplicationStatus(form: FormData): Promise<void> {
   const account = await requireEmployer();
   const status = String(form.get("status") ?? "");
-  if (!["new", "viewed", "shortlisted", "rejected"].includes(status)) return;
-  const app = await ownApplication(account.id, String(form.get("id") ?? ""));
-  if (!app) return;
-  await createAdminClient().from("mms_applications").update({ status }).eq("id", app.id);
+  if (!isApplicationStatus(status)) return;
+  const own = await ownApplication(account.id, String(form.get("id") ?? ""));
+  if (!own || own.app.status === status) return;
+  const { error } = await createAdminClient().from("mms_applications").update({ status }).eq("id", own.app.id);
+  if (error) {
+    console.error("[employer] status update failed:", error.message);
+    return;
+  }
+  await recordEmployerStatus({ application: own.app, job: own.job, from: own.app.status, to: status });
   refresh();
 }
 
 export async function markApplicationViewed(appId: string): Promise<void> {
   const account = await requireEmployer();
-  const app = await ownApplication(account.id, appId);
-  if (!app || app.status !== "new") return;
-  await createAdminClient().from("mms_applications").update({ status: "viewed" }).eq("id", app.id).eq("status", "new");
+  const own = await ownApplication(account.id, appId);
+  if (!own || own.app.status !== "new") return;
+  const { data } = await createAdminClient().from("mms_applications").update({ status: "viewed" }).eq("id", own.app.id).eq("status", "new").select("id");
+  if ((data ?? []).length > 0) await recordEmployerStatus({ application: own.app, job: own.job, from: "new", to: "viewed" });
 }
 
 /* ---------- Contact requests ---------- */
@@ -293,6 +304,7 @@ export interface ContactState {
 export async function requestContact(_prev: ContactState | null, form: FormData): Promise<ContactState> {
   const account = await requireEmployer();
   if (!effectivePlan(account)) return { ok: false, message: "You need an active plan to contact candidates." };
+  if (!hasCandidateSearch(effectivePlan(account))) return { ok: false, message: CANDIDATE_SEARCH_UPGRADE };
   const candidateId = String(form.get("candidate_id") ?? "");
   const jobIdRaw = String(form.get("job_id") ?? "");
   if (!isUuid(candidateId)) return { ok: false, message: "That candidate was not found." };

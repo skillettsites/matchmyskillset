@@ -1,5 +1,5 @@
 // Row shapes for the job board tables (supabase/migrations/006_job_board.sql,
-// plus the optional columns from 007_employer_extras.sql and 008_shortlists.sql).
+// plus the optional columns from 007_employer_extras.sql, 008_shortlists.sql and 010_tracking.sql).
 
 export interface EmployerAccount {
   id: string;
@@ -21,6 +21,14 @@ export interface EmployerAccount {
   slug?: string | null;
   /** 007: company page text. */
   company_description?: string | null;
+  /** 010: partner rate (Flintstone Associates clients) set by admin: the plan it applies to. */
+  partner_plan?: string | null;
+  /** 010: partner monthly price in pence for partner_plan. */
+  partner_price_pence?: number | null;
+  /** 010: when admin last set or cleared the partner rate. */
+  partner_set_at?: string | null;
+  /** 010: monthly price in pence of the card subscription in force (written by the Stripe webhook). */
+  billed_price_pence?: number | null;
 }
 
 export type JobStatus = "draft" | "pending" | "live" | "closed" | "rejected";
@@ -59,7 +67,14 @@ export interface JobRow {
   shortlist_wanted?: boolean;
 }
 
-export type ApplicationStatus = "new" | "viewed" | "shortlisted" | "rejected";
+/** Where the employer has got to with an applicant (010: interview, offer and hired added; no DB constraint). */
+export type ApplicationStatus = "new" | "viewed" | "shortlisted" | "interview" | "offer" | "hired" | "rejected";
+
+export const APPLICATION_STATUSES: ApplicationStatus[] = ["new", "viewed", "shortlisted", "interview", "offer", "hired", "rejected"];
+
+export function isApplicationStatus(value: unknown): value is ApplicationStatus {
+  return typeof value === "string" && (APPLICATION_STATUSES as string[]).includes(value);
+}
 
 export interface ApplicationRow {
   id: string;

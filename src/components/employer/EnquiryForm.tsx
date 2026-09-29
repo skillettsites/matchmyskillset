@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import { useKeepValues } from "@/components/employer/useKeepValues";
 import { sendEnquiryAction, type EnquiryState } from "@/app/employers/actions";
+import { ENQUIRY_INTERESTS } from "@/lib/employer/plans";
 
 // Enquiry form for Enterprise, pay per hire and anything else. Sends an email
 // to the jobs inbox (reply goes straight to the sender) and a Telegram alert.
@@ -45,7 +46,7 @@ export function EnquiryForm({ defaultInterest = "Enterprise" }: { defaultInteres
           Interested in
         </label>
         <select id="enq-interest" name="interest" className="field" defaultValue={defaultInterest}>
-          {["Enterprise", "Pay per hire", "Starter", "Growth", "Something else"].map((o) => (
+          {ENQUIRY_INTERESTS.map((o) => (
             <option key={o}>{o}</option>
           ))}
         </select>

@@ -3,19 +3,32 @@ import { isAllowedOrigin } from "@/lib/api-guard";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { getStripe, isStripeConfigError } from "@/lib/apis/stripe";
 import { getEmployer, isSetUp } from "@/lib/employer/session";
-import { EMPLOYER_PRODUCT, JOBS_EMAIL, PAYMENTS_UNAVAILABLE, PLAN_LIMITS, PLAN_NAMES, SELF_SERVE_PRICES } from "@/lib/employer/plans";
+import {
+  EMPLOYER_PRODUCT,
+  isSelfServePlan,
+  JOBS_EMAIL,
+  monthlyPriceFor,
+  PAYMENTS_UNAVAILABLE,
+  PLAN_LIMITS,
+  PLAN_NAMES,
+  type SelfServePlan,
+} from "@/lib/employer/plans";
 import { localBase } from "@/lib/employer/server";
 
-// Starts a monthly subscription for Starter or Growth with Stripe Checkout.
-// Prices are inline (price_data, GBP) so no Stripe products need setting up.
-// The webhook (/api/stripe/webhook) turns the plan on when payment succeeds.
+// Starts a monthly subscription for Lite, Starter or Growth with Stripe
+// Checkout. Prices are inline (price_data, GBP) so no Stripe products need
+// setting up. An account with a partner rate for the chosen plan (set by
+// admin for Flintstone Associates clients) is charged that rate instead of the
+// standard price. The webhook (/api/stripe/webhook) turns the plan on when
+// payment succeeds.
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const DESCRIPTIONS = {
-  starter: "3 live job listings, up to 10 matched candidates shown per role, views and applications for every job. Billed monthly, cancel any time.",
-  growth: `${PLAN_LIMITS.growth.liveJobs} live job listings, up to ${PLAN_LIMITS.growth.matchedPerRole} matched candidates shown per role, a recruiter shortlist for every role, skills-gap report per role, company page and priority email support. Billed monthly, cancel any time.`,
+const DESCRIPTIONS: Record<SelfServePlan, string> = {
+  lite: "1 live job listing, with applicants in your dashboard and inbox and a skills match for each. Billed monthly, cancel any time.",
+  starter: "3 live job listings, up to 10 matched candidates shown per role, candidate search, views and applications for every job. Billed monthly, cancel any time.",
+  growth: `${PLAN_LIMITS.growth.liveJobs} live job listings, up to ${PLAN_LIMITS.growth.matchedPerRole} matched candidates shown per role, candidate search, a recruiter shortlist for every role, skills-gap report per role, company page and priority email support. Billed monthly, cancel any time.`,
 };
 
 export async function POST(request: NextRequest) {
@@ -28,16 +41,19 @@ export async function POST(request: NextRequest) {
   const { allowed, retryAfter } = await checkRateLimit(`emp-checkout:${account.id}`, 20, 3600);
   if (!allowed) return NextResponse.json({ error: "Too many attempts. Please try again later." }, { status: 429, headers: { "Retry-After": String(retryAfter) } });
 
-  let plan: "starter" | "growth";
+  let plan: SelfServePlan;
   try {
     const body = JSON.parse((await request.text()).slice(0, 500)) as { plan?: unknown };
-    if (body.plan !== "starter" && body.plan !== "growth") throw new Error("bad plan");
+    if (!isSelfServePlan(body.plan)) throw new Error("bad plan");
     plan = body.plan;
   } catch {
     return NextResponse.json({ error: "Invalid request." }, { status: 400 });
   }
 
-  if (account.plan === plan && (account.plan_status === "active" || account.plan_status === "past_due") && account.stripe_subscription_id) {
+  const price = monthlyPriceFor(account, plan);
+  // A partner rate set after they subscribed: choosing the same plan again moves them onto it (the webhook ends the old subscription).
+  const movingToPartnerRate = price.partner && account.billed_price_pence !== price.pence;
+  if (account.plan === plan && (account.plan_status === "active" || account.plan_status === "past_due") && account.stripe_subscription_id && !movingToPartnerRate) {
     return NextResponse.json({ error: `You are already on ${PLAN_NAMES[plan]}. Use Manage billing to update your card or cancel.` }, { status: 409 });
   }
   if (account.plan_status === "comped") {
@@ -48,7 +64,13 @@ export async function POST(request: NextRequest) {
   if (!stripe) return NextResponse.json({ error: PAYMENTS_UNAVAILABLE, unavailable: true }, { status: 503 });
 
   const base = localBase(request.nextUrl);
-  const metadata = { product: EMPLOYER_PRODUCT, account_id: account.id, plan };
+  const metadata = {
+    product: EMPLOYER_PRODUCT,
+    account_id: account.id,
+    plan,
+    price_pence: String(price.pence),
+    partner_rate: price.partner ? "1" : "0",
+  };
   try {
     const session = await stripe.checkout.sessions.create({
       mode: "subscription",
@@ -57,9 +79,12 @@ export async function POST(request: NextRequest) {
           quantity: 1,
           price_data: {
             currency: "gbp",
-            unit_amount: SELF_SERVE_PRICES[plan],
+            unit_amount: price.pence,
             recurring: { interval: "month" },
-            product_data: { name: `MatchMySkillset ${PLAN_NAMES[plan]} plan`, description: DESCRIPTIONS[plan] },
+            product_data: {
+              name: `MatchMySkillset ${PLAN_NAMES[plan]} plan${price.partner ? " (partner rate)" : ""}`,
+              description: DESCRIPTIONS[plan],
+            },
           },
         },
       ],

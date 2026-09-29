@@ -1,7 +1,19 @@
 import type { Metadata } from "next";
 import { requireEmployer } from "@/lib/employer/session";
 import { countActiveListings, formatDate } from "@/lib/employer/jobs";
-import { effectivePlan, isPlanId, JOBS_EMAIL, limitsFor, PLAN_NAMES, STATUS_LABELS, type PlanStatus } from "@/lib/employer/plans";
+import {
+  effectivePlan,
+  formatPence,
+  isPlanId,
+  JOBS_EMAIL,
+  limitsFor,
+  partnerRate,
+  PLAN_NAMES,
+  SELF_SERVE_PRICES,
+  STATUS_LABELS,
+  isSelfServePlan,
+  type PlanStatus,
+} from "@/lib/employer/plans";
 import { EnquiryForm } from "@/components/employer/EnquiryForm";
 import { PortalButton } from "@/components/employer/PortalButton";
 import { PricingCards } from "@/components/employer/PricingCards";
@@ -18,6 +30,11 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
   const limits = limitsFor(plan);
   const [{ live, pending }, paymentsOpen] = await Promise.all([countActiveListings(account.id), isStripeReady().catch(() => false)]);
   const status = (account.plan_status as PlanStatus) ?? "inactive";
+  // Partner rate (Flintstone Associates clients, set in admin). Shown as what they pay only when the card subscription in force is at that price.
+  const partner = partnerRate(account);
+  const billed = account.billed_price_pence ?? null;
+  const onPartnerRate = Boolean(partner && plan === partner.plan && (status === "active" || status === "past_due") && billed === partner.pence);
+  const monthly = onPartnerRate && partner ? partner.pence : billed ?? (plan && isSelfServePlan(plan) && status !== "comped" ? SELF_SERVE_PRICES[plan] : null);
 
   return (
     <div>
@@ -46,7 +63,23 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
             <div className="mt-1 flex flex-wrap items-center gap-3">
               <p className="text-[26px] font-bold tracking-[-0.03em] text-ink">{isPlanId(account.plan) ? PLAN_NAMES[account.plan] : "No plan yet"}</p>
               <Badge tone={plan ? (status === "past_due" ? "amber" : "green") : "grey"}>{STATUS_LABELS[status] ?? status}</Badge>
+              {onPartnerRate && <Badge tone="blue">Partner rate</Badge>}
             </div>
+            {monthly !== null && (status === "active" || status === "past_due") && (
+              <p className="mt-1 text-[15px] text-ink-2">
+                {formatPence(monthly)} a month{onPartnerRate ? " (partner rate)" : ""}
+              </p>
+            )}
+            {partner && !onPartnerRate && (
+              <p className="mt-2 text-[15px] text-ink-2">
+                Partner rate agreed: {formatPence(partner.pence)} a month for {PLAN_NAMES[partner.plan]}.{" "}
+                {plan === partner.plan && status === "comped"
+                  ? ""
+                  : plan === partner.plan
+                    ? "Choose it below to move your card payment onto it."
+                    : `Choose ${PLAN_NAMES[partner.plan]} below to pay it.`}
+              </p>
+            )}
             <p className="mt-2 text-[15px] text-mute">
               {limits
                 ? `${live} live${pending ? ` and ${pending} waiting` : ""} of ${limits.liveJobs === null ? "unlimited" : limits.liveJobs} listings.`
@@ -66,11 +99,11 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
       <h2 className="mt-12 text-[22px] font-bold tracking-[-0.02em] text-ink">{plan ? "Change plan" : "Choose a plan"}</h2>
       <p className="mt-1 text-[15px] text-mute">Monthly, no minimum term. Moving to another plan by card replaces your current subscription.</p>
       <div className="mt-6">
-        <PricingCards mode="dashboard" currentPlan={plan} paymentsOpen={paymentsOpen} />
+        <PricingCards mode="dashboard" currentPlan={plan} paymentsOpen={paymentsOpen} partner={partner} billedPence={billed} />
       </div>
 
       <div id="enquiry" className="mt-14 scroll-mt-24">
-        <h2 className="text-[22px] font-bold tracking-[-0.02em] text-ink">Enterprise, pay per hire or a question</h2>
+        <h2 className="text-[22px] font-bold tracking-[-0.02em] text-ink">Enterprise, pay per hire, partner rates or a question</h2>
         <p className="mt-1 mb-6 text-[15px] text-mute">Tell us what you need and we will reply by email.</p>
         <EnquiryForm />
       </div>
