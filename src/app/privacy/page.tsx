@@ -11,6 +11,7 @@ import {
   SITE_NAME,
 } from "@/lib/site";
 import { EmployerPrivacy } from "@/components/employer/legal/EmployerPrivacy";
+import { CandidateToolsPrivacy } from "@/components/candidate/legal/CandidateToolsPrivacy";
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
@@ -40,12 +41,15 @@ export default function PrivacyPage() {
         <div className="rounded-xl border border-gray-200 bg-gray-50 p-5">
           <h2 className="font-semibold text-gray-900 mb-2">The short version</h2>
           <ul className="list-disc pl-5 space-y-1">
-            <li>There are no accounts. You can check your CV without signing up.</li>
+            <li>
+              You can check your CV without signing up. Accounts are optional, for the paid CV tools
+              (see <a href="#cv-tools" className={link}>CV tools</a>).
+            </li>
             <li>
               Your CV text is sent to Anthropic (the company behind the Claude AI model) in the
               United States to identify your skills. We do not keep the raw CV text once the
-              analysis has finished, unless you apply for a job posted here or choose to add it to
-              an employer-visible profile.
+              analysis has finished, unless you apply for a job posted here, choose to add it to
+              an employer-visible profile, or use the CV tools (it is then kept inside your job pack).
             </li>
             <li>
               To find live jobs for you we send job titles and the place you typed (never your name,
@@ -377,7 +381,8 @@ export default function PrivacyPage() {
         <ul className="list-disc pl-5 space-y-2">
           <li>
             <strong>Raw CV text and uploaded files:</strong> not stored by us after the analysis
-            {RECRUITER_SHARING_ENABLED ? " unless you tick the recruiter box" : ""}. Anthropic keeps
+            {RECRUITER_SHARING_ENABLED ? " unless you tick the recruiter box" : ""}, except inside a
+            job pack you ask for (see <a href="#cv-tools" className={link}>CV tools</a>). Anthropic keeps
             API data for up to 30 days, as described above.
           </li>
           <li>
@@ -493,6 +498,9 @@ export default function PrivacyPage() {
           If we change how we use personal data, we will update this page and the date at the top.
           See also our <Link href="/terms" className={link}>Terms of Service</Link>.
         </p>
+
+        {/* CV tools section (accounts, job packs, Plus): kept in its own component. */}
+        <CandidateToolsPrivacy />
 
         {/* Employer section: owned by the employer side, kept in its own component. */}
         <EmployerPrivacy />

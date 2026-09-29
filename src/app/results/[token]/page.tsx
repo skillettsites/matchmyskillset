@@ -20,6 +20,7 @@ import { PayBlock, SkillChips, WaysIn } from "../_components/parts";
 import { EmailLinkForm, ReportCheckout, ViewEvent } from "./ResultsClient";
 import { ResultsShell, ShowJobsButton } from "./ResultsShell";
 import { AlertSignup, ProfileOptIn } from "./SideCards";
+import { ResultsPacks } from "@/components/candidate/ResultsPacks";
 
 export const dynamic = "force-dynamic";
 
@@ -374,6 +375,8 @@ export default async function ResultsPage({ params, searchParams }: { params: Pa
 
   const side = (
     <>
+      {/* CV tools: job packs made from these results (renders nothing when there are none). */}
+      <ResultsPacks token={token} />
       <AlertSignup token={token} consentText={ALERT_CONSENT_TEXT} where={place ? (place.kind === "region" ? `in ${place.label}` : `near ${place.label}`) : "across the UK"} />
       <ProfileOptIn
         token={token}
