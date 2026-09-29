@@ -6,7 +6,9 @@ import { requireEmployer } from "@/lib/employer/session";
 import { formatDate, getAccountJob } from "@/lib/employer/jobs";
 import { jobSkillSet, parseSkillIds, skillName } from "@/lib/employer/matching";
 import { isUuid } from "@/lib/employer/server";
-import type { ApplicationRow } from "@/lib/employer/types";
+import { APPLICATION_STATUSES, type ApplicationRow, type ApplicationStatus } from "@/lib/employer/types";
+import { candidateReports } from "@/lib/tracking/tracker";
+import { CANDIDATE_SAYS, EMPLOYER_STATUS_LABELS } from "@/lib/tracking/constants";
 import { ApplicantCard } from "@/components/employer/ApplicantCard";
 import { JobTabs } from "@/components/employer/JobTabs";
 import { Badge, EmptyState, MatchBar, PageHead, SkillChip, type Tone } from "@/components/employer/ui";
@@ -15,20 +17,33 @@ import { setApplicationStatus } from "../../../actions";
 export const metadata: Metadata = { title: "Applicants for your job", robots: { index: false, follow: false } };
 export const dynamic = "force-dynamic";
 
-const STATUS: Record<string, { label: string; tone: Tone }> = {
-  new: { label: "New", tone: "blue" },
-  viewed: { label: "Viewed", tone: "grey" },
-  shortlisted: { label: "Shortlisted", tone: "green" },
-  rejected: { label: "Not taken forward", tone: "red" },
+const TONES: Record<ApplicationStatus, Tone> = {
+  new: "blue",
+  viewed: "grey",
+  shortlisted: "green",
+  interview: "blue",
+  offer: "amber",
+  hired: "green",
+  rejected: "red",
 };
+
+const STATUS: Record<string, { label: string; tone: Tone }> = Object.fromEntries(
+  APPLICATION_STATUSES.map((s) => [s, { label: EMPLOYER_STATUS_LABELS[s], tone: TONES[s] }])
+);
 
 const FILTERS = [
   ["all", "All"],
   ["new", "New"],
   ["shortlisted", "Shortlisted"],
+  ["interview", "Interview"],
+  ["offer", "Offer"],
+  ["hired", "Hired"],
   ["viewed", "Viewed"],
   ["rejected", "Not taken forward"],
 ] as const;
+
+/** Where an applicant can be moved to from the card (new happens only on arrival). */
+const MOVE_TO: ApplicationStatus[] = ["viewed", "shortlisted", "interview", "offer", "hired", "rejected"];
 
 export default async function ApplicantsPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ status?: string; sort?: string }> }) {
   const account = await requireEmployer();
@@ -46,6 +61,8 @@ export default async function ApplicantsPage({ params, searchParams }: { params:
   if (status !== "all" && STATUS[status]) q = q.eq("status", status);
   const { data } = await q;
   const apps = (data as ApplicationRow[]) ?? [];
+  // What applicants told us themselves in check-ins (interview, offer or placed only). Empty before migration 010.
+  const reports = await candidateReports(apps.map((a) => a.id));
   const totalQ = await createAdminClient().from("mms_applications").select("id", { count: "exact", head: true }).eq("job_id", job.id);
   const total = totalQ.count ?? 0;
   const jobSkills = jobSkillSet(job.title, job.skills);
@@ -114,6 +131,7 @@ export default async function ApplicantsPage({ params, searchParams }: { params:
                         <div className="flex flex-wrap items-center gap-2">
                           <p className="truncate text-[17px] font-semibold text-ink">{a.name}</p>
                           <Badge tone={st.tone}>{st.label}</Badge>
+                          {reports.get(a.id) && CANDIDATE_SAYS[reports.get(a.id)!] && <Badge tone="grey">{CANDIDATE_SAYS[reports.get(a.id)!]}</Badge>}
                         </div>
                         <p className="mt-1 text-[14px] text-mute">Applied {formatDate(a.created_at)}</p>
                       </div>
@@ -165,19 +183,30 @@ export default async function ApplicantsPage({ params, searchParams }: { params:
                           <p className="mt-2 whitespace-pre-wrap rounded-2xl bg-cloud p-4 text-[15px] leading-relaxed text-ink-2">{a.cover_note}</p>
                         </div>
                       )}
-                      <div className="flex flex-wrap gap-2">
-                        {(["shortlisted", "viewed", "rejected"] as const)
-                          .filter((sname) => sname !== a.status)
-                          .map((sname) => (
-                            <form key={sname} action={setApplicationStatus}>
-                              <input type="hidden" name="id" value={a.id} />
-                              <input type="hidden" name="status" value={sname} />
-                              <button type="submit" className={`btn btn-sm ${sname === "shortlisted" ? "btn-primary" : "btn-secondary"}`}>
-                                {sname === "shortlisted" ? "Shortlist" : sname === "viewed" ? "Move back to viewed" : "Not taken forward"}
-                              </button>
-                            </form>
-                          ))}
-                      </div>
+                      <form action={setApplicationStatus} className="rounded-2xl bg-cloud p-4">
+                        <input type="hidden" name="id" value={a.id} />
+                        <label htmlFor={`stage-${a.id}`} className="text-[13px] font-semibold text-ink">
+                          Where they are
+                        </label>
+                        <div className="mt-2 flex flex-wrap items-center gap-2">
+                          <select id={`stage-${a.id}`} name="status" defaultValue={a.status === "new" ? "viewed" : a.status} className="field !w-auto !bg-white !py-2 !text-[15px]">
+                            {MOVE_TO.map((s) => (
+                              <option key={s} value={s}>
+                                {EMPLOYER_STATUS_LABELS[s]}
+                              </option>
+                            ))}
+                          </select>
+                          <button type="submit" className="btn btn-primary btn-sm">
+                            Update
+                          </button>
+                        </div>
+                        <p className="mt-2 text-[12px] leading-snug text-mute">
+                          {reports.get(a.id) && CANDIDATE_SAYS[reports.get(a.id)!]
+                            ? `${CANDIDATE_SAYS[reports.get(a.id)!]} (their own answer to our check-in email). `
+                            : ""}
+                          Marking someone hired records a placement. We may ask them separately whether we can mention their move, anonymised, in our case studies.
+                        </p>
+                      </form>
                     </div>
                     <div>
                       <div className="flex items-center justify-between gap-3">

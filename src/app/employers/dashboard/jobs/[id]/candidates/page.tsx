@@ -6,7 +6,7 @@ import { requireEmployer } from "@/lib/employer/session";
 import { getAccountJob, listAccountJobs } from "@/lib/employer/jobs";
 import { jobSkillSet, MATCH_METHOD_SUMMARY } from "@/lib/employer/matching";
 import { contactStatusMap, loadDiscoverable, rankCandidates } from "@/lib/employer/candidates";
-import { effectivePlan, limitsFor, moreMatchesHint } from "@/lib/employer/plans";
+import { CANDIDATE_SEARCH_UPGRADE, effectivePlan, hasCandidateSearch, limitsFor, moreMatchesHint } from "@/lib/employer/plans";
 import { isUuid } from "@/lib/employer/server";
 import { CandidateCard } from "@/components/employer/CandidateCard";
 import { JobTabs } from "@/components/employer/JobTabs";
@@ -28,7 +28,8 @@ export default async function MatchedCandidatesPage({ params, searchParams }: { 
   const skillSet = jobSkillSet(job.title, job.skills);
   const ranked = rankCandidates(skillSet, await loadDiscoverable({ region }));
   const cap = limits?.matchedPerRole ?? null;
-  const visible = limits ? (cap === null ? ranked : ranked.slice(0, cap)) : [];
+  const searchIncluded = hasCandidateSearch(plan);
+  const visible = limits && searchIncluded ? (cap === null ? ranked : ranked.slice(0, cap)) : [];
   const contacts = await contactStatusMap(account.id, visible.map((r) => r.candidate.id));
   const jobs = (await listAccountJobs(account.id)).filter((j) => j.status !== "draft").map((j) => ({ id: j.id, title: j.title }));
 
@@ -66,6 +67,13 @@ export default async function MatchedCandidatesPage({ params, searchParams }: { 
           Choose a plan to see their profiles and ask to contact them.{" "}
           <Link href="/employers/dashboard/billing" className="font-semibold underline">
             See plans
+          </Link>
+        </Notice>
+      ) : !searchIncluded ? (
+        <Notice tone="amber">
+          {CANDIDATE_SEARCH_UPGRADE}{" "}
+          <Link href="/employers/dashboard/billing" className="font-semibold underline">
+            Compare plans
           </Link>
         </Notice>
       ) : ranked.length === 0 ? (

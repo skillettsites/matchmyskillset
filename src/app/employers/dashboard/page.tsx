@@ -79,7 +79,11 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
         />
         <Stat label="Applications" value={totalApps} hint={newApps ? `${newApps} new` : "All seen"} />
         <Stat label="Contact requests waiting" value={openRequests} hint={`${accepted} accepted so far`} />
-        <Stat label="Matched candidates shown" value={limits ? (limits.matchedPerRole === null ? "Unlimited" : `Up to ${limits.matchedPerRole}`) : "None"} hint="per role" />
+        <Stat
+          label="Matched candidates shown"
+          value={limits ? (limits.matchedPerRole === null ? "Unlimited" : limits.matchedPerRole === 0 ? "Not on Lite" : `Up to ${limits.matchedPerRole}`) : "None"}
+          hint={limits?.matchedPerRole === 0 ? "Comes with Starter and above" : "per role"}
+        />
       </div>
 
       <h2 className="mt-12 text-[22px] font-bold tracking-[-0.02em] text-ink">All jobs</h2>

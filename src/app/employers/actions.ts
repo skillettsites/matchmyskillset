@@ -10,7 +10,7 @@ import { cleanText } from "@/lib/input";
 import { isValidEmail } from "@/lib/email/results-email";
 import { sendEnquiry, sendMagicLink } from "@/lib/employer/email";
 import { notifyOwner } from "@/lib/employer/telegram";
-import { JOBS_EMAIL } from "@/lib/employer/plans";
+import { ENQUIRY_INTERESTS, JOBS_EMAIL } from "@/lib/employer/plans";
 import { linkBase, requestIp } from "@/lib/employer/server";
 import {
   consumeLoginToken,
@@ -85,7 +85,7 @@ export interface EnquiryState {
   message: string;
 }
 
-const INTERESTS = ["Enterprise", "Pay per hire", "Starter", "Growth", "Something else"];
+const INTERESTS = ENQUIRY_INTERESTS;
 
 export async function sendEnquiryAction(_prev: EnquiryState | null, form: FormData): Promise<EnquiryState> {
   // Bots fill every field; people never see this one.

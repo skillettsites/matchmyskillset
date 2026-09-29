@@ -16,7 +16,7 @@ export const revalidate = 600;
 export const metadata: Metadata = {
   title: { absolute: "Post a job and hire on skills | MatchMySkillset" },
   description:
-    "Post an engineering, manufacturing or any UK job and we match it to job seekers whose CV skills fit. Applicants arrive in your dashboard. From £199 a month.",
+    "Post an engineering, manufacturing or any UK job and get applicants whose CV skills fit, in your dashboard and inbox. Plans from £49 a month.",
   alternates: { canonical: "/employers" },
 };
 
@@ -60,7 +60,7 @@ export default async function EmployersPage() {
             </Link>
             <More href="#pricing">See pricing</More>
           </div>
-          <p className="rise rise-3 mt-6 text-[14px] text-mute">Plans from £199 a month. A person checks every job before it goes live.</p>
+          <p className="rise rise-3 mt-6 text-[14px] text-mute">Plans from £49 a month. A person checks every job before it goes live.</p>
           <p className="rise rise-3 mx-auto mt-2 max-w-[640px] text-[14px] text-mute">
             Built for engineering, manufacturing and Industry 4.0 hiring, and open to any UK job. Recruiter shortlists on Growth and Enterprise are prepared by
             recruiters from Flintstone Associates, our recruitment partner.
@@ -156,8 +156,8 @@ export default async function EmployersPage() {
           </div>
           <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <Feature icon={<Target />} grad="from-[#0a84ff] to-[#5e5ce6]" title="A match score on every applicant" text="See at a glance which skills in your advert each applicant's CV shows, and which it does not." />
-            <Feature icon={<Inbox />} grad="from-[#bf5af2] to-[#ff375f]" title="Applicants in one place" text="Every application in your dashboard and your inbox. Mark people as viewed, shortlisted or not right, and download CVs." />
-            <Feature icon={<Search />} grad="from-[#30d158] to-[#0a84ff]" title="People who asked to be found" text="Search job seekers who opted in, matched to your role. They decide whether to share their details with you." />
+            <Feature icon={<Inbox />} grad="from-[#bf5af2] to-[#ff375f]" title="Applicants in one place" text="Every application in your dashboard and your inbox. Move people from shortlisted to interview, offer and hired, and download CVs." />
+            <Feature icon={<Search />} grad="from-[#30d158] to-[#0a84ff]" title="People who asked to be found" text="Search job seekers who opted in, matched to your role. They decide whether to share their details with you. On Starter and above." />
             <Feature icon={<Chart />} grad="from-[#ff9f0a] to-[#ff375f]" title="Skills-gap report" text="For each role, how often its key skills appear among applicants and matched candidates. On Growth and above." />
             <Feature icon={<Building />} grad="from-[#64d2ff] to-[#0a84ff]" title="Your company page" text="A page for your company with your description, website and every live job. On Growth and above." />
             <Feature icon={<Shield />} grad="from-[#5e5ce6] to-[#bf5af2]" title="Checked by a person" text={`Every job is reviewed before it goes live and runs for ${LISTING_DAYS} days, renewable from your dashboard.`} />
@@ -214,7 +214,7 @@ export default async function EmployersPage() {
       <section id="enquiry" className="scroll-mt-20 bg-cloud px-5 py-20 md:py-28" aria-labelledby="enquiry-title">
         <div className="mx-auto grid max-w-[1080px] gap-10 lg:grid-cols-[1fr_1.3fr] lg:items-start">
           <div>
-            <p className="eyebrow text-link">Enterprise and pay per hire</p>
+            <p className="eyebrow text-link">Enterprise, pay per hire and partner rates</p>
             <h2 id="enquiry-title" className="headline mt-2">
               Talk to us.
             </h2>

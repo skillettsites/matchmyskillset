@@ -10,6 +10,7 @@ import type { EmployerAccount, JobRow, ShortlistRow } from "@/lib/employer/types
 import { isShortlistSchemaMissing } from "@/lib/employer/shortlists";
 import { isoDaysAgo } from "@/lib/employer/server";
 import { AdminLogin } from "@/components/employer/AdminLogin";
+import { PartnerRateForm } from "@/components/admin/PartnerRateForm";
 import { Badge, SkillChip, Stat } from "@/components/employer/ui";
 import { adminCloseJob, adminSignOut, approveJob, rejectJob, updateEmployer } from "./actions";
 
@@ -101,9 +102,15 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
       <div className="mx-auto max-w-[1180px]">
         <div className="flex items-center justify-between gap-4">
           <h1 className="headline">Admin</h1>
-          <form action={adminSignOut}>
-            <button className="btn btn-secondary btn-sm">Sign out</button>
-          </form>
+          <div className="flex flex-wrap items-center gap-2">
+            {/* Journey tracking (migration 010): funnel, trends, placements and CSV exports. */}
+            <Link href="/admin/funnel" className="btn btn-primary btn-sm">
+              Funnel and placements
+            </Link>
+            <form action={adminSignOut}>
+              <button className="btn btn-secondary btn-sm">Sign out</button>
+            </form>
+          </div>
         </div>
 
         {msg && <p className="mt-6 rounded-2xl bg-[#e8f6ec] px-4 py-3 text-[15px] text-[#1d7f37]">{msg}</p>}
@@ -273,6 +280,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
                 <input name="notes" defaultValue={a.notes ?? ""} className="field !py-2 !text-[14px]" placeholder="Notes (only you see these)" maxLength={2000} />
                 <button className="btn btn-dark btn-sm">Save</button>
               </form>
+              <PartnerRateForm account={a} />
             </div>
           ))}
         </div>

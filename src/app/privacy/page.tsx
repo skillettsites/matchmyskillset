@@ -13,6 +13,7 @@ import {
 } from "@/lib/site";
 import { EmployerPrivacy } from "@/components/employer/legal/EmployerPrivacy";
 import { CandidateToolsPrivacy } from "@/components/candidate/legal/CandidateToolsPrivacy";
+import { TrackingPrivacy } from "@/components/tracking/legal/TrackingPrivacy";
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
@@ -519,6 +520,8 @@ export default function PrivacyPage() {
 
         {/* CV tools section (accounts, job packs, Plus): kept in its own component. */}
         <CandidateToolsPrivacy />
+        {/* Application tracking, outcomes and placements: kept in its own component. */}
+        <TrackingPrivacy />
 
         {/* Employer section: owned by the employer side, kept in its own component. */}
         <EmployerPrivacy />

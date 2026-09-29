@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { track } from "@/lib/analytics";
+import { noteApplyClick, TrackApplied } from "@/components/tracking/TrackApplied";
 import { postedLabel } from "./format";
 
 /** What a job card needs. Built from a results snapshot or a /jobs search. */
@@ -59,6 +60,8 @@ function MatchDial({ value }: { value: number }) {
 function recordClick(job: CardJob, position: number | undefined) {
   track("job_click", { source: job.source, position: position ?? null, match: job.match ?? null });
   if (job.source === "mms") return;
+  // Application tracker: ask "Did you apply?" when they come back from the advert.
+  noteApplyClick(job);
   fetch("/api/track-click", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -193,6 +196,7 @@ export function MatchJobCard({ job, position, tailorHref }: { job: CardJob; posi
         )}
       </div>
       {why && job.explain && <p className="mt-2 rounded-xl bg-cloud px-3 py-2 text-[13px] leading-relaxed text-ink-2">{job.explain}</p>}
+      {!mms && <TrackApplied job={job} />}
     </article>
   );
 }

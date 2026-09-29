@@ -19,7 +19,9 @@ import {
 import { jobSkillSet, parseSkillIds, skillName } from "@/lib/employer/matching";
 import { loadDiscoverable, rankCandidates } from "@/lib/employer/candidates";
 import { isUuid } from "@/lib/employer/server";
-import { effectivePlan, hasRecruiterShortlist, JOBS_EMAIL, LISTING_DAYS } from "@/lib/employer/plans";
+import { effectivePlan, hasCandidateSearch, hasRecruiterShortlist, JOBS_EMAIL, LISTING_DAYS } from "@/lib/employer/plans";
+import { APPLICATION_STATUSES } from "@/lib/employer/types";
+import { EMPLOYER_STATUS_LABELS } from "@/lib/tracking/constants";
 import { getJobShortlist, shortlistItems } from "@/lib/employer/shortlists";
 import { ShortlistSection } from "@/components/employer/ShortlistSection";
 import { JobTabs } from "@/components/employer/JobTabs";
@@ -71,8 +73,14 @@ export default async function JobPage({ params, searchParams }: { params: Promis
     if (status) q = q.eq("status", status);
     return (await q).count ?? 0;
   };
-  const [total, fresh, shortlisted, rejected] = await Promise.all([statusCount(), statusCount("new"), statusCount("shortlisted"), statusCount("rejected")]);
+  const [total, ...byStatus] = await Promise.all([statusCount(), ...APPLICATION_STATUSES.map((s) => statusCount(s))]);
+  const fresh = byStatus[APPLICATION_STATUSES.indexOf("new")];
+  // Pipeline order for the line under the stats, most advanced first.
+  const pipeline = (["hired", "offer", "interview", "shortlisted", "viewed", "new", "rejected"] as const)
+    .map((s) => ({ s, n: byStatus[APPLICATION_STATUSES.indexOf(s)] }))
+    .filter((x) => x.n > 0);
   const skillSet = jobSkillSet(job.title, job.skills);
+  const searchIncluded = hasCandidateSearch(effectivePlan(account));
   const matched = rankCandidates(skillSet, await loadDiscoverable()).length;
   const s = displayStatus(job);
   const expired = isExpired(job);
@@ -157,12 +165,14 @@ export default async function JobPage({ params, searchParams }: { params: Promis
         <Stat label="Views" value={job.views} hint="Times the job was opened" />
         <Stat label="Applications" value={total} hint={fresh ? `${fresh} new` : undefined} />
         <Stat label="Application rate" value={applicationRate(total, job.views)} hint="Applications per view" />
-        <Stat label="Matched candidates" value={matched} hint="People who opted in with these skills" />
+        <Stat
+          label="Matched candidates"
+          value={searchIncluded ? matched : "Not on Lite"}
+          hint={searchIncluded ? "People who opted in with these skills" : "Comes with Starter and above"}
+        />
       </div>
       {total > 0 && (
-        <p className="mt-3 text-[14px] text-mute">
-          {shortlisted} shortlisted · {rejected} not taken forward · {total - shortlisted - rejected - fresh} viewed · {fresh} new
-        </p>
+        <p className="mt-3 text-[14px] text-mute">{pipeline.map((x) => `${x.n} ${EMPLOYER_STATUS_LABELS[x.s].toLowerCase()}`).join(" · ")}</p>
       )}
 
       <div className="mt-10 grid gap-6 lg:grid-cols-[1.4fr_1fr]">

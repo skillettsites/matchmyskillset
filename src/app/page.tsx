@@ -70,7 +70,7 @@ const FAQS: FaqItem[] = [
   },
   {
     q: "I am hiring. How do I post a job?",
-    a: "Employer plans start at £199 a month. You post your roles, we match them against candidates' skills, and applicants arrive in one inbox. The employer page has the plans and how it works.",
+    a: "Employer plans start at £49 a month. You post your roles, we match them against candidates' skills, and applicants arrive in one inbox. The employer page has the plans and how it works.",
   },
 ];
 
@@ -363,7 +363,7 @@ export default function Home() {
               </MoreLink>
             </div>
             <ul className="mt-12 grid gap-4 text-[15px] text-[#d2d2d7] sm:grid-cols-3">
-              {["Plans from £199 a month", "A skills match on every applicant", "Candidates say yes before you see their details"].map((t) => (
+              {["Plans from £49 a month", "A skills match on every applicant", "Candidates say yes before you see their details"].map((t) => (
                 <li key={t} className="flex items-start gap-2.5">
                   <Check className="mt-0.5 h-5 w-5 shrink-0 text-[#30d158]" />
                   {t}

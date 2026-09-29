@@ -9,6 +9,8 @@ import { employerMatch } from "@/lib/candidates/apply";
 import { findCandidateByEmail, getEmployer, hasApplied, insertApplication, markEmployerNotified } from "@/lib/candidates/db";
 import { sendApplicationReceipt, sendApplicationToEmployer, type ApplicationMail } from "@/lib/candidates/emails";
 import { notifyEmployerOfApplication } from "@/lib/employer/notify";
+import { trackMmsApplication } from "@/lib/tracking/tracker";
+import { currentCandidateAccountId } from "@/lib/tracking/identity";
 
 // "Apply with MatchMySkillset" for a job posted on the site. The applicant
 // ticks a box naming the employer and the job; only then are their name,
@@ -111,7 +113,18 @@ export async function POST(request: NextRequest) {
     }
     const receipt = await sendApplicationReceipt(email, mail);
 
-    return json(200, { ok: true, id: saved.id, match: fit?.match ?? null, employerEmailed, receiptEmailed: receipt.ok });
+    // Application tracker and "Did you hear back?" check-ins (the notice is on the apply form). Never blocks applying.
+    const tracker = await trackMmsApplication({
+      applicationId: saved.id,
+      job,
+      email,
+      candidateId: candidate?.id ?? null,
+      accountId: await currentCandidateAccountId(),
+      resultsToken: token,
+      trackerToken: typeof body.trackerToken === "string" ? body.trackerToken : null,
+    });
+
+    return json(200, { ok: true, id: saved.id, match: fit?.match ?? null, employerEmailed, receiptEmailed: receipt.ok, tracker });
   } catch (err) {
     console.error("[applications] failed:", err instanceof Error ? err.message : err);
     return json(500, { error: "We could not send your application just now. Please try again." });

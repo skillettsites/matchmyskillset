@@ -73,7 +73,7 @@ export function CandidateToolsTerms() {
         </li>
         <li>
           It includes up to {PLUS_PACKS_PER_MONTH} job packs in each billing month (fair use; the count starts again when your plan renews and unused packs do not carry
-          over), Check any job, and full access to the application tracker. Check any job has a daily limit to stop misuse.
+          over) and Check any job. Check any job has a daily limit to stop misuse. The application tracker is free for everyone and is not part of Plus.
         </li>
         <li>
           You can cancel at any time from Manage billing in your account. Plus then keeps working until the end of the month you have paid for and does not renew. We

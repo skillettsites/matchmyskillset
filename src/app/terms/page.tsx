@@ -3,6 +3,7 @@ import Link from "next/link";
 import { CONTACT_EMAIL, LEGAL_ENTITY_NAME, LEGAL_LAST_UPDATED, SHORTLIST_PARTNER_NAME, SITE_NAME } from "@/lib/site";
 import { EmployerTerms } from "@/components/employer/legal/EmployerTerms";
 import { CandidateToolsTerms } from "@/components/candidate/legal/CandidateToolsTerms";
+import { TrackingTerms } from "@/components/tracking/legal/TrackingTerms";
 
 export const metadata: Metadata = {
   title: "Terms of Service",
@@ -180,6 +181,8 @@ export default function TermsPage() {
 
         {/* CV tools terms (job packs, Plus, accounts): kept in its own component. */}
         <CandidateToolsTerms />
+        {/* Application tracker: kept in its own component. */}
+        <TrackingTerms />
 
         {/* Employer terms: owned by the employer side, kept in its own component. */}
         <EmployerTerms />

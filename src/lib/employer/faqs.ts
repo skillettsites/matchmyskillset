@@ -20,7 +20,7 @@ export const EMPLOYER_FAQS: FaqItem[] = [
   },
   {
     q: "Can I search for candidates?",
-    a: "Yes, but only people who have chosen to be found. You see an anonymous profile: headline, current role, region, years of experience and skills. You can ask to contact them, with a short message. If they accept, we share their name, email address and CV with you. If they decline, you are not told who they are.",
+    a: "Yes, on Starter, Growth and Enterprise, but only people who have chosen to be found. You see an anonymous profile: headline, current role, region, years of experience and skills. You can ask to contact them, with a short message. If they accept, we share their name, email address and CV with you. If they decline, you are not told who they are.",
   },
   {
     q: "What is the recruiter shortlist?",
@@ -32,7 +32,7 @@ export const EMPLOYER_FAQS: FaqItem[] = [
   },
   {
     q: "How do payments and cancelling work?",
-    a: `Starter and Growth are monthly subscriptions paid by card through Stripe. There is no minimum term: cancel any time and your plan runs to the end of the month you have paid for. Enterprise and pay per hire are agreed with you directly. If card payments are not open when you sign up, email ${JOBS_EMAIL} and we will set you up the same day.`,
+    a: `Lite, Starter and Growth are monthly subscriptions paid by card through Stripe. There is no minimum term: cancel any time and your plan runs to the end of the month you have paid for. Enterprise and pay per hire are agreed with you directly. Flintstone Associates clients can ask about partner rates: once we have agreed one, it is the monthly price you pay by card. If card payments are not open when you sign up, email ${JOBS_EMAIL} and we will set you up the same day.`,
   },
   {
     q: "Do job seekers pay anything?",

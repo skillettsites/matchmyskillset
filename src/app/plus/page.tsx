@@ -40,7 +40,7 @@ const FAQ: FaqItem[] = [
   },
   {
     q: "Is the free part really free?",
-    a: "Yes. Uploading your CV, seeing live jobs scored against it, job alerts, applying for jobs posted here and the careers that fit you are free, with no account needed. Only the CV tools on this page cost money, apart from your one free tailored CV.",
+    a: "Yes. Uploading your CV, seeing live jobs scored against it, job alerts, applying for jobs posted here, the application tracker with its follow-up emails, and the careers that fit you are free, with no account needed. Only the CV tools on this page cost money, apart from your one free tailored CV.",
   },
 ];
 
@@ -155,7 +155,6 @@ export default async function PlusPage({ searchParams }: { searchParams: Promise
               {[
                 `Up to ${PLUS_PACKS_PER_MONTH} job packs a month (fair use)`,
                 "Check any job: paste any advert and see your match and gaps",
-                "Full access to the application tracker",
                 "Cancel any time",
               ].map((f) => (
                 <li key={f} className="flex gap-2.5">
