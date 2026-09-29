@@ -18,6 +18,7 @@ import { NOT_SWITCHED_ON } from "@/lib/candidate/plans";
 import { claimGuestPacks, deleteAccount, deleteSavedCv, setConsents } from "@/lib/candidate/account";
 import { isPlusAccount } from "@/lib/candidate/entitlements";
 import { consumeLoginToken, createSession, destroySession, findOrCreateAccount, getCandidate, issueLoginToken, safeNext } from "@/lib/candidate/session";
+import { claimTrackedForAccount, deleteTrackerDataForEmail, stopAllCheckins, trackedForAccount } from "@/lib/tracking/tracker";
 
 export interface SignInState {
   status: "idle" | "sent" | "error";
@@ -63,6 +64,8 @@ export async function completeCandidateSignIn(form: FormData): Promise<void> {
       await createSession(account.id);
       // Packs bought without an account, sent to this (now proven) email address.
       await claimGuestPacks(account.id, email);
+      // Applications tracked as a guest with the same email (never throws).
+      await claimTrackedForAccount(account.id, email);
     }
   } catch (err) {
     if (err instanceof NotSwitchedOnError) redirect("/account/sign-in?error=off");
@@ -81,8 +84,15 @@ export async function signOutCandidate(): Promise<void> {
 export async function updateCandidateSettings(form: FormData): Promise<void> {
   const account = await getCandidate();
   if (!account) redirect("/account/sign-in?next=/account");
+  const tracking = form.get("tracking") === "on";
   try {
-    await setConsents(account.id, { marketing: form.get("marketing") === "on", tracking: form.get("tracking") === "on" }, account);
+    await setConsents(account.id, { marketing: form.get("marketing") === "on", tracking }, account);
+    // Tracking switched off: no more "did you hear back?" emails to this address.
+    if (!tracking) {
+      const rows = await trackedForAccount(account.id);
+      const active = rows === "off" ? undefined : rows.find((r) => !r.checkins_stopped_at);
+      if (active) await stopAllCheckins(active, "tracker");
+    }
   } catch (err) {
     console.error("[account] settings failed:", err instanceof Error ? err.message : err);
     redirect("/account?saved=error#settings");
@@ -123,6 +133,7 @@ export async function deleteCandidateAccount(form: FormData): Promise<void> {
   }
   try {
     await deleteAccount(account.id, form.get("results") === "on");
+    await deleteTrackerDataForEmail(account.email);
   } catch (err) {
     console.error("[account] delete failed:", err instanceof Error ? err.message : err);
     redirect("/account?delete=error#delete");

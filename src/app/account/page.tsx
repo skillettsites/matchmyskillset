@@ -6,6 +6,8 @@ import { entitlementFor, isPlusAccount } from "@/lib/candidate/entitlements";
 import { listAccountPacks, type PackSummary } from "@/lib/candidate/packs";
 import { linkedResults, profileForAccount, type LinkedProfile, type LinkedResults } from "@/lib/candidate/account";
 import { NOT_SWITCHED_ON, PLUS_PACKS_PER_MONTH, PLUS_PRICE_LABEL } from "@/lib/candidate/plans";
+import { trackedForAccount, type TrackedRow } from "@/lib/tracking/tracker";
+import { TrackerList } from "@/components/tracking/TrackerList";
 import { deleteCandidateAccount, deleteCandidateSavedCv, signOutCandidate, updateCandidateSettings } from "./actions";
 import { BillingButton, LinkBrowserResults } from "./AccountClient";
 
@@ -92,12 +94,16 @@ export default async function AccountPage({ searchParams }: { searchParams: Prom
     redirect("/account/sign-in?next=/account");
   }
 
-  const [ent, packs, results, profile] = await Promise.all([
+  const [ent, packs, results, profile, trackedResult] = await Promise.all([
     entitlementFor(account),
     listAccountPacks(account.id).catch(() => [] as PackSummary[]),
     linkedResults(account.id).catch(() => [] as LinkedResults[]),
     profileForAccount(account).catch(() => null as LinkedProfile | null),
+    trackedForAccount(account.id).catch(() => [] as TrackedRow[]),
   ]);
+  const tracked = trackedResult === "off" ? [] : trackedResult;
+  // Check-ins still running count as tracking on, even if the box was never ticked here.
+  const trackingOn = Boolean(account.tracking_consent_at) || tracked.some((r) => !r.checkins_stopped_at && r.next_checkin_at);
   const plus = isPlusAccount(account);
   const noticeKey = Object.keys(NOTICES).find((k) => {
     const [name, value] = k.split("=");
@@ -134,6 +140,20 @@ export default async function AccountPage({ searchParams }: { searchParams: Prom
             <Card id="packs" title="Your job packs">
               <PackList packs={packs} />
             </Card>
+
+            {tracked.length > 0 && (
+              <Card id="applications" title="Your applications">
+                <p className="mb-4 text-[15px] text-ink-2">Jobs you told us you applied for. The tracker is free: update a status or stop the check-in emails from its page.</p>
+                <TrackerList
+                  rows={tracked.slice(0, 20)}
+                  controls={(row) => (
+                    <Link href={`/tracker/${row.manage_token}`} className="text-[15px] font-medium text-link hover:underline">
+                      Update on your tracker
+                    </Link>
+                  )}
+                />
+              </Card>
+            )}
 
             <Card id="results" title="Your results pages">
               {results.length ? (
@@ -185,7 +205,7 @@ export default async function AccountPage({ searchParams }: { searchParams: Prom
             <Card id="settings" title="Emails and tracking">
               <form action={updateCandidateSettings} className="space-y-4">
                 <label className="flex items-start gap-3 text-[15px] text-ink-2">
-                  <input type="checkbox" name="tracking" defaultChecked={Boolean(account.tracking_consent_at)} className="mt-1 h-4 w-4 shrink-0 accent-[#0071e3]" />
+                  <input type="checkbox" name="tracking" defaultChecked={trackingOn} className="mt-1 h-4 w-4 shrink-0 accent-[#0071e3]" />
                   <span>
                     <strong className="text-ink">Track my applications.</strong> Keep a record of the jobs I apply for and ask me afterwards whether I heard back.
                   </span>

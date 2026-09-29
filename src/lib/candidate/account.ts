@@ -6,6 +6,7 @@ import { findCandidateByEmail } from "@/lib/candidates/db";
 import { isMatchesDoc, isSkillsDoc } from "@/lib/skills/profile";
 import { db, isMissingObject, PACK_COLUMNS, raise, type CandidateAccount, type PackRow } from "./db";
 import type { ResultsProfile } from "./job-source";
+import { trackedForAccount } from "@/lib/tracking/tracker";
 
 // ---------------------------------------------------------------------------
 // Saved CV (only with the "keep my CV on my account" tick)
@@ -169,6 +170,7 @@ export async function exportAccount(account: CandidateAccount): Promise<Record<s
   ]);
   for (const r of [acc, packs, usage, links]) if (r.error) raise(r.error, "export read failed");
   const profile = await profileForAccount(account);
+  const tracked = await trackedForAccount(account.id);
   return {
     exported_at: new Date().toISOString(),
     about: "Everything MatchMySkillset holds for your account. Payments are processed by Stripe, which keeps its own records.",
@@ -179,6 +181,7 @@ export async function exportAccount(account: CandidateAccount): Promise<Record<s
     }),
     usage: usage.data,
     linked_results: links.data,
+    tracked_applications: tracked === "off" ? [] : tracked.map((t) => ({ ...t, id: undefined, email_hash: undefined, account_id: undefined })),
     employer_profile: profile ? { manage_link_token: profile.manageToken, discoverable: profile.discoverable, created_at: profile.createdAt } : null,
   };
 }
